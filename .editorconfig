@@ -15,3 +15,6 @@ indent_size = 2
 
 # C# files
 [*.cs]
+
+# CA1014: Mark assemblies with CLSCompliant
+dotnet_diagnostic.CA1014.severity = none    # Not interested in feature
