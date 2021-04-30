@@ -41,8 +41,8 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "{controller}Client",
-      "operationGenerationMode": "MultipleClientsFromFirstTagAndPathSegments",
+      "className": "BeeDebugClient",
+      "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": true,
@@ -93,7 +93,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/Bee.Net/Clients/DebugApi/NswagSwarmDebugApiClient.cs",
+      "output": "../src/Bee.Net/Clients/DebugApi/NswagBeeDebugApiClient.cs",
       "newLineBehavior": "Auto"
     }
   }
