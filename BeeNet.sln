@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bee.Net", "src\Bee.Net\Bee.Net.csproj", "{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet", "src\BeeNet\BeeNet.csproj", "{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7932D52A-3D44-4723-9E77-1711F7486417}"
 EndProject
@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956
 		tools\openapi\SwarmDebug.yaml = tools\openapi\SwarmDebug.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.AspNetCore", "src\BeeNet.AspNetCore\BeeNet.AspNetCore.csproj", "{443050B3-3143-4B2E-B9D8-56EA77115D33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +53,7 @@ Global
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{C162BCCF-B5C8-466A-AAB7-6D85CC171434} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
 		{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92} = {C162BCCF-B5C8-466A-AAB7-6D85CC171434}
+		{443050B3-3143-4B2E-B9D8-56EA77115D33} = {7932D52A-3D44-4723-9E77-1711F7486417}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BC8368EB-8E3B-4FBB-B657-D1C9375AFAFC}
