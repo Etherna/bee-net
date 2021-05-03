@@ -37,6 +37,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\nuget-stable-deploy.yml = .github\workflows\nuget-stable-deploy.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2784CACA-1220-438F-980D-D51FB77C8BFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{3B8C4D66-F407-4309-88C4-2C9FDB6C8876}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,10 @@ Global
 		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B8C4D66-F407-4309-88C4-2C9FDB6C8876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B8C4D66-F407-4309-88C4-2C9FDB6C8876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B8C4D66-F407-4309-88C4-2C9FDB6C8876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B8C4D66-F407-4309-88C4-2C9FDB6C8876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +69,7 @@ Global
 		{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92} = {C162BCCF-B5C8-466A-AAB7-6D85CC171434}
 		{443050B3-3143-4B2E-B9D8-56EA77115D33} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{F6289FE6-5CC0-4225-98BC-2DCFE85C767F} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
+		{3B8C4D66-F407-4309-88C4-2C9FDB6C8876} = {2784CACA-1220-438F-980D-D51FB77C8BFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BC8368EB-8E3B-4FBB-B657-D1C9375AFAFC}

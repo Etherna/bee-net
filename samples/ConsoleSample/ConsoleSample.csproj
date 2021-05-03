@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etherna.BeeNet.SampleClient</RootNamespace>
+    <AssemblyName>bee-sample</AssemblyName>
+    <Authors>Etherna Sagl</Authors>
+    <IsPackable>false</IsPackable>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BeeNet\BeeNet.csproj" />
+  </ItemGroup>
+
+</Project>
