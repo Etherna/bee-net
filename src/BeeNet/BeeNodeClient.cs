@@ -6,7 +6,7 @@ using System.Net.Http;
 
 namespace Etherna.BeeNet
 {
-    public class BeeNetClient : IBeeNetClient, IDisposable
+    public class BeeNodeClient : IBeeNodeClient, IDisposable
     {
         // Fields.
         private readonly HttpClient httpClient;
@@ -15,19 +15,25 @@ namespace Etherna.BeeNet
         // Constructors.
         [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
             Justification = "A string is required by Nswag generated client")]
-        public BeeNetClient(
+        public BeeNodeClient(
             string baseUrl = "http://localhost",
-            int gatewayApiPort = 1633,
-            int debugApiPort = 1635)
+            int? gatewayApiPort = 1633,
+            int? debugApiPort = 1635)
         {
             httpClient = new HttpClient();
 
             // Generate api clients.
-            BeeDebugClient = new BeeDebugClient(httpClient)
-            { BaseUrl = string.Concat(baseUrl, ':', debugApiPort) };
+            if (debugApiPort is not null)
+            {
+                DebugApiUrl = new Uri(string.Concat(baseUrl, ':', debugApiPort));
+                DebugClient = new BeeDebugClient(httpClient) { BaseUrl = DebugApiUrl.ToString() };
+            }
 
-            BeeGatewayClient = new BeeGatewayClient(httpClient)
-            { BaseUrl = string.Concat(baseUrl, ':', gatewayApiPort) };
+            if (gatewayApiPort is not null)
+            {
+                GatewayApiUrl = new Uri(string.Concat(baseUrl, ':', gatewayApiPort));
+                GatewayClient = new BeeGatewayClient(httpClient) { BaseUrl = GatewayApiUrl.ToString() };
+            }
         }
 
         // Dispose.
@@ -48,8 +54,11 @@ namespace Etherna.BeeNet
             disposed = true;
         }
 
+
         // Properties.
-        public IBeeDebugClient BeeDebugClient { get; }
-        public IBeeGatewayClient BeeGatewayClient { get; }
+        public Uri? DebugApiUrl { get; }
+        public IBeeDebugClient? DebugClient { get; }
+        public Uri? GatewayApiUrl { get; }
+        public IBeeGatewayClient? GatewayClient { get; }
     }
 }

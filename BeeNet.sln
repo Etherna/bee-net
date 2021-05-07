@@ -29,8 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956
 		tools\openapi\SwarmDebug.yaml = tools\openapi\SwarmDebug.yaml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet.AspNetCore", "src\BeeNet.AspNetCore\BeeNet.AspNetCore.csproj", "{443050B3-3143-4B2E-B9D8-56EA77115D33}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F6289FE6-5CC0-4225-98BC-2DCFE85C767F}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\myget-unstable-deploy.yml = .github\workflows\myget-unstable-deploy.yml
@@ -47,10 +45,6 @@ Global
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{443050B3-3143-4B2E-B9D8-56EA77115D33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,7 +53,6 @@ Global
 		{653BEB35-743E-4612-BEF4-7B26C6FB3D8F} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{C162BCCF-B5C8-466A-AAB7-6D85CC171434} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
 		{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92} = {C162BCCF-B5C8-466A-AAB7-6D85CC171434}
-		{443050B3-3143-4B2E-B9D8-56EA77115D33} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{F6289FE6-5CC0-4225-98BC-2DCFE85C767F} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

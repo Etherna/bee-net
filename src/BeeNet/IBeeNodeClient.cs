@@ -4,9 +4,9 @@ using System;
 
 namespace Etherna.BeeNet
 {
-    public interface IBeeNetClient
+    public interface IBeeNodeClient
     {
-        IBeeDebugClient BeeDebugClient { get; }
-        IBeeGatewayClient BeeGatewayClient { get; }
+        IBeeDebugClient? DebugClient { get; }
+        IBeeGatewayClient? GatewayClient { get; }
     }
 }
