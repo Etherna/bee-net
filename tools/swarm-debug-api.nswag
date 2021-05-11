@@ -20,7 +20,7 @@
       "disposeHttpClient": true,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "ApiException",
+      "exceptionClass": "BeeNetDebugApiException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
