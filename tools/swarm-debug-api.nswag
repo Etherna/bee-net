@@ -71,7 +71,7 @@
       "arrayBaseType": "System.Collections.ObjectModel.Collection",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
-      "jsonLibrary": "NewtonsoftJson",
+      "jsonLibrary": "SystemTextJson",
       "generateDefaultValues": true,
       "generateDataAnnotations": true,
       "excludedTypeNames": [],
@@ -91,9 +91,10 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
+      "checksumCacheEnabled": false,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/Bee.Net/Clients/DebugApi/NswagBeeDebugApiClient.cs",
+      "output": "../src/BeeNet/Clients/DebugApi/NswagBeeDebugApiClient.cs",
       "newLineBehavior": "Auto"
     }
   }
