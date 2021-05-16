@@ -2115,7 +2115,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                         ProcessResponse(client_, response_);
     
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response23>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2391,7 +2391,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                         ProcessResponse(client_, response_);
     
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response26>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2486,7 +2486,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                         ProcessResponse(client_, response_);
     
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response27>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -3212,8 +3212,16 @@ namespace Etherna.BeeNet.Clients.DebugApi
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Peer { get; set; }= default!;
     
-        [System.Text.Json.Serialization.JsonPropertyName("lastCashedCheque")]
-        public LastCashedCheque LastCashedCheque { get; set; }= default!;
+        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Chequebook { get; set; }= default!;
+    
+        [System.Text.Json.Serialization.JsonPropertyName("cumulativePayout")]
+        public int CumulativePayout { get; set; }= default!;
+    
+        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Beneficiary { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
@@ -3221,9 +3229,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
     
         [System.Text.Json.Serialization.JsonPropertyName("result")]
         public Result Result { get; set; }= default!;
-    
-        [System.Text.Json.Serialization.JsonPropertyName("uncashedAmount")]
-        public int UncashedAmount { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
@@ -3501,32 +3506,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
     
         [System.Text.Json.Serialization.JsonPropertyName("connectedPeers")]
         public object ConnectedPeers { get; set; }= default!;
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.4.3.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class LastCashedCheque 
-    {
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; }= default!;
-    
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; }= default!;
-    
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public int Payout { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
