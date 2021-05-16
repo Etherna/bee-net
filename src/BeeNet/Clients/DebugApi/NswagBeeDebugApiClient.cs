@@ -3556,7 +3556,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public string Chequebook { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public int Payout { get; set; }= default!;
+        public long Payout { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
@@ -3582,7 +3582,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public string Chequebook { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public int Payout { get; set; }= default!;
+        public long Payout { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
@@ -3633,7 +3633,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public string Chequebook { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public int Payout { get; set; }= default!;
+        public long Payout { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
@@ -3659,7 +3659,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public string Chequebook { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public int Payout { get; set; }= default!;
+        public long Payout { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
