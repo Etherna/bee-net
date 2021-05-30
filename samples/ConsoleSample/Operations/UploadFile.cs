@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,15 @@ namespace Etherna.BeeNet.SampleClient.Operations
 {
     class UploadFile
     {
-        internal static void Run(BeeNetClient beeClient, string inputFile)
+        internal static void Run(BeeNodeClient beeClient, string inputFile)
         {
-            throw new NotImplementedException();
+            // Get file.
+            var fileStream = File.OpenRead(inputFile);
+
+            // Get available postage stamps.
+
+            // Upload file.
+
         }
     }
 }

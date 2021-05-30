@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.SampleClient.Operations
 {
-    class DownloadFile
+    class BuyStamps
     {
-        internal static void Run(BeeNodeClient beeClient, string hash, string outputFile)
+        internal static void Run(BeeNodeClient beeClient, long ammount, int depth)
         {
             throw new NotImplementedException();
         }
