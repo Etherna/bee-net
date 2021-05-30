@@ -3538,7 +3538,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public Result Result { get; set; }= default!;
     
         [System.Text.Json.Serialization.JsonPropertyName("uncashedAmount")]
-        public int UncashedAmount { get; set; }= default!;
+        public long UncashedAmount { get; set; }= default!;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     

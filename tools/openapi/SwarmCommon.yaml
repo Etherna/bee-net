@@ -401,6 +401,7 @@ components:
           $ref: "#/components/schemas/SwapCashoutResult"
         uncashedAmount:
           type: integer
+          format: int64
 
     TagName:
       type: string
