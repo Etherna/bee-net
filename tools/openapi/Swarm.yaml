@@ -796,6 +796,7 @@ paths:
           name: amount
           schema:
             type: integer
+            format: int64
           required: true
           description: Amount of BZZ added that the postage batch will have.
         - in: path

@@ -1,16 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Etherna.BeeNet.Clients.GatewayApi;
+using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.SampleClient.Operations
 {
     class BuyStamps
     {
-        internal static void Run(BeeNodeClient beeClient, long ammount, int depth)
+        internal static async Task RunAsync(BeeNodeClient beeClient, long ammount, int depth)
         {
-            throw new NotImplementedException();
+            if (beeClient.GatewayClient is null)
+                throw new InvalidOperationException();
+
+            // Try to buy stamps.
+            try
+            {
+                var batchResponse = await beeClient.GatewayClient.StampsPostAsync(ammount, depth, gas_price: 30);
+                Console.WriteLine("Stamps batch id: " + batchResponse.BatchID);
+            }
+            catch (BeeNetGatewayApiException)
+            {
+                Console.WriteLine("Invalid request");
+            }
         }
     }
 }

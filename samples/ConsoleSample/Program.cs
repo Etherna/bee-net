@@ -1,18 +1,23 @@
 ﻿using Etherna.BeeNet.SampleClient.Operations;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.SampleClient
 {
     class Program
     {
         // Enums.
-        private enum UseMode { Stamps, Upload, Download }
+        private enum UseMode { Download, Info, Stamps, Upload }
 
         // Consts.
         const string HelpText =
-            "Bee.Net client sample help:\n" +
-            "Buy postage stamps, upload or download files with a Bee node instance.\n\n" +
+            "Bee.Net client sample help\n" +
+            "Permits to get Bee node info, buy postage stamps, upload or download files.\n\n" +
+
+            "Get node info:\n" +
+            "./bee-sample.exe info [options]\n" +
+            "\n" +
 
             "Buy postage stamps:\n" +
             "./bee-sample.exe stamps [options]\n" +
@@ -30,11 +35,12 @@ namespace Etherna.BeeNet.SampleClient
             "\n" +
 
             "Common options:\n" +
-            "-u\tBee node Url [default: http://localhost]\n" +
-            "-p\tGateway port [default: 1633]\n";
+            "--gp\tGateway port [default: 1633]\n" +
+            "--dp\tDebug port [default: 1635]\n" +
+            "-u\tBee node Url [default: http://localhost]\n";
 
         [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "CLI arguments don't have a name")]
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             UseMode mode;
             string? commandInput = null;
@@ -42,7 +48,8 @@ namespace Etherna.BeeNet.SampleClient
             var batchDepth = 20;
             var outputFile = "./output";
             var baseUrl = "http://localhost";
-            var port = 1633;
+            var debugPort = 1635;
+            var gatewayPort = 1633;
 
             // Try to read arguments.
             try
@@ -53,8 +60,9 @@ namespace Etherna.BeeNet.SampleClient
                 //select mode
                 mode = args[i++] switch
                 {
-                    "stamps" => UseMode.Stamps,
                     "download" => UseMode.Download,
+                    "info" => UseMode.Info,
+                    "stamps" => UseMode.Stamps,
                     "upload" => UseMode.Upload,
                     _ => throw new ArgumentException(),
                 };
@@ -83,8 +91,6 @@ namespace Etherna.BeeNet.SampleClient
                                 throw new ArgumentException("Invalid batch depth");
                             break;
 
-                        //upload
-
                         //download
                         case "-o":
                             if (mode is not UseMode.Download)
@@ -93,10 +99,17 @@ namespace Etherna.BeeNet.SampleClient
                             break;
 
                         //common
-                        case "-p":
+                        case "--dp":
                             if (args.Length <= i + 1)
                                 throw new ArgumentException("A port is needed");
-                            if (!int.TryParse(args[++i], out port))
+                            if (!int.TryParse(args[++i], out debugPort))
+                                throw new ArgumentException("Invalid port");
+                            break;
+
+                        case "--gp":
+                            if (args.Length <= i + 1)
+                                throw new ArgumentException("A port is needed");
+                            if (!int.TryParse(args[++i], out gatewayPort))
                                 throw new ArgumentException("Invalid port");
                             break;
 
@@ -117,13 +130,14 @@ namespace Etherna.BeeNet.SampleClient
             }
 
             // Create client.
-            var beeClient = new BeeNodeClient(baseUrl, gatewayApiPort: port);
+            var beeClient = new BeeNodeClient(baseUrl, gatewayPort, debugPort);
 
             // Execute command.
             switch (mode)
             {
-                case UseMode.Stamps: BuyStamps.Run(beeClient, stampsAmmount, batchDepth); break;
+                case UseMode.Info: await GetInfo.RunAsync(beeClient); break;
                 case UseMode.Download: DownloadFile.Run(beeClient, commandInput!, outputFile); break;
+                case UseMode.Stamps: await BuyStamps.RunAsync(beeClient, stampsAmmount, batchDepth); break;
                 case UseMode.Upload: UploadFile.Run(beeClient, commandInput!); break;
 
                 default: throw new NotSupportedException();
