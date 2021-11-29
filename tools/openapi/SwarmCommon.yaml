@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.6.0
+  version: 1.0.0
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -11,6 +11,16 @@ externalDocs:
 
 paths: {}
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: SecurityToken
+
   schemas:
     Address:
       type: object
@@ -34,6 +44,11 @@ components:
         pssPublicKey:
           $ref: "#/components/schemas/PublicKey"
 
+    BigInt:
+      description: Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+      type: string
+      example: "1000000000000000000"
+
     ReserveState:
       type: object
       properties:
@@ -41,26 +56,20 @@ components:
           type: integer
         available:
           type: integer
-          format: int64
         outer:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
         inner:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
 
     ChainState:
       type: object
       properties:
         block:
           type: integer
-          format: int64
         totalAmount:
           type: integer
-          format: int64
         currentPrice:
           type: integer
-          format: int64
 
     Balance:
       type: object
@@ -68,8 +77,7 @@ components:
         peer:
           $ref: "#/components/schemas/SwarmAddress"
         balance:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
 
     Balances:
       type: object
@@ -104,9 +112,24 @@ components:
               connected:
                 type: integer
               disconnectedPeers:
-                type: object
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      $ref: "#/components/schemas/SwarmAddress"
+                    metrics:
+                      $ref: "#/components/schemas/PeerMetricsView"
               connectedPeers:
-                type: object
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      $ref: "#/components/schemas/SwarmAddress"
+                    metrics:
+                      $ref: "#/components/schemas/PeerMetricsView"
+
 
     Cheque:
       type: object
@@ -116,8 +139,7 @@ components:
         chequebook:
           $ref: "#/components/schemas/EthereumAddress"
         payout:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
 
     ChequeAllPeersResponse:
       type: object
@@ -142,11 +164,9 @@ components:
       type: object
       properties:
         totalBalance:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
         availableBalance:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
 
     ChequebookAddress:
       type: object
@@ -169,19 +189,17 @@ components:
       type: string
       pattern: "^[A-Fa-f0-9]{40}$"
       example: "36b7efd913ca4cf880b8eeac5093fa27b0825906"
-      
+
     FileName:
       type: string
 
     GasLimit:
       type: integer
-      format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
       type: integer
-      format: int64
 
     Hash:
       type: object
@@ -212,35 +230,26 @@ components:
           $ref: "#/components/schemas/DateTime"
         total:
           type: integer
-          format: int64
         processed:
           type: integer
-          format: int64
         synced:
           type: integer
-          format: int64
 
     NewTagDebugResponse:
       type: object
       properties:
         total:
           type: integer
-          format: int64
         split:
           type: integer
-          format: int64
         seen:
           type: integer
-          format: int64
         stored:
           type: integer
-          format: int64
         sent:
           type: integer
-          format: int64
         synced:
           type: integer
-          format: int64
         uid:
           $ref: "#/components/schemas/Uid"
         address:
@@ -261,6 +270,28 @@ components:
       type: string
       example: "/ip4/127.0.0.1/tcp/1634/p2p/16Uiu2HAmTm17toLDaPYzRyjKn27iCB76yjKnJ5DjQXneFmifFvaX"
 
+    PeerMetricsView:
+      type: object
+      properties:
+        lastSeenTimestamp:
+          type: integer
+          nullable: false
+        sessionConnectionRetry:
+          type: integer
+          nullable: false
+        connectionTotalDuration:
+          type: number
+          nullable: false
+        sessionConnectionDuration:
+          type: number
+          nullable: false
+        sessionConnectionDirection:
+          type: string
+          nullable: false
+        latencyEWMA:
+          type: integer
+          nullable: false
+
     Peers:
       type: object
       properties:
@@ -274,13 +305,20 @@ components:
       type: string
 
     PssTargets:
+      pattern: '^[0-9a-fA-F]{1,6}(,[0-9a-fA-F]{1,6})*$'
+      description: List of hex string targets that are comma seprated and can have maximum length of 6
       type: string
 
     PssTopic:
       type: string
 
     ProblemDetails:
-      type: string
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
 
     ReferenceResponse:
       type: object
@@ -296,6 +334,15 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/PostageBatch"
+
+    DebugPostageBatchesResponse:
+      type: object
+      properties:
+        stamps:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/DebugPostageBatch"
 
     BatchIDResponse:
       type: object
@@ -322,6 +369,16 @@ components:
       properties:
         status:
           type: string
+        version:
+          type: string
+        apiVersion:
+          type: string
+          default: "0.0.0"
+          description: The default value is set in case the bee binary was not build correctly.
+        debugApiVersion:
+          type: string
+          default: "0.0.0"
+          description: The default value is set in case the bee binary was not build correctly.
 
     PostageBatch:
       type: object
@@ -330,6 +387,56 @@ components:
           $ref: "#/components/schemas/BatchID"
         utilization:
           type: integer
+        usable:
+          description: Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.
+          type: boolean
+        label:
+          type: string
+        depth:
+          type: integer
+        amount:
+          $ref: "#/components/schemas/BigInt"
+        bucketDepth:
+          type: integer
+        blockNumber:
+          type: integer
+        immutableFlag:
+          type: boolean
+
+    DebugPostageBatch:
+      allOf:
+        - $ref: '#/components/schemas/PostageBatch'
+        - type: object
+          properties:
+            exists:
+              description: Internal debugging property. It indicates if the batch is expired.
+              type: boolean
+            batchTTL:
+              description: The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.
+              type: integer
+
+    StampBucketData:
+      type: object
+      properties:
+        bucketID:
+          type: integer
+        collisions:
+          type: integer
+
+    PostageStampBuckets:
+      type: object
+      properties:
+        depth:
+          type: integer
+        bucketDepth:
+          type: integer
+        bucketUpperBound:
+          type: integer
+        buckets:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/StampBucketData"
 
     Settlement:
       type: object
@@ -338,20 +445,16 @@ components:
           $ref: "#/components/schemas/SwarmAddress"
         received:
           type: integer
-          format: int64
         sent:
           type: integer
-          format: int64
 
     Settlements:
       type: object
       properties:
         totalReceived:
           type: integer
-          format: int64
         totalSent:
           type: integer
-          format: int64
         settlements:
           type: array
           nullable: true
@@ -408,8 +511,7 @@ components:
         recipient:
           $ref: "#/components/schemas/EthereumAddress"
         lastPayout:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
         bounced:
           type: boolean
 
@@ -425,22 +527,52 @@ components:
         result:
           $ref: "#/components/schemas/SwapCashoutResult"
         uncashedAmount:
-          type: integer
-          format: int64
+          $ref: "#/components/schemas/BigInt"
 
     TagName:
       type: string
 
     TransactionHash:
       type: string
-      pattern: "^[A-Fa-f0-9]{64}$"
-      example: "e28a34ffe7b1710c1baf97ca6d71d81b7f159a9920910876856c8d94dd7be4ae"
+      pattern: "^0x[A-Fa-f0-9]{64}$"
+      example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
 
     TransactionResponse:
       type: object
       properties:
         transactionHash:
           $ref: "#/components/schemas/TransactionHash"
+
+    TransactionInfo:
+      type: object
+      properties:
+        transactionHash:
+          $ref: "#/components/schemas/TransactionHash"
+        to:
+          $ref: "#/components/schemas/EthereumAddress"
+        nonce:
+          type: integer
+        gasPrice:
+          $ref: "#/components/schemas/BigInt"
+        gasLimit:
+          type: integer
+        data:
+          type: string
+        created:
+          $ref: "#/components/schemas/DateTime"
+        description:
+          type: string
+        value:
+          $ref: "#/components/schemas/BigInt"
+
+    PendingTransactionsResponse:
+      type: object
+      properties:
+        pendingTransactions:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/TransactionInfo"
 
     Uid:
       type: integer
@@ -454,6 +586,29 @@ components:
     FeedType:
       type: string
       pattern: "^(sequence|epoch)$"
+
+    IsRetrievableResponse:
+      type: object
+      properties:
+        isRetrievable:
+          type: boolean
+
+    SecurityTokenRequest:
+      type: object
+      properties:
+        Role:
+          type: string
+          nullable: false
+        Expiry:
+          type: integer
+          nullable: false
+
+    SecurityTokenResponse:
+      type: object
+      properties:
+        Key:
+          type: string
+          nullable: false
 
   headers:
     SwarmTag:
@@ -526,7 +681,10 @@ components:
       schema:
         type: boolean
       required: false
-      description: Represents the pinning state of the chunk
+      description: >
+        Represents if the uploaded data should be also locally pinned on the node.
+
+        Warning! Not available for nodes that run in Gateway mode!
 
     SwarmEncryptParameter:
       in: header
@@ -534,7 +692,10 @@ components:
       schema:
         type: boolean
       required: false
-      description: Represents the encrypting state of the file
+      description: >
+        Represents the encrypting state of the file
+
+        Warning! Not available for nodes that run in Gateway mode!
 
     ContentTypePreserved:
       in: header
@@ -575,7 +736,7 @@ components:
       description: "ID of Postage Batch that is used to upload data with"
       required: true
       schema:
-        $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
+        $ref: "#/components/schemas/SwarmAddress"
 
   responses:
     "204":
@@ -592,8 +753,8 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/ProblemDetails"
-    "403":
-      description: Forbidden
+    "402":
+      description: Payment Required
       content:
         application/problem+json:
           schema:
@@ -604,8 +765,21 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/ProblemDetails"
+    "429":
+      description: Too many requests
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
     "500":
       description: Internal Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+
+    "GatewayForbidden":
+      description: "Endpoint or header (pinning or encryption headers) forbidden in Gateway mode"
       content:
         application/problem+json:
           schema:
