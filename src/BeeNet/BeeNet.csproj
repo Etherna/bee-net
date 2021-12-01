@@ -2,12 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Etherna.BeeNet</RootNamespace>
     <Authors>Etherna Sagl</Authors>
     <Description>A .Net client for Swarm Bee</Description>
-    <LangVersion>9.0</LangVersion>
-    <Nullable>enable</Nullable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 

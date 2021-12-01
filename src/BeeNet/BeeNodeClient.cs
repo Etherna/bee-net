@@ -1,40 +1,40 @@
-﻿using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using TestAdapter.Clients;
 
-namespace Etherna.BeeNet
+namespace TestAdapter
 {
     public class BeeNodeClient : IBeeNodeClient, IDisposable
     {
-        // Fields.
         private readonly HttpClient httpClient;
         private bool disposed;
+        public Uri DebugApiUrl { get; }
+        public IFacadeBeeDebugClient DebugClient { get; }
+        public Uri GatewayApiUrl { get; }
+        public IFacadeBeeGatewayApiClient GatewayClient { get; }
 
-        // Constructors.
-        [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
-            Justification = "A string is required by Nswag generated client")]
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635)
+            int? debugApiPort = 1635,
+            string version = "default")
         {
             httpClient = new HttpClient();
 
             // Generate api clients.
-            if (debugApiPort is not null)
+            if (debugApiPort != null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient) { BaseUrl = DebugApiUrl.ToString() };
+                DebugClient = new FacadeBeeDebugClient(version, httpClient, DebugApiUrl.ToString());
             }
 
-            if (gatewayApiPort is not null)
+            if (gatewayApiPort != null)
             {
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(httpClient) { BaseUrl = GatewayApiUrl.ToString() };
+                GatewayClient = new FacadeBeeGatewayApiClient(version, httpClient, GatewayApiUrl.ToString());
             }
         }
 
@@ -55,13 +55,6 @@ namespace Etherna.BeeNet
 
             disposed = true;
         }
-
-
-        // Properties.
-        public Uri? DebugApiUrl { get; }
-        public IBeeDebugClient? DebugClient { get; }
-        public Uri? GatewayApiUrl { get; }
-        public IBeeGatewayClient? GatewayClient { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)
