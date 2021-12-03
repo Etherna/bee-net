@@ -8,7 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class TopologyDto : BaseDto
     {
-        public TopologyDto(string baseAddr, int population, int connected, string timestamp, int nnLowWatermark, int depth, IDictionary<string, AnonymousDto> bins, IDictionary<string, object> additionalProperties)
+        public TopologyDto(
+            string baseAddr, 
+            int population, 
+            int connected, 
+            string timestamp, 
+            int nnLowWatermark, 
+            int depth, 
+            IDictionary<string, AnonymousDto>? bins, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             BaseAddr = baseAddr;
@@ -32,7 +40,7 @@ namespace Etherna.BeeNet.DtoModel.Debug
 
         public int Depth { get; set; }
 
-        public IDictionary<string, AnonymousDto> Bins { get; set; }
+        public IDictionary<string, AnonymousDto>? Bins { get; set; }
     }
 }
 

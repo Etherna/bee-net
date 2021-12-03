@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class RefreshDto : BaseDto
     {
-        public RefreshDto(string key, IDictionary<string, object> additionalProperties)
+        public RefreshDto(
+            string key, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Key = key;

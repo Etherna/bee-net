@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class AuthDto : BaseDto
     {
-        public AuthDto(string key, IDictionary<string, object> additionalProperties)
+        public AuthDto(
+            string key, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Key = key;

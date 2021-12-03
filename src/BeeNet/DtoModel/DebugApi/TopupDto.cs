@@ -6,15 +6,17 @@ using System.Text;
 
 namespace Etherna.BeeNet.DtoModel.Debug
 {
-    public class TopupDto : BaseDto
+    public class TopUpDto : BaseDto
     {
-        public TopupDto(object batchID, IDictionary<string, object> additionalProperties)
+        public TopUpDto(
+            object batchId, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
-            BatchID = batchID;
+            BatchId = batchId;
         }
 
-        public object BatchID { get; set; }
+        public object BatchId { get; set; }
     }
 }
 

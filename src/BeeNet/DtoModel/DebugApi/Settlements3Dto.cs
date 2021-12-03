@@ -8,7 +8,11 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Settlements3Dto : BaseDto
     {
-        public Settlements3Dto(int totalReceived, int totalSent, ICollection<SettlementsDto> settlements, IDictionary<string, object> additionalProperties)
+        public Settlements3Dto(
+            int totalReceived, 
+            int totalSent, 
+            ICollection<SettlementsDto>? settlements, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TotalReceived = totalReceived;
@@ -20,7 +24,7 @@ namespace Etherna.BeeNet.DtoModel.Debug
 
         public int TotalSent { get; set; }
 
-        public ICollection<SettlementsDto> Settlements { get; set; }
+        public ICollection<SettlementsDto>? Settlements { get; set; }
     }
 }
 

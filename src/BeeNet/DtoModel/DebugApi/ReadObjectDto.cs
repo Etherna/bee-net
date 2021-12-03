@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ReadObjectDto : BaseDto
     {
-        public ReadObjectDto(string message, int code, IDictionary<string, object> additionalProperties)
+        public ReadObjectDto(
+            string message, 
+            int code, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Message = message;

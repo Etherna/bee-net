@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ChunksGetDto : BaseDto
     {
-        public ChunksGetDto(string message, int code, IDictionary<string, object> additionalProperties)
+        public ChunksGetDto(
+            string message, 
+            int code, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Message = message;

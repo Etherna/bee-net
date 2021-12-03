@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoInput.GatewayApi
 {
     public class BodyDto : BaseDto
     {
-        public BodyDto(string role, int expiry, IDictionary<string, object> additionalProperties)
+        public BodyDto(string role, 
+            int expiry, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Role = role;

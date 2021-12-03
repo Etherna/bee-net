@@ -8,7 +8,13 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class TagsDto : BaseDto
     {
-        public TagsDto(int uid, DateTimeOffset startedAt, int total, int processed, int synced, IDictionary<string, object> additionalProperties)
+        public TagsDto(
+            int uid, 
+            DateTimeOffset startedAt, 
+            int total, 
+            int processed, 
+            int synced, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Uid = uid;

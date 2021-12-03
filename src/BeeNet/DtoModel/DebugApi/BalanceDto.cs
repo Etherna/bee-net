@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class BalanceDto : BaseDto
     {
-        public BalanceDto(string totalBalance, string availableBalance, IDictionary<string, object> additionalProperties)
+        public BalanceDto(
+            string totalBalance, 
+            string availableBalance, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TotalBalance = totalBalance;

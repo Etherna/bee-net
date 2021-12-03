@@ -8,26 +8,32 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class CashoutGetDto : BaseDto
     {
-        public CashoutGetDto(string peer, LastCashedChequeDto lastCashedCheque, string transactionHash, ResultDto result, string uncashedAmount, IDictionary<string, object> additionalProperties)
+        public CashoutGetDto(
+            string peer, 
+            LastCashedChequeDto? lastCashedCheque, 
+            string transactionHash, 
+            ResultDto? result, 
+            string unCashedAmount,
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Peer = peer;
             LastCashedCheque = lastCashedCheque;
             TransactionHash = transactionHash;
             Result = result;
-            UncashedAmount = uncashedAmount;
+            UnCashedAmount = unCashedAmount;
         }
 
         public string Peer { get; set; }
 
-        public LastCashedChequeDto LastCashedCheque { get; set; }
+        public LastCashedChequeDto? LastCashedCheque { get; set; }
 
         public string TransactionHash { get; set; }
 
-        public ResultDto Result { get; set; }
+        public ResultDto? Result { get; set; }
 
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string UncashedAmount { get; set; }
+        public string UnCashedAmount { get; set; }
     }
 }
 

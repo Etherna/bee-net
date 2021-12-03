@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class TagsPatchDto : BaseDto
     {
-        public TagsPatchDto(string status, string version, string apiVersion, string debugApiVersion, IDictionary<string, object> additionalProperties)
+        public TagsPatchDto(
+            string status, 
+            string version, 
+            string apiVersion, 
+            string debugApiVersion, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Status = status;

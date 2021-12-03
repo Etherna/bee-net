@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class TagsGetDto : BaseDto
     {
-        public TagsGetDto(ICollection<TagsDto> tags, IDictionary<string, object> additionalProperties)
+        public TagsGetDto(
+            ICollection<TagsDto> tags, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Tags = tags;

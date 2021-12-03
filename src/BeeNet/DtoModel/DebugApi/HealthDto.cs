@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class HealthDto : BaseDto
     {
-        public HealthDto(string status, string version, string apiVersion, string debugApiVersion, IDictionary<string, object> additionalProperties)
+        public HealthDto(
+            string status, 
+            string version, 
+            string apiVersion, 
+            string debugApiVersion, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Status = status;

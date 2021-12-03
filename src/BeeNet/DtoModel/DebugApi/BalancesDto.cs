@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class BalancesDto : BaseDto
     {
-        public BalancesDto(string peer, string balance, IDictionary<string, object> additionalProperties)
+        public BalancesDto(
+            string peer, 
+            string balance,
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Peer = peer;

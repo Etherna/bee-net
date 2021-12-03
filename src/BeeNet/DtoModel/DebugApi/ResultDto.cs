@@ -8,7 +8,11 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ResultDto : BaseDto
     {
-        public ResultDto(string recipient, string lastPayout, bool bounced, IDictionary<string, object> additionalProperties)
+        public ResultDto(
+            string recipient, 
+            string lastPayout, 
+            bool bounced, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Recipient = recipient;

@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class PingpongDto : BaseDto
     {
-        public PingpongDto(string rtt, IDictionary<string, object> additionalProperties)
+        public PingpongDto(
+            string rtt, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Rtt = rtt;

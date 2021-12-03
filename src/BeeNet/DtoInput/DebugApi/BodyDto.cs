@@ -8,7 +8,8 @@ namespace Etherna.BeeNet.DtoInput.DebugApi
 {
     public class BodyDto : BaseDto
     {
-        public BodyDto(string welcomeMessage, IDictionary<string, object> additionalProperties)
+        public BodyDto(string welcomeMessage, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             WelcomeMessage = welcomeMessage;

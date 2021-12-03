@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class WelcomeMessageGetDto : BaseDto
     {
-        public WelcomeMessageGetDto(string welcomeMessage, IDictionary<string, object> additionalProperties)
+        public WelcomeMessageGetDto(
+            string welcomeMessage, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             WelcomeMessage = welcomeMessage;

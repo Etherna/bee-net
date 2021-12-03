@@ -8,13 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Balances3Dto : BaseDto
     {
-        public Balances3Dto(ICollection<BalancesDto> balances, IDictionary<string, object> additionalProperties)
+        public Balances3Dto(
+            ICollection<BalancesDto>? balances, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Balances = balances;
         }
 
-        public ICollection<BalancesDto> Balances { get; set; }
+        public ICollection<BalancesDto>? Balances { get; set; }
     }
 }
 

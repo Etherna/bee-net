@@ -8,8 +8,20 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class StampsDto : Anonymous3Dto
     {
-        public StampsDto(bool exists, int batchTTL, object batchID, int utilization, bool usable, string label, int depth, string amount, int bucketDepth, int blockNumber, bool immutableFlag, IDictionary<string, object> additionalProperties)
-            : base (batchID, utilization, usable, label, depth, amount, bucketDepth, blockNumber, immutableFlag, additionalProperties)
+        public StampsDto(
+            bool exists, 
+            int batchTTL, 
+            object batchId, 
+            int utilization, 
+            bool usable,
+            string label, 
+            int depth, 
+            string amount,
+            int bucketDepth, 
+            int blockNumber, 
+            bool immutableFlag, 
+            IDictionary<string, object> additionalProperties)
+            : base (batchId, utilization, usable, label, depth, amount, bucketDepth, blockNumber, immutableFlag, additionalProperties)
         {
             Exists = exists;
             BatchTTL = batchTTL;

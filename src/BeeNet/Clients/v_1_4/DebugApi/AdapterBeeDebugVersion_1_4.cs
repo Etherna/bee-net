@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,9 +16,9 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
         readonly IBeeDebugClient_1_4 _beeDebugClient;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "<Pending>")]
-        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, string baseUrl)
+        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri baseUrl)
         {
-            _beeDebugClient = new BeeDebugClient_1_4(httpClient) { BaseUrl = baseUrl };
+            _beeDebugClient = new BeeDebugClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
         public async Task<AddressDto> AddressAsync(CancellationToken? cancellationToken)
@@ -85,7 +86,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
 
             var lastCashedCheque = response.LastCashedCheque != null ?
                 new LastCashedChequeDto(beneficiary: response.LastCashedCheque.Beneficiary, 
-                    chequebook: response.LastCashedCheque.Chequebook, 
+                    chequeBook: response.LastCashedCheque.Chequebook, 
                     payout: response.LastCashedCheque.Payout,
                     additionalProperties: response.LastCashedCheque.AdditionalProperties)
                 : null;
@@ -121,7 +122,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
             var lastcheques = response.Lastcheques?.Select(
                 i => new LastchequesDto(i.Peer,
                 i.Lastreceived != null
-                ? new Lastreceived2Dto(i.Lastreceived.Beneficiary, i.Lastreceived.Chequebook, i.Lastreceived.Payout, i.Lastreceived.AdditionalProperties)
+                ? new LastReceived2Dto(i.Lastreceived.Beneficiary, i.Lastreceived.Chequebook, i.Lastreceived.Payout, i.Lastreceived.AdditionalProperties)
                 : null,
                 i.Lastsent != null
                 ? new Lastsent2Dto(i.Lastsent.Beneficiary, i.Lastsent.Chequebook, i.Lastsent.Payout, i.Lastsent.AdditionalProperties)
@@ -238,11 +239,11 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
             return new ReadinessDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion, response.AdditionalProperties);
         }
 
-        public async Task<ReservestateDto> ReservestateAsync(CancellationToken? cancellationToken)
+        public async Task<ReserveStateDto> ReservestateAsync(CancellationToken? cancellationToken)
         {
             var response = cancellationToken.HasValue ? await _beeDebugClient.ReservestateAsync(cancellationToken.Value) : await _beeDebugClient.ReservestateAsync();
 
-            return new ReservestateDto(response.Radius, response.Available, response.Outer, response.Inner, response.AdditionalProperties);
+            return new ReserveStateDto(response.Radius, response.Available, response.Outer, response.Inner, response.AdditionalProperties);
         }
 
         public async Task<Settlements3Dto> Settlements2Async(CancellationToken? cancellationToken)
@@ -293,7 +294,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
             return new TagsDto(response.Total, response.Split, response.Seen, response.Stored, response.Sent, response.Synced, response.Uid, response.Address, response.StartedAt, response.AdditionalProperties);
         }
 
-        public async Task<TimesettlementsDto> TimesettlementsAsync(CancellationToken? cancellationToken)
+        public async Task<TimeSettlementsDto> TimesettlementsAsync(CancellationToken? cancellationToken)
         {
             var response = cancellationToken.HasValue ? await _beeDebugClient.TimesettlementsAsync(cancellationToken.Value) : await _beeDebugClient.TimesettlementsAsync();
 
@@ -301,7 +302,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
                 .Select(i => new SettlementsDto(i.Peer, i.Received, i.Sent, i.AdditionalProperties))
                 .ToList();
 
-            return new TimesettlementsDto(response.TotalReceived, response.TotalSent, settlements, response.AdditionalProperties);
+            return new TimeSettlementsDto(response.TotalReceived, response.TotalSent, settlements, response.AdditionalProperties);
         }
 
         public async Task<TopologyDto> TopologyAsync(CancellationToken? cancellationToken)
@@ -320,11 +321,11 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
             return new TopologyDto(response.BaseAddr, response.Population, response.Connected, response.Timestamp, response.NnLowWatermark, response.Depth, bins, response.AdditionalProperties);
         }
 
-        public async Task<TopupDto> TopupAsync(object id, int amount, CancellationToken? cancellationToken)
+        public async Task<TopUpDto> TopupAsync(object id, int amount, CancellationToken? cancellationToken)
         {
             var response = cancellationToken.HasValue ? await _beeDebugClient.TopupAsync(id, amount, cancellationToken.Value) : await _beeDebugClient.TopupAsync(id, amount);
 
-            return new TopupDto(response.BatchID, response.AdditionalProperties);
+            return new TopUpDto(response.BatchID, response.AdditionalProperties);
         }
 
         public async Task<TransactionsDeleteDto> TransactionsDELETEAsync(string txHash, int? gasPrice, CancellationToken? cancellationToken)

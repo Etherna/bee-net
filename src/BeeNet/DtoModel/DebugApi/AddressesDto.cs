@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class AddressesDto
     {
-        public AddressesDto(string overlay, ICollection<string> underlay, string ethereum, string publicKey, string pssPublicKey)
+        public AddressesDto(
+            string overlay, 
+            ICollection<string> underlay, 
+            string ethereum, 
+            string publicKey, 
+            string pssPublicKey)
         {
             Overlay = overlay;
             Underlay = underlay;

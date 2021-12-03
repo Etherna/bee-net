@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class CashoutPostDto : BaseDto
     {
-        public CashoutPostDto(string transactionHash, IDictionary<string, object> additionalProperties)
+        public CashoutPostDto(
+            string transactionHash, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TransactionHash = transactionHash;

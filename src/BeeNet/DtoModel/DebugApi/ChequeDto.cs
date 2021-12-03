@@ -8,19 +8,23 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ChequeDto : BaseDto
     {
-        public ChequeDto(string peer, LastreceivedDto lastreceived, LastsentDto lastsent, IDictionary<string, object> additionalProperties)
+        public ChequeDto(
+            string peer, 
+            LastreceivedDto? lastReceived, 
+            LastsentDto? lastSent, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Peer = peer;
-            Lastreceived = lastreceived;
-            Lastsent = lastsent;
+            LastReceived = lastReceived;
+            LastSent = lastSent;
         }
 
         public string Peer { get; set; }
 
-        public LastreceivedDto Lastreceived { get; set; }
+        public LastreceivedDto? LastReceived { get; set; }
 
-        public LastsentDto Lastsent { get; set; }
+        public LastsentDto? LastSent { get; set; }
     }
 }
 

@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class PeersDto: BaseDto
     {
-        public PeersDto(string address, IDictionary<string, object> additionalProperties)
+        public PeersDto(
+            string address, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Address = address;

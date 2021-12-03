@@ -8,10 +8,20 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Anonymous3Dto : BaseDto
     {
-        public Anonymous3Dto(object batchID, int utilization, bool usable, string label, int depth, string amount, int bucketDepth, int blockNumber, bool immutableFlag, IDictionary<string, object> additionalProperties)
+        public Anonymous3Dto(
+            object batchId, 
+            int utilization, 
+            bool usable, 
+            string label, 
+            int depth, 
+            string amount, 
+            int bucketDepth, 
+            int blockNumber,
+            bool immutableFlag, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
-            BatchID = batchID;
+            BatchId = batchId;
             Utilization = utilization;
             Usable = usable;
             Label = label;
@@ -22,7 +32,7 @@ namespace Etherna.BeeNet.DtoModel.Debug
             ImmutableFlag = immutableFlag;
         }
 
-        public object BatchID { get; set; }
+        public object BatchId { get; set; }
 
         public int Utilization { get; set; }
 

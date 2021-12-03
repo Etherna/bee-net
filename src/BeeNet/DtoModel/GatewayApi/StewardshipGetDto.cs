@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class StewardshipGetDto : BaseDto
     {
-        public StewardshipGetDto(bool isRetrievable, IDictionary<string, object> additionalProperties)
+        public StewardshipGetDto(
+            bool isRetrievable, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             IsRetrievable = isRetrievable;

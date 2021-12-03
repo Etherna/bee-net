@@ -6,7 +6,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ConnectedPeersDto : BaseDto
     {
-        public ConnectedPeersDto(string address, MetricsDto metrics, IDictionary<string, object> additionalProperties)
+        public ConnectedPeersDto(
+            string address, 
+            MetricsDto metrics,
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Address = address;

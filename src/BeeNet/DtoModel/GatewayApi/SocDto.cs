@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class SocDto : BaseDto
     {
-        public SocDto(string reference, IDictionary<string, object> additionalProperties)
+        public SocDto(
+            string reference, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Reference = reference;

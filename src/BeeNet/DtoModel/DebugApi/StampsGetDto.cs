@@ -8,13 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class StampsGetDto : BaseDto
     {
-        public StampsGetDto(ICollection<StampsDto> stamps, IDictionary<string, object> additionalProperties)
+        public StampsGetDto(
+            ICollection<StampsDto>? stamps,
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Stamps = stamps;
         }
 
-        public ICollection<StampsDto> Stamps { get; set; }
+        public ICollection<StampsDto>? Stamps { get; set; }
     }
 }
 

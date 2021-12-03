@@ -18,9 +18,9 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         readonly IBeeGatewayClient_1_4 _beeGatewayApiClient;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "<Pending>")]
-        public AdapterGatewayApiClient_1_4(HttpClient httpClient, string baseUrl)
+        public AdapterGatewayApiClient_1_4(HttpClient httpClient, Uri baseUrl)
         {
-            _beeGatewayApiClient = new BeeGatewayClient_1_4(httpClient) { BaseUrl = baseUrl };
+            _beeGatewayApiClient = new BeeGatewayClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
         public async Task<AuthDto> AuthAsync(BodyDto body, CancellationToken? cancellationToken)

@@ -8,14 +8,17 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class BucketsDto : BaseDto
     {
-        public BucketsDto(int bucketID, int collisions, IDictionary<string, object> additionalProperties)
+        public BucketsDto(
+            int bucketId, 
+            int collisions, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
-            BucketID = bucketID;
+            BucketId = bucketId;
             Collisions = collisions;
         }
 
-        public int BucketID { get; set; }
+        public int BucketId { get; set; }
 
         public int Collisions { get; set; }
     }

@@ -8,7 +8,15 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class FileResponse
     {
-
+        public FileResponse(
+            int statusCode, 
+            IReadOnlyDictionary<string, IEnumerable<string>> headers, 
+            System.IO.Stream stream)
+        {
+            StatusCode = statusCode;
+            Headers = headers;
+            Stream = stream;
+        }
 
         public int StatusCode { get; private set; }
 
@@ -19,13 +27,6 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
         public bool IsPartial
         {
             get { return StatusCode == 206; }
-        }
-
-        public FileResponse(int statusCode, IReadOnlyDictionary<string, IEnumerable<string>> headers, System.IO.Stream stream)
-        {
-            StatusCode = statusCode;
-            Headers = headers;
-            Stream = stream;
         }
     }
 }

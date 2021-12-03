@@ -5222,7 +5222,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Peer { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastreceived")]
+        [System.Text.Json.Serialization.JsonPropertyName("lastReceived")]
         public Lastreceived Lastreceived { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("lastsent")]
@@ -7119,7 +7119,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Peer { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastreceived")]
+        [System.Text.Json.Serialization.JsonPropertyName("lastReceived")]
         public Lastreceived2 Lastreceived { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("lastsent")]

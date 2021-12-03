@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class PinsPostDto : BaseDto
     {
-        public PinsPostDto(string message, int code, IDictionary<string, object> additionalProperties)
+        public PinsPostDto(
+            string message, 
+            int code, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Message = message;

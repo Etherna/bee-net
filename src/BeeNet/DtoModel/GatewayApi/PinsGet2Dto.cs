@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class PinsGet2Dto : BaseDto
     {
-        public PinsGet2Dto(ICollection<string> addresses, IDictionary<string, object> additionalProperties)
+        public PinsGet2Dto(
+            ICollection<string> addresses, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Addresses = addresses;

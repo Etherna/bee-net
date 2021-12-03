@@ -8,7 +8,8 @@ namespace Etherna.BeeNet.DtoInput.GatewayApi
 {
     public class Body3Dto : BaseDto
     {
-        public Body3Dto(string address, IDictionary<string, object> additionalProperties)
+        public Body3Dto(string address, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Address = address;

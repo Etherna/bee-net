@@ -8,7 +8,13 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class TagsGet2Dto : BaseDto
     {
-        public TagsGet2Dto(int uid, DateTimeOffset startedAt, int total, int processed, int synced, IDictionary<string, object> additionalProperties)
+        public TagsGet2Dto(
+            int uid, 
+            DateTimeOffset startedAt, 
+            int total, 
+            int processed, 
+            int synced, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Uid = uid;
@@ -20,7 +26,7 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 
         public int Uid { get; set; }
 
-        public System.DateTimeOffset StartedAt { get; set; }
+        public DateTimeOffset StartedAt { get; set; }
 
         public int Total { get; set; }
 

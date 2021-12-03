@@ -6,9 +6,13 @@ using System.Text;
 
 namespace Etherna.BeeNet.DtoModel.Debug
 {
-    public class TimesettlementsDto : BaseDto
+    public class TimeSettlementsDto : BaseDto
     {
-        public TimesettlementsDto(int totalReceived, int totalSent, ICollection<SettlementsDto> settlements, IDictionary<string, object> additionalProperties)
+        public TimeSettlementsDto(
+            int totalReceived, 
+            int totalSent, 
+            ICollection<SettlementsDto>? settlements, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TotalReceived = totalReceived;
@@ -20,7 +24,7 @@ namespace Etherna.BeeNet.DtoModel.Debug
 
         public int TotalSent { get; set; }
 
-        public ICollection<SettlementsDto> Settlements { get; set; }
+        public ICollection<SettlementsDto>? Settlements { get; set; }
     }
 }
 

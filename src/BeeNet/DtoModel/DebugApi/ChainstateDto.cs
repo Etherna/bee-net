@@ -8,7 +8,11 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ChainstateDto : BaseDto
     {
-        public ChainstateDto(int block, int totalAmount, int currentPrice, IDictionary<string, object> additionalProperties)
+        public ChainstateDto(
+            int block, 
+            int totalAmount, 
+            int currentPrice, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Block = block;

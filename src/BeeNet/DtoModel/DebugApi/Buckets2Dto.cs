@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Buckets2Dto : BaseDto
     {
-        public Buckets2Dto(int depth, int bucketDepth, int bucketUpperBound, ICollection<BucketsDto> buckets, IDictionary<string, object> additionalProperties)
+        public Buckets2Dto(
+            int depth, 
+            int bucketDepth, 
+            int bucketUpperBound, 
+            ICollection<BucketsDto>? buckets, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Depth = depth;
@@ -23,7 +28,7 @@ namespace Etherna.BeeNet.DtoModel.Debug
 
         public int BucketUpperBound { get; set; }
 
-        public ICollection<BucketsDto> Buckets { get; set; }
+        public ICollection<BucketsDto>? Buckets { get; set; }
     }
 }
 

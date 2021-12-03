@@ -8,7 +8,17 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class TransactionsGet2Dto : BaseDto
     {
-        public TransactionsGet2Dto(string transactionHash, string to, int nonce, string gasPrice, int gasLimit, string data, DateTimeOffset created, string description, string value, IDictionary<string, object> additionalProperties)
+        public TransactionsGet2Dto(
+            string transactionHash, 
+            string to, 
+            int nonce, 
+            string gasPrice, 
+            int gasLimit, 
+            string data, 
+            DateTimeOffset created, 
+            string description, 
+            string value, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TransactionHash = transactionHash;

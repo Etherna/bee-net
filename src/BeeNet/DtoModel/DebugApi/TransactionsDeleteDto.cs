@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class TransactionsDeleteDto : BaseDto
     {
-        public TransactionsDeleteDto(string transactionHash, IDictionary<string, object> additionalProperties)
+        public TransactionsDeleteDto(
+            string transactionHash, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TransactionHash = transactionHash;

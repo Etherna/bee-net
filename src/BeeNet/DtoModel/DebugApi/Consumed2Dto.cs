@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Consumed2Dto: BaseDto
     {
-        public Consumed2Dto(string peer, string balance, IDictionary<string, object> additionalProperties)
+        public Consumed2Dto(
+            string peer, 
+            string balance, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Peer = peer;

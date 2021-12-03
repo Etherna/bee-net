@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class BytesPostDto : BaseDto
     {
-        public BytesPostDto(string reference, IDictionary<string, object> additionalProperties)
+        public BytesPostDto(
+            string reference, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Reference = reference;

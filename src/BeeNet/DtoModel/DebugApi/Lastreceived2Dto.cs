@@ -6,19 +6,23 @@ using System.Text;
 
 namespace Etherna.BeeNet.DtoModel.Debug
 {
-    public class Lastreceived2Dto : BaseDto
+    public class LastReceived2Dto : BaseDto
     {
-        public Lastreceived2Dto(string beneficiary, string chequebook, string payout, IDictionary<string, object> additionalProperties)
+        public LastReceived2Dto(
+            string beneficiary, 
+            string chequeBook, 
+            string payout, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Beneficiary = beneficiary;
-            Chequebook = chequebook;
+            ChequeBook = chequeBook;
             Payout = payout;
         }
 
         public string Beneficiary { get; set; }
 
-        public string Chequebook { get; set; }
+        public string ChequeBook { get; set; }
 
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
         public string Payout { get; set; }

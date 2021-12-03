@@ -8,7 +8,17 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class TagsDto : BaseDto
     {
-        public TagsDto(int total, int split, int seen, int stored, int sent, int synced, int uid, string address, DateTimeOffset startedAt, IDictionary<string, object> additionalProperties)
+        public TagsDto(
+            int total, 
+            int split, 
+            int seen, 
+            int stored, 
+            int sent, 
+            int synced, 
+            int uid, 
+            string address, 
+            DateTimeOffset startedAt, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Total = total;

@@ -8,13 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class Cheque2Dto : BaseDto
     {
-        public Cheque2Dto(ICollection<LastchequesDto> lastcheques, IDictionary<string, object> additionalProperties)
+        public Cheque2Dto(
+            ICollection<LastchequesDto>? lastCheques, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
-            Lastcheques = lastcheques;
+            LastCheques = lastCheques;
         }
 
-        public ICollection<LastchequesDto> Lastcheques { get; set; }
+        public ICollection<LastchequesDto>? LastCheques { get; set; }
     }
 }
 

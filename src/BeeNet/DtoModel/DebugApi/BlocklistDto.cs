@@ -8,13 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class BlocklistDto: BaseDto
     {
-        public BlocklistDto(ICollection<PeersDto> peers, IDictionary<string, object> additionalProperties)
+        public BlocklistDto(
+            ICollection<PeersDto>? peers, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Peers = peers;
         }
 
-        public ICollection<PeersDto> Peers { get; set; }
+        public ICollection<PeersDto>? Peers { get; set; }
     }
 }
 

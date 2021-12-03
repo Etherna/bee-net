@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class AnonymousDto : BaseDto
     {
-        public AnonymousDto(int population, int connected, ICollection<DisconnectedPeersDto> disconnectedPeers, ICollection<ConnectedPeersDto> connectedPeers, IDictionary<string, object> additionalProperties)
+        public AnonymousDto(
+            int population, 
+            int connected, 
+            ICollection<DisconnectedPeersDto>? disconnectedPeers, 
+            ICollection<ConnectedPeersDto>? connectedPeers, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Population = population;
@@ -21,8 +26,8 @@ namespace Etherna.BeeNet.DtoModel.Debug
 
         public int Connected { get; set; }
 
-        public ICollection<DisconnectedPeersDto> DisconnectedPeers { get; set; }
-        public ICollection<ConnectedPeersDto> ConnectedPeers { get; set; }
+        public ICollection<DisconnectedPeersDto>? DisconnectedPeers { get; set; }
+        public ICollection<ConnectedPeersDto>? ConnectedPeers { get; set; }
     }
 }
 

@@ -8,17 +8,11 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class FileParameterDto : BaseDto
     {
-        public FileParameterDto(System.IO.Stream data, IDictionary<string, object> additionalProperties)
-            : this(data, null, null, additionalProperties)
-        {
-        }
-
-        public FileParameterDto(System.IO.Stream data, string fileName, IDictionary<string, object> additionalProperties)
-            : this(data, fileName, null, additionalProperties)
-        {
-        }
-
-        public FileParameterDto(System.IO.Stream data, string fileName, string contentType, IDictionary<string, object> additionalProperties)
+        public FileParameterDto(
+            System.IO.Stream data, 
+            string? fileName, 
+            string? contentType, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Data = data;
@@ -28,9 +22,9 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 
         public System.IO.Stream Data { get; private set; }
 
-        public string FileName { get; private set; }
+        public string? FileName { get; private set; }
 
-        public string ContentType { get; private set; }
+        public string? ContentType { get; private set; }
     }
 }
 

@@ -6,9 +6,14 @@ using System.Text;
 
 namespace Etherna.BeeNet.DtoModel.Debug
 {
-    public class ReservestateDto : BaseDto
+    public class ReserveStateDto : BaseDto
     {
-        public ReservestateDto(int radius, int available, string outer, string inner, IDictionary<string, object> additionalProperties)
+        public ReserveStateDto(
+            int radius, 
+            int available, 
+            string outer, 
+            string inner, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Radius = radius;

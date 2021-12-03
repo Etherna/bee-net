@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class ConnectDto : BaseDto
     {
-        public ConnectDto(string address, IDictionary<string, object> additionalProperties)
+        public ConnectDto(
+            string address, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Address = address;

@@ -81,7 +81,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get reserve state</summary>
         /// <returns>Reserve State</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ReservestateDto> ReservestateAsync(System.Threading.CancellationToken? cancellationToken);
+        System.Threading.Tasks.Task<ReserveStateDto> ReservestateAsync(System.Threading.CancellationToken? cancellationToken);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get chain state</summary>
@@ -138,7 +138,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get time based settlements with all known peers and total amount sent or received</summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TimesettlementsDto> TimesettlementsAsync(System.Threading.CancellationToken? cancellationToken);
+        System.Threading.Tasks.Task<TimeSettlementsDto> TimesettlementsAsync(System.Threading.CancellationToken? cancellationToken);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Swarm topology of the bee node</returns>
@@ -273,7 +273,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="amount">Amount of BZZ per chunk to top up to an existing postage batch.</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TopupDto> TopupAsync(object id, int amount, System.Threading.CancellationToken? cancellationToken);
+        System.Threading.Tasks.Task<TopUpDto> TopupAsync(object id, int amount, System.Threading.CancellationToken? cancellationToken);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Dilute an existing postage batch.</summary>

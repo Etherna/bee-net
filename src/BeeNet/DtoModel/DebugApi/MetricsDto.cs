@@ -8,7 +8,14 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class MetricsDto : BaseDto
     {
-        public MetricsDto(int lastSeenTimestamp, int sessionConnectionRetry, double connectionTotalDuration, double sessionConnectionDuration, string sessionConnectionDirection, int latencyEWMA, IDictionary<string, object> additionalProperties)
+        public MetricsDto(
+            int lastSeenTimestamp, 
+            int sessionConnectionRetry, 
+            double connectionTotalDuration, 
+            double sessionConnectionDuration, 
+            string sessionConnectionDirection, 
+            int latencyEWMA, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             LastSeenTimestamp = lastSeenTimestamp;

@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class PeersDeleteDto : BaseDto
     {
-        public PeersDeleteDto(string message, int code, IDictionary<string, object> additionalProperties)
+        public PeersDeleteDto(
+            string message, 
+            int code, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Message = message;

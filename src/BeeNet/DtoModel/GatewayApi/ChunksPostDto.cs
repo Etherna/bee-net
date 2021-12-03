@@ -8,7 +8,12 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class ChunksPostDto : BaseDto
     {
-        public ChunksPostDto(string status, string version, string apiVersion, string debugApiVersion, IDictionary<string, object> additionalProperties)
+        public ChunksPostDto(
+            string status, 
+            string version, 
+            string apiVersion, 
+            string debugApiVersion, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Status = status;

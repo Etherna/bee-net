@@ -8,7 +8,10 @@ namespace Etherna.BeeNet.DtoModel.GatewayApi
 {
     public class PinsDeleteDto : BaseDto
     {
-        public PinsDeleteDto(string message, int code, IDictionary<string, object> additionalProperties)
+        public PinsDeleteDto(
+            string message, 
+            int code, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             Message = message;

@@ -8,7 +8,9 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class WithdrawDto : BaseDto
     {
-        public WithdrawDto(string transactionHash, IDictionary<string, object> additionalProperties)
+        public WithdrawDto(
+            string transactionHash, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
             TransactionHash = transactionHash;

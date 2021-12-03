@@ -8,13 +8,15 @@ namespace Etherna.BeeNet.DtoModel.Debug
 {
     public class AddressDto : BaseDto
     {
-        public AddressDto(string chequebookAddress, IDictionary<string, object> additionalProperties)
+        public AddressDto(
+            string chequeBookAddress, 
+            IDictionary<string, object> additionalProperties)
             : base(additionalProperties)
         {
-            ChequebookAddress = chequebookAddress;
+            ChequeBookAddress = chequeBookAddress;
         }
 
-        public string ChequebookAddress { get; set; }
+        public string ChequeBookAddress { get; set; }
     }
 }
 
