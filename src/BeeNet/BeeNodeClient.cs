@@ -1,40 +1,44 @@
-﻿using System;
+﻿using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.Clients.v_1_4.DebugApi;
+using Etherna.BeeNet.Clients.v_1_4.GatewayApi;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using TestAdapter.Clients;
 
-namespace TestAdapter
+namespace Etherna.BeeNet
 {
     public class BeeNodeClient : IBeeNodeClient, IDisposable
     {
+        // Fields.
         private readonly HttpClient httpClient;
         private bool disposed;
-        public Uri DebugApiUrl { get; }
-        public IFacadeBeeDebugClient DebugClient { get; }
-        public Uri GatewayApiUrl { get; }
-        public IFacadeBeeGatewayApiClient GatewayClient { get; }
 
+        // Constructors.
+        [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
+            Justification = "A string is required by Nswag generated client")]
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
-            int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
+            int gatewayApiPort = 1633,
+            int debugApiPort = 1635,
             string version = "default")
         {
             httpClient = new HttpClient();
 
             // Generate api clients.
-            if (debugApiPort != null)
+            switch (version)
             {
-                DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new FacadeBeeDebugClient(version, httpClient, DebugApiUrl.ToString());
-            }
-
-            if (gatewayApiPort != null)
-            {
-                GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new FacadeBeeGatewayApiClient(version, httpClient, GatewayApiUrl.ToString());
+                case "1.5":
+                    //_beeDebugClient = new AdapterBeeVersion_1_5(httpClient, baseUrl);
+                    break;
+                case "1.4":
+                default:
+                    DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort));
+                    DebugClient = new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl.ToString());
+                    GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
+                    GatewayClient = new AdapterGatewayApiClient_1_4(httpClient, GatewayApiUrl.ToString());
+                    break;
             }
         }
 
@@ -55,6 +59,13 @@ namespace TestAdapter
 
             disposed = true;
         }
+
+
+        // Properties.
+        public Uri DebugApiUrl { get; }
+        public IBeeNodeDebugClient DebugClient { get; }
+        public Uri GatewayApiUrl { get; }
+        public IBeeGatewayApiClient GatewayClient { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)
