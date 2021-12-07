@@ -1,11 +1,11 @@
-﻿using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.Clients.v_1_4.DebugApi;
+﻿using Etherna.BeeNet.Clients.v_1_4.DebugApi;
 using Etherna.BeeNet.Clients.v_1_4.GatewayApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using Etherna.BeeNet.Clients;
 
 namespace Etherna.BeeNet
 {
@@ -41,8 +41,8 @@ namespace Etherna.BeeNet
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
                 GatewayClient = version switch
                 {
-                    "1.4" => new AdapterGatewayApiClient_1_4(httpClient, GatewayApiUrl),
-                    _ => new AdapterGatewayApiClient_1_4(httpClient, GatewayApiUrl),
+                    "1.4" => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
+                    _ => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
                 };
             }
         }
@@ -68,9 +68,9 @@ namespace Etherna.BeeNet
 
         // Properties.
         public Uri? DebugApiUrl { get; }
-        public IBeeNodeDebugClient? DebugClient { get; }
+        public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
-        public IBeeGatewayApiClient? GatewayClient { get; }
+        public IBeeGatewayClient? GatewayClient { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)

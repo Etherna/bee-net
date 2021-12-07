@@ -1,392 +1,374 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Etherna.BeeNet.DtoInput.DebugApi;
-using Etherna.BeeNet.DtoModel.Debug;
+using Etherna.BeeNet.DtoModel;
+using Etherna.BeeNet.DtoModel.DebugApi;
 
-#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
-    public class AdapterBeeDebugVersion_1_4 : IBeeNodeDebugClient
+    public class AdapterBeeDebugVersion_1_4 : IBeeDebugClient
     {
         readonly IBeeDebugClient_1_4 _beeDebugClient;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "<Pending>")]
-        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri baseUrl)
+        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri? baseUrl)
         {
+            if (baseUrl is null)
+            {
+                throw new ArgumentNullException(nameof(baseUrl));
+            }
+
             _beeDebugClient = new BeeDebugClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
-        public async Task<AddressDto> AddressAsync(CancellationToken? cancellationToken)
+        public async Task<AddressesDto> AddressesAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.AddressAsync(cancellationToken.Value) : await _beeDebugClient.AddressAsync();
-
-            return new AddressDto(response.ChequebookAddress, response.AdditionalProperties);
-        }
-
-        public async Task<AddressesDto> AddressesAsync(CancellationToken? cancellationToken = null)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.AddressesAsync(cancellationToken.Value) : await _beeDebugClient.AddressesAsync();
+            var response = await _beeDebugClient.AddressesAsync().ConfigureAwait(false);
 
             return new AddressesDto(response.Overlay, response.Underlay, response.Ethereum, response.PublicKey, response.PssPublicKey);
         }
 
-        public async Task<BalanceDto> BalanceAsync(CancellationToken? cancellationToken)
+        public async Task<List<BalanceDto>?> BalancesGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.BalanceAsync(cancellationToken.Value) : await _beeDebugClient.BalanceAsync();
+            var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
-            return new BalanceDto(response.TotalBalance, response.AvailableBalance, response.AdditionalProperties);
+            return response.Balances
+                ?.Select(i => new BalanceDto(i.Peer, i.Balance))
+                ?.ToList();
         }
 
-        public async Task<Balances2Dto> Balances2Async(string address, CancellationToken? cancellationToken)
+        public async Task<List<BalanceDto>?> BalancesGetAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.Balances2Async(address, cancellationToken.Value) : await _beeDebugClient.Balances2Async(address);
+            var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
-            return new Balances2Dto(response.Peer, response.Balance, response.AdditionalProperties);
+            return response.Balances
+                ?.Select(i => new BalanceDto(i.Peer, i.Balance))
+                ?.ToList();
         }
 
-        public async Task<Balances3Dto> BalancesAsync(CancellationToken? cancellationToken)
+        public async Task<List<PeerDto>?> BlocklistAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.BalancesAsync(cancellationToken.Value) : await _beeDebugClient.BalancesAsync();
+            var response = await _beeDebugClient.BlocklistAsync().ConfigureAwait(false);
 
-            var balances = response.Balances?
-                .Select(i => new BalancesDto(i.Peer, i.Balance, i.AdditionalProperties))
-                .ToList();
-            return new Balances3Dto(balances, response.AdditionalProperties);
+            return response.Peers
+                ?.Select(i => new PeerDto(i.Address))
+                ?.ToList();
         }
 
-        public async Task<BlocklistDto> BlocklistAsync(CancellationToken? cancellationToken)
+        public async Task<List<BalanceDto>?> ConsumedGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.BlocklistAsync(cancellationToken.Value) : await _beeDebugClient.BlocklistAsync();
+            var response = await _beeDebugClient.ConsumedGetAsync().ConfigureAwait(false);
 
-            var peers = response.Peers?
-                .Select(i => new PeersDto(i.Address, i.AdditionalProperties))
-                .ToList();
-            return new BlocklistDto(peers, response.AdditionalProperties);
+            return response.Balances
+                ?.Select(i => new BalanceDto(i.Peer, i.Balance))
+                ?.ToList();
         }
 
-        public async Task<Buckets2Dto> BucketsAsync(object id, CancellationToken? cancellationToken)
+        public async Task<List<BalanceDto>?> ConsumedGetAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.BucketsAsync(id, cancellationToken.Value) : await _beeDebugClient.BucketsAsync(id);
+            var response = await _beeDebugClient.ConsumedGetAsync().ConfigureAwait(false);
 
-            var buckets = response.Buckets?
-                .Select(i => new BucketsDto(i.BucketID, i.Collisions, i.AdditionalProperties))
-                .ToList();
-
-            return new Buckets2Dto(response.Depth, response.BucketDepth, response.BucketUpperBound, buckets, response.AdditionalProperties);
+            return response.Balances
+                ?.Select(i => new BalanceDto(i.Peer, i.Balance))
+                ?.ToList();
         }
 
-        public async Task<CashoutGetDto> CashoutGETAsync(string peerId, CancellationToken? cancellationToken)
+        public async Task<ChequebookAddressDto> ChequebookAddressAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.CashoutGETAsync(peerId, cancellationToken.Value) : await _beeDebugClient.CashoutGETAsync(peerId);
+            var response = await _beeDebugClient.ChequebookAddressAsync().ConfigureAwait(false);
 
-            var lastCashedCheque = response.LastCashedCheque != null ?
-                new LastCashedChequeDto(beneficiary: response.LastCashedCheque.Beneficiary, 
-                    chequeBook: response.LastCashedCheque.Chequebook, 
-                    payout: response.LastCashedCheque.Payout,
-                    additionalProperties: response.LastCashedCheque.AdditionalProperties)
-                : null;
-
-            var result = response.Result != null 
-                ? new ResultDto(response.Result.Recipient,
-                    response.Result.LastPayout,
-                    response.Result.Bounced,
-                    response.Result.AdditionalProperties)
-                : null;
-
-            return new CashoutGetDto(response.Peer, lastCashedCheque, response.TransactionHash, result, response.UncashedAmount, response.AdditionalProperties);
+            return new ChequebookAddressDto(response.ChequebookAddress);
         }
 
-        public async Task<CashoutPostDto> CashoutPOSTAsync(string peerId, int? gasPrice, long? gasLimit, CancellationToken? cancellationToken)
+        public async Task<ChequebookBalanceDto> ChequebookBalanceAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.CashoutPOSTAsync(peerId, gasPrice, gasLimit, cancellationToken.Value) : await _beeDebugClient.CashoutPOSTAsync(peerId, gasPrice, gasLimit);
+            var response = await _beeDebugClient.ChequebookBalanceAsync().ConfigureAwait(false);
 
-            return new CashoutPostDto(response.TransactionHash, response.AdditionalProperties);
+            return new ChequebookBalanceDto(response.TotalBalance, response.AvailableBalance);
         }
 
-        public async Task<ChainstateDto> ChainstateAsync(CancellationToken? cancellationToken)
+        public async Task<MessageResponseDto> ChunksGetAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ChainstateAsync(cancellationToken.Value) : await _beeDebugClient.ChainstateAsync();
+            var response = await _beeDebugClient.ChunksGetAsync(address).ConfigureAwait(false);
 
-            return new ChainstateDto(response.Block, response.TotalAmount, response.CurrentPrice, response.AdditionalProperties);
+            return new MessageResponseDto(response.Message, response.Code);
         }
 
-        public async Task<Cheque2Dto> Cheque2Async(CancellationToken? cancellationToken)
+        public async Task<MessageResponseDto> ChunksDeleteAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.Cheque2Async(cancellationToken.Value) : await _beeDebugClient.Cheque2Async();
+            var response = await _beeDebugClient.ChunksDeleteAsync(address).ConfigureAwait(false);
 
-            var lastcheques = response.Lastcheques?.Select(
-                i => new LastchequesDto(i.Peer,
-                i.Lastreceived != null
-                ? new LastReceived2Dto(i.Lastreceived.Beneficiary, i.Lastreceived.Chequebook, i.Lastreceived.Payout, i.Lastreceived.AdditionalProperties)
-                : null,
-                i.Lastsent != null
-                ? new Lastsent2Dto(i.Lastsent.Beneficiary, i.Lastsent.Chequebook, i.Lastsent.Payout, i.Lastsent.AdditionalProperties)
-                : null,
-                i.AdditionalProperties
-                )).ToList();
-
-            return new Cheque2Dto(lastcheques, response.AdditionalProperties);
+            return new MessageResponseDto(response.Message, response.Code);
         }
 
-        public async Task<ChequeDto> ChequeAsync(string peerId, CancellationToken? cancellationToken)
+        public async Task<ConnectDto> ConnectAsync(string multiAddress)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ChequeAsync(peerId, cancellationToken.Value) : await _beeDebugClient.ChequeAsync(peerId);
+            var response = await _beeDebugClient.ConnectAsync(multiAddress).ConfigureAwait(false);
 
-            return new ChequeDto(
-                response.Peer,
-                response.Lastreceived != null
-                ? new LastreceivedDto(response.Lastreceived.Beneficiary, response.Lastreceived.Chequebook, response.Lastreceived.Payout, response.Lastreceived.AdditionalProperties)
-                : null,
-                response.Lastsent != null
-                ? new LastsentDto(response.Lastsent.Beneficiary, response.Lastsent.Chequebook, response.Lastsent.Payout, response.Lastsent.AdditionalProperties)
-                : null,
-                response.AdditionalProperties
-                );
+            return new ConnectDto(response.Address);
         }
 
-        public async Task<ChunksDeleteDto> ChunksDELETEAsync(string address, CancellationToken? cancellationToken)
+        public async Task<ReservestateDto> ReservestateAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ChunksDELETEAsync(address, cancellationToken.Value) : await _beeDebugClient.ChunksDELETEAsync(address);
+            var response = await _beeDebugClient.ReservestateAsync().ConfigureAwait(false);
 
-            return new ChunksDeleteDto(response.Message, response.Code, response.AdditionalProperties);
+            return new ReservestateDto(response.Radius, response.Available, response.Outer, response.Inner);
         }
 
-        public async Task<ChunksGetDto> ChunksGETAsync(string address, CancellationToken? cancellationToken)
+        public async Task<ChainstateDto> ChainstateAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ChunksGETAsync(address, cancellationToken.Value) : await _beeDebugClient.ChunksGETAsync(address);
+            var response = await _beeDebugClient.ChainstateAsync().ConfigureAwait(false);
 
-            return new ChunksGetDto(response.Message, response.Code, response.AdditionalProperties);
+            return new ChainstateDto(response.Block, response.TotalAmount, response.CurrentPrice);
         }
 
-        public async Task<ConnectDto> ConnectAsync(string multiAddress, CancellationToken? cancellationToken)
+        public async Task<VersionDto> HealthAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ConnectAsync(multiAddress, cancellationToken.Value) : await _beeDebugClient.ConnectAsync(multiAddress);
+            var response = await _beeDebugClient.HealthAsync().ConfigureAwait(false);
 
-            return new ConnectDto(response.Address, response.AdditionalProperties);
+            return new VersionDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion);
         }
 
-        public async Task<Consumed2Dto> Consumed2Async(string address, CancellationToken? cancellationToken)
+        public async Task<List<PeerDto>?> PeersGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.Consumed2Async(address, cancellationToken.Value) : await _beeDebugClient.Consumed2Async(address);
+            var response = await _beeDebugClient.PeersGetAsync().ConfigureAwait(false);
 
-            return new Consumed2Dto(response.Peer, response.Balance, response.AdditionalProperties);
+            return response.Peers
+                ?.Select(i => new PeerDto(i.Address))
+                ?.ToList();
         }
 
-        public async Task<ConsumedDto> ConsumedAsync(CancellationToken? cancellationToken)
+        public async Task<MessageResponseDto> PeersDeleteAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ConsumedAsync(cancellationToken.Value) : await _beeDebugClient.ConsumedAsync();
+            var response = await _beeDebugClient.PeersDeleteAsync(address).ConfigureAwait(false);
 
-            var balances = response.Balances?
-                .Select(i => new Balances2Dto(i.Balance, i.Peer, i.AdditionalProperties))
-                .ToList();
-            return new ConsumedDto(balances, response.AdditionalProperties);
+            return new MessageResponseDto(response.Message, response.Code);
         }
 
-        public async Task<DepositDto> DepositAsync(int amount, int? gasPrice, CancellationToken? cancellationToken)
+        public async Task<PingpongDto> PingpongAsync(string peerId)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.DepositAsync(amount, gasPrice, cancellationToken.Value) : await _beeDebugClient.DepositAsync(amount, gasPrice);
+            var response = await _beeDebugClient.PingpongAsync(peerId).ConfigureAwait(false);
 
-            return new DepositDto(response.TransactionHash, response.AdditionalProperties);
+            return new PingpongDto(response.Rtt);
         }
 
-        public async Task<DiluteDto> DiluteAsync(object id, int depth, CancellationToken? cancellationToken)
+        public async Task<VersionDto> ReadinessAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.DiluteAsync(id, depth, cancellationToken.Value) : await _beeDebugClient.DiluteAsync(id, depth);
+            var response = await _beeDebugClient.ReadinessAsync().ConfigureAwait(false);
 
-            return new DiluteDto(response.BatchID, response.AdditionalProperties);
+            return new VersionDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion);
         }
 
-        public async Task<HealthDto> HealthAsync(CancellationToken? cancellationToken)
+        public async Task<List<SettlementDataDto>?> SettlementsGetAsync(string address)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.HealthAsync(cancellationToken.Value) : await _beeDebugClient.HealthAsync();
+            var response = await _beeDebugClient.SettlementsGetAsync().ConfigureAwait(false);
 
-            return new HealthDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion, response.AdditionalProperties);
+            return response.Settlements
+                ?.Select(i => new SettlementDataDto(i.Peer, i.Received, i.Sent))
+                ?.ToList();
         }
 
-        public async Task<PeersDeleteDto> PeersDELETEAsync(string address, CancellationToken? cancellationToken)
+        public async Task<SettlementDto> SettlementsGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.PeersDELETEAsync(address, cancellationToken.Value) : await _beeDebugClient.PeersDELETEAsync(address);
+            var response = await _beeDebugClient.SettlementsGetAsync().ConfigureAwait(false);
 
-            return new PeersDeleteDto(response.Message, response.Code, response.AdditionalProperties);
+            var settlements = response.Settlements
+                ?.Select(i => new SettlementDataDto(i.Peer, i.Received, i.Sent))
+                ?.ToList();
+
+            return new SettlementDto(response.TotalReceived, response.TotalSent, settlements);
         }
 
-        public async Task<PeersGetDto> PeersGETAsync(CancellationToken? cancellationToken)
+        public async Task<TimesettlementsDto> TimesettlementsAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.PeersGETAsync(cancellationToken.Value) : await _beeDebugClient.PeersGETAsync();
-
-            var peers = response.Peers?
-                .Select(i => new Peers2Dto(i.Address, i.AdditionalProperties))
-                .ToList();
-            return new PeersGetDto(peers, response.AdditionalProperties);
-        }
-
-        public async Task<PingpongDto> PingpongAsync(string peerId, CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.PingpongAsync(peerId, cancellationToken.Value) : await _beeDebugClient.PingpongAsync(peerId);
-
-            return new PingpongDto(response.Rtt, response.AdditionalProperties);
-        }
-
-        public async Task<ReadinessDto> ReadinessAsync(CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ReadinessAsync(cancellationToken.Value) : await _beeDebugClient.ReadinessAsync();
-
-            return new ReadinessDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion, response.AdditionalProperties);
-        }
-
-        public async Task<ReserveStateDto> ReservestateAsync(CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.ReservestateAsync(cancellationToken.Value) : await _beeDebugClient.ReservestateAsync();
-
-            return new ReserveStateDto(response.Radius, response.Available, response.Outer, response.Inner, response.AdditionalProperties);
-        }
-
-        public async Task<Settlements3Dto> Settlements2Async(CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.Settlements2Async(cancellationToken.Value) : await _beeDebugClient.Settlements2Async();
+            var response = await _beeDebugClient.TimesettlementsAsync().ConfigureAwait(false);
 
             var settlements = response.Settlements?
-                .Select(i => new SettlementsDto(i.Peer, i.Received, i.Sent, i.AdditionalProperties))
-                .ToList();
-            return new Settlements3Dto(response.TotalReceived, response.TotalSent, settlements, response.AdditionalProperties);
-        }
-
-        public async Task<SettlementsDto> SettlementsAsync(string address, CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.SettlementsAsync(address, cancellationToken.Value) : await _beeDebugClient.SettlementsAsync(address);
-
-            return new SettlementsDto(response.Peer, response.Received, response.Sent, response.AdditionalProperties);
-        }
-
-        public async Task<StampsGet2Dto> StampsGET2Async(object id, CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.StampsGET2Async(id, cancellationToken.Value) : await _beeDebugClient.StampsGET2Async(id);
-
-            return new StampsGet2Dto(response.Exists, response.BatchTTL, response.BatchID, response.Utilization, response.Usable, response.Label, response.Depth, response.Amount, response.BucketDepth, response.BlockNumber, response.ImmutableFlag, response.AdditionalProperties);
-        }
-
-        public async Task<StampsGetDto> StampsGETAsync(CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.StampsGETAsync(cancellationToken.Value) : await _beeDebugClient.StampsGETAsync();
-
-            var stamps = response.Stamps?
-                .Select(i => new StampsDto(i.Exists, i.BatchTTL, i.BatchID, i.Utilization, i.Usable, i.Label, i.Depth, i.Amount, i.BucketDepth, i.BlockNumber, i.ImmutableFlag, i.AdditionalProperties))
-                .ToList();
-            return new StampsGetDto(stamps, response.AdditionalProperties);
-        }
-
-        public async Task<StampsPostDto> StampsPOSTAsync(int amount, int depth, string label, bool? immutable, int? gasPrice, CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.StampsPOSTAsync(amount, depth, label, immutable, gasPrice, cancellationToken.Value) : await _beeDebugClient.StampsPOSTAsync(amount, depth, label, immutable, gasPrice);
-
-            return new StampsPostDto(response.BatchID, response.AdditionalProperties);
-        }
-
-        public async Task<TagsDto> TagsAsync(int uid, CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TagsAsync(uid, cancellationToken.Value) : await _beeDebugClient.TagsAsync(uid);
-
-            return new TagsDto(response.Total, response.Split, response.Seen, response.Stored, response.Sent, response.Synced, response.Uid, response.Address, response.StartedAt, response.AdditionalProperties);
-        }
-
-        public async Task<TimeSettlementsDto> TimesettlementsAsync(CancellationToken? cancellationToken)
-        {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TimesettlementsAsync(cancellationToken.Value) : await _beeDebugClient.TimesettlementsAsync();
-
-            var settlements = response.Settlements?
-                .Select(i => new SettlementsDto(i.Peer, i.Received, i.Sent, i.AdditionalProperties))
+                .Select(i => new SettlementDataDto(i.Peer, i.Received, i.Sent))
                 .ToList();
 
-            return new TimeSettlementsDto(response.TotalReceived, response.TotalSent, settlements, response.AdditionalProperties);
+            return new TimesettlementsDto(response.TotalReceived, response.TotalSent, settlements);
         }
 
-        public async Task<TopologyDto> TopologyAsync(CancellationToken? cancellationToken)
+        public async Task<TopologyDto> TopologyAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TopologyAsync(cancellationToken.Value) : await _beeDebugClient.TopologyAsync();
+            var response = await _beeDebugClient.TopologyAsync().ConfigureAwait(false);
 
-            var bins = response.Bins?.ToDictionary(
-                i => i.Key, 
+            var bins = response.Bins.ToDictionary(
+                i => i.Key,
                 i => new AnonymousDto(
-                    i.Value.Population, 
+                    i.Value.Population,
                     i.Value.Connected,
-                    i.Value.DisconnectedPeers?.Select(k => new DisconnectedPeersDto(k.Address, new MetricsDto(k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA, k.Metrics.AdditionalProperties), k.AdditionalProperties)).ToList(),
-                    i.Value.ConnectedPeers?.Select(k => new ConnectedPeersDto(k.Address, new MetricsDto(k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA, k.Metrics.AdditionalProperties), k.AdditionalProperties)).ToList(),
-                    i.Value.AdditionalProperties));
+                    i.Value.DisconnectedPeers.Select(k => new DisconnectedPeersDto(k.Address, new MetricsDto(k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA))).ToList(),
+                    i.Value.ConnectedPeers.Select(k => new ConnectedPeersDto(k.Address, k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA)).ToList()));
 
-            return new TopologyDto(response.BaseAddr, response.Population, response.Connected, response.Timestamp, response.NnLowWatermark, response.Depth, bins, response.AdditionalProperties);
+            return new TopologyDto(response.BaseAddr, response.Population, response.Connected, response.Timestamp, response.NnLowWatermark, response.Depth, bins);
         }
 
-        public async Task<TopUpDto> TopupAsync(object id, int amount, CancellationToken? cancellationToken)
+        public async Task<string> WelcomeMessageGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TopupAsync(id, amount, cancellationToken.Value) : await _beeDebugClient.TopupAsync(id, amount);
+            var response = await _beeDebugClient.WelcomeMessageGetAsync().ConfigureAwait(false);
 
-            return new TopUpDto(response.BatchID, response.AdditionalProperties);
+            return response.WelcomeMessage;
         }
 
-        public async Task<TransactionsDeleteDto> TransactionsDELETEAsync(string txHash, int? gasPrice, CancellationToken? cancellationToken)
+        public async Task<VersionDto> WelcomeMessagePostAsync(string welcomeMessage)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TransactionsDELETEAsync(txHash, gasPrice, cancellationToken.Value) : await _beeDebugClient.TransactionsDELETEAsync(txHash, gasPrice);
+            var response = await _beeDebugClient.WelcomeMessagePostAsync(new Body{ WelcomeMessage = welcomeMessage }).ConfigureAwait(false);
 
-            return new TransactionsDeleteDto(response.TransactionHash, response.AdditionalProperties);
+            return new VersionDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion);
         }
 
-        public async Task<TransactionsGet2Dto> TransactionsGET2Async(string txHash, CancellationToken? cancellationToken)
+        public async Task<ChequebookCashoutGetResponse> ChequebookCashoutGetAsync(string peerId)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TransactionsGET2Async(txHash, cancellationToken.Value) : await _beeDebugClient.TransactionsGET2Async(txHash);
+            var response = await _beeDebugClient.ChequebookCashoutGetAsync(peerId).ConfigureAwait(false);
 
-            return new TransactionsGet2Dto(response.TransactionHash, response.To, response.Nonce, response.GasPrice, response.GasLimit, response.Data, response.Created, response.Description, response.Value, response.AdditionalProperties);
+            return new ChequebookCashoutGetResponse(
+                response.Peer,
+                new DtoModel.DebugApi.LastCashedCheque(response.LastCashedCheque.Beneficiary, response.LastCashedCheque.Chequebook, response.LastCashedCheque.Payout),
+                response.TransactionHash,
+                new DtoModel.DebugApi.Result(
+                    response.Result.Recipient,
+                    response.Result.LastPayout,
+                    response.Result.Bounced),
+                response.UncashedAmount);
         }
 
-        public async Task<TransactionsDto> TransactionsGETAsync(CancellationToken? cancellationToken)
+        public async Task<ChequebookCashoutPostDto> ChequebookCashoutPostAsync(string peerId, int? gasPrice = null, long? gasLimit = null)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TransactionsGETAsync(cancellationToken.Value) : await _beeDebugClient.TransactionsGETAsync();
+            var response = await _beeDebugClient.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit).ConfigureAwait(false);
 
-            var pendingTransactions = response.PendingTransactions?
-                .Select(i => new PendingTransactionsDto(i.TransactionHash, i.To, i.Nonce, i.GasPrice, i.GasLimit, i.Data, i.Created, i.Description, i.Value, i.AdditionalProperties))
+            return new ChequebookCashoutPostDto(response.TransactionHash);
+        }
+
+        public async Task<ChequebookChequeGetDto> ChequebookChequeGetAsync(string peerId)
+        {
+            var response = await _beeDebugClient.ChequebookChequeGetAsync(peerId).ConfigureAwait(false);
+
+            return new ChequebookChequeGetDto(
+                response.Peer,
+                new LastreceivedDto(response.Lastreceived.Beneficiary, response.Lastreceived.Chequebook, response.Lastreceived.Payout),
+                new LastsentDto(response.Lastsent.Beneficiary, response.Lastsent.Chequebook, response.Lastsent.Payout));
+        }
+
+        public async Task<List<ChequebookChequeGetDto>> ChequebookChequeGetAsync()
+        {
+            var response = await _beeDebugClient.ChequebookChequeGetAsync().ConfigureAwait(false);
+
+            return response.Lastcheques.Select(i =>
+                new ChequebookChequeGetDto(
+                i.Peer,
+                new LastreceivedDto(i.Lastreceived.Beneficiary, i.Lastreceived.Chequebook, i.Lastreceived.Payout),
+                new LastsentDto(i.Lastsent.Beneficiary, i.Lastsent.Chequebook, i.Lastsent.Payout)))
                 .ToList();
-            return new TransactionsDto(pendingTransactions, response.AdditionalProperties);
         }
 
-        public async Task<TransactionsPostDto> TransactionsPOSTAsync(string txHash, CancellationToken? cancellationToken)
+        public async Task<ChequebookDepositDto> ChequebookDepositAsync(int amount, int? gasPrice = null)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.TransactionsPOSTAsync(txHash, cancellationToken.Value) : await _beeDebugClient.TransactionsPOSTAsync(txHash);
+            var response = await _beeDebugClient.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false);
 
-            return new TransactionsPostDto(response.TransactionHash, response.AdditionalProperties);
+            return new ChequebookDepositDto(response.TransactionHash);
         }
 
-        public async Task<WelcomeMessageGetDto> WelcomeMessageGETAsync(CancellationToken? cancellationToken)
+        public async Task<ChequebookWithdrawDto> ChequebookWithdrawAsync(int amount, int? gasPrice = null)
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.WelcomeMessageGETAsync(cancellationToken.Value) : await _beeDebugClient.WelcomeMessageGETAsync();
+            var response = await _beeDebugClient.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false);
 
-            return new WelcomeMessageGetDto(response.WelcomeMessage, response.AdditionalProperties);
+            return new ChequebookWithdrawDto(response.TransactionHash);
         }
 
-        public async Task<WelcomeMessagePostDto> WelcomeMessagePOSTAsync(BodyDto body, CancellationToken? cancellationToken)
+        public async Task<TagsDto> TagsAsync(int uid)
         {
-            var bodeRequest = new Body
-            {
-                AdditionalProperties = body?.AdditionalProperties,
-                WelcomeMessage = body?.WelcomeMessage
-            };
+            var response = await _beeDebugClient.TagsAsync(uid).ConfigureAwait(false);
 
-            var response = cancellationToken.HasValue ? await _beeDebugClient.WelcomeMessagePOSTAsync(bodeRequest, cancellationToken.Value) : await _beeDebugClient.WelcomeMessagePOSTAsync(bodeRequest);
-
-            return new WelcomeMessagePostDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion, response.AdditionalProperties);
+            return new TagsDto(response.Total, response.Split, response.Seen, response.Stored, response.Sent, response.Synced, response.Uid, response.Address, response.StartedAt);
         }
 
-        public async Task<WithdrawDto> WithdrawAsync(int amount, int? gasPrice, CancellationToken? cancellationToken)
+        public async Task<List<PendingTransactionDto>> TransactionsGetAsync()
         {
-            var response = cancellationToken.HasValue ? await _beeDebugClient.WithdrawAsync(amount, gasPrice, cancellationToken.Value) : await _beeDebugClient.WithdrawAsync(amount, gasPrice);
+            var response = await _beeDebugClient.TransactionsGetAsync().ConfigureAwait(false);
 
-            return new WithdrawDto(response.TransactionHash, response.AdditionalProperties);
+            return response.PendingTransactions
+                .Select(i => new PendingTransactionDto(i.TransactionHash, i.To, i.Nonce, i.GasPrice, i.GasLimit, i.Data, i.Created, i.Description, i.Value))
+                .ToList();
         }
 
+        public async Task<TransactionsGet2Dto> TransactionsGetAsync(string txHash)
+        {
+            var response = await _beeDebugClient.TransactionsGetAsync(txHash).ConfigureAwait(false);
+
+            return new TransactionsGet2Dto(response.TransactionHash, response.To, response.Nonce, response.GasPrice, response.GasLimit, response.Data, response.Created,
+                response.Description, response.Value);
+        }
+
+        public async Task<TransactionsDto> TransactionsPostAsync(string txHash)
+        {
+            var response = await _beeDebugClient.TransactionsPostAsync(txHash).ConfigureAwait(false);
+
+            return new TransactionsDto(response.TransactionHash);
+        }
+
+        public async Task<TransactionsDto> TransactionsDeleteAsync(string txHash, int? gasPrice = null)
+        {
+            var response = await _beeDebugClient.TransactionsDeleteAsync(txHash).ConfigureAwait(false);
+
+            return new TransactionsDto(response.TransactionHash);
+        }
+
+        public async Task<List<StampsGetDto>> StampsGetAsync()
+        {
+            var response = await _beeDebugClient.StampsGetAsync().ConfigureAwait(false);
+
+            return response.Stamps
+                .Select(i => new StampsGetDto(i.Exists, i.BatchTTL, i.BatchID, i.Utilization, i.Usable, i.Label, i.Depth, i.Amount, i.BucketDepth, i.BlockNumber, i.ImmutableFlag))
+                .ToList();
+        }
+
+        public async Task<StampsGetDto> StampsGetAsync(object id)
+        {
+            var response = await _beeDebugClient.StampsGetAsync(id).ConfigureAwait(false);
+
+            return new StampsGetDto(response.Exists, response.BatchTTL, response.BatchID, response.Utilization, response.Usable, response.Label, response.Depth,
+                response.Amount, response.BucketDepth, response.BlockNumber, response.ImmutableFlag);
+        }
+
+        public async Task<StampsBucketsDto> StampsBucketsAsync(object id)
+        {
+            var response = await _beeDebugClient.StampsBucketsAsync(id).ConfigureAwait(false);
+
+            return new StampsBucketsDto(
+                response.Depth,
+                response.BucketDepth,
+                response.BucketUpperBound,
+                response.Buckets.Select(i => new BucketsDto(i.BucketID, i.Collisions)).ToList());
+        }
+
+        public async Task<BatchDto> StampsPostAsync(int amount, int depth, string? label = null, bool? immutable = null, int? gasPrice = null)
+        {
+            var response = await _beeDebugClient.StampsPostAsync(amount, depth, label, immutable, gasPrice).ConfigureAwait(false);
+
+            return new BatchDto(response.BatchID);
+        }
+
+        public async Task<BatchDto> StampsTopupAsync(object id, int amount)
+        {
+            var response = await _beeDebugClient.StampsTopupAsync(id, amount).ConfigureAwait(false);
+
+            return new BatchDto(response.BatchID);
+        }
+
+        public async Task<BatchDto> StampsDiluteAsync(object id, int depth)
+        {
+            var response = await _beeDebugClient.StampsDiluteAsync(id, depth).ConfigureAwait(false);
+
+            return new BatchDto(response.BatchID);
+        }
     }
 }
-#pragma warning restore CA2007 // Consider calling ConfigureAwait on the awaited task
 #pragma warning restore CA1707 // Identifiers should not contain underscores

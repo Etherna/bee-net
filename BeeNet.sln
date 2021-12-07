@@ -25,9 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C162BCCF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92}"
 	ProjectSection(SolutionItems) = preProject
-		tools\openapi\Swarm.yaml = tools\openapi\Swarm.yaml
+		tools\openapi\DebugSwarm.yaml = tools\openapi\DebugSwarm.yaml
+		tools\openapi\GatewaySwarm.yaml = tools\openapi\GatewaySwarm.yaml
 		tools\openapi\SwarmCommon.yaml = tools\openapi\SwarmCommon.yaml
-		tools\openapi\SwarmDebug.yaml = tools\openapi\SwarmDebug.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F6289FE6-5CC0-4225-98BC-2DCFE85C767F}"

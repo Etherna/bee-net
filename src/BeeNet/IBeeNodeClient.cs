@@ -5,7 +5,7 @@ namespace Etherna.BeeNet
 {
     public interface IBeeNodeClient
     {
-        IBeeNodeDebugClient DebugClient { get; }
-        IBeeGatewayApiClient GatewayClient { get; }
+        IBeeDebugClient? DebugClient { get; }
+        IBeeGatewayClient? GatewayClient { get; }
     }
 }
