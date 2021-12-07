@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Etherna.BeeNet.DtoModel;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using Etherna.BeeNet.DtoModel;
-using Etherna.BeeNet.DtoModel.DebugApi;
 
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
@@ -231,9 +228,9 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
 
             return new ChequebookCashoutGetResponse(
                 response.Peer,
-                new DtoModel.DebugApi.LastCashedCheque(response.LastCashedCheque.Beneficiary, response.LastCashedCheque.Chequebook, response.LastCashedCheque.Payout),
+                new DtoModel.LastCashedCheque(response.LastCashedCheque.Beneficiary, response.LastCashedCheque.Chequebook, response.LastCashedCheque.Payout),
                 response.TransactionHash,
-                new DtoModel.DebugApi.Result(
+                new DtoModel.Result(
                     response.Result.Recipient,
                     response.Result.LastPayout,
                     response.Result.Bounced),

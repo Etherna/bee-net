@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Etherna.BeeNet.DtoModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Etherna.BeeNet.DtoModel;
-using Etherna.BeeNet.DtoModel.DebugApi;
 
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
@@ -17,8 +16,12 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         readonly IBeeGatewayClient_1_4 _beeGatewayApiClient;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "<Pending>")]
-        public AdapterGatewayClient14(HttpClient httpClient, Uri baseUrl)
+        public AdapterGatewayClient14(HttpClient httpClient, Uri? baseUrl)
         {
+            if (baseUrl is null)
+            {
+                throw new ArgumentNullException(nameof(baseUrl));
+            }
             _beeGatewayApiClient = new BeeGatewayClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
@@ -53,7 +56,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
 
         public async Task<Stream> BytesGetAsync(string reference)
         {
-            var response = await _beeGatewayApiClient.BytesGetAsync(reference);
+            var response = await _beeGatewayApiClient.BytesGetAsync(reference).ConfigureAwait(false);
 
             return response.Stream;
         }

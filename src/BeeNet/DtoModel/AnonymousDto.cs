@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Etherna.BeeNet.DtoModel.DebugApi
+namespace Etherna.BeeNet.DtoModel
 {
     public class AnonymousDto
     {

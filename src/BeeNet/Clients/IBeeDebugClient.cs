@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Etherna.BeeNet.Clients.v_1_4.DebugApi;
 using Etherna.BeeNet.DtoModel;
-using Etherna.BeeNet.DtoModel.DebugApi;
 
 namespace Etherna.BeeNet.Clients
 {

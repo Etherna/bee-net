@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Etherna.BeeNet.DtoModel.DebugApi
+namespace Etherna.BeeNet.DtoModel
 {
     public class TransactionsGet2Dto
     {

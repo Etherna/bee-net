@@ -2,7 +2,6 @@
 using System.IO;
 using Etherna.BeeNet.Clients.v_1_4.GatewayApi;
 using Etherna.BeeNet.DtoModel;
-using Etherna.BeeNet.DtoModel.DebugApi;
 
 namespace Etherna.BeeNet.Clients
 {
