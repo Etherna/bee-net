@@ -2,7 +2,11 @@
 {
     public class ReservestateDto
     {
-        public ReservestateDto(int radius, int available, string outer, string inner)
+        public ReservestateDto(
+            int radius, 
+            int available, 
+            string outer, 
+            string inner)
         {
             Radius = radius;
             Available = available;

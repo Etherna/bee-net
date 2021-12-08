@@ -8,7 +8,7 @@ namespace Etherna.BeeNet.DtoModel
             int depth, 
             int bucketDepth, 
             int bucketUpperBound, 
-            ICollection<BucketsDto>? buckets)
+            ICollection<BucketDto>? buckets)
         {
             Depth = depth;
             BucketDepth = bucketDepth;
@@ -19,19 +19,6 @@ namespace Etherna.BeeNet.DtoModel
         public int Depth { get; set; } = default!;
         public int BucketDepth { get; set; } = default!;
         public int BucketUpperBound { get; set; } = default!;
-        public ICollection<BucketsDto>? Buckets { get; set; } = default!;
-    }
-    public class BucketsDto
-    {
-        public int BucketId { get; set; } = default!;
-
-        public BucketsDto(int bucketId, int collisions)
-        {
-            BucketId = bucketId;
-            Collisions = collisions;
-        }
-
-        public int Collisions { get; set; } = default!;
-
+        public ICollection<BucketDto>? Buckets { get; set; } = default!;
     }
 }

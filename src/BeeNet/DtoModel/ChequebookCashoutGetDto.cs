@@ -1,8 +1,8 @@
 ﻿namespace Etherna.BeeNet.DtoModel
 {
-    public class ChequebookCashoutGetResponse
+    public class ChequebookCashoutGetDto
     {
-        public ChequebookCashoutGetResponse(
+        public ChequebookCashoutGetDto(
             string peer, 
             LastCashedCheque lastCashedCheque, 
             string transactionHash, 

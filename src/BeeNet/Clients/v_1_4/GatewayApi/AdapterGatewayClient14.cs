@@ -127,36 +127,36 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
             return response.Stream;
         }
 
-        public async Task<List<TagsGetDto>> TagsGetAsync(int? offset = null, int? limit = null)
+        public async Task<List<TagInfoDto>> TagsGetAsync(int? offset = null, int? limit = null)
         {
             var response = await _beeGatewayApiClient.TagsGetAsync(offset, limit).ConfigureAwait(false);
 
             return response.Tags
-                .Select(i => new TagsGetDto(i.Uid, i.StartedAt, i.Total, i.Processed, i.Synced))
+                .Select(i => new TagInfoDto(i.Uid, i.StartedAt, i.Total, i.Processed, i.Synced))
                 .ToList();
         }
 
-        public async Task<TagsGetDto> TagsPostAsync(string address)
+        public async Task<TagInfoDto> CreateTagAsync(string address)
         {
             var response = await _beeGatewayApiClient.TagsPostAsync(new Body3 { Address = address }).ConfigureAwait(false);
 
-            return new TagsGetDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
+            return new TagInfoDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
         }
 
-        public async Task<TagsGetDto> TagsGetAsync(int uid)
+        public async Task<TagInfoDto> TagsGetAsync(int uid)
         {
             var response = await _beeGatewayApiClient.TagsGetAsync(uid).ConfigureAwait(false);
 
-            return new TagsGetDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
+            return new TagInfoDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
         }
 
-        public async Task TagsDeleteAsync(int uid)
+        public async Task DeleteTagAsync(int uid)
         {
             await _beeGatewayApiClient.TagsDeleteAsync(uid).ConfigureAwait(false);
         }
 
-        public async Task<VersionDto> TagsPatchAsync(int uid, string? address = null)
-        {
+        public async Task<VersionDto> UpdateTag(int uid, string? address = null)
+        { //TODO check for data input (maybe missing some input)
             if (address is null)
             {
                 throw new ArgumentNullException(nameof(address));

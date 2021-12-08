@@ -1,12 +1,12 @@
 ﻿namespace Etherna.BeeNet.DtoModel
 {
-    public class ChequebookCashoutPostDto
+    public class TransactionHashDto
     {
-        public ChequebookCashoutPostDto(string transactionHash)
+        public TransactionHashDto(string transactionHash)
         {
             TransactionHash = transactionHash;
         }
-        
+
         public string TransactionHash { get; set; } = default!;
     }
 }

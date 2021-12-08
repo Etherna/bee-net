@@ -2,9 +2,9 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class TagsGetDto
+    public class TagInfoDto
     {
-        public TagsGetDto(
+        public TagInfoDto(
             int uid, 
             DateTimeOffset startedAt,
             int total, 

@@ -2,9 +2,9 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class AddressesDto
+    public class AddressDetailDto
     {
-        public AddressesDto(
+        public AddressDetailDto(
             string overlay, 
             ICollection<string> underlay, 
             string ethereum, 

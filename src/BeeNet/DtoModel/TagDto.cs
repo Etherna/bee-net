@@ -2,9 +2,9 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class TagsDto
+    public class TagDto
     {
-        public TagsDto(
+        public TagDto(
             int total, 
             int split, 
             int seen, 
@@ -39,9 +39,8 @@ namespace Etherna.BeeNet.DtoModel
         
         public int Uid { get; set; } = default!;
         
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Address { get; set; } = default!;
         
-        public System.DateTimeOffset StartedAt { get; set; } = default!;
+        public DateTimeOffset StartedAt { get; set; } = default!;
     }
 }

@@ -10,7 +10,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get overlay and underlay addresses of the node</summary>
         /// <returns>Own node underlay and overlay addresses</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AddressesDto> AddressesAsync();
+        System.Threading.Tasks.Task<AddressDetailDto> AddressesAsync();
 
         
         /// <summary>Get the balances with all known peers including prepaid services</summary>
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<List<PeerDto>?> BlocklistAsync();
+        System.Threading.Tasks.Task<List<AddressDto>?> BlocklistAsync();
 
         
         /// <summary>Get the past due consumption balances with all known peers</summary>
@@ -99,7 +99,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get a list of peers</summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<List<PeerDto>?> PeersGetAsync();
+        System.Threading.Tasks.Task<List<AddressDto>?> PeersGetAsync();
 
         
         /// <summary>Remove peer</summary>
@@ -162,7 +162,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="peerId">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ChequebookCashoutGetResponse> ChequebookCashoutGetAsync(string peerId);
+        System.Threading.Tasks.Task<ChequebookCashoutGetDto> ChequebookCashoutGetAsync(string peerId);
 
         
         /// <summary>Cashout the last cheque for the peer</summary>
@@ -171,7 +171,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ChequebookCashoutPostDto> ChequebookCashoutPostAsync(string peerId, int? gasPrice = null, long? gasLimit = null);
+        System.Threading.Tasks.Task<TransactionHashDto> ChequebookCashoutPostAsync(string peerId, int? gasPrice = null, long? gasLimit = null);
 
         
         /// <summary>Get last cheques for the peer</summary>
@@ -192,7 +192,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ChequebookDepositDto> ChequebookDepositAsync(int amount, int? gasPrice = null);
+        System.Threading.Tasks.Task<TransactionHashDto> ChequebookDepositAsync(int amount, int? gasPrice = null);
 
         
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
@@ -200,14 +200,14 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ChequebookWithdrawDto> ChequebookWithdrawAsync(int amount, int? gasPrice = null);
+        System.Threading.Tasks.Task<TransactionHashDto> ChequebookWithdrawAsync(int amount, int? gasPrice = null);
 
         
         /// <summary>Get Tag information using Uid</summary>
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TagsDto> TagsAsync(int uid);
+        System.Threading.Tasks.Task<TagDto> TagAsync(int uid);
 
         
         /// <summary>Get list of pending transactions</summary>
@@ -220,14 +220,14 @@ namespace Etherna.BeeNet.Clients
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TransactionsGet2Dto> TransactionsGetAsync(string txHash);
+        System.Threading.Tasks.Task<TransactionsDto> TransactionsGetAsync(string txHash);
 
         
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TransactionsDto> TransactionsPostAsync(string txHash);
+        System.Threading.Tasks.Task<TransactionHashDto> TransactionsPostAsync(string txHash);
 
         
         /// <summary>Cancel existing transaction</summary>
@@ -235,7 +235,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TransactionsDto> TransactionsDeleteAsync(string txHash, int? gasPrice = null);
+        System.Threading.Tasks.Task<TransactionHashDto> TransactionsDeleteAsync(string txHash, int? gasPrice = null);
 
         
         /// <summary>Get all available stamps for this node</summary>

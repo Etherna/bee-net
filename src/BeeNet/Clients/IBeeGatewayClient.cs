@@ -109,27 +109,27 @@ namespace Etherna.BeeNet.Clients
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<List<TagsGetDto>> TagsGetAsync(int? offset = null, int? limit = null);
+        System.Threading.Tasks.Task<List<TagInfoDto>> TagsGetAsync(int? offset = null, int? limit = null);
 
         
         /// <summary>Create Tag</summary>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TagsGetDto> TagsPostAsync(string address);
+        System.Threading.Tasks.Task<TagInfoDto> CreateTagAsync(string address);
 
         
         /// <summary>Get Tag information using Uid</summary>
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TagsGetDto> TagsGetAsync(int uid);
+        System.Threading.Tasks.Task<TagInfoDto> TagsGetAsync(int uid);
 
         
         /// <summary>Delete Tag information using Uid</summary>
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task TagsDeleteAsync(int uid);
+        System.Threading.Tasks.Task DeleteTagAsync(int uid);
 
         
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>
@@ -137,7 +137,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<VersionDto> TagsPatchAsync(int uid, string? address = null);
+        System.Threading.Tasks.Task<VersionDto> UpdateTag(int uid, string? address = null);
 
         
         /// <summary>Pin the root hash with the given reference</summary>
