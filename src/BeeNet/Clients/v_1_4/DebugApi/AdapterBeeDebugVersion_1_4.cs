@@ -28,10 +28,12 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
         {
             var response = await _beeDebugClient.AddressesAsync().ConfigureAwait(false);
 
+            response.Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
+
             return new AddressDetailDto(response.Overlay, response.Underlay, response.Ethereum, response.PublicKey, response.PssPublicKey);
         }
 
-        public async Task<List<BalanceDto>?> BalancesGetAsync()
+        public async Task<List<BalanceDto>?> GetBalancesAsync()
         {
             var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
@@ -40,7 +42,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
                 ?.ToList();
         }
 
-        public async Task<List<BalanceDto>?> BalancesGetAsync(string address)
+        public async Task<List<BalanceDto>?> GetBalanceAsync(string address)
         {
             var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
@@ -202,8 +204,8 @@ namespace Etherna.BeeNet.Clients.v_1_4.DebugApi
                 i => new AnonymousDto(
                     i.Value.Population,
                     i.Value.Connected,
-                    i.Value.DisconnectedPeers.Select(k => new DisconnectedPeersDto(k.Address, new MetricsDto(k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA))).ToList(),
-                    i.Value.ConnectedPeers.Select(k => new ConnectedPeersDto(k.Address, k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA)).ToList()));
+                    i.Value?.DisconnectedPeers?.Select(k => new DisconnectedPeersDto(k.Address, new MetricsDto(k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA)))?.ToList(),
+                    i.Value?.ConnectedPeers?.Select(k => new ConnectedPeersDto(k.Address, k.Metrics.LastSeenTimestamp, k.Metrics.SessionConnectionRetry, k.Metrics.ConnectionTotalDuration, k.Metrics.SessionConnectionDuration, k.Metrics.SessionConnectionDirection, k.Metrics.LatencyEWMA))?.ToList()));
 
             return new TopologyDto(response.BaseAddr, response.Population, response.Connected, response.Timestamp, response.NnLowWatermark, response.Depth, bins);
         }

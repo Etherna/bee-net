@@ -16,14 +16,14 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get the balances with all known peers including prepaid services</summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<List<BalanceDto>?> BalancesGetAsync();
+        System.Threading.Tasks.Task<List<BalanceDto>?> GetBalancesAsync();
 
         
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<List<BalanceDto>?> BalancesGetAsync(string address);
+        System.Threading.Tasks.Task<List<BalanceDto>?> GetBalanceAsync(string address);
 
         
         /// <summary>Get a list of blocklisted peers</summary>

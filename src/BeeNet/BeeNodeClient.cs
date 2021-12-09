@@ -1,11 +1,12 @@
-﻿using Etherna.BeeNet.Clients.v_1_4.DebugApi;
+﻿using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.Clients.v_1_4.DebugApi;
 using Etherna.BeeNet.Clients.v_1_4.GatewayApi;
+using Etherna.BeeNet.DtoModel;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using Etherna.BeeNet.Clients;
 
 namespace Etherna.BeeNet
 {
@@ -22,17 +23,18 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            string? version = "default")
+            ClientVersionEnum? version = ClientVersionEnum.v_1_4)
         {
             httpClient = new HttpClient();
+            version ??= ClientVersionEnum.v_1_4;
 
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
                 DebugClient = version switch
                 {
-                    "1.4" => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
-                    _ => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
+                    ClientVersionEnum.v_1_4 => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
+                    _ => throw new NotSupportedException($"DebugClient {nameof(ClientVersion)} not supported"),
                 };
             }
 
@@ -41,8 +43,8 @@ namespace Etherna.BeeNet
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
                 GatewayClient = version switch
                 {
-                    "1.4" => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
-                    _ => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
+                    ClientVersionEnum.v_1_4 => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
+                    _ => throw new NotSupportedException($"GatewayClient {nameof(ClientVersion)} not supported"),
                 };
             }
         }
@@ -71,6 +73,7 @@ namespace Etherna.BeeNet
         public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
         public IBeeGatewayClient? GatewayClient { get; }
+        public ClientVersionEnum ClientVersion { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)

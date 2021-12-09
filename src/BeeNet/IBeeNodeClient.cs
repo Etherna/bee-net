@@ -1,5 +1,6 @@
 ﻿
 using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.DtoModel;
 
 namespace Etherna.BeeNet
 {
@@ -7,5 +8,6 @@ namespace Etherna.BeeNet
     {
         IBeeDebugClient? DebugClient { get; }
         IBeeGatewayClient? GatewayClient { get; }
+        ClientVersionEnum ClientVersion { get; }
     }
 }

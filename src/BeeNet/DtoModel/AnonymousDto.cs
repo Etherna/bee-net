@@ -7,8 +7,8 @@ namespace Etherna.BeeNet.DtoModel
         public AnonymousDto(
             int population, 
             int connected, 
-            ICollection<DisconnectedPeersDto> disconnectedPeers, 
-            ICollection<ConnectedPeersDto> connectedPeers)
+            ICollection<DisconnectedPeersDto>? disconnectedPeers, 
+            ICollection<ConnectedPeersDto>? connectedPeers)
         {
             Population = population;
             Connected = connected;
@@ -20,8 +20,8 @@ namespace Etherna.BeeNet.DtoModel
         
         public int Connected { get; set; } = default!;
         
-        public ICollection<DisconnectedPeersDto> DisconnectedPeers { get; set; } = default!;
+        public ICollection<DisconnectedPeersDto>? DisconnectedPeers { get; set; } = default!;
         
-        public ICollection<ConnectedPeersDto> ConnectedPeers { get; set; } = default!;
+        public ICollection<ConnectedPeersDto>? ConnectedPeers { get; set; } = default!;
     }
 }
