@@ -1,6 +1,7 @@
 using System;
 using Etherna.BeeNet;
 using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.DtoModel;
 using Xunit;
 
 namespace BeeNet.IntegrationTest
