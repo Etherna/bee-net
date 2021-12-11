@@ -2,21 +2,47 @@
 {
     public class StampsGetDto
     {
-        public StampsGetDto(bool exists, int batchTtl, object batchId, int utilization, bool usable, string label, int depth, string amount, int bucketDepth, int blockNumber, bool immutableFlag)
+        public StampsGetDto(Clients.v1_4.DebugApi.Stamps stamps)
         {
-            Exists = exists;
-            BatchTTL = batchTtl;
-            BatchID = batchId;
-            Utilization = utilization;
-            Usable = usable;
-            Label = label;
-            Depth = depth;
-            Amount = amount;
-            BucketDepth = bucketDepth;
-            BlockNumber = blockNumber;
-            ImmutableFlag = immutableFlag;
+            if (stamps == null)
+            {
+                return;
+            }
+
+            Exists = stamps.Exists;
+            BatchTTL = stamps.BatchTTL;
+            BatchID = stamps.BatchID;
+            Utilization = stamps.Utilization;
+            Usable = stamps.Usable;
+            Label = stamps.Label;
+            Depth = stamps.Depth;
+            Amount = stamps.Amount;
+            BucketDepth = stamps.BucketDepth;
+            BlockNumber = stamps.BlockNumber;
+            ImmutableFlag = stamps.ImmutableFlag;
         }
 
+        public StampsGetDto(Clients.v1_4.DebugApi.Response37 response37)
+        {
+            if (response37 == null)
+            {
+                return;
+            }
+
+            Exists = response37.Exists;
+            BatchTTL = response37.BatchTTL;
+            BatchID = response37.BatchID;
+            Utilization = response37.Utilization;
+            Usable = response37.Usable;
+            Label = response37.Label;
+            Depth = response37.Depth;
+            Amount = response37.Amount;
+            BucketDepth = response37.BucketDepth;
+            BlockNumber = response37.BlockNumber;
+            ImmutableFlag = response37.ImmutableFlag;
+        }
+
+        
         public bool Exists { get; set; } = default!;
 
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>

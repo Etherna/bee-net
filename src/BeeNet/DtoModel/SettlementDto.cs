@@ -1,17 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Etherna.BeeNet.DtoModel
 {
     public class SettlementDto
     {
-        public SettlementDto(
-            int totalReceived, 
-            int totalSent, 
-            ICollection<SettlementDataDto>? settlements)
+        public SettlementDto(Clients.v1_4.DebugApi.Response20 response20)
         {
-            TotalReceived = totalReceived;
-            TotalSent = totalSent;
-            Settlements = settlements;
+            if (response20 is null)
+            {
+                return;
+            }
+
+            TotalReceived = response20.TotalReceived;
+            TotalSent = response20.TotalSent;
+            Settlements = response20.Settlements
+                ?.Select(i => new SettlementDataDto(i))
+                ?.ToList();
         }
 
         public int TotalReceived { get; set; } = default!;

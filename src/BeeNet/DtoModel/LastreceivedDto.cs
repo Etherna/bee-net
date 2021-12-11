@@ -2,14 +2,28 @@
 {
     public class LastreceivedDto
     {
-        public LastreceivedDto(
-            string beneficiary, 
-            string chequebook, 
-            string payout)
+        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived lastreceived)
         {
-            Beneficiary = beneficiary;
-            Chequebook = chequebook;
-            Payout = payout;
+            if (lastreceived is null)
+            {
+                return;
+            }
+
+            Beneficiary = lastreceived.Beneficiary;
+            Chequebook = lastreceived.Chequebook;
+            Payout = lastreceived.Payout;
+        }
+
+        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived2 lastreceived2)
+        {
+            if (lastreceived2 is null)
+            {
+                return;
+            }
+
+            Beneficiary = lastreceived2.Beneficiary;
+            Chequebook = lastreceived2.Chequebook;
+            Payout = lastreceived2.Payout;
         }
 
         public string Beneficiary { get; set; } = default!;

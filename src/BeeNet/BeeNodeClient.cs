@@ -1,6 +1,6 @@
 ﻿using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.Clients.v_1_4.DebugApi;
-using Etherna.BeeNet.Clients.v_1_4.GatewayApi;
+using Etherna.BeeNet.Clients.v1_4.DebugApi;
+using Etherna.BeeNet.Clients.v1_4.GatewayApi;
 using Etherna.BeeNet.DtoModel;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,17 +23,17 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            ClientVersionEnum? version = ClientVersionEnum.v_1_4)
+            ClientVersions? version = ClientVersions.v1_4)
         {
             httpClient = new HttpClient();
-            version ??= ClientVersionEnum.v_1_4;
+            version ??= ClientVersions.v1_4;
 
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
                 DebugClient = version switch
                 {
-                    ClientVersionEnum.v_1_4 => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
+                    ClientVersions.v1_4 => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
                     _ => throw new NotSupportedException($"DebugClient {nameof(ClientVersion)} not supported"),
                 };
             }
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
                 GatewayClient = version switch
                 {
-                    ClientVersionEnum.v_1_4 => new AdapterGatewayClient14(httpClient, GatewayApiUrl),
+                    ClientVersions.v1_4 => new AdapterGatewayClient_1_4(httpClient, GatewayApiUrl),
                     _ => throw new NotSupportedException($"GatewayClient {nameof(ClientVersion)} not supported"),
                 };
             }
@@ -69,11 +69,11 @@ namespace Etherna.BeeNet
 
 
         // Properties.
+        public ClientVersions ClientVersion { get; }
         public Uri? DebugApiUrl { get; }
         public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
         public IBeeGatewayClient? GatewayClient { get; }
-        public ClientVersionEnum ClientVersion { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)

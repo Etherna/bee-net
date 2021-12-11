@@ -2,12 +2,15 @@
 {
     public class DisconnectedPeersDto
     {
-        public DisconnectedPeersDto(
-            string address, 
-            MetricsDto metrics)
+        public DisconnectedPeersDto(Clients.v1_4.DebugApi.DisconnectedPeers disconnectedPeers)
         {
-            Address = address;
-            Metrics = metrics;
+            if (disconnectedPeers is null)
+            {
+                return;
+            }
+
+            Address = disconnectedPeers.Address;
+            Metrics = new MetricsDto(disconnectedPeers.Metrics);
         }
         
         public string Address { get; set; } = default!;

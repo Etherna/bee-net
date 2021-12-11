@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Etherna.BeeNet;
+﻿using Etherna.BeeNet;
 using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.DtoModel;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeDebugClient.v_1_4
 {
-    public class EndPointApiTest : BaseTest
+    public class EndPointApiTest 
     {
         private IBeeDebugClient _client;
+        private const string _beeSwarmNodeUrl = "http://localhost";
+        private const int _beeSwarmNodeDebugPort = 1635;
+        private const int _beeSwarmNodeGatewayPort = 1633;
 
         public EndPointApiTest()
         {
-            _client = new BeeNodeClient(BaseUrl, 1633, 1635, ClientVersionEnum.v_1_4).DebugClient;
+            _client = new BeeNodeClient(_beeSwarmNodeUrl, _beeSwarmNodeGatewayPort, _beeSwarmNodeDebugPort, ClientVersions.v1_4).DebugClient;
         }
         
         [Fact]

@@ -2,16 +2,17 @@
 {
     public class ReservestateDto
     {
-        public ReservestateDto(
-            int radius, 
-            int available, 
-            string outer, 
-            string inner)
+        public ReservestateDto(Clients.v1_4.DebugApi.Response12 response12)
         {
-            Radius = radius;
-            Available = available;
-            Outer = outer;
-            Inner = inner;
+            if (response12 is null)
+            {
+                return;
+            }
+
+            Radius = response12.Radius;
+            Available = response12.Available;
+            Outer = response12.Outer;
+            Inner = response12.Inner;
         }
 
         public int Radius { get; set; } = default!;

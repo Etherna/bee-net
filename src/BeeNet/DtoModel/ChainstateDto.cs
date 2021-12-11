@@ -2,14 +2,16 @@
 {
     public class ChainstateDto
     {
-        public ChainstateDto(
-            int block, 
-            int totalAmount, 
-            int currentPrice)
+        public ChainstateDto(Clients.v1_4.DebugApi.Response13 response13)
         {
-            Block = block;
-            TotalAmount = totalAmount;
-            CurrentPrice = currentPrice;
+            if (response13 is null)
+            {
+                return;
+            }
+
+            Block = response13.Block;
+            TotalAmount = response13.TotalAmount;
+            CurrentPrice = response13.CurrentPrice;
         }
 
         public int Block { get; set; } = default!;

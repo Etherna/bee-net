@@ -6,10 +6,15 @@ namespace Etherna.BeeNet.DtoModel
 {
     public class BucketDto
     {
-        public BucketDto(int bucketId, int collisions)
+        public BucketDto(Clients.v1_4.DebugApi.Buckets buckets)
         {
-            BucketId = bucketId;
-            Collisions = collisions;
+            if (buckets is null)
+            {
+                return;
+            }
+
+            BucketId = buckets.BucketID;
+            Collisions = buckets.Collisions;
         }
 
         public int BucketId { get; set; } = default!;

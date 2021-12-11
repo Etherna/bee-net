@@ -2,20 +2,19 @@
 {
     public class MetricsDto
     {
-        public MetricsDto(
-            int lastSeenTimestamp, 
-            int sessionConnectionRetry, 
-            double connectionTotalDuration, 
-            double sessionConnectionDuration, 
-            string sessionConnectionDirection, 
-            int latencyEwma)
+        public MetricsDto(Clients.v1_4.DebugApi.Metrics metrics)
         {
-            LastSeenTimestamp = lastSeenTimestamp;
-            SessionConnectionRetry = sessionConnectionRetry;
-            ConnectionTotalDuration = connectionTotalDuration;
-            SessionConnectionDuration = sessionConnectionDuration;
-            SessionConnectionDirection = sessionConnectionDirection;
-            LatencyEWMA = latencyEwma;
+            if (metrics is null)
+            {
+                return;
+            }
+
+            LastSeenTimestamp = metrics.LastSeenTimestamp;
+            SessionConnectionRetry = metrics.SessionConnectionRetry;
+            ConnectionTotalDuration = metrics.ConnectionTotalDuration;
+            SessionConnectionDuration = metrics.SessionConnectionDuration;
+            SessionConnectionDirection = metrics.SessionConnectionDirection;
+            LatencyEWMA = metrics.LatencyEWMA;
         }
 
         public int LastSeenTimestamp { get; set; } = default!;

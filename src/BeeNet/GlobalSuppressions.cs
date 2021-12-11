@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "Etherna.BeeNet.DtoModel")]
+[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Dto property collection should be editable", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.DtoModel")]

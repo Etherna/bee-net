@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Etherna.BeeNet.DtoModel
 {
     public class AddressDetailDto
     {
-        public AddressDetailDto(
-            string overlay, 
-            ICollection<string> underlay, 
-            string ethereum, 
-            string publicKey, 
-            string pssPublicKey)
+        public AddressDetailDto(Clients.v1_4.DebugApi.Response response)
         {
-            Overlay = overlay;
-            Underlay = underlay;
-            Ethereum = ethereum;
-            PublicKey = publicKey;
-            PssPublicKey = pssPublicKey;
+            if (response is null)
+            {
+                return;
+            }
+
+            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
+            Overlay = response.Overlay;
+            Ethereum = response.Ethereum;
+            PublicKey = response.PublicKey;
+            PssPublicKey = response.PssPublicKey;
         }
 
         public string Overlay { get; set; } = default!;

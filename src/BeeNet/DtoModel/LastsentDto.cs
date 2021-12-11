@@ -2,14 +2,28 @@
 {
     public class LastsentDto
     {
-        public LastsentDto(
-            string beneficiary, 
-            string chequebook, 
-            string payout)
+        public LastsentDto(Clients.v1_4.DebugApi.Lastsent lastsent)
         {
-            Beneficiary = beneficiary;
-            Chequebook = chequebook;
-            Payout = payout;
+            if (lastsent is null)
+            {
+                return;
+            }
+
+            Beneficiary = lastsent.Beneficiary;
+            Chequebook = lastsent.Chequebook;
+            Payout = lastsent.Payout;
+        }
+
+        public LastsentDto(Clients.v1_4.DebugApi.Lastsent2 lastsent2)
+        {
+            if (lastsent2 is null)
+            {
+                return;
+            }
+
+            Beneficiary = lastsent2.Beneficiary;
+            Chequebook = lastsent2.Chequebook;
+            Payout = lastsent2.Payout;
         }
 
         public string Beneficiary { get; set; } = default!;

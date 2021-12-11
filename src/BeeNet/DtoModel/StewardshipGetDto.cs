@@ -2,9 +2,14 @@
 {
     public class StewardshipGetDto
     {
-        public StewardshipGetDto(bool isRetrievable)
+        public StewardshipGetDto(Clients.v1_4.GatewayApi.Response17 response17)
         {
-            IsRetrievable = isRetrievable;
+            if (response17 is null)
+            {
+                return;
+            }
+
+            IsRetrievable = response17.IsRetrievable;
         }
 
         public bool IsRetrievable { get; set; } = default!;

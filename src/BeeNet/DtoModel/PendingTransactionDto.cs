@@ -4,26 +4,22 @@ namespace Etherna.BeeNet.DtoModel
 {
     public class PendingTransactionDto
     {
-        public PendingTransactionDto(
-            string transactionHash, 
-            string to, 
-            int nonce, 
-            string gasPrice, 
-            int gasLimit, 
-            string data, 
-            DateTimeOffset created, 
-            string description, 
-            string value)
+        public PendingTransactionDto(Clients.v1_4.DebugApi.PendingTransactions pendingTransactions)
         {
-            TransactionHash = transactionHash;
-            To = to;
-            Nonce = nonce;
-            GasPrice = gasPrice;
-            GasLimit = gasLimit;
-            Data = data;
-            Created = created;
-            Description = description;
-            Value = value;
+            if (pendingTransactions is null)
+            {
+                return;
+            }
+
+            TransactionHash = pendingTransactions.TransactionHash;
+            To = pendingTransactions.To;
+            Nonce = pendingTransactions.Nonce;
+            GasPrice = pendingTransactions.GasPrice;
+            GasLimit = pendingTransactions.GasLimit;
+            Data = pendingTransactions.Data;
+            Created = pendingTransactions.Created;
+            Description = pendingTransactions.Description;
+            Value = pendingTransactions.Value;
         }
         
         public string TransactionHash { get; set; } = default!;

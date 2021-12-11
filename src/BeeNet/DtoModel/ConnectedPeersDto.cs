@@ -3,22 +3,23 @@
     public class ConnectedPeersDto
     {
 
-        public ConnectedPeersDto(
-            string address, 
-            int lastSeenTimestamp, 
-            int sessionConnectionRetry, 
-            double connectionTotalDuration, 
-            double sessionConnectionDuration, 
-            string sessionConnectionDirection, 
-            int latencyEwma)
+        public ConnectedPeersDto(Clients.v1_4.DebugApi.ConnectedPeers connectedPeers)
         {
-            Address = address;
-            LastSeenTimestamp = lastSeenTimestamp;
-            SessionConnectionRetry = sessionConnectionRetry;
-            ConnectionTotalDuration = connectionTotalDuration;
-            SessionConnectionDuration = sessionConnectionDuration;
-            SessionConnectionDirection = sessionConnectionDirection;
-            LatencyEWMA = latencyEwma;
+            if (connectedPeers is null)
+            {
+                return;
+            }
+            Address = connectedPeers.Address;
+
+            if (connectedPeers.Metrics is not null)
+            {
+                LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
+                SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
+                ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
+                SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
+                SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
+                LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
+            }
         }
 
         public string Address { get; set; } = default!;

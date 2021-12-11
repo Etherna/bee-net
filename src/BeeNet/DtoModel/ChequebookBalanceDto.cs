@@ -2,12 +2,15 @@
 {
     public class ChequebookBalanceDto
     {
-        public ChequebookBalanceDto(
-            string totalBalance, 
-            string availableBalance)
+        public ChequebookBalanceDto(Clients.v1_4.DebugApi.Response8 response8)
         {
-            TotalBalance = totalBalance;
-            AvailableBalance = availableBalance;
+            if (response8 is null)
+            {
+                return;
+            }
+
+            TotalBalance = response8.TotalBalance;
+            AvailableBalance = response8.AvailableBalance;
         }
 
         public string TotalBalance { get; set; } = default!;

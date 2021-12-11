@@ -2,9 +2,14 @@
 {
     public class PingpongDto
     {
-        public PingpongDto(string rtt)
+        public PingpongDto(Clients.v1_4.DebugApi.Response17 response17)
         {
-            Rtt = rtt;
+            if (response17 is null)
+            {
+                return;
+            }
+
+            Rtt = response17.Rtt;
         }
 
         public string Rtt { get; set; } = default!;

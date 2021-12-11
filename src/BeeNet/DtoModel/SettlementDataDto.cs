@@ -2,15 +2,30 @@
 {
     public class SettlementDataDto
     {
-        public SettlementDataDto(
-            string peer, 
-            int received, 
-            int sent)
+        public SettlementDataDto(Clients.v1_4.DebugApi.Settlements settlement)
         {
-            Peer = peer;
-            Received = received;
-            Sent = sent;
+            if (settlement == null)
+            {
+                return;
+            }
+
+            Peer = settlement.Peer;
+            Received = settlement.Received;
+            Sent = settlement.Sent;
         }
+
+        public SettlementDataDto(Clients.v1_4.DebugApi.Settlements2 settlements2)
+        {
+            if (settlements2 == null)
+            {
+                return;
+            }
+
+            Peer = settlements2.Peer;
+            Received = settlements2.Received;
+            Sent = settlements2.Sent;
+        }
+        
 
         public string Peer { get; set; } = default!;
         

@@ -1,22 +1,21 @@
 ﻿using Etherna.BeeNet.DtoModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
+namespace Etherna.BeeNet.Clients.v1_4.GatewayApi
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
-    public class AdapterGatewayClient14 : IBeeGatewayClient
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Version number should containt underscores")]
+    public class AdapterGatewayClient_1_4 : IBeeGatewayClient
     {
         readonly IBeeGatewayClient_1_4 _beeGatewayApiClient;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "<Pending>")]
-        public AdapterGatewayClient14(HttpClient httpClient, Uri? baseUrl)
+        public AdapterGatewayClient_1_4(HttpClient httpClient, Uri? baseUrl)
         {
             if (baseUrl is null)
             {
@@ -30,14 +29,14 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         {
             var response = await _beeGatewayApiClient.AuthAsync(new Body { Role = role, Expiry = expiry }).ConfigureAwait(false);
 
-            return new AuthDto(response.Key);
+            return new AuthDto(response);
         }
 
         public async Task<RefreshDto> RefreshAsync(string role, int expiry)
         {
             var response = await _beeGatewayApiClient.RefreshAsync(new Body2 { Role = role, Expiry = expiry }).ConfigureAwait(false);
 
-            return new RefreshDto(response.Key);
+            return new RefreshDto(response);
         }
 
         public async Task<ReferenceDto> BytesPostAsync(string swarmPostageBatchId, int? swarmTag = null, bool? swarmPin = null,
@@ -51,7 +50,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
                 swarmDeferredUpload, 
                 body).ConfigureAwait(false);
 
-            return new ReferenceDto(response.Reference);
+            return new ReferenceDto(response);
         }
 
         public async Task<Stream> BytesGetAsync(string reference)
@@ -78,7 +77,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
                 swarmDeferredUpload, 
                 body).ConfigureAwait(false);
 
-            return new VersionDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion);
+            return new VersionDto(response);
         }
 
         public async Task ChunksStreamAsync(string swarmPostageBatchId, int? swarmTag = null, bool? swarmPin = null)
@@ -110,7 +109,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
                 swarmErrorDocument, 
                 swarmDeferredUpload).ConfigureAwait(false);
 
-            return new ReferenceDto(response.Reference);
+            return new ReferenceDto(response);
         }
 
         public async Task<Stream> BzzGetAsync(string reference, string? targets = null)
@@ -132,7 +131,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
             var response = await _beeGatewayApiClient.TagsGetAsync(offset, limit).ConfigureAwait(false);
 
             return response.Tags
-                .Select(i => new TagInfoDto(i.Uid, i.StartedAt, i.Total, i.Processed, i.Synced))
+                .Select(i => new TagInfoDto(i))
                 .ToList();
         }
 
@@ -140,14 +139,14 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         {
             var response = await _beeGatewayApiClient.TagsPostAsync(new Body3 { Address = address }).ConfigureAwait(false);
 
-            return new TagInfoDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
+            return new TagInfoDto(response);
         }
 
         public async Task<TagInfoDto> TagsGetAsync(int uid)
         {
             var response = await _beeGatewayApiClient.TagsGetAsync(uid).ConfigureAwait(false);
 
-            return new TagInfoDto(response.Uid, response.StartedAt, response.Total, response.Processed, response.Synced);
+            return new TagInfoDto(response);
         }
 
         public async Task DeleteTagAsync(int uid)
@@ -164,21 +163,21 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
 
             var response = await _beeGatewayApiClient.TagsPatchAsync(uid, new Body4 { Address = address }).ConfigureAwait(false);
 
-            return new VersionDto(response.Status, response.Version, response.ApiVersion, response.DebugApiVersion);
+            return new VersionDto(response);
         }
 
         public async Task<MessageResponseDto> PinsPostAsync(string reference)
         {
             var response = await _beeGatewayApiClient.PinsPostAsync(reference).ConfigureAwait(false);
 
-            return new MessageResponseDto(response.Message, response.Code);
+            return new MessageResponseDto(response);
         }
 
         public async Task<MessageResponseDto> PinsDeleteAsync(string reference)
         {
             var response = await _beeGatewayApiClient.PinsDeleteAsync(reference).ConfigureAwait(false);
 
-            return new MessageResponseDto(response.Message, response.Code);
+            return new MessageResponseDto(response);
         }
 
         public async Task<string> PinsGetAsync(string reference)
@@ -209,7 +208,7 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         {
             var response = await _beeGatewayApiClient.SocAsync(owner, id, sig, swarmPin).ConfigureAwait(false);
 
-            return new ReferenceDto(response.Reference);
+            return new ReferenceDto(response);
         }
 
         public async Task<ReferenceDto> FeedsPostAsync(string owner, string topic, string swarmPostageBatchId, string? type = null,
@@ -217,21 +216,21 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         {
             var response = await _beeGatewayApiClient.FeedsPostAsync(owner, topic, swarmPostageBatchId, type, swarmPin).ConfigureAwait(false);
 
-            return new ReferenceDto(response.Reference);
+            return new ReferenceDto(response);
         }
 
         public async Task<ReferenceDto> FeedsGetAsync(string owner, string topic, int? at = null, string? type = null)
         {
             var response = await _beeGatewayApiClient.FeedsGetAsync(owner, topic, at, type).ConfigureAwait(false);
 
-            return new ReferenceDto(response.Reference);
+            return new ReferenceDto(response);
         }
 
         public async Task<StewardshipGetDto> StewardshipGetAsync(string reference)
         {
             var response = await _beeGatewayApiClient.StewardshipGetAsync(reference).ConfigureAwait(false);
 
-            return new StewardshipGetDto(response.IsRetrievable);
+            return new StewardshipGetDto(response);
         }
 
         public async Task StewardshipPutAsync(string reference)
@@ -240,4 +239,3 @@ namespace Etherna.BeeNet.Clients.v_1_4.GatewayApi
         }
     }
 }
-#pragma warning restore CA1707 // Identifiers should not contain underscores

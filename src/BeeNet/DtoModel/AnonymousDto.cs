@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Etherna.BeeNet.DtoModel
 {
     public class AnonymousDto
     {
-        public AnonymousDto(
-            int population, 
-            int connected, 
-            ICollection<DisconnectedPeersDto>? disconnectedPeers, 
-            ICollection<ConnectedPeersDto>? connectedPeers)
+        public AnonymousDto(Clients.v1_4.DebugApi.Anonymous anonymous)
         {
-            Population = population;
-            Connected = connected;
-            DisconnectedPeers = disconnectedPeers;
-            ConnectedPeers = connectedPeers;
+            if (anonymous is null)
+            {
+                return;
+            }
+
+            Population = anonymous.Population;
+            Connected = anonymous.Connected;
+            DisconnectedPeers = anonymous.DisconnectedPeers?
+                .Select(k => new DisconnectedPeersDto(k))?.ToList();
+            ConnectedPeers = anonymous.ConnectedPeers?
+                .Select(k => new ConnectedPeersDto(k))?.ToList();
         }
 
         public int Population { get; set; } = default!;
