@@ -1,14 +1,13 @@
-﻿using Etherna.BeeNet;
-using Etherna.BeeNet.Clients;
+﻿using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.DtoModel;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeDebugClient.v_1_4
+namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
 {
     public class EndPointApiTest 
     {
-        private IBeeDebugClient _client;
+        private readonly IBeeDebugClient _client;
         private const string _beeSwarmNodeUrl = "http://localhost";
         private const int _beeSwarmNodeDebugPort = 1635;
         private const int _beeSwarmNodeGatewayPort = 1633;

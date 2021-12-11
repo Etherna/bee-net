@@ -1,10 +1,7 @@
-using System;
-using Etherna.BeeNet;
-using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.DtoModel;
 using Xunit;
 
-namespace BeeNet.UnitTest
+namespace Etherna.BeeNet.UnitTest
 {
     public class StartupClientTest
     {
