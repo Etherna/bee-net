@@ -4,12 +4,11 @@ namespace Etherna.BeeNet.DtoModel
 {
     public class TagInfoDto
     {
+        // Constructors.
         public TagInfoDto(Clients.v1_4.GatewayApi.Tags tags)
         {
-            if (tags == null)
-            {
-                return;
-            }
+            if (tags is null)
+                throw new ArgumentNullException(nameof(tags));
 
             Uid = tags.Uid;
             StartedAt = tags.StartedAt;
@@ -20,10 +19,8 @@ namespace Etherna.BeeNet.DtoModel
 
         public TagInfoDto(Clients.v1_4.GatewayApi.Response7 response7)
         {
-            if (response7 == null)
-            {
-                return;
-            }
+            if (response7 is null)
+                throw new ArgumentNullException(nameof(response7));
 
             Uid = response7.Uid;
             StartedAt = response7.StartedAt;
@@ -34,10 +31,8 @@ namespace Etherna.BeeNet.DtoModel
 
         public TagInfoDto(Clients.v1_4.GatewayApi.Response8 response8)
         {
-            if (response8 == null)
-            {
-                return;
-            }
+            if (response8 is null)
+                throw new ArgumentNullException(nameof(response8));
 
             Uid = response8.Uid;
             StartedAt = response8.StartedAt;
@@ -45,17 +40,13 @@ namespace Etherna.BeeNet.DtoModel
             Processed = response8.Processed;
             Synced = response8.Synced;
         }
-        
 
 
-        public int Uid { get; set; } = default!;
-        
-        public DateTimeOffset StartedAt { get; set; } = default!;
-        
-        public int Total { get; set; } = default!;
-        
-        public int Processed { get; set; } = default!;
-        
-        public int Synced { get; set; } = default!;
+        // Properties.
+        public int Uid { get; }
+        public DateTimeOffset StartedAt { get; }
+        public int Total { get; }
+        public int Processed { get; }
+        public int Synced { get; }
     }
 }

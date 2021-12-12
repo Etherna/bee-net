@@ -31,7 +31,13 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ReferenceDto> BytesPostAsync(string swarmPostageBatchId, int? swarmTag = null, bool? swarmPin = null, bool? swarmEncrypt = null, bool? swarmDeferredUpload = null, System.IO.Stream? body = null);
+        Task<ReferenceDto> BytesPostAsync(
+            string swarmPostageBatchId, 
+            int? swarmTag = null, 
+            bool? swarmPin = null, 
+            bool? swarmEncrypt = null, 
+            bool? swarmDeferredUpload = null, 
+            Stream? body = null);
 
         
         /// <summary>Get referenced data</summary>
@@ -46,7 +52,9 @@ namespace Etherna.BeeNet.Clients
         /// <param name="targets">Global pinning targets prefix</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> ChunksGetAsync(string reference, string? targets = null);
+        Task<Stream> ChunksGetAsync(
+            string reference, 
+            string? targets = null);
 
         
         /// <summary>Upload Chunk</summary>
@@ -57,7 +65,12 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<VersionDto> ChunksPostAsync(string swarmPostageBatchId, int? swarmTag = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, System.IO.Stream? body = null);
+        Task<VersionDto> ChunksPostAsync(
+            string swarmPostageBatchId, 
+            int? swarmTag = null, 
+            bool? swarmPin = null, 
+            bool? swarmDeferredUpload = null, 
+            Stream? body = null);
 
         
         /// <summary>Upload stream of chunks</summary>
@@ -67,7 +80,10 @@ namespace Etherna.BeeNet.Clients
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task ChunksStreamAsync(string swarmPostageBatchId, int? swarmTag = null, bool? swarmPin = null);
+        Task ChunksStreamAsync(
+            string swarmPostageBatchId, 
+            int? swarmTag = null, 
+            bool? swarmPin = null);
 
         
         /// <summary>Upload file or a collection of files</summary>
@@ -85,7 +101,18 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ReferenceDto> BzzPostAsync(string swarmPostageBatchId, string? name = null, int? swarmTag = null, bool? swarmPin = null, bool? swarmEncrypt = null, string? contentType = null, bool? swarmCollection = null, string? swarmIndexDocument = null, string? swarmErrorDocument = null, bool? swarmDeferredUpload = null, IEnumerable<FileParameter>? file = null);
+        Task<ReferenceDto> BzzPostAsync(
+            string swarmPostageBatchId, 
+            string? name = null, 
+            int? swarmTag = null, 
+            bool? swarmPin = null, 
+            bool? swarmEncrypt = null, 
+            string? contentType = null, 
+            bool? swarmCollection = null, 
+            string? swarmIndexDocument = null, 
+            string? swarmErrorDocument = null, 
+            bool? swarmDeferredUpload = null, 
+            IEnumerable<FileParameter>? file = null);
 
 
         /// <summary>Get file or index document from a collection of files</summary>
@@ -102,7 +129,10 @@ namespace Etherna.BeeNet.Clients
         /// <param name="targets">Global pinning targets prefix</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> BzzGetAsync(string reference, string path, string? targets = null);
+        Task<Stream> BzzGetAsync(
+            string reference, 
+            string path, 
+            string? targets = null);
 
         
         /// <summary>Get list of tags</summary>
@@ -110,7 +140,9 @@ namespace Etherna.BeeNet.Clients
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<List<TagInfoDto>> TagsGetAsync(int? offset = null, int? limit = null);
+        Task<IEnumerable<TagInfoDto>> TagsGetAsync(
+            int? offset = null, 
+            int? limit = null);
 
         
         /// <summary>Create Tag</summary>
@@ -138,7 +170,9 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<VersionDto> UpdateTag(int uid, string? address = null);
+        Task<VersionDto> UpdateTag(
+            int uid, 
+            string? address = null);
 
         
         /// <summary>Pin the root hash with the given reference</summary>
@@ -165,7 +199,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<List<AddressDto>> PinsGetAsync();
+        Task<IEnumerable<AddressDto>> PinsGetAsync();
 
         
         /// <summary>Send to recipient or target with Postal Service for Swarm</summary>
@@ -175,7 +209,11 @@ namespace Etherna.BeeNet.Clients
         /// <param name="recipient">Recipient publickey</param>
         /// <returns>Subscribed to topic</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task PssSendAsync(string topic, string targets, string swarmPostageBatchId, string? recipient = null);
+        Task PssSendAsync(
+            string topic, 
+            string targets, 
+            string swarmPostageBatchId, 
+            string? recipient = null);
 
         
         /// <summary>Subscribe for messages on the given topic.</summary>
@@ -193,7 +231,11 @@ namespace Etherna.BeeNet.Clients
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ReferenceDto> SocAsync(string owner, string id, string sig, bool? swarmPin = null);
+        Task<ReferenceDto> SocAsync(
+            string owner, 
+            string id, 
+            string sig, 
+            bool? swarmPin = null);
 
         
         /// <summary>Create an initial feed root manifest</summary>
@@ -205,7 +247,12 @@ namespace Etherna.BeeNet.Clients
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ReferenceDto> FeedsPostAsync(string owner, string topic, string swarmPostageBatchId, string? type = null, bool? swarmPin = null);
+        Task<ReferenceDto> FeedsPostAsync(
+            string owner, 
+            string topic, 
+            string swarmPostageBatchId, 
+            string? type = null, 
+            bool? swarmPin = null);
 
         
         /// <summary>Find feed update</summary>
@@ -215,7 +262,11 @@ namespace Etherna.BeeNet.Clients
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ReferenceDto> FeedsGetAsync(string owner, string topic, int? at = null, string? type = null);
+        Task<ReferenceDto> FeedsGetAsync(
+            string owner, 
+            string topic, 
+            int? at = null, 
+            string? type = null);
 
         
         /// <summary>Check if content is available</summary>

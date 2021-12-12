@@ -1,17 +1,20 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class AuthDto
     {
+        // Constructors.
         public AuthDto(Clients.v1_4.GatewayApi.Response response)
         {
             if (response is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(response));
 
             Key = response.Key;
         }
 
-        public string Key { get; set; } = default!;
+
+        // Properties.
+        public string Key { get; }
     }
 }

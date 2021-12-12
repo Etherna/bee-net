@@ -1,27 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Etherna.BeeNet.DtoModel
 {
     public class TimesettlementsDto
     {
+        // Constructors.
         public TimesettlementsDto(Clients.v1_4.DebugApi.Response21 response21)
         {
             if (response21 is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(response21));
 
             TotalReceived = response21.TotalReceived;
             TotalSent = response21.TotalSent;
-            Settlements = response21.Settlements?
+            Settlements = response21.Settlements
                 .Select(i => new SettlementDataDto(i))
                 .ToList();
         }
-        public int TotalReceived { get; set; } = default!;
 
-        public int TotalSent { get; set; } = default!;
 
-        public ICollection<SettlementDataDto>? Settlements { get; set; } = default!;
+        // Properties.
+        public int TotalReceived { get; }
+        public int TotalSent { get; }
+        public IEnumerable<SettlementDataDto> Settlements { get; }
     }
 }

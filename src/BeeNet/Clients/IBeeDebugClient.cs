@@ -17,33 +17,33 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get the balances with all known peers including prepaid services</summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<BalanceDto>?> GetBalancesAsync();
+        Task<IEnumerable<BalanceDto>> GetBalancesAsync();
 
         
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<BalanceDto>?> GetBalanceAsync(string address);
+        Task<IEnumerable<BalanceDto>> GetBalanceAsync(string address);
 
         
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<AddressDto>?> BlocklistAsync();
+        Task<IEnumerable<AddressDto>> BlocklistAsync();
 
         
         /// <summary>Get the past due consumption balances with all known peers</summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<BalanceDto>?> ConsumedGetAsync();
+        Task<IEnumerable<BalanceDto>> ConsumedGetAsync();
 
         
         /// <summary>Get the past due consumption balance with a specific peer</summary>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<BalanceDto>?> ConsumedGetAsync(string address);
+        Task<IEnumerable<BalanceDto>> ConsumedGetAsync(string address);
 
         
         /// <summary>Get the address of the chequebook contract used</summary>
@@ -100,7 +100,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get a list of peers</summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<AddressDto>?> PeersGetAsync();
+        Task<IEnumerable<AddressDto>> PeersGetAsync();
 
         
         /// <summary>Remove peer</summary>
@@ -127,7 +127,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<SettlementDataDto>?> SettlementsGetAsync(string address);
+        Task<IEnumerable<SettlementDataDto>> SettlementsGetAsync(string address);
 
         
         /// <summary>Get settlements with all known peers and total amount sent or received</summary>
@@ -172,7 +172,10 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookCashoutPostAsync(string peerId, int? gasPrice = null, long? gasLimit = null);
+        Task<TransactionHashDto> ChequebookCashoutPostAsync(
+            string peerId, 
+            int? gasPrice = null, 
+            long? gasLimit = null);
 
         
         /// <summary>Get last cheques for the peer</summary>
@@ -185,7 +188,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<ChequebookChequeGetDto>> ChequebookChequeGetAsync();
+        Task<IEnumerable<ChequebookChequeGetDto>> ChequebookChequeGetAsync();
 
         
         /// <summary>Deposit tokens from overlay address into chequebook</summary>
@@ -193,7 +196,9 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookDepositAsync(int amount, int? gasPrice = null);
+        Task<TransactionHashDto> ChequebookDepositAsync(
+            int amount, 
+            int? gasPrice = null);
 
         
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
@@ -201,7 +206,9 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookWithdrawAsync(int amount, int? gasPrice = null);
+        Task<TransactionHashDto> ChequebookWithdrawAsync(
+            int amount, 
+            int? gasPrice = null);
 
         
         /// <summary>Get Tag information using Uid</summary>
@@ -214,7 +221,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<PendingTransactionDto>> TransactionsGetAsync();
+        Task<IEnumerable<PendingTransactionDto>> TransactionsGetAsync();
 
         
         /// <summary>Get information about a sent transaction</summary>
@@ -236,13 +243,15 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> TransactionsDeleteAsync(string txHash, int? gasPrice = null);
+        Task<TransactionHashDto> TransactionsDeleteAsync(
+            string txHash, 
+            int? gasPrice = null);
 
         
         /// <summary>Get all available stamps for this node</summary>
         /// <returns>Returns an array of all available postage batches.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<List<StampsGetDto>> StampsGetAsync();
+        Task<IEnumerable<StampsGetDto>> StampsGetAsync();
 
         
         /// <summary>Get an individual postage batch status</summary>
@@ -266,7 +275,12 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<BatchDto> StampsPostAsync(int amount, int depth, string? label = null, bool? immutable = null, int? gasPrice = null);
+        Task<BatchDto> StampsPostAsync(
+            int amount, 
+            int depth, 
+            string? label = null, 
+            bool? immutable = null, 
+            int? gasPrice = null);
 
         
         /// <summary>Top up an existing postage batch.</summary>

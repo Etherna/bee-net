@@ -1,13 +1,14 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class StampsGetDto
     {
+        // Constructors.
         public StampsGetDto(Clients.v1_4.DebugApi.Stamps stamps)
         {
-            if (stamps == null)
-            {
-                return;
-            }
+            if (stamps is null)
+                throw new ArgumentNullException(nameof(stamps));
 
             Exists = stamps.Exists;
             BatchTTL = stamps.BatchTTL;
@@ -24,10 +25,8 @@
 
         public StampsGetDto(Clients.v1_4.DebugApi.Response37 response37)
         {
-            if (response37 == null)
-            {
-                return;
-            }
+            if (response37 is null)
+                throw new ArgumentNullException(nameof(response37));
 
             Exists = response37.Exists;
             BatchTTL = response37.BatchTTL;
@@ -42,31 +41,22 @@
             ImmutableFlag = response37.ImmutableFlag;
         }
 
-        
-        public bool Exists { get; set; } = default!;
 
+        // Properties.
+        public bool Exists { get; }
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
-        public int BatchTTL { get; set; } = default!;
-
-        public object BatchID { get; set; } = default!;
-
-        public int Utilization { get; set; } = default!;
-
+        public int BatchTTL { get; }
+        public object BatchID { get; }
+        public int Utilization { get; }
         /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
-        public bool Usable { get; set; } = default!;
-
-        public string Label { get; set; } = default!;
-
-        public int Depth { get; set; } = default!;
-
+        public bool Usable { get; }
+        public string Label { get; }
+        public int Depth { get; }
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Amount { get; set; } = default!;
-
-        public int BucketDepth { get; set; } = default!;
-
-        public int BlockNumber { get; set; } = default!;
-
-        public bool ImmutableFlag { get; set; } = default!;
+        public string Amount { get; }
+        public int BucketDepth { get; }
+        public int BlockNumber { get; }
+        public bool ImmutableFlag { get; }
     }
 
 }

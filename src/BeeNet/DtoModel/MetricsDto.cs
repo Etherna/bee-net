@@ -1,13 +1,14 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class MetricsDto
     {
+        // Constructors.
         public MetricsDto(Clients.v1_4.DebugApi.Metrics metrics)
         {
             if (metrics is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(metrics));
 
             LastSeenTimestamp = metrics.LastSeenTimestamp;
             SessionConnectionRetry = metrics.SessionConnectionRetry;
@@ -17,16 +18,13 @@
             LatencyEWMA = metrics.LatencyEWMA;
         }
 
-        public int LastSeenTimestamp { get; set; } = default!;
-        
-        public int SessionConnectionRetry { get; set; } = default!;
-        
-        public double ConnectionTotalDuration { get; set; } = default!;
-        
-        public double SessionConnectionDuration { get; set; } = default!;
-        
-        public string SessionConnectionDirection { get; set; } = default!;
-        
-        public int LatencyEWMA { get; set; } = default!;
+
+        // Properties.
+        public int LastSeenTimestamp { get; }
+        public int SessionConnectionRetry { get; }
+        public double ConnectionTotalDuration { get; }
+        public double SessionConnectionDuration { get; }
+        public string SessionConnectionDirection { get; }
+        public int LatencyEWMA { get; }
     }
 }

@@ -13,12 +13,10 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
     {
         readonly IBeeDebugClient_1_4 _beeDebugClient;
 
-        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri? baseUrl)
+        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri baseUrl)
         {
             if (baseUrl is null)
-            {
                 throw new ArgumentNullException(nameof(baseUrl));
-            }
 
             _beeDebugClient = new BeeDebugClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
         }
@@ -30,49 +28,49 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new AddressDetailDto(response);
         }
 
-        public async Task<List<BalanceDto>?> GetBalancesAsync()
+        public async Task<IEnumerable<BalanceDto>> GetBalancesAsync()
         {
             var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
             return response.Balances
-                ?.Select(i => new BalanceDto(i))
-                ?.ToList();
+                .Select(i => new BalanceDto(i))
+                .ToList();
         }
 
-        public async Task<List<BalanceDto>?> GetBalanceAsync(string address)
+        public async Task<IEnumerable<BalanceDto>> GetBalanceAsync(string address)
         {
             var response = await _beeDebugClient.BalancesGetAsync().ConfigureAwait(false);
 
             return response.Balances
-                ?.Select(i => new BalanceDto(i))
-                ?.ToList();
+                .Select(i => new BalanceDto(i))
+                .ToList();
         }
 
-        public async Task<List<AddressDto>?> BlocklistAsync()
+        public async Task<IEnumerable<AddressDto>> BlocklistAsync()
         {
             var response = await _beeDebugClient.BlocklistAsync().ConfigureAwait(false);
 
             return response.Peers
-                ?.Select(i => new AddressDto(i))
-                ?.ToList();
+                .Select(i => new AddressDto(i))
+                .ToList();
         }
 
-        public async Task<List<BalanceDto>?> ConsumedGetAsync()
+        public async Task<IEnumerable<BalanceDto>> ConsumedGetAsync()
         {
             var response = await _beeDebugClient.ConsumedGetAsync().ConfigureAwait(false);
 
             return response.Balances
-                ?.Select(i => new BalanceDto(i))
-                ?.ToList();
+                .Select(i => new BalanceDto(i))
+                .ToList();
         }
 
-        public async Task<List<BalanceDto>?> ConsumedGetAsync(string address)
+        public async Task<IEnumerable<BalanceDto>> ConsumedGetAsync(string address)
         {
             var response = await _beeDebugClient.ConsumedGetAsync().ConfigureAwait(false);
 
             return response.Balances
-                ?.Select(i => new BalanceDto(i))
-                ?.ToList();
+                .Select(i => new BalanceDto(i))
+                .ToList();
         }
 
         public async Task<ChequebookAddressDto> ChequebookAddressAsync()
@@ -131,13 +129,13 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new VersionDto(response);
         }
 
-        public async Task<List<AddressDto>?> PeersGetAsync()
+        public async Task<IEnumerable<AddressDto>> PeersGetAsync()
         {
             var response = await _beeDebugClient.PeersGetAsync().ConfigureAwait(false);
 
             return response.Peers
-                ?.Select(i => new AddressDto(i))
-                ?.ToList();
+                .Select(i => new AddressDto(i))
+                .ToList();
         }
 
         public async Task<MessageResponseDto> PeersDeleteAsync(string address)
@@ -161,13 +159,13 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new VersionDto(response);
         }
 
-        public async Task<List<SettlementDataDto>?> SettlementsGetAsync(string address)
+        public async Task<IEnumerable<SettlementDataDto>> SettlementsGetAsync(string address)
         {
             var response = await _beeDebugClient.SettlementsGetAsync().ConfigureAwait(false);
 
             return response.Settlements
-                ?.Select(i => new SettlementDataDto(i))
-                ?.ToList();
+                .Select(i => new SettlementDataDto(i))
+                .ToList();
         }
 
         public async Task<SettlementDto> SettlementsGetAsync()
@@ -200,7 +198,11 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
 
         public async Task<VersionDto> WelcomeMessagePostAsync(string welcomeMessage)
         {
-            var response = await _beeDebugClient.WelcomeMessagePostAsync(new Body{ WelcomeMessage = welcomeMessage }).ConfigureAwait(false);
+            var response = await _beeDebugClient.WelcomeMessagePostAsync(
+                new Body
+                {
+                    WelcomeMessage = welcomeMessage
+                }).ConfigureAwait(false);
 
             return new VersionDto(response);
         }
@@ -212,7 +214,10 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new ChequebookCashoutGetDto(response);
         }
 
-        public async Task<TransactionHashDto> ChequebookCashoutPostAsync(string peerId, int? gasPrice = null, long? gasLimit = null)
+        public async Task<TransactionHashDto> ChequebookCashoutPostAsync(
+            string peerId, 
+            int? gasPrice = null, 
+            long? gasLimit = null)
         {
             var response = await _beeDebugClient.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit).ConfigureAwait(false);
 
@@ -226,7 +231,7 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new ChequebookChequeGetDto(response);
         }
 
-        public async Task<List<ChequebookChequeGetDto>> ChequebookChequeGetAsync()
+        public async Task<IEnumerable<ChequebookChequeGetDto>> ChequebookChequeGetAsync()
         {
             var response = await _beeDebugClient.ChequebookChequeGetAsync().ConfigureAwait(false);
 
@@ -235,14 +240,18 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
                 .ToList();
         }
 
-        public async Task<TransactionHashDto> ChequebookDepositAsync(int amount, int? gasPrice = null)
+        public async Task<TransactionHashDto> ChequebookDepositAsync(
+            int amount, 
+            int? gasPrice = null)
         {
             var response = await _beeDebugClient.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false);
 
             return new TransactionHashDto(response);
         }
 
-        public async Task<TransactionHashDto> ChequebookWithdrawAsync(int amount, int? gasPrice = null)
+        public async Task<TransactionHashDto> ChequebookWithdrawAsync(
+            int amount, 
+            int? gasPrice = null)
         {
             var response = await _beeDebugClient.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false);
 
@@ -256,7 +265,7 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new TagDto(response);
         }
 
-        public async Task<List<PendingTransactionDto>> TransactionsGetAsync()
+        public async Task<IEnumerable<PendingTransactionDto>> TransactionsGetAsync()
         {
             var response = await _beeDebugClient.TransactionsGetAsync().ConfigureAwait(false);
 
@@ -279,14 +288,16 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new TransactionHashDto(response);
         }
 
-        public async Task<TransactionHashDto> TransactionsDeleteAsync(string txHash, int? gasPrice = null)
+        public async Task<TransactionHashDto> TransactionsDeleteAsync(
+            string txHash, 
+            int? gasPrice = null)
         {
             var response = await _beeDebugClient.TransactionsDeleteAsync(txHash).ConfigureAwait(false);
 
             return new TransactionHashDto(response);
         }
 
-        public async Task<List<StampsGetDto>> StampsGetAsync()
+        public async Task<IEnumerable<StampsGetDto>> StampsGetAsync()
         {
             var response = await _beeDebugClient.StampsGetAsync().ConfigureAwait(false);
 
@@ -309,21 +320,30 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
             return new StampsBucketsDto(response);
         }
 
-        public async Task<BatchDto> StampsPostAsync(int amount, int depth, string? label = null, bool? immutable = null, int? gasPrice = null)
+        public async Task<BatchDto> StampsPostAsync(
+            int amount, 
+            int depth, 
+            string? label = null, 
+            bool? immutable = null, 
+            int? gasPrice = null)
         {
             var response = await _beeDebugClient.StampsPostAsync(amount, depth, label, immutable, gasPrice).ConfigureAwait(false);
 
             return new BatchDto(response);
         }
 
-        public async Task<BatchDto> StampsTopupAsync(object id, int amount)
+        public async Task<BatchDto> StampsTopupAsync(
+            object id, 
+            int amount)
         {
             var response = await _beeDebugClient.StampsTopupAsync(id, amount).ConfigureAwait(false);
 
             return new BatchDto(response);
         }
 
-        public async Task<BatchDto> StampsDiluteAsync(object id, int depth)
+        public async Task<BatchDto> StampsDiluteAsync(
+            object id, 
+            int depth)
         {
             var response = await _beeDebugClient.StampsDiluteAsync(id, depth).ConfigureAwait(false);
 

@@ -4,12 +4,11 @@ namespace Etherna.BeeNet.DtoModel
 {
     public class TagDto
     {
+        // Constructors.
         public TagDto(Clients.v1_4.DebugApi.Response31 response31)
         {
-            if (response31 == null)
-            {
-                return;
-            }
+            if (response31 is null)
+                throw new ArgumentNullException(nameof(response31));
 
             Total = response31.Total;
             Split = response31.Split;
@@ -21,22 +20,17 @@ namespace Etherna.BeeNet.DtoModel
             Address = response31.Address;
             StartedAt = response31.StartedAt;
         }
-        public int Total { get; set; } = default!;
 
-        public int Split { get; set; } = default!;
 
-        public int Seen { get; set; } = default!;
-
-        public int Stored { get; set; } = default!;
-        
-        public int Sent { get; set; } = default!;
-        
-        public int Synced { get; set; } = default!;
-        
-        public int Uid { get; set; } = default!;
-        
-        public string Address { get; set; } = default!;
-        
-        public DateTimeOffset StartedAt { get; set; } = default!;
+        // Properties.
+        public int Total { get; }
+        public int Split { get; }
+        public int Seen { get; }
+        public int Stored { get; }
+        public int Sent { get; }
+        public int Synced { get; }
+        public int Uid { get; }
+        public string Address { get; }
+        public DateTimeOffset StartedAt { get; }
     }
 }

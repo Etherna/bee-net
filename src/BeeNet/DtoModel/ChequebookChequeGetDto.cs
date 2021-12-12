@@ -1,13 +1,14 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class ChequebookChequeGetDto
     {
+        // Constructors.
         public ChequebookChequeGetDto(Clients.v1_4.DebugApi.Response27 response27)
         {
             if (response27 is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(response27));
 
             Peer = response27.Peer;
             Lastreceived = new LastreceivedDto(response27.Lastreceived);
@@ -17,19 +18,17 @@
         public ChequebookChequeGetDto(Clients.v1_4.DebugApi.Lastcheques lastcheques)
         {
             if (lastcheques is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(lastcheques));
 
             Peer = lastcheques.Peer;
             Lastreceived = new LastreceivedDto(lastcheques.Lastreceived);
             Lastsent = new LastsentDto(lastcheques.Lastsent);
         }
 
-        public string Peer { get; set; } = default!;
-        
-        public LastreceivedDto Lastreceived { get; set; } = default!;
-        
-        public LastsentDto Lastsent { get; set; } = default!;
+
+        // Properties.
+        public string Peer { get; }
+        public LastreceivedDto Lastreceived { get; }
+        public LastsentDto Lastsent { get; }
     }
 }

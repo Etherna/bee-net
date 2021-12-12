@@ -1,20 +1,22 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class DisconnectedPeersDto
     {
+        // Constructors.
         public DisconnectedPeersDto(Clients.v1_4.DebugApi.DisconnectedPeers disconnectedPeers)
         {
             if (disconnectedPeers is null)
-            {
-                return;
-            }
+                throw new ArgumentNullException(nameof(disconnectedPeers));
 
             Address = disconnectedPeers.Address;
             Metrics = new MetricsDto(disconnectedPeers.Metrics);
         }
-        
-        public string Address { get; set; } = default!;
-        
-        public MetricsDto Metrics { get; set; } = default!;
+
+
+        // Properties.
+        public string Address { get; }
+        public MetricsDto Metrics { get; }
     }
 }

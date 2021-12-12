@@ -1,13 +1,14 @@
-﻿namespace Etherna.BeeNet.DtoModel
+﻿using System;
+
+namespace Etherna.BeeNet.DtoModel
 {
     public class SettlementDataDto
     {
+        // Constructors.
         public SettlementDataDto(Clients.v1_4.DebugApi.Settlements settlement)
         {
-            if (settlement == null)
-            {
-                return;
-            }
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
             Received = settlement.Received;
@@ -16,21 +17,18 @@
 
         public SettlementDataDto(Clients.v1_4.DebugApi.Settlements2 settlements2)
         {
-            if (settlements2 == null)
-            {
-                return;
-            }
+            if (settlements2 is null)
+                throw new ArgumentNullException(nameof(settlements2));
 
             Peer = settlements2.Peer;
             Received = settlements2.Received;
             Sent = settlements2.Sent;
         }
-        
 
-        public string Peer { get; set; } = default!;
-        
-        public int Received { get; set; } = default!;
-        
-        public int Sent { get; set; } = default!;
+
+        // Properties.
+        public string Peer { get; }
+        public int Received { get; }
+        public int Sent { get; }
     }
 }
