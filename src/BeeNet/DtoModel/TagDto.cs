@@ -5,20 +5,20 @@ namespace Etherna.BeeNet.DtoModel
     public class TagDto
     {
         // Constructors.
-        public TagDto(Clients.v1_4.DebugApi.Response31 response31)
+        public TagDto(Clients.v1_4.DebugApi.Response31 response)
         {
-            if (response31 is null)
-                throw new ArgumentNullException(nameof(response31));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Total = response31.Total;
-            Split = response31.Split;
-            Seen = response31.Seen;
-            Stored = response31.Stored;
-            Sent = response31.Sent;
-            Synced = response31.Synced;
-            Uid = response31.Uid;
-            Address = response31.Address;
-            StartedAt = response31.StartedAt;
+            Total = response.Total;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
+            Synced = response.Synced;
+            Uid = response.Uid;
+            Address = response.Address;
+            StartedAt = response.StartedAt;
         }
 
 

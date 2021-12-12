@@ -17,28 +17,28 @@ namespace Etherna.BeeNet.DtoModel
             Synced = tags.Synced;
         }
 
-        public TagInfoDto(Clients.v1_4.GatewayApi.Response7 response7)
+        public TagInfoDto(Clients.v1_4.GatewayApi.Response7 response)
         {
-            if (response7 is null)
-                throw new ArgumentNullException(nameof(response7));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Uid = response7.Uid;
-            StartedAt = response7.StartedAt;
-            Total = response7.Total;
-            Processed = response7.Processed;
-            Synced = response7.Synced;
+            Uid = response.Uid;
+            StartedAt = response.StartedAt;
+            Total = response.Total;
+            Processed = response.Processed;
+            Synced = response.Synced;
         }
 
-        public TagInfoDto(Clients.v1_4.GatewayApi.Response8 response8)
+        public TagInfoDto(Clients.v1_4.GatewayApi.Response8 response)
         {
-            if (response8 is null)
-                throw new ArgumentNullException(nameof(response8));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Uid = response8.Uid;
-            StartedAt = response8.StartedAt;
-            Total = response8.Total;
-            Processed = response8.Processed;
-            Synced = response8.Synced;
+            Uid = response.Uid;
+            StartedAt = response.StartedAt;
+            Total = response.Total;
+            Processed = response.Processed;
+            Synced = response.Synced;
         }
 
 

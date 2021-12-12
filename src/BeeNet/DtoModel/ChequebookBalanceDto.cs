@@ -2,16 +2,16 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ChequebookBalanceDto
+    public class ChequeBookBalanceDto
     {
         // Constructors.
-        public ChequebookBalanceDto(Clients.v1_4.DebugApi.Response8 response8)
+        public ChequeBookBalanceDto(Clients.v1_4.DebugApi.Response8 response)
         {
-            if (response8 is null)
-                throw new ArgumentNullException(nameof(response8));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TotalBalance = response8.TotalBalance;
-            AvailableBalance = response8.AvailableBalance;
+            TotalBalance = response.TotalBalance;
+            AvailableBalance = response.AvailableBalance;
         }
 
 

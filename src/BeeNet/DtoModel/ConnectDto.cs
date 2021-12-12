@@ -5,12 +5,12 @@ namespace Etherna.BeeNet.DtoModel
     public class ConnectDto
     {
         // Constructors.
-        public ConnectDto(Clients.v1_4.DebugApi.Response11 response11)
+        public ConnectDto(Clients.v1_4.DebugApi.Response11 response)
         {
-            if (response11 is null)
-                throw new ArgumentNullException(nameof(response11));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Address = response11.Address;
+            Address = response.Address;
         }
 
 

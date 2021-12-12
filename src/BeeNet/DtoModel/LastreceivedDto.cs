@@ -5,24 +5,24 @@ namespace Etherna.BeeNet.DtoModel
     public class LastreceivedDto
     {
         // Constructors.
-        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived lastreceived)
+        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived lastReceived)
         {
-            if (lastreceived is null)
-                throw new ArgumentNullException(nameof(lastreceived));
+            if (lastReceived is null)
+                throw new ArgumentNullException(nameof(lastReceived));
 
-            Beneficiary = lastreceived.Beneficiary;
-            Chequebook = lastreceived.Chequebook;
-            Payout = lastreceived.Payout;
+            Beneficiary = lastReceived.Beneficiary;
+            Chequebook = lastReceived.Chequebook;
+            Payout = lastReceived.Payout;
         }
 
-        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived2 lastreceived2)
+        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived2 lastReceived)
         {
-            if (lastreceived2 is null)
-                throw new ArgumentNullException(nameof(lastreceived2));
+            if (lastReceived is null)
+                throw new ArgumentNullException(nameof(lastReceived));
 
-            Beneficiary = lastreceived2.Beneficiary;
-            Chequebook = lastreceived2.Chequebook;
-            Payout = lastreceived2.Payout;
+            Beneficiary = lastReceived.Beneficiary;
+            Chequebook = lastReceived.Chequebook;
+            Payout = lastReceived.Payout;
         }
 
 

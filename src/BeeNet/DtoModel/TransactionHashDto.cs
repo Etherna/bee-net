@@ -5,36 +5,36 @@ namespace Etherna.BeeNet.DtoModel
     public class TransactionHashDto
     {
         // Constructors.
-        public TransactionHashDto(Clients.v1_4.DebugApi.Response26 response26)
+        public TransactionHashDto(Clients.v1_4.DebugApi.Response26 response)
         {
-            if (response26 is null)
-                throw new ArgumentNullException(nameof(response26));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TransactionHash = response26.TransactionHash;
+            TransactionHash = response.TransactionHash;
         }
 
-        public TransactionHashDto(Clients.v1_4.DebugApi.Response29 response29)
+        public TransactionHashDto(Clients.v1_4.DebugApi.Response29 response)
         {
-            if (response29 is null)
-                throw new ArgumentNullException(nameof(response29));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TransactionHash = response29.TransactionHash;
+            TransactionHash = response.TransactionHash;
         }
 
-        public TransactionHashDto(Clients.v1_4.DebugApi.Response34 response34)
+        public TransactionHashDto(Clients.v1_4.DebugApi.Response34 response)
         {
-            if (response34 is null)
-                throw new ArgumentNullException(nameof(response34));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TransactionHash = response34.TransactionHash;
+            TransactionHash = response.TransactionHash;
         }
 
-        public TransactionHashDto(Clients.v1_4.DebugApi.Response35 response35)
+        public TransactionHashDto(Clients.v1_4.DebugApi.Response35 response)
         {
-            if (response35 is null)
-                throw new ArgumentNullException(nameof(response35));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TransactionHash = response35.TransactionHash;
+            TransactionHash = response.TransactionHash;
         }
 
 

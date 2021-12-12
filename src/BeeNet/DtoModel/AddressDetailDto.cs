@@ -12,7 +12,7 @@ namespace Etherna.BeeNet.DtoModel
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
+            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
             Overlay = response.Overlay;
             Ethereum = response.Ethereum;
             PublicKey = response.PublicKey;
@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModel
 
         // Properties.
         public string Overlay { get; }
-        public ICollection<string> Underlay { get; }
+        public IEnumerable<string> Underlay { get; }
         public string Ethereum { get; }
         public string PublicKey { get; }
         public string PssPublicKey { get; }

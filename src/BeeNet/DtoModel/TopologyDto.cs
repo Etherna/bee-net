@@ -7,18 +7,18 @@ namespace Etherna.BeeNet.DtoModel
     public class TopologyDto
     {
         // Constructors.
-        public TopologyDto(Clients.v1_4.DebugApi.Response22 response22)
+        public TopologyDto(Clients.v1_4.DebugApi.Response22 response)
         {
-            if (response22 is null)
-                throw new ArgumentNullException(nameof(response22));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            BaseAddr = response22.BaseAddr;
-            Population = response22.Population;
-            Connected = response22.Connected;
-            Timestamp = response22.Timestamp;
-            NnLowWatermark = response22.NnLowWatermark;
-            Depth = response22.Depth;
-            Bins = response22.Bins.ToDictionary(
+            BaseAddr = response.BaseAddr;
+            Population = response.Population;
+            Connected = response.Connected;
+            Timestamp = response.Timestamp;
+            NnLowWatermark = response.NnLowWatermark;
+            Depth = response.Depth;
+            Bins = response.Bins.ToDictionary(
                 i => i.Key,
                 i => new AnonymousDto(i.Value));
         }

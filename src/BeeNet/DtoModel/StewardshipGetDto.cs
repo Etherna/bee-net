@@ -2,15 +2,15 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class StewardshipGetDto
+    public class StewardShipGetDto
     {
         // Constructors.
-        public StewardshipGetDto(Clients.v1_4.GatewayApi.Response17 response17)
+        public StewardShipGetDto(Clients.v1_4.GatewayApi.Response17 response)
         {
-            if (response17 is null)
-                throw new ArgumentNullException(nameof(response17));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            IsRetrievable = response17.IsRetrievable;
+            IsRetrievable = response.IsRetrievable;
         }
 
 

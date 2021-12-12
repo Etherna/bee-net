@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ResultChequebookDto
+    public class ResultChequeBookDto
     {
         // Constructors.
-        public ResultChequebookDto(Clients.v1_4.DebugApi.Result result)
+        public ResultChequeBookDto(Clients.v1_4.DebugApi.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));

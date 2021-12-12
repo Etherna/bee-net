@@ -56,7 +56,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "Etherna.BeeNet.Clients.GatewayApi",
+      "namespace": "Etherna.BeeNet.Clients.v1_4.GatewayApi",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -94,7 +94,7 @@
       "checksumCacheEnabled": false,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet/Clients/GatewayApi/NswagBeeGatewayApiClient.cs",
+      "output": "../src/BeeNet/Clients/v1_4/GatewayApi/BeeGatewayClient_1_4.cs",
       "newLineBehavior": "Auto"
     }
   }

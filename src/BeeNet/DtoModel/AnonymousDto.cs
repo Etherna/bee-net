@@ -15,9 +15,9 @@ namespace Etherna.BeeNet.DtoModel
             Population = anonymous.Population;
             Connected = anonymous.Connected;
             DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k)).ToList();
+                .Select(k => new DisconnectedPeersDto(k));
             ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k)).ToList();
+                .Select(k => new ConnectedPeersDto(k));
         }
 
 

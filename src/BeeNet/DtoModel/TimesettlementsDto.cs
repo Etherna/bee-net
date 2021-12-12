@@ -4,19 +4,18 @@ using System.Linq;
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class TimesettlementsDto
+    public class TimeSettlementsDto
     {
         // Constructors.
-        public TimesettlementsDto(Clients.v1_4.DebugApi.Response21 response21)
+        public TimeSettlementsDto(Clients.v1_4.DebugApi.Response21 response)
         {
-            if (response21 is null)
-                throw new ArgumentNullException(nameof(response21));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TotalReceived = response21.TotalReceived;
-            TotalSent = response21.TotalSent;
-            Settlements = response21.Settlements
-                .Select(i => new SettlementDataDto(i))
-                .ToList();
+            TotalReceived = response.TotalReceived;
+            TotalSent = response.TotalSent;
+            Settlements = response.Settlements
+                .Select(i => new SettlementDataDto(i));
         }
 
 

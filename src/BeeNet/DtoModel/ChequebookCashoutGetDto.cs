@@ -2,19 +2,19 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ChequebookCashoutGetDto
+    public class ChequeBookCashoutGetDto
     {
         // Constructors.
-        public ChequebookCashoutGetDto(Clients.v1_4.DebugApi.Response25 response25)
+        public ChequeBookCashoutGetDto(Clients.v1_4.DebugApi.Response25 response)
         {
-            if (response25 is null)
-                throw new ArgumentNullException(nameof(response25));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Peer = response25.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response25.LastCashedCheque);
-            TransactionHash = response25.TransactionHash;
-            Result = new ResultChequebookDto(response25.Result);
-            UncashedAmount = response25.UncashedAmount;
+            Peer = response.Peer;
+            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            TransactionHash = response.TransactionHash;
+            Result = new ResultChequeBookDto(response.Result);
+            UncashedAmount = response.UncashedAmount;
         }
 
 
@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModel
         public string Peer { get; }
         public LastCashedChequeDto LastCashedCheque { get; }
         public string TransactionHash { get; }
-        public ResultChequebookDto Result { get; }
+        public ResultChequeBookDto Result { get; }
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
         public string UncashedAmount { get; }
     }

@@ -164,10 +164,10 @@ namespace Etherna.BeeNet.Clients
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task DeleteTagAsync(int uid);
 
-        
+
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>
         /// <param name="uid">Uid</param>
-        /// <param name="body">Can contain swarm hash to use for the tag</param>
+        /// <param name="address">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UpdateTag(
@@ -273,14 +273,14 @@ namespace Etherna.BeeNet.Clients
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<StewardshipGetDto> StewardshipGetAsync(string reference);
+        Task<StewardShipGetDto> StewardShipGetAsync(string reference);
 
         
         /// <summary>Reupload a root hash to the network</summary>
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task StewardshipPutAsync(string reference);
+        Task StewardShipPutAsync(string reference);
 
     }
 }

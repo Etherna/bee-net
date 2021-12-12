@@ -2,18 +2,18 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ReservestateDto
+    public class ReserveStateDto
     {
         // Constructors.
-        public ReservestateDto(Clients.v1_4.DebugApi.Response12 response12)
+        public ReserveStateDto(Clients.v1_4.DebugApi.Response12 response)
         {
-            if (response12 is null)
-                throw new ArgumentNullException(nameof(response12));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Radius = response12.Radius;
-            Available = response12.Available;
-            Outer = response12.Outer;
-            Inner = response12.Inner;
+            Radius = response.Radius;
+            Available = response.Available;
+            Outer = response.Outer;
+            Inner = response.Inner;
         }
 
 

@@ -23,10 +23,10 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            ClientVersions? version = ClientVersions.v1_4)
+            ClientVersions version = ClientVersions.v1_4)
         {
             httpClient = new HttpClient();
-            version ??= ClientVersions.v1_4;
+            ClientVersion = version;
 
             if (debugApiPort is not null)
             {

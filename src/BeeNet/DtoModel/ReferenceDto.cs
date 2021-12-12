@@ -5,44 +5,44 @@ namespace Etherna.BeeNet.DtoModel
     public class ReferenceDto
     {
         // Constructors.
-        public ReferenceDto(Clients.v1_4.GatewayApi.Response3 response3)
+        public ReferenceDto(Clients.v1_4.GatewayApi.Response3 response)
         {
-            if (response3 is null)
-                throw new ArgumentNullException(nameof(response3));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Reference = response3.Reference;
+            Reference = response.Reference;
         }
 
-        public ReferenceDto(Clients.v1_4.GatewayApi.Response5 response5)
+        public ReferenceDto(Clients.v1_4.GatewayApi.Response5 response)
         {
-            if (response5 is null)
-                throw new ArgumentNullException(nameof(response5));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Reference = response5.Reference;
+            Reference = response.Reference;
         }
 
-        public ReferenceDto(Clients.v1_4.GatewayApi.Response14 response14)
+        public ReferenceDto(Clients.v1_4.GatewayApi.Response14 response)
         {
-            if (response14 is null)
-                throw new ArgumentNullException(nameof(response14));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Reference = response14.Reference;
+            Reference = response.Reference;
         }
 
-        public ReferenceDto(Clients.v1_4.GatewayApi.Response15 response15)
+        public ReferenceDto(Clients.v1_4.GatewayApi.Response15 response)
         {
-            if (response15 is null)
-                throw new ArgumentNullException(nameof(response15));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Reference = response15.Reference;
+            Reference = response.Reference;
         }
 
-        public ReferenceDto(Clients.v1_4.GatewayApi.Response16 response16)
+        public ReferenceDto(Clients.v1_4.GatewayApi.Response16 response)
         {
-            if (response16 is null)
-                throw new ArgumentNullException(nameof(response16));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Reference = response16.Reference;
+            Reference = response.Reference;
         }
 
 

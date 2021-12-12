@@ -49,13 +49,13 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get the address of the chequebook contract used</summary>
         /// <returns>Ethereum address of chequebook contract</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChequebookAddressDto> ChequebookAddressAsync();
+        Task<ChequeBookAddressDto> ChequeBookAddressAsync();
 
         
         /// <summary>Get the balance of the chequebook</summary>
         /// <returns>Balance of the chequebook</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChequebookBalanceDto> ChequebookBalanceAsync();
+        Task<ChequeBookBalanceDto> ChequeBookBalanceAsync();
 
         
         /// <summary>Check if chunk at address exists locally</summary>
@@ -82,13 +82,13 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get reserve state</summary>
         /// <returns>Reserve State</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ReservestateDto> ReservestateAsync();
+        Task<ReserveStateDto> ReserveStateAsync();
 
         
         /// <summary>Get chain state</summary>
         /// <returns>Chain State</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChainstateDto> ChainstateAsync();
+        Task<ChainStateDto> ChainStateAsync();
 
         
         /// <summary>Get health of node</summary>
@@ -114,7 +114,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="peerId">Swarm address of peer</param>
         /// <returns>Returns round trip time for given peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<PingpongDto> PingpongAsync(string peerId);
+        Task<PingPongDto> PingPongAsync(string peerId);
 
         
         /// <summary>Get readiness state of node</summary>
@@ -139,7 +139,7 @@ namespace Etherna.BeeNet.Clients
         /// <summary>Get time based settlements with all known peers and total amount sent or received</summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TimesettlementsDto> TimesettlementsAsync();
+        Task<TimeSettlementsDto> TimeSettlementsAsync();
 
         
         /// <returns>Swarm topology of the bee node</returns>
@@ -163,7 +163,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="peerId">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChequebookCashoutGetDto> ChequebookCashoutGetAsync(string peerId);
+        Task<ChequeBookCashoutGetDto> ChequeBookCashoutGetAsync(string peerId);
 
         
         /// <summary>Cashout the last cheque for the peer</summary>
@@ -172,7 +172,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookCashoutPostAsync(
+        Task<TransactionHashDto> ChequeBookCashoutPostAsync(
             string peerId, 
             int? gasPrice = null, 
             long? gasLimit = null);
@@ -182,13 +182,13 @@ namespace Etherna.BeeNet.Clients
         /// <param name="peerId">Swarm address of peer</param>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChequebookChequeGetDto> ChequebookChequeGetAsync(string peerId);
+        Task<ChequeBookChequeGetDto> ChequeBookChequeGetAsync(string peerId);
 
         
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<ChequebookChequeGetDto>> ChequebookChequeGetAsync();
+        Task<IEnumerable<ChequeBookChequeGetDto>> ChequeBookChequeGetAsync();
 
         
         /// <summary>Deposit tokens from overlay address into chequebook</summary>
@@ -196,7 +196,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookDepositAsync(
+        Task<TransactionHashDto> ChequeBookDepositAsync(
             int amount, 
             int? gasPrice = null);
 
@@ -206,7 +206,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TransactionHashDto> ChequebookWithdrawAsync(
+        Task<TransactionHashDto> ChequeBookWithdrawAsync(
             int amount, 
             int? gasPrice = null);
 

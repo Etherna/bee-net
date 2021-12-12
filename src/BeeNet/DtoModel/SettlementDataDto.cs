@@ -15,14 +15,14 @@ namespace Etherna.BeeNet.DtoModel
             Sent = settlement.Sent;
         }
 
-        public SettlementDataDto(Clients.v1_4.DebugApi.Settlements2 settlements2)
+        public SettlementDataDto(Clients.v1_4.DebugApi.Settlements2 settlements)
         {
-            if (settlements2 is null)
-                throw new ArgumentNullException(nameof(settlements2));
+            if (settlements is null)
+                throw new ArgumentNullException(nameof(settlements));
 
-            Peer = settlements2.Peer;
-            Received = settlements2.Received;
-            Sent = settlements2.Sent;
+            Peer = settlements.Peer;
+            Received = settlements.Received;
+            Sent = settlements.Sent;
         }
 
 

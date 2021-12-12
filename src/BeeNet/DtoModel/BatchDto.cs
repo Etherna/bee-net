@@ -5,28 +5,28 @@ namespace Etherna.BeeNet.DtoModel
     public class BatchDto
     {
         // Constructors.
-        public BatchDto(Clients.v1_4.DebugApi.Response39 response39)
+        public BatchDto(Clients.v1_4.DebugApi.Response39 response)
         {
-            if (response39 is null)
-                throw new ArgumentNullException(nameof(response39));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            BatchId = response39.BatchID;
+            BatchId = response.BatchID;
         }
 
-        public BatchDto(Clients.v1_4.DebugApi.Response40 response40)
+        public BatchDto(Clients.v1_4.DebugApi.Response40 response)
         {
-            if (response40 is null)
-                throw new ArgumentNullException(nameof(response40));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            BatchId = response40.BatchID;
+            BatchId = response.BatchID;
         }
 
-        public BatchDto(Clients.v1_4.DebugApi.Response41 response41)
+        public BatchDto(Clients.v1_4.DebugApi.Response41 response)
         {
-            if (response41 is null)
-                throw new ArgumentNullException(nameof(response41));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            BatchId = response41.BatchID;
+            BatchId = response.BatchID;
         }
 
 

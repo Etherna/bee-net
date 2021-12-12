@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task ChequebookAddressAsync()
         {
-            var result = await _client.ChequebookAddressAsync();
+            var result = await _client.ChequeBookAddressAsync();
             
 
             Assert.Equal("0x0000000000000000000000000000000000000000", result.ChequebookAddress);
@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task ChequebookBalanceAsync()
         {
-            var result = await _client.ChequebookBalanceAsync();
+            var result = await _client.ChequeBookBalanceAsync();
 
 
             Assert.Equal("0", result.AvailableBalance);
@@ -119,7 +119,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task ReservestateAsync()
         {
-            var result = await _client.ReservestateAsync();
+            var result = await _client.ReserveStateAsync();
 
 
             Assert.Equal(12, result.Radius);
@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task ChainstateAsync()
         {
-            var result = await _client.ChainstateAsync();
+            var result = await _client.ChainStateAsync();
 
             Assert.Equal(0, result.Block);
             Assert.Equal(0, result.TotalAmount);//TODO totalAmount response from Endpoint was string instead of int
@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task PingpongAsync()
         {
-            var result = await _client.PingpongAsync("peerId");
+            var result = await _client.PingPongAsync("peerId");
             //TODO empty response need data for test
             //TODO Response:400   "invalid peer address"
         }
@@ -219,7 +219,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task TimesettlementsAsync()
         {
-            var result = await _client.TimesettlementsAsync();
+            var result = await _client.TimeSettlementsAsync();
 
 
             Assert.NotEmpty(result.Settlements);//TODO empty response need data for test
@@ -255,7 +255,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
         [Fact]
         public async Task ChequebookCashoutGetAsync()
         {
-            var result = await _client.ChequebookCashoutGetAsync("peerId");
+            var result = await _client.ChequeBookCashoutGetAsync("peerId");
             //TODO empty response need data for test
         }
 
@@ -268,7 +268,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
             long? gasLimit = null;//TODO insert real data
 
 
-            var result = await _client.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit);
+            var result = await _client.ChequeBookCashoutPostAsync(peerId, gasPrice, gasLimit);
         }
 
 
@@ -278,14 +278,14 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
             string peerId = "";//TODO insert real data
 
 
-            var result = await _client.ChequebookChequeGetAsync(peerId);
+            var result = await _client.ChequeBookChequeGetAsync(peerId);
         }
 
 
         [Fact]
         public async Task ChequebookChequeGetAsync()
         {
-            var result = await _client.ChequebookChequeGetAsync();
+            var result = await _client.ChequeBookChequeGetAsync();
             //TODO empty response need data for test
         }
 
@@ -297,7 +297,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
             int? gasPrice = null;//TODO insert real data
 
 
-            var result = await _client.ChequebookDepositAsync(amount, gasPrice);
+            var result = await _client.ChequeBookDepositAsync(amount, gasPrice);
             //TODO empty response need data for test
         }
 
@@ -309,7 +309,7 @@ namespace Etherna.BeeNet.IntegrationTest.BeeDebugClient.v1_4
             int? gasPrice = null;//TODO insert real data
 
 
-            var result = await _client.ChequebookWithdrawAsync(amount, gasPrice);
+            var result = await _client.ChequeBookWithdrawAsync(amount, gasPrice);
         }
 
 

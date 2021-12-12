@@ -14,13 +14,13 @@ namespace Etherna.BeeNet.DtoModel
             Balance = balance.Balance;
         }
 
-        public BalanceDto(Clients.v1_4.DebugApi.Balances2 balance2)
+        public BalanceDto(Clients.v1_4.DebugApi.Balances2 balance)
         {
-            if (balance2 is null)
-                throw new ArgumentNullException(nameof(balance2));
+            if (balance is null)
+                throw new ArgumentNullException(nameof(balance));
 
-            Peer = balance2.Peer;
-            Balance = balance2.Balance;
+            Peer = balance.Peer;
+            Balance = balance.Balance;
         }
 
 

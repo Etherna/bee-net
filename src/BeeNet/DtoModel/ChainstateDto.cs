@@ -2,17 +2,17 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ChainstateDto
+    public class ChainStateDto
     {
         // Constructors.
-        public ChainstateDto(Clients.v1_4.DebugApi.Response13 response13)
+        public ChainStateDto(Clients.v1_4.DebugApi.Response13 response)
         {
-            if (response13 is null)
-                throw new ArgumentNullException(nameof(response13));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Block = response13.Block;
-            TotalAmount = response13.TotalAmount;
-            CurrentPrice = response13.CurrentPrice;
+            Block = response.Block;
+            TotalAmount = response.TotalAmount;
+            CurrentPrice = response.CurrentPrice;
         }
 
 

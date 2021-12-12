@@ -13,12 +13,12 @@ namespace Etherna.BeeNet.DtoModel
             Address = peer.Address;
         }
 
-        public AddressDto(Clients.v1_4.DebugApi.Peers2? peers2)
+        public AddressDto(Clients.v1_4.DebugApi.Peers2? peers)
         {
-            if (peers2 is null)
-                throw new ArgumentNullException(nameof(peers2));
+            if (peers is null)
+                throw new ArgumentNullException(nameof(peers));
 
-            Address = peers2.Address;
+            Address = peers.Address;
         }
 
         public AddressDto(string addresses)

@@ -2,15 +2,15 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class ChequebookAddressDto
+    public class ChequeBookAddressDto
     {
         // Constructors.
-        public ChequebookAddressDto(Clients.v1_4.DebugApi.Response7 response7)
+        public ChequeBookAddressDto(Clients.v1_4.DebugApi.Response7 response)
         {
-            if (response7 is null)
-                throw new ArgumentNullException(nameof(response7));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            ChequebookAddress = response7.ChequebookAddress;
+            ChequebookAddress = response.ChequebookAddress;
         }
 
 

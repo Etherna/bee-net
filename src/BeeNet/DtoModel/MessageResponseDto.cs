@@ -5,49 +5,49 @@ namespace Etherna.BeeNet.DtoModel
     public class MessageResponseDto
     {
         // Constructors.
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response9 response9)
+        public MessageResponseDto(Clients.v1_4.DebugApi.Response9 response)
         {
-            if (response9 is null)
-                throw new ArgumentNullException(nameof(response9));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Message = response9.Message;
-            Code = response9.Code;
+            Message = response.Message;
+            Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response10 response10)
+        public MessageResponseDto(Clients.v1_4.DebugApi.Response10 response)
         {
-            if (response10 is null)
-                throw new ArgumentNullException(nameof(response10));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Message = response10.Message;
-            Code = response10.Code;
+            Message = response.Message;
+            Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response16 response16)
+        public MessageResponseDto(Clients.v1_4.DebugApi.Response16 response)
         {
-            if (response16 is null)
-                throw new ArgumentNullException(nameof(response16));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Message = response16.Message;
-            Code = response16.Code;
+            Message = response.Message;
+            Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.GatewayApi.Response10 response10)
+        public MessageResponseDto(Clients.v1_4.GatewayApi.Response10 response)
         {
-            if (response10 is null)
-                throw new ArgumentNullException(nameof(response10));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Message = response10.Message;
-            Code = response10.Code;
+            Message = response.Message;
+            Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.GatewayApi.Response12 response12)
+        public MessageResponseDto(Clients.v1_4.GatewayApi.Response12 response)
         {
-            if (response12 is null)
-                throw new ArgumentNullException(nameof(response12));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Message = response12.Message;
-            Code = response12.Code;
+            Message = response.Message;
+            Code = response.Code;
         }
 
 

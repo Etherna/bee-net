@@ -23,22 +23,22 @@ namespace Etherna.BeeNet.DtoModel
             ImmutableFlag = stamps.ImmutableFlag;
         }
 
-        public StampsGetDto(Clients.v1_4.DebugApi.Response37 response37)
+        public StampsGetDto(Clients.v1_4.DebugApi.Response37 response)
         {
-            if (response37 is null)
-                throw new ArgumentNullException(nameof(response37));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Exists = response37.Exists;
-            BatchTTL = response37.BatchTTL;
-            BatchID = response37.BatchID;
-            Utilization = response37.Utilization;
-            Usable = response37.Usable;
-            Label = response37.Label;
-            Depth = response37.Depth;
-            Amount = response37.Amount;
-            BucketDepth = response37.BucketDepth;
-            BlockNumber = response37.BlockNumber;
-            ImmutableFlag = response37.ImmutableFlag;
+            Exists = response.Exists;
+            BatchTTL = response.BatchTTL;
+            BatchID = response.BatchID;
+            Utilization = response.Utilization;
+            Usable = response.Usable;
+            Label = response.Label;
+            Depth = response.Depth;
+            Amount = response.Amount;
+            BucketDepth = response.BucketDepth;
+            BlockNumber = response.BlockNumber;
+            ImmutableFlag = response.ImmutableFlag;
         }
 
 

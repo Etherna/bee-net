@@ -5,5 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Dto property collection should be editable", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.DtoModel")]
 [assembly: SuppressMessage("Usage", "CA1707:Remove the underscores from namespace name", Justification = "Version number should containt underscores", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.Clients")]

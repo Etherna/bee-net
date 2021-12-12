@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModel
         public string GasPrice { get; }
         public int GasLimit { get; }
         public string Data { get; }
-        public System.DateTimeOffset Created { get; }
+        public DateTimeOffset Created { get; }
         public string Description { get; }
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
         public string Value { get; }

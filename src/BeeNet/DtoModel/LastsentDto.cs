@@ -15,14 +15,14 @@ namespace Etherna.BeeNet.DtoModel
             Payout = lastsent.Payout;
         }
 
-        public LastsentDto(Clients.v1_4.DebugApi.Lastsent2 lastsent2)
+        public LastsentDto(Clients.v1_4.DebugApi.Lastsent2 lastsent)
         {
-            if (lastsent2 is null)
-                throw new ArgumentNullException(nameof(lastsent2));
+            if (lastsent is null)
+                throw new ArgumentNullException(nameof(lastsent));
 
-            Beneficiary = lastsent2.Beneficiary;
-            Chequebook = lastsent2.Chequebook;
-            Payout = lastsent2.Payout;
+            Beneficiary = lastsent.Beneficiary;
+            Chequebook = lastsent.Chequebook;
+            Payout = lastsent.Payout;
         }
 
 

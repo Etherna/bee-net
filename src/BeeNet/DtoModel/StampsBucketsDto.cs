@@ -15,7 +15,7 @@ namespace Etherna.BeeNet.DtoModel
             Depth = response38.Depth;
             BucketDepth = response38.BucketDepth;
             BucketUpperBound = response38.BucketUpperBound;
-            Buckets = response38.Buckets?.Select(i => new BucketDto(i))?.ToList();
+            Buckets = response38.Buckets?.Select(i => new BucketDto(i));
         }
 
 
@@ -23,6 +23,6 @@ namespace Etherna.BeeNet.DtoModel
         public int Depth { get; }
         public int BucketDepth { get; }
         public int BucketUpperBound { get; }
-        public ICollection<BucketDto>? Buckets { get; }
+        public IEnumerable<BucketDto>? Buckets { get; }
     }
 }

@@ -5,20 +5,20 @@ namespace Etherna.BeeNet.DtoModel
     public class TransactionsDto
     {
         // Constructors.
-        public TransactionsDto(Clients.v1_4.DebugApi.Response33 response33)
+        public TransactionsDto(Clients.v1_4.DebugApi.Response33 response)
         {
-            if (response33 is null)
-                throw new ArgumentNullException(nameof(response33));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            TransactionHash = response33.TransactionHash;
-            To = response33.To;
-            Nonce = response33.Nonce;
-            GasPrice = response33.GasPrice;
-            GasLimit = response33.GasLimit;
-            Data = response33.Data;
-            Created = response33.Created;
-            Description = response33.Description;
-            Value = response33.Value;
+            TransactionHash = response.TransactionHash;
+            To = response.To;
+            Nonce = response.Nonce;
+            GasPrice = response.GasPrice;
+            GasLimit = response.GasLimit;
+            Data = response.Data;
+            Created = response.Created;
+            Description = response.Description;
+            Value = response.Value;
         }
 
 

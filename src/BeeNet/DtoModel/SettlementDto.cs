@@ -15,8 +15,7 @@ namespace Etherna.BeeNet.DtoModel
             TotalReceived = response20.TotalReceived;
             TotalSent = response20.TotalSent;
             Settlements = response20.Settlements
-                .Select(i => new SettlementDataDto(i))
-                .ToList();
+                .Select(i => new SettlementDataDto(i));
         }
 
 

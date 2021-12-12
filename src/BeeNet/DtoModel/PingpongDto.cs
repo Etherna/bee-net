@@ -2,15 +2,15 @@
 
 namespace Etherna.BeeNet.DtoModel
 {
-    public class PingpongDto
+    public class PingPongDto
     {
         // Constructors.
-        public PingpongDto(Clients.v1_4.DebugApi.Response17 response17)
+        public PingPongDto(Clients.v1_4.DebugApi.Response17 response)
         {
-            if (response17 is null)
-                throw new ArgumentNullException(nameof(response17));
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-            Rtt = response17.Rtt;
+            Rtt = response.Rtt;
         }
 
 
