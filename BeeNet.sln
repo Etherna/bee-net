@@ -19,8 +19,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C162BCCF-B5C8-466A-AAB7-6D85CC171434}"
 	ProjectSection(SolutionItems) = preProject
 		tools\README.md = tools\README.md
-		tools\swarm-debug-api.nswag = tools\swarm-debug-api.nswag
-		tools\swarm-gateway-api.nswag = tools\swarm-gateway-api.nswag
+		tools\swarm-debug-api.1_4.nswag = tools\swarm-debug-api.1_4.nswag
+		tools\swarm-gateway-api.1_4.nswag = tools\swarm-gateway-api.1_4.nswag
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92}"

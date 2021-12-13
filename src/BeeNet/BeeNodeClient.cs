@@ -1,5 +1,7 @@
-﻿using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+﻿using Etherna.BeeNet.Clients;
+using Etherna.BeeNet.Clients.v1_4.DebugApi;
+using Etherna.BeeNet.Clients.v1_4.GatewayApi;
+using Etherna.BeeNet.DtoModel;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -20,21 +22,30 @@ namespace Etherna.BeeNet
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635)
+            int? debugApiPort = 1635,
+            ClientVersions version = ClientVersions.v1_4)
         {
             httpClient = new HttpClient();
+            ClientVersion = version;
 
-            // Generate api clients.
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient) { BaseUrl = DebugApiUrl.ToString() };
+                DebugClient = version switch
+                {
+                    ClientVersions.v1_4 => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
+                    _ => throw new NotSupportedException($"DebugClient {nameof(ClientVersion)} not supported"),
+                };
             }
 
             if (gatewayApiPort is not null)
             {
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(httpClient) { BaseUrl = GatewayApiUrl.ToString() };
+                GatewayClient = version switch
+                {
+                    ClientVersions.v1_4 => new AdapterGatewayClient_1_4(httpClient, GatewayApiUrl),
+                    _ => throw new NotSupportedException($"GatewayClient {nameof(ClientVersion)} not supported"),
+                };
             }
         }
 
@@ -58,6 +69,7 @@ namespace Etherna.BeeNet
 
 
         // Properties.
+        public ClientVersions ClientVersion { get; }
         public Uri? DebugApiUrl { get; }
         public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
