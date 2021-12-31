@@ -6,22 +6,22 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Clients.v1_4.DebugApi
+namespace Etherna.BeeNet.Clients.v1_4_1.DebugApi
 {
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Version number should containt underscores")]
-    public class AdapterBeeDebugVersion_1_4 : IBeeDebugClient
+    public class AdapterBeeDebugVersion_1_4_1 : IBeeDebugClient
     {
         // Fields.
-        private readonly IBeeDebugClient_1_4 beeDebugClient;
+        private readonly IBeeDebugClient_1_4_1 beeDebugClient;
 
 
         // Constructors.
-        public AdapterBeeDebugVersion_1_4(HttpClient httpClient, Uri baseUrl)
+        public AdapterBeeDebugVersion_1_4_1(HttpClient httpClient, Uri baseUrl)
         {
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeDebugClient = new BeeDebugClient_1_4(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeDebugClient = new BeeDebugClient_1_4_1(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
         public async Task<AddressDetailDto> AddressesAsync()

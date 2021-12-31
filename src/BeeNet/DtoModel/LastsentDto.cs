@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class LastsentDto
     {
         // Constructors.
-        public LastsentDto(Clients.v1_4.DebugApi.Lastsent lastsent)
+        public LastsentDto(Clients.v1_4_1.DebugApi.Lastsent lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
@@ -15,7 +15,7 @@ namespace Etherna.BeeNet.DtoModel
             Payout = lastsent.Payout;
         }
 
-        public LastsentDto(Clients.v1_4.DebugApi.Lastsent2 lastsent)
+        public LastsentDto(Clients.v1_4_1.DebugApi.Lastsent2 lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));

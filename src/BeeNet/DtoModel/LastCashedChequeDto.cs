@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class LastCashedChequeDto
     {
         // Constructors.
-        public LastCashedChequeDto(Clients.v1_4.DebugApi.LastCashedCheque lastCashedCheque)
+        public LastCashedChequeDto(Clients.v1_4_1.DebugApi.LastCashedCheque lastCashedCheque)
         {
             if (lastCashedCheque is null)
                 throw new ArgumentNullException(nameof(lastCashedCheque));

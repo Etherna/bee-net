@@ -7,7 +7,7 @@ namespace Etherna.BeeNet.DtoModel
     public class AddressDetailDto
     {
         // Constructors.
-        public AddressDetailDto(Clients.v1_4.DebugApi.Response response)
+        public AddressDetailDto(Clients.v1_4_1.DebugApi.Response response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

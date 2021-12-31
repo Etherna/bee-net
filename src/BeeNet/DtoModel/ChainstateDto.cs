@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class ChainStateDto
     {
         // Constructors.
-        public ChainStateDto(Clients.v1_4.DebugApi.Response13 response)
+        public ChainStateDto(Clients.v1_4_1.DebugApi.Response13 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

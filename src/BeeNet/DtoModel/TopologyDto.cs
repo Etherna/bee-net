@@ -7,7 +7,7 @@ namespace Etherna.BeeNet.DtoModel
     public class TopologyDto
     {
         // Constructors.
-        public TopologyDto(Clients.v1_4.DebugApi.Response22 response)
+        public TopologyDto(Clients.v1_4_1.DebugApi.Response22 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

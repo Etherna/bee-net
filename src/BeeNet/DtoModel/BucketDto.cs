@@ -7,7 +7,7 @@ namespace Etherna.BeeNet.DtoModel
     public class BucketDto
     {
         // Constructors.
-        public BucketDto(Clients.v1_4.DebugApi.Buckets buckets)
+        public BucketDto(Clients.v1_4_1.DebugApi.Buckets buckets)
         {
             if (buckets is null)
                 throw new ArgumentNullException(nameof(buckets));

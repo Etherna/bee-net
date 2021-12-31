@@ -1,6 +1,6 @@
 ﻿using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.Clients.v1_4.DebugApi;
-using Etherna.BeeNet.Clients.v1_4.GatewayApi;
+using Etherna.BeeNet.Clients.v1_4_1.DebugApi;
+using Etherna.BeeNet.Clients.v1_4_1.GatewayApi;
 using Etherna.BeeNet.DtoModel;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,7 +23,7 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            ClientVersions version = ClientVersions.v1_4)
+            ClientVersions version = ClientVersions.v1_4_1)
         {
             httpClient = new HttpClient();
             ClientVersion = version;
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
                 DebugClient = version switch
                 {
-                    ClientVersions.v1_4 => new AdapterBeeDebugVersion_1_4(httpClient, DebugApiUrl),
+                    ClientVersions.v1_4_1 => new AdapterBeeDebugVersion_1_4_1(httpClient, DebugApiUrl),
                     _ => throw new NotSupportedException($"DebugClient {nameof(ClientVersion)} not supported"),
                 };
             }
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
                 GatewayClient = version switch
                 {
-                    ClientVersions.v1_4 => new AdapterGatewayClient_1_4(httpClient, GatewayApiUrl),
+                    ClientVersions.v1_4_1 => new AdapterGatewayClient_1_4_1(httpClient, GatewayApiUrl),
                     _ => throw new NotSupportedException($"GatewayClient {nameof(ClientVersion)} not supported"),
                 };
             }

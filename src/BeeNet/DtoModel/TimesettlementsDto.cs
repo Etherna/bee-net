@@ -7,7 +7,7 @@ namespace Etherna.BeeNet.DtoModel
     public class TimeSettlementsDto
     {
         // Constructors.
-        public TimeSettlementsDto(Clients.v1_4.DebugApi.Response21 response)
+        public TimeSettlementsDto(Clients.v1_4_1.DebugApi.Response21 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

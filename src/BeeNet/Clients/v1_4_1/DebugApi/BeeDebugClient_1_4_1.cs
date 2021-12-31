@@ -14,12 +14,12 @@
 #pragma warning disable 8073 // Disable "CS8073 The result of the expression is always 'false' since a value of type 'T' is never equal to 'null' of type 'T?'"
 #pragma warning disable 3016 // Disable "CS3016 Arrays as attribute arguments is not CLS-compliant"
 
-namespace Etherna.BeeNet.Clients.v1_4.DebugApi
+namespace Etherna.BeeNet.Clients.v1_4_1.DebugApi
 {
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.14.8.0 (NJsonSchema v10.5.2.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial interface IBeeDebugClient_1_4
+    public partial interface IBeeDebugClient_1_4_1
     {
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get overlay and underlay addresses of the node</summary>
@@ -301,13 +301,13 @@ namespace Etherna.BeeNet.Clients.v1_4.DebugApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.14.8.0 (NJsonSchema v10.5.2.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class BeeDebugClient_1_4 : IBeeDebugClient_1_4
+    public partial class BeeDebugClient_1_4_1 : IBeeDebugClient_1_4_1
     {
         private string _baseUrl = "http://{apiRoot}:{port}";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<System.Text.Json.JsonSerializerOptions> _settings;
 
-        public BeeDebugClient_1_4(System.Net.Http.HttpClient httpClient)
+        public BeeDebugClient_1_4_1(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient;
             _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings);

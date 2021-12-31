@@ -14,12 +14,12 @@
 #pragma warning disable 8073 // Disable "CS8073 The result of the expression is always 'false' since a value of type 'T' is never equal to 'null' of type 'T?'"
 #pragma warning disable 3016 // Disable "CS3016 Arrays as attribute arguments is not CLS-compliant"
 
-namespace Etherna.BeeNet.Clients.v1_4.GatewayApi
+namespace Etherna.BeeNet.Clients.v1_4_1.GatewayApi
 {
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.14.8.0 (NJsonSchema v10.5.2.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial interface IBeeGatewayClient_1_4
+    public partial interface IBeeGatewayClient_1_4_1
     {
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Authenticate - This endpoint is experimental</summary>
@@ -255,13 +255,13 @@ namespace Etherna.BeeNet.Clients.v1_4.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.14.8.0 (NJsonSchema v10.5.2.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class BeeGatewayClient_1_4 : IBeeGatewayClient_1_4
+    public partial class BeeGatewayClient_1_4_1 : IBeeGatewayClient_1_4_1
     {
         private string _baseUrl = "http://{apiRoot}:{port}/v1";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<System.Text.Json.JsonSerializerOptions> _settings;
 
-        public BeeGatewayClient_1_4(System.Net.Http.HttpClient httpClient)
+        public BeeGatewayClient_1_4_1(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient;
             _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings);
