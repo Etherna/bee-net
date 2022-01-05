@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class PendingTransactionDto
     {
         // Constructors.
-        public PendingTransactionDto(Clients.v1_4.DebugApi.PendingTransactions pendingTransactions)
+        public PendingTransactionDto(Clients.v1_4_1.DebugApi.PendingTransactions pendingTransactions)
         {
             if (pendingTransactions is null)
                 throw new ArgumentNullException(nameof(pendingTransactions));

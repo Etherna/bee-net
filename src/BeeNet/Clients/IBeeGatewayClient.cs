@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Etherna.BeeNet.Clients.v1_4.GatewayApi;
+using Etherna.BeeNet.Clients.v1_4_1.GatewayApi;
 using Etherna.BeeNet.DtoModel;
 
 namespace Etherna.BeeNet.Clients

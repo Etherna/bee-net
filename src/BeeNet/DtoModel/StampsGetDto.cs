@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class StampsGetDto
     {
         // Constructors.
-        public StampsGetDto(Clients.v1_4.DebugApi.Stamps stamps)
+        public StampsGetDto(Clients.v1_4_1.DebugApi.Stamps stamps)
         {
             if (stamps is null)
                 throw new ArgumentNullException(nameof(stamps));
@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.DtoModel
             ImmutableFlag = stamps.ImmutableFlag;
         }
 
-        public StampsGetDto(Clients.v1_4.DebugApi.Response37 response)
+        public StampsGetDto(Clients.v1_4_1.DebugApi.Response37 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

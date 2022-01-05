@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Etherna.BeeNet.Clients.v1_4.DebugApi;
+using Etherna.BeeNet.Clients.v1_4_1.DebugApi;
 using Etherna.BeeNet.DtoModel;
 
 namespace Etherna.BeeNet.Clients

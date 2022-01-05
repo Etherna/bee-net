@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class LastreceivedDto
     {
         // Constructors.
-        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived lastReceived)
+        public LastreceivedDto(Clients.v1_4_1.DebugApi.Lastreceived lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));
@@ -15,7 +15,7 @@ namespace Etherna.BeeNet.DtoModel
             Payout = lastReceived.Payout;
         }
 
-        public LastreceivedDto(Clients.v1_4.DebugApi.Lastreceived2 lastReceived)
+        public LastreceivedDto(Clients.v1_4_1.DebugApi.Lastreceived2 lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));

@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class RefreshDto
     {
         // Constructors.
-        public RefreshDto(Clients.v1_4.GatewayApi.Response2 response)
+        public RefreshDto(Clients.v1_4_1.GatewayApi.Response2 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

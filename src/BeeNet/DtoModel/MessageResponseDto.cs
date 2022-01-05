@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class MessageResponseDto
     {
         // Constructors.
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response9 response)
+        public MessageResponseDto(Clients.v1_4_1.DebugApi.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -14,7 +14,7 @@ namespace Etherna.BeeNet.DtoModel
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response10 response)
+        public MessageResponseDto(Clients.v1_4_1.DebugApi.Response10 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.DtoModel
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.DebugApi.Response16 response)
+        public MessageResponseDto(Clients.v1_4_1.DebugApi.Response16 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModel
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.GatewayApi.Response10 response)
+        public MessageResponseDto(Clients.v1_4_1.GatewayApi.Response10 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModel
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.v1_4.GatewayApi.Response12 response)
+        public MessageResponseDto(Clients.v1_4_1.GatewayApi.Response12 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

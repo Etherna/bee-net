@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModel
     public class BalanceDto
     {
         // Constructors.
-        public BalanceDto(Clients.v1_4.DebugApi.Balances balance)
+        public BalanceDto(Clients.v1_4_1.DebugApi.Balances balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -14,7 +14,7 @@ namespace Etherna.BeeNet.DtoModel
             Balance = balance.Balance;
         }
 
-        public BalanceDto(Clients.v1_4.DebugApi.Balances2 balance)
+        public BalanceDto(Clients.v1_4_1.DebugApi.Balances2 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
