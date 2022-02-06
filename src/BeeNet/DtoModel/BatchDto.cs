@@ -10,7 +10,7 @@ namespace Etherna.BeeNet.DtoModel
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            BatchId = response.BatchID;
+            BatchId = (string)response.BatchID;
         }
 
         public BatchDto(Clients.v1_4_1.DebugApi.Response40 response)
@@ -18,7 +18,7 @@ namespace Etherna.BeeNet.DtoModel
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            BatchId = response.BatchID;
+            BatchId = (string)response.BatchID;
         }
 
         public BatchDto(Clients.v1_4_1.DebugApi.Response41 response)
@@ -26,11 +26,10 @@ namespace Etherna.BeeNet.DtoModel
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            BatchId = response.BatchID;
+            BatchId = (string)response.BatchID;
         }
 
-
         // Properties.
-        public object BatchId { get; }
+        public string BatchId { get; }
     }
 }
