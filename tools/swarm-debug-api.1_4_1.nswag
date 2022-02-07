@@ -19,7 +19,7 @@
       "injectHttpClient": true,
       "disposeHttpClient": true,
       "protectedMethods": [],
-      "generateExceptionClasses": true,
+      "generateExceptionClasses": false,
       "exceptionClass": "BeeNetDebugApiException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
@@ -43,7 +43,9 @@
       "queryNullValue": "",
       "className": "BeeDebugClient_1_4_1",
       "operationGenerationMode": "SingleClientFromPathSegments",
-      "additionalNamespaceUsages": [],
+      "additionalNamespaceUsages": [
+        "Etherna.BeeNet.Exceptions"
+      ],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": true,
       "generateJsonMethods": false,
@@ -91,7 +93,6 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "checksumCacheEnabled": false,
       "serviceHost": null,
       "serviceSchemes": null,
       "output": "../src/BeeNet/Clients/v1_4_1/DebugApi/BeeDebugClient_1_4_1.cs",
