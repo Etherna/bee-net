@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModel
     public class VersionDto
     {
         // Constructors.
-        public VersionDto(Clients.v1_4_1.DebugApi.Response14 response)
+        public VersionDto(Clients.DebugApi.v1_2_0.Response14 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -29,18 +29,7 @@ namespace Etherna.BeeNet.DtoModel
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
         }
-        public VersionDto(Clients.v1_4_1.DebugApi.Response18 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.v1_4_1.DebugApi.Response24 response)
+        public VersionDto(Clients.DebugApi.v1_2_0.Response18 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -51,7 +40,7 @@ namespace Etherna.BeeNet.DtoModel
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.v1_4_1.GatewayApi.Response4 response)
+        public VersionDto(Clients.DebugApi.v1_2_0.Response24 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -62,7 +51,18 @@ namespace Etherna.BeeNet.DtoModel
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.v1_4_1.GatewayApi.Response9 response)
+        public VersionDto(Clients.GatewayApi.v2_0_0.Response4 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
+
+        public VersionDto(Clients.GatewayApi.v2_0_0.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

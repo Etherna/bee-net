@@ -14,14 +14,16 @@
 
 
 using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.DtoModel;
+using Etherna.BeeNet.Clients.DebugApi;
+using Etherna.BeeNet.Clients.GatewayApi;
 
 namespace Etherna.BeeNet
 {
     public interface IBeeNodeClient
     {
-        ClientVersions ClientVersion { get; }
+        DebugApiVersion DebugApiVersion { get; }
         IBeeDebugClient? DebugClient { get; }
+        GatewayApiVersion GatewayApiVersion { get; }
         IBeeGatewayClient? GatewayClient { get; }
     }
 }

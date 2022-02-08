@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModel
     public class StampsBucketsDto
     {
         // Constructors.
-        public StampsBucketsDto(Clients.v1_4_1.DebugApi.Response38 response38)
+        public StampsBucketsDto(Clients.DebugApi.v1_2_0.Response38 response38)
         {
             if (response38 is null)
                 throw new ArgumentNullException(nameof(response38));

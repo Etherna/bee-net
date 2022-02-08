@@ -12,23 +12,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System;
-
-namespace Etherna.BeeNet.DtoModel
+namespace Etherna.BeeNet.Clients.DebugApi
 {
-    public class ChequeBookAddressDto
+    public enum DebugApiVersion
     {
-        // Constructors.
-        public ChequeBookAddressDto(Clients.DebugApi.v1_2_0.Response7 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            ChequebookAddress = response.ChequebookAddress;
-        }
-
-
-        // Properties.
-        public string ChequebookAddress { get; }
+        v1_2_0
     }
 }

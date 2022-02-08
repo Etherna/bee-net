@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModel
     public class AnonymousDto
     {
         // Constructors.
-        public AnonymousDto(Clients.v1_4_1.DebugApi.Anonymous anonymous)
+        public AnonymousDto(Clients.DebugApi.v1_2_0.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));

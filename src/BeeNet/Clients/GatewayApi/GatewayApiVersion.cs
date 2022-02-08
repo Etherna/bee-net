@@ -12,23 +12,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System;
-
-namespace Etherna.BeeNet.DtoModel
+namespace Etherna.BeeNet.Clients.GatewayApi
 {
-    public class PingPongDto
+    public enum GatewayApiVersion
     {
-        // Constructors.
-        public PingPongDto(Clients.v1_4_1.DebugApi.Response17 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Rtt = response.Rtt;
-        }
-
-
-        // Properties.
-        public string Rtt { get; }
+        v2_0_0
     }
 }

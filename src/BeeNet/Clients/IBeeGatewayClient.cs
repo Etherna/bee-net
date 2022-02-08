@@ -12,11 +12,11 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients.GatewayApi.v2_0_0;
+using Etherna.BeeNet.DtoModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Etherna.BeeNet.Clients.v1_4_1.GatewayApi;
-using Etherna.BeeNet.DtoModel;
 
 namespace Etherna.BeeNet.Clients
 {
