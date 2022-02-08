@@ -12,12 +12,23 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using System;
+
 namespace Etherna.BeeNet.DtoModel
 {
-    public enum ClientVersions
+    public class PingPongDto
     {
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-        v1_4_1
-#pragma warning restore CA1707 // Identifiers should not contain underscores
+        // Constructors.
+        public PingPongDto(Clients.DebugApi.v1_2_0.Response17 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Rtt = response.Rtt;
+        }
+
+
+        // Properties.
+        public string Rtt { get; }
     }
 }

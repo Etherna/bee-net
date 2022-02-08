@@ -15,29 +15,27 @@
 using Etherna.BeeNet.DtoModel;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Clients.v1_4_1.GatewayApi
+namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
 {
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Version number should containt underscores")]
-    public class AdapterGatewayClient_1_4_1 : IBeeGatewayClient
+    public class AdapterGatewayClient_2_0_0 : IBeeGatewayClient
     {
         // Fields.
-        private readonly IBeeGatewayClient_1_4_1 beeGatewayApiClient;
+        private readonly IBeeGatewayClient_2_0_0 beeGatewayApiClient;
 
 
         // Constructors.
-        public AdapterGatewayClient_1_4_1(HttpClient httpClient, Uri baseUrl)
+        public AdapterGatewayClient_2_0_0(HttpClient httpClient, Uri baseUrl)
         {
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeGatewayApiClient = new BeeGatewayClient_1_4_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeGatewayApiClient = new BeeGatewayClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
         // Methods.

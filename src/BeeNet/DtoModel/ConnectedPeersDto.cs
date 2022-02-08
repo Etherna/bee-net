@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModel
     public class ConnectedPeersDto
     {
         // Constructors.
-        public ConnectedPeersDto(Clients.v1_4_1.DebugApi.ConnectedPeers connectedPeers)
+        public ConnectedPeersDto(Clients.DebugApi.v1_2_0.ConnectedPeers connectedPeers)
         {
             if (connectedPeers is null)
                 throw new ArgumentNullException(nameof(connectedPeers));

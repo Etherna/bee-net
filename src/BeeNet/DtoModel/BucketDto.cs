@@ -13,15 +13,13 @@
 //   limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Etherna.BeeNet.DtoModel
 {
     public class BucketDto
     {
         // Constructors.
-        public BucketDto(Clients.v1_4_1.DebugApi.Buckets buckets)
+        public BucketDto(Clients.DebugApi.v1_2_0.Buckets buckets)
         {
             if (buckets is null)
                 throw new ArgumentNullException(nameof(buckets));

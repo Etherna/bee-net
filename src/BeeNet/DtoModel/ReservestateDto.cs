@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModel
     public class ReserveStateDto
     {
         // Constructors.
-        public ReserveStateDto(Clients.v1_4_1.DebugApi.Response12 response)
+        public ReserveStateDto(Clients.DebugApi.v1_2_0.Response12 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

@@ -15,26 +15,24 @@
 using Etherna.BeeNet.DtoModel;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Clients.v1_4_1.DebugApi
+namespace Etherna.BeeNet.Clients.DebugApi.v1_2_0
 {
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Version number should containt underscores")]
-    public class AdapterBeeDebugVersion_1_4_1 : IBeeDebugClient
+    public class AdapterBeeDebugVersion_1_2_0 : IBeeDebugClient
     {
         // Fields.
-        private readonly IBeeDebugClient_1_4_1 beeDebugClient;
+        private readonly IBeeDebugClient_1_2_0 beeDebugClient;
 
         // Constructors.
-        public AdapterBeeDebugVersion_1_4_1(HttpClient httpClient, Uri baseUrl)
+        public AdapterBeeDebugVersion_1_2_0(HttpClient httpClient, Uri baseUrl)
         {
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeDebugClient = new BeeDebugClient_1_4_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeDebugClient = new BeeDebugClient_1_2_0(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
         // Methods.
