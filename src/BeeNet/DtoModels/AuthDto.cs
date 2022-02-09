@@ -12,17 +12,23 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+using System;
 
-namespace Etherna.BeeNet
+namespace Etherna.BeeNet.DtoModels
 {
-    public interface IBeeNodeClient
+    public class AuthDto
     {
-        DebugApiVersion DebugApiVersion { get; }
-        IBeeDebugClient? DebugClient { get; }
-        GatewayApiVersion GatewayApiVersion { get; }
-        IBeeGatewayClient? GatewayClient { get; }
+        // Constructors.
+        public AuthDto(Clients.GatewayApi.V2_0_0.Response response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Key = response.Key;
+        }
+
+
+        // Properties.
+        public string Key { get; }
     }
 }

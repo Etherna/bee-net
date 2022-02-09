@@ -12,17 +12,16 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients;
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Etherna.BeeNet
+namespace Etherna.BeeNet.DtoModels
 {
-    public interface IBeeNodeClient
+    public enum BeeModeDto
     {
-        DebugApiVersion DebugApiVersion { get; }
-        IBeeDebugClient? DebugClient { get; }
-        GatewayApiVersion GatewayApiVersion { get; }
-        IBeeGatewayClient? GatewayClient { get; }
+        Light,
+        Full,
+        Dev,
     }
 }
