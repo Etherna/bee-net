@@ -12,11 +12,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
-
-using System.Diagnostics.CodeAnalysis;
-
-[assembly: SuppressMessage("Usage", "CA1707:Remove the underscores from namespace name", Justification = "Version number should containt underscores", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.Clients")]
+namespace Etherna.BeeNet.Clients.GatewayApi
+{
+    public enum GatewayApiVersion
+    {
+        v2_0_0
+    }
+}

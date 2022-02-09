@@ -12,11 +12,23 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+using System;
 
-using System.Diagnostics.CodeAnalysis;
+namespace Etherna.BeeNet.DtoModels
+{
+    public class StewardShipGetDto
+    {
+        // Constructors.
+        public StewardShipGetDto(Clients.GatewayApi.V2_0_0.Response17 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
 
-[assembly: SuppressMessage("Usage", "CA1707:Remove the underscores from namespace name", Justification = "Version number should containt underscores", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.Clients")]
+            IsRetrievable = response.IsRetrievable;
+        }
+
+
+        // Properties.
+        public bool IsRetrievable { get; }
+    }
+}

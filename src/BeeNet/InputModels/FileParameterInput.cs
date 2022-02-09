@@ -12,11 +12,23 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+using System.IO;
 
-using System.Diagnostics.CodeAnalysis;
+namespace Etherna.BeeNet.InputModels
+{
+    public class FileParameterInput
+    {
+        // Constructors.
+        public FileParameterInput(Stream data, string? fileName = null, string? contentType = null)
+        {
+            Data = data;
+            FileName = fileName;
+            ContentType = contentType;
+        }
 
-[assembly: SuppressMessage("Usage", "CA1707:Remove the underscores from namespace name", Justification = "Version number should containt underscores", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.Clients")]
+        // Properties.
+        public Stream Data { get; private set; }
+        public string? FileName { get; private set; }
+        public string? ContentType { get; private set; }
+    }
+}

@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - dev
+    - 'hotfix/**'
 
 jobs:
   build-test-package:
