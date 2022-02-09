@@ -12,11 +12,23 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-namespace Etherna.BeeNet.Clients.DebugApi
+using System;
+
+namespace Etherna.BeeNet.DtoModels
 {
-    public enum DebugApiVersion
+    public class StewardShipGetDto
     {
-        v1_2_0,
-        v1_2_1
+        // Constructors.
+        public StewardShipGetDto(Clients.GatewayApi.V2_0_0.Response17 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            IsRetrievable = response.IsRetrievable;
+        }
+
+
+        // Properties.
+        public bool IsRetrievable { get; }
     }
 }

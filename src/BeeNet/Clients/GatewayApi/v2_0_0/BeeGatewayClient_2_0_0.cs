@@ -17,7 +17,7 @@ using Etherna.BeeNet.Exceptions;
 #pragma warning disable 3016 // Disable "CS3016 Arrays as attribute arguments is not CLS-compliant"
 #pragma warning disable 8603 // Disable "CS8603 Possible null reference return"
 
-namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
+namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
 {
     using System = global::System;
 
@@ -84,6 +84,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, int? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -901,6 +902,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, int? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -3468,10 +3470,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
     public partial class Body
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
         public string Role { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Expiry")]
+        /// <summary>
+        /// Expiration time in seconds
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("expiry")]
         public int Expiry { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3489,10 +3495,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
     public partial class Body2
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
         public string Role { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Expiry")]
+        /// <summary>
+        /// Expiration time in seconds
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("expiry")]
         public int Expiry { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3548,7 +3558,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
     public partial class Response
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Key")]
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
         public string Key { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3566,7 +3576,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.v2_0_0
     public partial class Response2
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Key")]
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
         public string Key { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();

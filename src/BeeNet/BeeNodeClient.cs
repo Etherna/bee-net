@@ -12,11 +12,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.DebugApi.v1_2_0;
 using Etherna.BeeNet.Clients.GatewayApi;
-using Etherna.BeeNet.Clients.GatewayApi.v2_0_0;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -48,21 +45,13 @@ namespace Etherna.BeeNet
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = debugApiVersion switch
-                {
-                    DebugApiVersion.v1_2_0 => new AdapterBeeDebugVersion_1_2_0(httpClient, DebugApiUrl),
-                    _ => throw new NotSupportedException($"DebugClient {nameof(debugApiVersion)} not supported"),
-                };
+                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
             }
 
             if (gatewayApiPort is not null)
             {
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = gatewayApiVersion switch
-                {
-                    GatewayApiVersion.v2_0_0 => new AdapterGatewayClient_2_0_0(httpClient, GatewayApiUrl),
-                    _ => throw new NotSupportedException($"GatewayClient {nameof(gatewayApiVersion)} not supported"),
-                };
+                GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
             }
         }
 
