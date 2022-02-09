@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.DtoModels
             if (validBatch is null)
                 throw new ArgumentNullException(nameof(validBatch));
 
-            BatchID = validBatch.BatchID;
+            Id = validBatch.BatchID;
             BatchTTL = validBatch.BatchTTL;
             BlockNumber = validBatch.BlockNumber;
             BucketDepth = validBatch.BucketDepth;
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.DtoModels
             Value = validBatch.Value;
         }
 
-        public string BatchID { get; }
+        public string Id { get; }
         public int BatchTTL { get; }
         public int BlockNumber { get; }
         public int BucketDepth { get; }

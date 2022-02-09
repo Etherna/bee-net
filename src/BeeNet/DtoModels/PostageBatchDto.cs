@@ -13,99 +13,100 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
+using System.Text.Json;
 
 namespace Etherna.BeeNet.DtoModels
 {
-    public class StampsGetDto
+    public class PostageBatchDto
     {
         // Constructors.
-        public StampsGetDto(Clients.DebugApi.V1_2_0.Stamps batch)
+        public PostageBatchDto(Clients.DebugApi.V1_2_0.Stamps batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             Exists = batch.Exists;
             BatchTTL = batch.BatchTTL;
-            BatchID = batch.BatchID;
+            Id = ((JsonElement)batch.BatchID).ToString();
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = batch.Amount;
+            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public StampsGetDto(Clients.DebugApi.V1_2_0.Response37 batch)
+        public PostageBatchDto(Clients.DebugApi.V1_2_0.Response37 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             Exists = batch.Exists;
             BatchTTL = batch.BatchTTL;
-            BatchID = batch.BatchID;
+            Id = ((JsonElement)batch.BatchID).ToString();
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = batch.Amount;
+            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public StampsGetDto(Clients.DebugApi.V1_2_1.Stamps batch)
+        public PostageBatchDto(Clients.DebugApi.V1_2_1.Stamps batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             Exists = batch.Exists;
             BatchTTL = batch.BatchTTL;
-            BatchID = batch.BatchID;
+            Id = ((JsonElement)batch.BatchID).ToString();
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = batch.Amount;
+            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public StampsGetDto(Clients.DebugApi.V1_2_1.Response38 batch)
+        public PostageBatchDto(Clients.DebugApi.V1_2_1.Response38 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             Exists = batch.Exists;
             BatchTTL = batch.BatchTTL;
-            BatchID = batch.BatchID;
+            Id = batch.BatchID;
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = batch.Amount;
+            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
         }
 
         // Properties.
-        public bool Exists { get; }
+        public string Id { get; }
+        public long Amount { get; }
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
         public int BatchTTL { get; }
-        public object BatchID { get; }
-        public int Utilization { get; }
+        public int BlockNumber { get; }
+        public int BucketDepth { get; }
+        public int Depth { get; }
+        public bool Exists { get; }
+        public bool ImmutableFlag { get; }
+        public string Label { get; }
         /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
         public bool Usable { get; }
-        public string Label { get; }
-        public int Depth { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Amount { get; }
-        public int BucketDepth { get; }
-        public int BlockNumber { get; }
-        public bool ImmutableFlag { get; }
+        public int Utilization { get; }
     }
 
 }

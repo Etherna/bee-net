@@ -179,11 +179,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<StampsGetDto>> GetAllStampsAsync() =>
+        public async Task<IEnumerable<PostageBatchDto>> GetAllPostageBatchesAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new StampsGetDto(i)),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new StampsGetDto(i)),
+                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
+                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -291,11 +291,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<StampsGetDto> GetPostageBatchStatusAsync(string id) =>
+        public async Task<PostageBatchDto> GetPostageBatchStatusAsync(string id) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => new StampsGetDto(await beeDebugClient_1_2_0.StampsGetAsync(id).ConfigureAwait(false)),
-                DebugApiVersion.v1_2_1 => new StampsGetDto(await beeDebugClient_1_2_1.StampsGetAsync(id).ConfigureAwait(false)),
+                DebugApiVersion.v1_2_0 => new PostageBatchDto(await beeDebugClient_1_2_0.StampsGetAsync(id).ConfigureAwait(false)),
+                DebugApiVersion.v1_2_1 => new PostageBatchDto(await beeDebugClient_1_2_1.StampsGetAsync(id).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

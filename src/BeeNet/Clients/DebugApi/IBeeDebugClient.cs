@@ -130,10 +130,10 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<SettlementDto> GetAllSettlementsAsync();
 
-        /// <summary>Get all available stamps for this node</summary>
-        /// <returns>Returns an array of all available postage batches.</returns>
-        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<StampsGetDto>> GetAllStampsAsync();
+        /// <summary>Get all available postage batches for this node</summary>
+        /// <returns>List of all available postage batches</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred</exception>
+        Task<IEnumerable<PostageBatchDto>> GetAllPostageBatchesAsync();
 
         /// <summary>Get time based settlements with all known peers and total amount sent or received</summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
@@ -211,7 +211,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<StampsGetDto> GetPostageBatchStatusAsync(string id);
+        Task<PostageBatchDto> GetPostageBatchStatusAsync(string id);
 
         /// <summary>Get readiness state of node</summary>
         /// <returns>Health State of node</returns>
