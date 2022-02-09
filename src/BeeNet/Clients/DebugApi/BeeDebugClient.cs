@@ -139,6 +139,14 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
+        public async Task<IEnumerable<ValidPostageBatchDto>> GetAllBatchesFromAllNodesAsync() =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v1_2_0 => throw new InvalidOperationException($"Debug API {CurrentApiVersion} doesn't implement this function"),
+                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.BatchesAsync().ConfigureAwait(false)).Stamps.Select(i => new ValidPostageBatchDto(i)),
+                _ => throw new InvalidOperationException()
+            };
+
         public async Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync() =>
             CurrentApiVersion switch
             {
@@ -264,6 +272,14 @@ namespace Etherna.BeeNet.Clients.DebugApi
             {
                 DebugApiVersion.v1_2_0 => new VersionDto(await beeDebugClient_1_2_0.HealthAsync().ConfigureAwait(false)),
                 DebugApiVersion.v1_2_1 => new VersionDto(await beeDebugClient_1_2_1.HealthAsync().ConfigureAwait(false)),
+                _ => throw new InvalidOperationException()
+            };
+
+        public async Task<NodeInfoDto> GetNodeInfoAsync() =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v1_2_0 => throw new InvalidOperationException($"Debug API {CurrentApiVersion} doesn't implement this function"),
+                DebugApiVersion.v1_2_1 => new NodeInfoDto(await beeDebugClient_1_2_1.NodeAsync().ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

@@ -294,7 +294,7 @@ paths:
             "swarm-tag":
               $ref: "SwarmCommon.yaml#/components/headers/SwarmTag"
             "etag":
-              $ref: "SwarmCommon.yaml#/components/headers/ETag" 
+              $ref: "SwarmCommon.yaml#/components/headers/ETag"
           content:
             application/json:
               schema:
@@ -892,3 +892,14 @@ paths:
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
           description: Default response
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: SecurityToken

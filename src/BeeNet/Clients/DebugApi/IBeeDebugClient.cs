@@ -102,6 +102,14 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<IEnumerable<BalanceDto>> GetAllBalancesAsync();
 
+        /// <summary>
+        /// Get all globally available batches that were purchased by all nodes.
+        /// </summary>
+        /// <returns></returns>
+        /// <returns>Returns an array of all available and currently valid postage batches.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<IEnumerable<ValidPostageBatchDto>> GetAllBatchesFromAllNodesAsync();
+
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
@@ -186,6 +194,13 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<VersionDto> GetHealthAsync();
+
+        /// <summary>
+        /// Get information about the node
+        /// </summary>
+        /// <returns>Information about the node</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<NodeInfoDto> GetNodeInfoAsync();
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>

@@ -5279,17 +5279,21 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.7.0 (NJsonSchema v10.6.7.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class Response38
+    public partial class Response38 : Anonymous2
     {
+        /// <summary>
+        /// Internal debugging property. It indicates if the batch is expired.
+        /// </summary>
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
+        [System.Text.Json.Serialization.JsonPropertyName("exists")]
+        public bool Exists { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
+        /// <summary>
+        /// The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
+        public int BatchTTL { get; set; } = default!;
 
     }
 
@@ -7055,8 +7059,62 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.7.0 (NJsonSchema v10.6.7.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class Stamps
+    public partial class Stamps : Anonymous3
     {
+        /// <summary>
+        /// Internal debugging property. It indicates if the batch is expired.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("exists")]
+        public bool Exists { get; set; } = default!;
+
+        /// <summary>
+        /// The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
+        public int BatchTTL { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.7.0 (NJsonSchema v10.6.7.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class Anonymous2
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
+        public string BatchID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("utilization")]
+        public int Utilization { get; set; } = default!;
+
+        /// <summary>
+        /// Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("usable")]
+        public bool Usable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("label")]
+        public string Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; } = default!;
+
+        /// <summary>
+        /// Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public string Amount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
+        public int BucketDepth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockNumber")]
+        public int BlockNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
+        public bool ImmutableFlag { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -7227,6 +7285,56 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
 
         [System.Text.Json.Serialization.JsonPropertyName("payout")]
         public string Payout { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties; }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.7.0 (NJsonSchema v10.6.7.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class Anonymous3
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
+        public object BatchID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("utilization")]
+        public int Utilization { get; set; } = default!;
+
+        /// <summary>
+        /// Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("usable")]
+        public bool Usable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("label")]
+        public string Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; } = default!;
+
+        /// <summary>
+        /// Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public string Amount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
+        public int BucketDepth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockNumber")]
+        public int BlockNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
+        public bool ImmutableFlag { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
