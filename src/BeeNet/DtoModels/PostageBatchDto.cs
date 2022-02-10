@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            PlurAmount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            PlurAmount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.DtoModels
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            PlurAmount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.DtoModels
             Usable = batch.Usable;
             Label = batch.Label;
             Depth = batch.Depth;
-            Amount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            PlurAmount = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
@@ -95,7 +95,6 @@ namespace Etherna.BeeNet.DtoModels
 
         // Properties.
         public string Id { get; }
-        public long Amount { get; }
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
         public int BatchTTL { get; }
         public int BlockNumber { get; }
@@ -104,6 +103,7 @@ namespace Etherna.BeeNet.DtoModels
         public bool Exists { get; }
         public bool ImmutableFlag { get; }
         public string Label { get; }
+        public long PlurAmount { get; }
         /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
         public bool Usable { get; }
         public int Utilization { get; }
