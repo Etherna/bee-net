@@ -12,14 +12,14 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi.V1_2_1;
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
     public class ValidPostageBatchDto
     {
-        public ValidPostageBatchDto(Stamps2 validBatch)
+        public ValidPostageBatchDto(Clients.DebugApi.V1_2_1.Stamps2 validBatch)
         {
             if (validBatch is null)
                 throw new ArgumentNullException(nameof(validBatch));
@@ -30,8 +30,8 @@ namespace Etherna.BeeNet.DtoModels
             BucketDepth = validBatch.BucketDepth;
             Depth = validBatch.Depth;
             ImmutableFlag = validBatch.ImmutableFlag;
+            NormalisedBalance = long.Parse(validBatch.Value, CultureInfo.InvariantCulture);
             Owner = validBatch.Owner;
-            Value = validBatch.Value;
         }
 
         public string Id { get; }
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.DtoModels
         /// Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)
         /// </summary>
         public bool ImmutableFlag { get; }
+        public long NormalisedBalance { get; }
         public string Owner { get; }
-        public string Value { get; }
     }
 }

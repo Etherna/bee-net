@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -27,12 +28,12 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = response.TransactionHash;
             To = response.To;
             Nonce = response.Nonce;
-            GasPrice = response.GasPrice;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = response.GasLimit;
             Data = response.Data;
             Created = response.Created;
             Description = response.Description;
-            Value = response.Value;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
         public TransactionsDto(Clients.DebugApi.V1_2_1.Response34 response)
@@ -43,12 +44,12 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = response.TransactionHash;
             To = response.To;
             Nonce = response.Nonce;
-            GasPrice = response.GasPrice;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = response.GasLimit;
             Data = response.Data;
             Created = response.Created;
             Description = response.Description;
-            Value = response.Value;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
         // Properties.
@@ -56,12 +57,12 @@ namespace Etherna.BeeNet.DtoModels
         public string To { get; }
         public int Nonce { get; }
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string GasPrice { get; }
+        public long GasPrice { get; }
         public int GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
         /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Value { get; }
+        public long Value { get; }
     }
 }
