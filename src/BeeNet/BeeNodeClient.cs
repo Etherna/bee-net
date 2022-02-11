@@ -39,8 +39,6 @@ namespace Etherna.BeeNet
             DebugApiVersion debugApiVersion = DebugApiVersion.v1_2_0)
         {
             httpClient = new HttpClient();
-            DebugApiVersion = debugApiVersion;
-            GatewayApiVersion = gatewayApiVersion;
 
             if (debugApiPort is not null)
             {
@@ -76,10 +74,8 @@ namespace Etherna.BeeNet
 
         // Properties.
         public Uri? DebugApiUrl { get; }
-        public DebugApiVersion DebugApiVersion { get; }
         public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
-        public GatewayApiVersion GatewayApiVersion { get; }
         public IBeeGatewayClient? GatewayClient { get; }
 
         // Helpers.

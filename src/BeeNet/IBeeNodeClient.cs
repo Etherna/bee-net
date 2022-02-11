@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.Clients.GatewayApi;
 
@@ -20,9 +19,7 @@ namespace Etherna.BeeNet
 {
     public interface IBeeNodeClient
     {
-        DebugApiVersion DebugApiVersion { get; }
         IBeeDebugClient? DebugClient { get; }
-        GatewayApiVersion GatewayApiVersion { get; }
         IBeeGatewayClient? GatewayClient { get; }
     }
 }
