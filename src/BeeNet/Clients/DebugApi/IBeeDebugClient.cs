@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns></returns>
         /// <returns>Returns an array of all available and currently valid postage batches.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<ValidPostageBatchDto>> GetAllValidPostageBatchesFromAllNodesAsync();
+        Task<IEnumerable<PostageBatchDto>> GetAllValidPostageBatchesFromAllNodesAsync();
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>

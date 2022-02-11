@@ -56,13 +56,11 @@ namespace Etherna.BeeNet.DtoModels
         public string TransactionHash { get; }
         public string To { get; }
         public int Nonce { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
         public long GasPrice { get; }
         public int GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
         public long Value { get; }
     }
 }

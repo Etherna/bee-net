@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -25,7 +26,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(balance));
 
             Peer = balance.Peer;
-            Balance = balance.Balance;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
         public BalanceDto(Clients.DebugApi.V1_2_0.Balances2 balance)
@@ -34,7 +35,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(balance));
 
             Peer = balance.Peer;
-            Balance = balance.Balance;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
         public BalanceDto(Clients.DebugApi.V1_2_1.Balances balance)
@@ -43,7 +44,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(balance));
 
             Peer = balance.Peer;
-            Balance = balance.Balance;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
         public BalanceDto(Clients.DebugApi.V1_2_1.Balances2 balance)
@@ -52,12 +53,11 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(balance));
 
             Peer = balance.Peer;
-            Balance = balance.Balance;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string Peer { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Balance { get; }
+        public long Balance { get; }
     }
 }

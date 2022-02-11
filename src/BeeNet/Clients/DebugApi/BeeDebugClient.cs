@@ -179,11 +179,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<ValidPostageBatchDto>> GetAllValidPostageBatchesFromAllNodesAsync() =>
+        public async Task<IEnumerable<PostageBatchDto>> GetAllValidPostageBatchesFromAllNodesAsync() =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => throw new InvalidOperationException($"Debug API {CurrentApiVersion} doesn't implement this function"),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.BatchesAsync().ConfigureAwait(false)).Stamps.Select(i => new ValidPostageBatchDto(i)),
+                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.BatchesAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
 

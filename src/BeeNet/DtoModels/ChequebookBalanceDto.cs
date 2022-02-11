@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -24,8 +25,8 @@ namespace Etherna.BeeNet.DtoModels
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalBalance = response.TotalBalance;
-            AvailableBalance = response.AvailableBalance;
+            TotalBalance = long.Parse(response.TotalBalance, CultureInfo.InvariantCulture);
+            AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
         }
 
         public ChequeBookBalanceDto(Clients.DebugApi.V1_2_1.Response8 response)
@@ -33,13 +34,12 @@ namespace Etherna.BeeNet.DtoModels
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalBalance = response.TotalBalance;
-            AvailableBalance = response.AvailableBalance;
+            TotalBalance = long.Parse(response.TotalBalance, CultureInfo.InvariantCulture);
+            AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
         }
 
         // Properties.
-        public string TotalBalance { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string AvailableBalance { get; }
+        public long TotalBalance { get; }
+        public long AvailableBalance { get; }
     }
 }
