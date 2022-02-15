@@ -46,11 +46,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
 
         // Methods.
         public async Task<string> BuyPostageBatchAsync(
-            int amount,
+            long amount,
             int depth,
             string? label = null,
             bool? immutable = null,
-            int? gasPrice = null) =>
+            long? gasPrice = null) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => ((JsonElement)(await beeDebugClient_1_2_0.StampsPostAsync(amount, depth, label, immutable, gasPrice).ConfigureAwait(false)).BatchID).ToString(),
@@ -60,7 +60,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
 
         public async Task<string> CashoutChequeForPeerAsync(
             string peerId,
-            int? gasPrice = null,
+            long? gasPrice = null,
             long? gasLimit = null) =>
             CurrentApiVersion switch
             {
@@ -95,17 +95,17 @@ namespace Etherna.BeeNet.Clients.DebugApi
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,
-            int? gasPrice = null) =>
+            long? gasPrice = null) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.TransactionsDeleteAsync(txHash).ConfigureAwait(false)).TransactionHash,
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.TransactionsDeleteAsync(txHash).ConfigureAwait(false)).TransactionHash,
+                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.TransactionsDeleteAsync(txHash, gasPrice).ConfigureAwait(false)).TransactionHash,
+                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.TransactionsDeleteAsync(txHash, gasPrice).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<string> DepositIntoChequeBookAsync(
-            int amount,
-            int? gasPrice = null) =>
+            long amount,
+            long? gasPrice = null) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,
@@ -389,7 +389,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
 
         public async Task<string> TopUpPostageBatchAsync(
             string id,
-            int amount) =>
+            long amount) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => ((JsonElement)(await beeDebugClient_1_2_0.StampsTopupAsync(id, amount).ConfigureAwait(false)).BatchID).ToString(),
@@ -406,8 +406,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
             };
 
         public async Task<string> WithdrawFromChequeBookAsync(
-            int amount,
-            int? gasPrice = null) =>
+            long amount,
+            long? gasPrice = null) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,

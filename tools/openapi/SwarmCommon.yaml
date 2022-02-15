@@ -185,11 +185,13 @@ components:
 
     GasLimit:
       type: integer
+      format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
       type: integer
+      format: int64
 
     Hash:
       type: object
@@ -592,6 +594,7 @@ components:
           $ref: "#/components/schemas/BigInt"
         gasLimit:
           type: integer
+          format: int64
         data:
           type: string
         created:
