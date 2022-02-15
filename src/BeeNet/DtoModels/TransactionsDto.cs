@@ -57,7 +57,7 @@ namespace Etherna.BeeNet.DtoModels
         public string To { get; }
         public int Nonce { get; }
         public long GasPrice { get; }
-        public int GasLimit { get; }
+        public long GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
