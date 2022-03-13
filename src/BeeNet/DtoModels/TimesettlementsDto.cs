@@ -43,6 +43,17 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
+        public TimeSettlementsDto(Clients.DebugApi.V2_0_0.Response22 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TotalReceived = response.TotalReceived;
+            TotalSent = response.TotalSent;
+            Settlements = response.Settlements
+                .Select(i => new SettlementDataDto(i));
+        }
+
         // Properties.
         public int TotalReceived { get; }
         public int TotalSent { get; }

@@ -110,6 +110,67 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
+        public PostageBatchDto(Clients.DebugApi.V2_0_0.Stamps batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            //TODO haven't any data
+            /*
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            BatchTTL = batch.BatchTTL;
+            Exists = batch.Exists;
+            Id = ((JsonElement)batch.BatchID).ToString();
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;*/
+        }
+
+        public PostageBatchDto(Clients.DebugApi.V2_0_0.Response38 batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+            //TODO haven't any data
+            /*
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            BatchTTL = batch.BatchTTL;
+            Exists = batch.Exists;
+            Id = batch.BatchID;
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;
+            */
+        }
+
+        public PostageBatchDto(Clients.DebugApi.V2_0_0.Batches batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            BatchTTL = batch.BatchTTL;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;
+
+            //TODO missing data 
+            /*
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            Exists = batch.Exists;
+            Id = ((JsonElement)batch.BatchID).ToString();
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;*/
+        }
+
         // Properties.
         public string Id { get; }
         public long? AmountPaid { get; }

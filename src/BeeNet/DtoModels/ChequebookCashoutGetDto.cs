@@ -44,6 +44,18 @@ namespace Etherna.BeeNet.DtoModels
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
+        public ChequeBookCashoutGetDto(Clients.DebugApi.V2_0_0.Response26 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Peer = response.Peer;
+            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            TransactionHash = response.TransactionHash;
+            Result = new ResultChequeBookDto(response.Result);
+            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public string Peer { get; }
         public LastCashedChequeDto LastCashedCheque { get; }

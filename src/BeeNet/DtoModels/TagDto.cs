@@ -51,6 +51,22 @@ namespace Etherna.BeeNet.DtoModels
             StartedAt = response.StartedAt;
         }
 
+        public TagDto(Clients.DebugApi.V2_0_0.Response32 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Total = response.Total;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
+            Synced = response.Synced;
+            Uid = response.Uid;
+            Address = response.Address;
+            StartedAt = response.StartedAt;
+        }
+
         // Properties.
         public int Total { get; }
         public int Split { get; }
