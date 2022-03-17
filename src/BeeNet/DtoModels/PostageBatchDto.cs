@@ -115,8 +115,6 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            //TODO haven't any data
-            /*
             AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
@@ -127,19 +125,18 @@ namespace Etherna.BeeNet.DtoModels
             Depth = batch.Depth;
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;*/
+            ImmutableFlag = batch.ImmutableFlag;
         }
 
         public PostageBatchDto(Clients.DebugApi.V2_0_0.Response38 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
-            //TODO haven't any data
-            /*
+            
             AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
-            Id = batch.BatchID;
+            Id = (string)batch.BatchID;
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
@@ -147,28 +144,6 @@ namespace Etherna.BeeNet.DtoModels
             BucketDepth = batch.BucketDepth;
             BlockNumber = batch.BlockNumber;
             ImmutableFlag = batch.ImmutableFlag;
-            */
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V2_0_0.Batches batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            BatchTTL = batch.BatchTTL;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-
-            //TODO missing data 
-            /*
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            Exists = batch.Exists;
-            Id = ((JsonElement)batch.BatchID).ToString();
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;*/
         }
 
         // Properties.
