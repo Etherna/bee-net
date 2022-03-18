@@ -35,8 +35,8 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v2_0_0,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v1_2_0)
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_0,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_0)
         {
             httpClient = new HttpClient();
 
