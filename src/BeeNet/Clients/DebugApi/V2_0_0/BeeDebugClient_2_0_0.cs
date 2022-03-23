@@ -4424,7 +4424,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peers")]
-        public System.Collections.Generic.ICollection<Peers>? Peers { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Peers> Peers { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -4720,7 +4720,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peers")]
-        public System.Collections.Generic.ICollection<Peers2>? Peers { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Peers2> Peers { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -4846,7 +4846,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public int TotalSent { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("settlements")]
-        public System.Collections.Generic.ICollection<Settlements>? Settlements { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Settlements> Settlements { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -4870,7 +4870,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public int TotalSent { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("settlements")]
-        public System.Collections.Generic.ICollection<Settlements2>? Settlements { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Settlements2> Settlements { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -5058,7 +5058,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("lastcheques")]
-        public System.Collections.Generic.ICollection<Lastcheques>? Lastcheques { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Lastcheques> Lastcheques { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -5157,7 +5157,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("pendingTransactions")]
-        public System.Collections.Generic.ICollection<PendingTransactions>? PendingTransactions { get; set; } = default!;
+        public System.Collections.Generic.ICollection<PendingTransactions> PendingTransactions { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -5265,7 +5265,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("stamps")]
-        public System.Collections.Generic.ICollection<Stamps>? Stamps { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Stamps> Stamps { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -5307,7 +5307,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public int BucketUpperBound { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("buckets")]
-        public System.Collections.Generic.ICollection<Buckets>? Buckets { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Buckets> Buckets { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -5382,7 +5382,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batches")]
-        public System.Collections.Generic.ICollection<Batches>? Batches { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Batches> Batches { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 

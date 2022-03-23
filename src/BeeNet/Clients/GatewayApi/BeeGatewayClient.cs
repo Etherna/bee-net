@@ -130,7 +130,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.PinsGetAsync().ConfigureAwait(false)).Addresses ?? Array.Empty<string>(),
-                GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.PinsGetAsync().ConfigureAwait(false)).References ?? Array.Empty<string>(),
+                GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.PinsGetAsync().ConfigureAwait(false)).References,
                 _ => throw new InvalidOperationException()
             };
 

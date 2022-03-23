@@ -3842,7 +3842,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("references")]
-        public System.Collections.Generic.ICollection<string>? References { get; set; } = default!;
+        public System.Collections.Generic.ICollection<string> References { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 

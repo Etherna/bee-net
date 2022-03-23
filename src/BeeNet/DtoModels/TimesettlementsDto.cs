@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.DtoModels
 
             TotalReceived = response.TotalReceived;
             TotalSent = response.TotalSent;
-            Settlements = response.Settlements
+            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_0.Settlements2>())
                 .Select(i => new SettlementDataDto(i));
         }
 
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.DtoModels
 
             TotalReceived = response.TotalReceived;
             TotalSent = response.TotalSent;
-            Settlements = response.Settlements
+            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_1.Settlements2>())
                 .Select(i => new SettlementDataDto(i));
         }
 

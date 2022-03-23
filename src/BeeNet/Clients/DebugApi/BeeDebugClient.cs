@@ -156,8 +156,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques ?? Array.Empty<V1_2_0.Lastcheques>()).Select(i => new ChequeBookChequeGetDto(i)),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques ?? Array.Empty<V1_2_1.Lastcheques>()).Select(i => new ChequeBookChequeGetDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
                 _ => throw new InvalidOperationException()
             };
@@ -174,8 +174,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.PeersGetAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.PeersGetAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.PeersGetAsync().ConfigureAwait(false)).Peers ?? Array.Empty<V1_2_0.Peers2>()).Select(i => i.Address),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.PeersGetAsync().ConfigureAwait(false)).Peers ?? Array.Empty<V1_2_1.Peers2>()).Select(i => i.Address),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.PeersGetAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
                 _ => throw new InvalidOperationException()
             };
@@ -202,7 +202,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => throw new InvalidOperationException($"Debug API {CurrentApiVersion} doesn't implement this function"),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.BatchesAsync().ConfigureAwait(false)).Stamps.Select(i => new BatchDto(i)),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.BatchesAsync().ConfigureAwait(false)).Stamps ?? Array.Empty<Stamps2>()).Select(i => new BatchDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.BatchesAsync().ConfigureAwait(false)).Batches.Select(i => new BatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
@@ -219,8 +219,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.BlocklistAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.BlocklistAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.BlocklistAsync().ConfigureAwait(false)).Peers ?? Array.Empty<V1_2_0.Peers>()).Select(i => i.Address),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.BlocklistAsync().ConfigureAwait(false)).Peers ?? Array.Empty<V1_2_1.Peers>()).Select(i => i.Address),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.BlocklistAsync().ConfigureAwait(false)).Peers.Select(i => i.Address),
                 _ => throw new InvalidOperationException()
             };
@@ -309,8 +309,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.StampsGetAsync().ConfigureAwait(false)).Stamps ?? Array.Empty<V1_2_0.Stamps>()).Select(i => new PostageBatchDto(i)),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.StampsGetAsync().ConfigureAwait(false)).Stamps ?? Array.Empty<V1_2_1.Stamps>()).Select(i => new PostageBatchDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
@@ -318,8 +318,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<PendingTransactionDto>> GetPendingTransactionsAsync() =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.TransactionsGetAsync().ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.TransactionsGetAsync().ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.TransactionsGetAsync().ConfigureAwait(false)).PendingTransactions ?? Array.Empty<V1_2_0.PendingTransactions>()).Select(i => new PendingTransactionDto(i)),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.TransactionsGetAsync().ConfigureAwait(false)).PendingTransactions ?? Array.Empty<V1_2_1.PendingTransactions>()).Select(i => new PendingTransactionDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.TransactionsGetAsync().ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
                 _ => throw new InvalidOperationException()
             };
@@ -354,8 +354,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(string address) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.SettlementsGetAsync().ConfigureAwait(false)).Settlements.Select(i => new SettlementDataDto(i)),
-                DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.SettlementsGetAsync().ConfigureAwait(false)).Settlements.Select(i => new SettlementDataDto(i)),
+                DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.SettlementsGetAsync().ConfigureAwait(false)).Settlements ?? Array.Empty<V1_2_0.Settlements>()).Select(i => new SettlementDataDto(i)),
+                DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.SettlementsGetAsync().ConfigureAwait(false)).Settlements ?? Array.Empty<V1_2_1.Settlements>()).Select(i => new SettlementDataDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.SettlementsGetAsync().ConfigureAwait(false)).Settlements.Select(i => new SettlementDataDto(i)),
                 _ => throw new InvalidOperationException()
             };
