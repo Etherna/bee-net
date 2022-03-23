@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             Depth = response.Depth;
             BucketDepth = response.BucketDepth;
             BucketUpperBound = response.BucketUpperBound;
-            Buckets = response.Buckets?.Select(i => new BucketDto(i));
+            Buckets = (response.Buckets ?? Array.Empty<Clients.DebugApi.V1_2_0.Buckets>()).Select(i => new BucketDto(i));
         }
 
         public StampsBucketsDto(Clients.DebugApi.V1_2_1.Response39 response)
@@ -40,13 +40,24 @@ namespace Etherna.BeeNet.DtoModels
             Depth = response.Depth;
             BucketDepth = response.BucketDepth;
             BucketUpperBound = response.BucketUpperBound;
-            Buckets = response.Buckets?.Select(i => new BucketDto(i));
+            Buckets = (response.Buckets ?? Array.Empty<Clients.DebugApi.V1_2_1.Buckets>()).Select(i => new BucketDto(i));
+        }
+
+        public StampsBucketsDto(Clients.DebugApi.V2_0_0.Response39 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Depth = response.Depth;
+            BucketDepth = response.BucketDepth;
+            BucketUpperBound = response.BucketUpperBound;
+            Buckets = response.Buckets.Select(i => new BucketDto(i));
         }
 
         // Properties.
         public int Depth { get; }
         public int BucketDepth { get; }
         public int BucketUpperBound { get; }
-        public IEnumerable<BucketDto>? Buckets { get; }
+        public IEnumerable<BucketDto> Buckets { get; }
     }
 }

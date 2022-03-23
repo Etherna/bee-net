@@ -37,6 +37,15 @@ namespace Etherna.BeeNet.DtoModels
             Collisions = bucket.Collisions;
         }
 
+        public BucketDto(Clients.DebugApi.V2_0_0.Buckets bucket)
+        {
+            if (bucket is null)
+                throw new ArgumentNullException(nameof(bucket));
+
+            BucketId = bucket.BucketID;
+            Collisions = bucket.Collisions;
+        }
+
         // Properties.
         public int BucketId { get; }
         public int Collisions { get; }

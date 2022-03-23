@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -26,8 +27,8 @@ namespace Etherna.BeeNet.DtoModels
 
             Radius = response.Radius;
             Available = response.Available;
-            Outer = response.Outer;
-            Inner = response.Inner;
+            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
+            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
 
         public ReserveStateDto(Clients.DebugApi.V1_2_1.Response12 response)
@@ -37,16 +38,25 @@ namespace Etherna.BeeNet.DtoModels
 
             Radius = response.Radius;
             Available = response.Available;
-            Outer = response.Outer;
-            Inner = response.Inner;
+            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
+            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
+        }
+
+        public ReserveStateDto(Clients.DebugApi.V2_0_0.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Radius = response.Radius;
+            Available = response.Available;
+            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
+            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public int Radius { get; }
         public int Available { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Outer { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Inner { get; }
+        public long Outer { get; }
+        public long Inner { get; }
     }
 }

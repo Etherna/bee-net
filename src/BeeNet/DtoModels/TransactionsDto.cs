@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -27,12 +28,12 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = response.TransactionHash;
             To = response.To;
             Nonce = response.Nonce;
-            GasPrice = response.GasPrice;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = response.GasLimit;
             Data = response.Data;
             Created = response.Created;
             Description = response.Description;
-            Value = response.Value;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
         public TransactionsDto(Clients.DebugApi.V1_2_1.Response34 response)
@@ -43,25 +44,39 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = response.TransactionHash;
             To = response.To;
             Nonce = response.Nonce;
-            GasPrice = response.GasPrice;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = response.GasLimit;
             Data = response.Data;
             Created = response.Created;
             Description = response.Description;
-            Value = response.Value;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
+        }
+
+        public TransactionsDto(Clients.DebugApi.V2_0_0.Response34 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TransactionHash = response.TransactionHash;
+            To = response.To;
+            Nonce = response.Nonce;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
+            GasLimit = response.GasLimit;
+            Data = response.Data;
+            Created = response.Created;
+            Description = response.Description;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string TransactionHash { get; }
         public string To { get; }
         public int Nonce { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string GasPrice { get; }
-        public int GasLimit { get; }
+        public long GasPrice { get; }
+        public long GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Value { get; }
+        public long Value { get; }
     }
 }

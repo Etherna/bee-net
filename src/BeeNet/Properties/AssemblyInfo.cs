@@ -1,4 +1,4 @@
-﻿//   Copyright 2021-present Etherna Sagl
+//   Copyright 2021-present Etherna Sagl
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -12,14 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+using System;
 
-namespace Etherna.BeeNet
-{
-    public interface IBeeNodeClient
-    {
-        IBeeDebugClient? DebugClient { get; }
-        IBeeGatewayClient? GatewayClient { get; }
-    }
-}
+[assembly: CLSCompliant(false)]

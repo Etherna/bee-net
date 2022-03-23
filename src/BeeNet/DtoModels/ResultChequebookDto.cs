@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -25,7 +26,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(result));
 
             Recipient = result.Recipient;
-            LastPayout = result.LastPayout;
+            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
             Bounced = result.Bounced;
         }
 
@@ -35,14 +36,23 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(result));
 
             Recipient = result.Recipient;
-            LastPayout = result.LastPayout;
+            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
+            Bounced = result.Bounced;
+        }
+
+        public ResultChequeBookDto(Clients.DebugApi.V2_0_0.Result result)
+        {
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+
+            Recipient = result.Recipient;
+            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
             Bounced = result.Bounced;
         }
 
         // Properties.
-        public string Recipient { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string LastPayout { get; }
         public bool Bounced { get; }
+        public long LastPayout { get; }
+        public string Recipient { get; }
     }
 }

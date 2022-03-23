@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 1.2.1
+  version: 2.0.0
   title: Bee Debug API
   description: "A list of the currently provided debug interfaces to interact with the bee node"
 
@@ -612,6 +612,7 @@ paths:
           name: amount
           schema:
             type: integer
+            format: int64
           required: true
           description: amount of tokens to deposit
         - $ref: "SwarmCommon.yaml#/components/parameters/GasPriceParameter"
@@ -639,6 +640,7 @@ paths:
           name: amount
           schema:
             type: integer
+            format: int64
           required: true
           description: amount of tokens to withdraw
         - $ref: "SwarmCommon.yaml#/components/parameters/GasPriceParameter"
@@ -850,7 +852,7 @@ paths:
         - in: path
           name: amount
           schema:
-            type: integer
+            $ref: "SwarmCommon.yaml#/components/schemas/BigInt"
           required: true
           description: Amount of BZZ added that the postage batch will have.
         - in: path
@@ -904,6 +906,7 @@ paths:
           name: amount
           schema:
             type: integer
+            format: int64
           required: true
           description: Amount of BZZ per chunk to top up to an existing postage batch.
       responses:

@@ -32,11 +32,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> BuyPostageBatchAsync(
-            int amount,
+            long amount,
             int depth,
             string? label = null,
             bool? immutable = null,
-            int? gasPrice = null);
+            long? gasPrice = null);
 
         /// <summary>Cashout the last cheque for the peer</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> CashoutChequeForPeerAsync(
             string peerId,
-            int? gasPrice = null,
+            long? gasPrice = null,
             long? gasLimit = null);
 
         /// <summary>Connect to address</summary>
@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> DeleteTransactionAsync(
             string txHash,
-            int? gasPrice = null);
+            long? gasPrice = null);
 
         /// <summary>Deposit tokens from overlay address into chequebook</summary>
         /// <param name="amount">amount of tokens to deposit</param>
@@ -82,8 +82,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> DepositIntoChequeBookAsync(
-            int amount,
-            int? gasPrice = null);
+            long amount,
+            long? gasPrice = null);
 
         /// <summary>Dilute an existing postage batch.</summary>
         /// <param name="id">Batch ID to dilute</param>
@@ -101,14 +101,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<IEnumerable<BalanceDto>> GetAllBalancesAsync();
-
-        /// <summary>
-        /// Get all globally available batches that were purchased by all nodes.
-        /// </summary>
-        /// <returns></returns>
-        /// <returns>Returns an array of all available and currently valid postage batches.</returns>
-        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<ValidPostageBatchDto>> GetAllBatchesFromAllNodesAsync();
 
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
@@ -130,15 +122,18 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<SettlementDto> GetAllSettlementsAsync();
 
-        /// <summary>Get all available stamps for this node</summary>
-        /// <returns>Returns an array of all available postage batches.</returns>
-        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<StampsGetDto>> GetAllStampsAsync();
-
         /// <summary>Get time based settlements with all known peers and total amount sent or received</summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<TimeSettlementsDto> GetAllTimeSettlementsAsync();
+
+        /// <summary>
+        /// Get all globally available batches that were purchased by all nodes.
+        /// </summary>
+        /// <returns></returns>
+        /// <returns>Returns an array of all available and currently valid postage batches.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<IEnumerable<BatchDto>> GetAllValidPostageBatchesFromAllNodesAsync();
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -202,6 +197,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<NodeInfoDto> GetNodeInfoAsync();
 
+        /// <summary>Get all owned postage batches by this node</summary>
+        /// <returns>List of all owned postage batches</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred</exception>
+        Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync();
+
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
@@ -211,7 +211,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<StampsGetDto> GetPostageBatchStatusAsync(string id);
+        Task<PostageBatchDto> GetPostageBatchAsync(string id);
 
         /// <summary>Get readiness state of node</summary>
         /// <returns>Health State of node</returns>
@@ -272,7 +272,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="amount">Amount of BZZ per chunk to top up to an existing postage batch.</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<string> TopUpPostageBatchAsync(string id, int amount);
+        Task<string> TopUpPostageBatchAsync(string id, long amount);
 
         /// <summary>Try connection to node</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -286,7 +286,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> WithdrawFromChequeBookAsync(
-            int amount,
-            int? gasPrice = null);
+            long amount,
+            long? gasPrice = null);
     }
 }

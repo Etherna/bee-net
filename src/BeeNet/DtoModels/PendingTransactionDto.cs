@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -27,12 +28,12 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = tx.TransactionHash;
             To = tx.To;
             Nonce = tx.Nonce;
-            GasPrice = tx.GasPrice;
+            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = tx.GasLimit;
             Data = tx.Data;
             Created = tx.Created;
             Description = tx.Description;
-            Value = tx.Value;
+            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
         }
 
         public PendingTransactionDto(Clients.DebugApi.V1_2_1.PendingTransactions tx)
@@ -43,25 +44,39 @@ namespace Etherna.BeeNet.DtoModels
             TransactionHash = tx.TransactionHash;
             To = tx.To;
             Nonce = tx.Nonce;
-            GasPrice = tx.GasPrice;
+            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
             GasLimit = tx.GasLimit;
             Data = tx.Data;
             Created = tx.Created;
             Description = tx.Description;
-            Value = tx.Value;
+            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
+        }
+
+        public PendingTransactionDto(Clients.DebugApi.V2_0_0.PendingTransactions tx)
+        {
+            if (tx is null)
+                throw new ArgumentNullException(nameof(tx));
+
+            TransactionHash = tx.TransactionHash;
+            To = tx.To;
+            Nonce = tx.Nonce;
+            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
+            GasLimit = tx.GasLimit;
+            Data = tx.Data;
+            Created = tx.Created;
+            Description = tx.Description;
+            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string TransactionHash { get; }
         public string To { get; }
         public int Nonce { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string GasPrice { get; }
-        public int GasLimit { get; }
+        public long GasPrice { get; }
+        public long GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Value { get; }
+        public long Value { get; }
     }
 }

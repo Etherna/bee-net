@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -26,7 +27,7 @@ namespace Etherna.BeeNet.DtoModels
 
             Beneficiary = lastCashedCheque.Beneficiary;
             Chequebook = lastCashedCheque.Chequebook;
-            Payout = lastCashedCheque.Payout;
+            Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
         }
 
         public LastCashedChequeDto(Clients.DebugApi.V1_2_1.LastCashedCheque lastCashedCheque)
@@ -36,13 +37,22 @@ namespace Etherna.BeeNet.DtoModels
 
             Beneficiary = lastCashedCheque.Beneficiary;
             Chequebook = lastCashedCheque.Chequebook;
-            Payout = lastCashedCheque.Payout;
+            Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
+        }
+
+        public LastCashedChequeDto(Clients.DebugApi.V2_0_0.LastCashedCheque lastCashedCheque)
+        {
+            if (lastCashedCheque is null)
+                throw new ArgumentNullException(nameof(lastCashedCheque));
+
+            Beneficiary = lastCashedCheque.Beneficiary;
+            Chequebook = lastCashedCheque.Chequebook;
+            Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string Beneficiary { get; }
         public string Chequebook { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string Payout { get; }
+        public long Payout { get; }
     }
 }

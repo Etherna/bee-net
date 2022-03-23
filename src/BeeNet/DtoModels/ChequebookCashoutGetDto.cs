@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -28,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
             TransactionHash = response.TransactionHash;
             Result = new ResultChequeBookDto(response.Result);
-            UncashedAmount = response.UncashedAmount;
+            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
         public ChequeBookCashoutGetDto(Clients.DebugApi.V1_2_1.Response26 response)
@@ -40,7 +41,19 @@ namespace Etherna.BeeNet.DtoModels
             LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
             TransactionHash = response.TransactionHash;
             Result = new ResultChequeBookDto(response.Result);
-            UncashedAmount = response.UncashedAmount;
+            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
+        }
+
+        public ChequeBookCashoutGetDto(Clients.DebugApi.V2_0_0.Response26 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Peer = response.Peer;
+            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            TransactionHash = response.TransactionHash;
+            Result = new ResultChequeBookDto(response.Result);
+            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
         // Properties.
@@ -48,8 +61,7 @@ namespace Etherna.BeeNet.DtoModels
         public LastCashedChequeDto LastCashedCheque { get; }
         public string TransactionHash { get; }
         public ResultChequeBookDto Result { get; }
-        /// <summary>Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)</summary>
-        public string UncashedAmount { get; }
+        public long UncashedAmount { get; }
     }
 
 }
