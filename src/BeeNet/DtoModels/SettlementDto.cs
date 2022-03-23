@@ -28,11 +28,22 @@ namespace Etherna.BeeNet.DtoModels
 
             TotalReceived = response.TotalReceived;
             TotalSent = response.TotalSent;
-            Settlements = response.Settlements
+            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_0.Settlements>())
                 .Select(i => new SettlementDataDto(i));
         }
 
         public SettlementDto(Clients.DebugApi.V1_2_1.Response21 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TotalReceived = response.TotalReceived;
+            TotalSent = response.TotalSent;
+            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_1.Settlements>())
+                .Select(i => new SettlementDataDto(i));
+        }
+
+        public SettlementDto(Clients.DebugApi.V2_0_0.Response21 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
