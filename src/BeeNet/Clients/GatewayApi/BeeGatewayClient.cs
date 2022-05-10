@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public Task DeleteTagAsync(int uid) =>
+        public Task DeleteTagAsync(long uid) =>
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.TagsDeleteAsync(uid),
@@ -186,7 +186,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<TagInfoDto> GetTagInfoAsync(int uid) =>
+        public async Task<TagInfoDto> GetTagInfoAsync(long uid) =>
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => new TagInfoDto(await beeGatewayApiClient_2_0_0.TagsGetAsync(uid).ConfigureAwait(false)),

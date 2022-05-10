@@ -191,7 +191,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response8> TagsGetAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response8> TagsGetAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -200,7 +200,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task TagsDeleteAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task TagsDeleteAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1808,7 +1808,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response8> TagsGetAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response8> TagsGetAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -1923,7 +1923,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task TagsDeleteAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task TagsDeleteAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -3698,7 +3698,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
         public System.DateTimeOffset StartedAt { get; set; } = default!;
