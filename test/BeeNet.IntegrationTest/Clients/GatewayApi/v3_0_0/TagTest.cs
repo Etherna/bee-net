@@ -2,7 +2,7 @@ using Etherna.BeeNet;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.Clients.DebugApi.v3_0_0
+namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
 {
     public class TagTest
     {
@@ -73,35 +73,27 @@ namespace BeeNet.IntegrationTest.Clients.DebugApi.v3_0_0
             // Arrange 
             var tag = await beeNodeClient.GatewayClient.CreateTagAsync("430b505bb0361b7a508559c10a6a9ea2b68a7320dabbddad585d0db78ba96a63");
 
+
             // Act 
             var tags = await beeNodeClient.GatewayClient.GetTagsListAsync();
 
 
             // Assert 
             Assert.Contains(tags, t =>t.Uid == tag.Uid);
+        }
 
-            /*
-                        var client = new HttpClient();
-                        var request = new HttpRequestMessage(HttpMethod.Get, "/tags");
-                        client.BaseAddress = new Uri("http://localhost:1633");
-                        var response = await client.SendAsync(request);
-
-
-                        response.EnsureSuccessStatusCode();
-
-                        var responseString = await response.Content.ReadAsStringAsync();
-            */
+        [Fact]
+        public async Task UpdateTagAsync()
+        {
+            // Arrange 
+            var tag = await beeNodeClient.GatewayClient.CreateTagAsync("430b505bb0361b7a508559c10a6a9ea2b68a7320dabbddad585d0db78ba96a63");
 
 
+            // Act 
+            await beeNodeClient.GatewayClient.UpdateTagAsync(tag.Uid);
 
 
-            //var postRequest = new HttpRequestMessage(HttpMethod.Get, "/topology");
-            /*var formModel = new Dictionary<string, string>
-            {
-                { "Name", "New Employee" },
-                { "Age", "25" }
-            };
-            postRequest.Content = new FormUrlEncodedContent(formModel);*/
+            // Assert 
         }
     }
 }

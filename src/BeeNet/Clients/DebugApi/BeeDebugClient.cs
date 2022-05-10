@@ -378,7 +378,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<TagDto> GetTagInfoAsync(int uid) =>
+        public async Task<TagDto> GetTagInfoAsync(long uid) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => new TagDto(await beeDebugClient_1_2_0.TagsAsync(uid).ConfigureAwait(false)),

@@ -243,7 +243,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TagDto> GetTagInfoAsync(int uid);
+        Task<TagDto> GetTagInfoAsync(long uid);
 
         /// <summary>Get information about a sent transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>

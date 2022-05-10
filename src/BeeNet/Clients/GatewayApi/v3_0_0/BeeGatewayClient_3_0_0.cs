@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_0
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, int? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -196,7 +196,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_0
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response9> TagsPatchAsync(int uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response9> TagsPatchAsync(long uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -905,7 +905,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_0
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, int? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(string swarm_postage_batch_id, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/chunks");
@@ -2019,7 +2019,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_0
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(int uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(long uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");

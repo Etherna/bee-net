@@ -184,7 +184,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UpdateTagAsync(
-            int uid,
+            long uid,
             string? address = null);
 
         /// <summary>Upload Chunk</summary>
@@ -197,7 +197,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UploadChunkAsync(
             string swarmPostageBatchId,
-            int? swarmTag = null,
+            long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
             Stream? body = null);

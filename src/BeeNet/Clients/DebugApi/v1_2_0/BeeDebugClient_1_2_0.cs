@@ -300,7 +300,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response31> TagsAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response31> TagsAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3027,7 +3027,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response31> TagsAsync(int uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response31> TagsAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");

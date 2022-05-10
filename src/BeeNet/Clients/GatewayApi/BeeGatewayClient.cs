@@ -248,7 +248,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<VersionDto> UpdateTagAsync(int uid, string? address = null) =>
+        public async Task<VersionDto> UpdateTagAsync(long uid, string? address = null) =>
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => new VersionDto(await beeGatewayApiClient_2_0_0.TagsPatchAsync(
@@ -266,7 +266,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
         public async Task<VersionDto> UploadChunkAsync(
             string swarmPostageBatchId,
-            int? swarmTag = null,
+            long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
             Stream? body = null) =>
