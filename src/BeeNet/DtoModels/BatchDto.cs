@@ -34,6 +34,21 @@ namespace Etherna.BeeNet.DtoModels
             Owner = batch.Owner;
         }
 
+        public BatchDto(Clients.DebugApi.V2_0_1.Batches batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            BatchID = batch.BatchID;
+            BatchTTL = batch.BatchTTL;
+            BlockNumber = batch.BlockNumber;
+            BucketDepth = batch.BucketDepth;
+            Depth = batch.Depth;
+            ImmutableFlag = batch.ImmutableFlag;
+            Value = batch.Value;
+            Owner = batch.Owner;
+        }
+
         // Properties.
         public string BatchID { get; set; } = default!;
         public int BatchTTL { get; set; } = default!;

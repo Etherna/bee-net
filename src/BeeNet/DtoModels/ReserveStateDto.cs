@@ -53,6 +53,17 @@ namespace Etherna.BeeNet.DtoModels
             Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
 
+        public ReserveStateDto(Clients.DebugApi.V2_0_1.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Radius = response.Radius;
+            Available = response.StorageRadius;
+            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
+            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public int Radius { get; }
         public int Available { get; }

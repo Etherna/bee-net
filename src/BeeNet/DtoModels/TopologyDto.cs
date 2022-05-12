@@ -68,6 +68,22 @@ namespace Etherna.BeeNet.DtoModels
                 i => new AnonymousDto(i.Value));
         }
 
+        public TopologyDto(Clients.DebugApi.V2_0_1.Response23 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            BaseAddr = response.BaseAddr;
+            Population = response.Population;
+            Connected = response.Connected;
+            Timestamp = response.Timestamp;
+            NnLowWatermark = response.NnLowWatermark;
+            Depth = response.Depth;
+            Bins = response.Bins.ToDictionary(
+                i => i.Key,
+                i => new AnonymousDto(i.Value));
+        }
+
         // Properties.
         public string BaseAddr { get; }
         public int Population { get; }

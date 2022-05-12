@@ -117,6 +117,39 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
+        public VersionDto(Clients.DebugApi.V2_0_1.Response15 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
+
+        public VersionDto(Clients.DebugApi.V2_0_1.Response19 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
+
+        public VersionDto(Clients.DebugApi.V2_0_1.Response25 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
+
         public VersionDto(Clients.GatewayApi.V2_0_0.Response4 response)
         {
             if (response is null)
@@ -161,6 +194,27 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
+        public VersionDto(Clients.GatewayApi.V3_0_1.Response4 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
+
+        public VersionDto(Clients.GatewayApi.V3_0_1.Response9 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+        }
         // Properties.
         public string Status { get; }
         public string Version { get; }

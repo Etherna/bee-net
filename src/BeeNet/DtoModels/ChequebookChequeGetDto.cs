@@ -79,6 +79,26 @@ namespace Etherna.BeeNet.DtoModels
             LastSent = new LastSentDto(response.Lastsent);
         }
 
+        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Lastcheques lastcheques)
+        {
+            if (lastcheques is null)
+                throw new ArgumentNullException(nameof(lastcheques));
+
+            Peer = lastcheques.Peer;
+            LastReceived = new LastReceivedDto(lastcheques.Lastreceived);
+            LastSent = new LastSentDto(lastcheques.Lastsent);
+        }
+
+        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Response28 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Peer = response.Peer;
+            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastSent = new LastSentDto(response.Lastsent);
+        }
+
         // Properties.
         public string Peer { get; }
         public LastReceivedDto LastReceived { get; }

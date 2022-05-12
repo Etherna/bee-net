@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Clients.GatewayApi.V2_0_0;
 using Etherna.BeeNet.Clients.GatewayApi.V3_0_0;
+using Etherna.BeeNet.Clients.GatewayApi.V3_0_1;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
 using System;
@@ -31,6 +32,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         // Fields.
         private readonly IBeeGatewayClient_2_0_0 beeGatewayApiClient_2_0_0;
         private readonly IBeeGatewayClient_3_0_0 beeGatewayApiClient_3_0_0;
+        private readonly IBeeGatewayClient_3_0_1 beeGatewayApiClient_3_0_1;
 
         // Constructors.
         public BeeGatewayClient(HttpClient httpClient, Uri baseUrl, GatewayApiVersion apiVersion)
@@ -40,6 +42,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
             beeGatewayApiClient_2_0_0 = new BeeGatewayClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
             beeGatewayApiClient_3_0_0 = new BeeGatewayClient_3_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeGatewayApiClient_3_0_1 = new BeeGatewayClient_3_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
 
@@ -62,6 +65,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                         Role = role,
                         Expiry = expiry
                     }).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new AuthDto(await beeGatewayApiClient_3_0_1.AuthAsync(
+                    new V3_0_1.Body
+                    {
+                        Role = role,
+                        Expiry = expiry
+                    }).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -70,6 +79,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => new StewardShipGetDto(await beeGatewayApiClient_2_0_0.StewardshipGetAsync(reference).ConfigureAwait(false)),
                 GatewayApiVersion.v3_0_0 => new StewardShipGetDto(await beeGatewayApiClient_3_0_0.StewardshipGetAsync(reference).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new StewardShipGetDto(await beeGatewayApiClient_3_0_1.StewardshipGetAsync(reference).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -83,6 +93,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.FeedsPostAsync(owner, topic, swarmPostageBatchId, type, swarmPin).ConfigureAwait(false)).Reference,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.FeedsPostAsync(owner, topic, swarmPostageBatchId, type, swarmPin).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.FeedsPostAsync(owner, topic, swarmPostageBatchId, type, swarmPin).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -91,6 +102,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => new MessageResponseDto(await beeGatewayApiClient_2_0_0.PinsPostAsync(reference).ConfigureAwait(false)),
                 GatewayApiVersion.v3_0_0 => new MessageResponseDto(await beeGatewayApiClient_3_0_0.PinsPostAsync(reference).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new MessageResponseDto(await beeGatewayApiClient_3_0_1.PinsPostAsync(reference).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -107,6 +119,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     {
                         Address = address
                     }).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new TagInfoDto(await beeGatewayApiClient_3_0_1.TagsPostAsync(
+                    new V3_0_1.Body3
+                    {
+                        Address = address
+                    }).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -115,6 +132,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => new MessageResponseDto(await beeGatewayApiClient_2_0_0.PinsDeleteAsync(reference).ConfigureAwait(false)),
                 GatewayApiVersion.v3_0_0 => new MessageResponseDto(await beeGatewayApiClient_3_0_0.PinsDeleteAsync(reference).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new MessageResponseDto(await beeGatewayApiClient_3_0_1.PinsDeleteAsync(reference).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -123,6 +141,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.TagsDeleteAsync(uid),
                 GatewayApiVersion.v3_0_0 => beeGatewayApiClient_3_0_0.TagsDeleteAsync(uid),
+                GatewayApiVersion.v3_0_1 => beeGatewayApiClient_3_0_1.TagsDeleteAsync(uid),
                 _ => throw new InvalidOperationException()
             };
 
@@ -131,14 +150,16 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.PinsGetAsync().ConfigureAwait(false)).Addresses ?? Array.Empty<string>(),
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.PinsGetAsync().ConfigureAwait(false)).References,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.PinsGetAsync().ConfigureAwait(false)).References,
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetChunkStreamAsync(string reference, string? targets = null) =>
+        public async Task<Stream> GetChunkStreamAsync(string reference, string? targets = null) => //TODO is required only with old version
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.ChunksGetAsync(reference, targets).ConfigureAwait(false)).Stream,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.ChunksGetAsync(reference, targets).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.ChunksGetAsync(reference).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
@@ -147,6 +168,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.BytesGetAsync(reference).ConfigureAwait(false)).Stream,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.BytesGetAsync(reference).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.BytesGetAsync(reference).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
@@ -159,22 +181,25 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.FeedsGetAsync(owner, topic, at, type).ConfigureAwait(false)).Reference,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.FeedsGetAsync(owner, topic, at, type).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.FeedsGetAsync(owner, topic, at, type).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileAsync(string reference, string path, string? targets = null) =>
+        public async Task<Stream> GetFileAsync(string reference, string path, string? targets = null) => //TODO is required only with old version
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.BzzGetAsync(reference, path, targets).ConfigureAwait(false)).Stream,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.BzzGetAsync(reference, path, targets).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.BzzGetAsync(reference, path).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileAsync(string reference, string? targets = null) =>
+        public async Task<Stream> GetFileAsync(string reference, string? targets = null) => //TODO is required only with old version
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.BzzGetAsync(reference, targets, CancellationToken.None).ConfigureAwait(false)).Stream,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.BzzGetAsync(reference, targets, CancellationToken.None).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.BzzGetAsync(reference, CancellationToken.None).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
@@ -183,6 +208,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => await beeGatewayApiClient_2_0_0.PinsGetAsync(reference).ConfigureAwait(false),
                 GatewayApiVersion.v3_0_0 => await beeGatewayApiClient_3_0_0.PinsGetAsync(reference).ConfigureAwait(false),
+                GatewayApiVersion.v3_0_1 => await beeGatewayApiClient_3_0_1.PinsGetAsync(reference).ConfigureAwait(false),
                 _ => throw new InvalidOperationException()
             };
 
@@ -191,6 +217,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => new TagInfoDto(await beeGatewayApiClient_2_0_0.TagsGetAsync(uid).ConfigureAwait(false)),
                 GatewayApiVersion.v3_0_0 => new TagInfoDto(await beeGatewayApiClient_3_0_0.TagsGetAsync(uid).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new TagInfoDto(await beeGatewayApiClient_3_0_1.TagsGetAsync(uid).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -199,6 +226,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.TagsGetAsync(offset, limit).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i)),
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.TagsGetAsync(offset, limit).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i)),
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.TagsGetAsync(offset, limit).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -217,6 +245,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                         Role = role,
                         Expiry = expiry
                     }).ConfigureAwait(false)).Key,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.RefreshAsync(
+                    new V3_0_1.Body2
+                    {
+                        Role = role,
+                        Expiry = expiry
+                    }).ConfigureAwait(false)).Key,
                 _ => throw new InvalidOperationException()
             };
 
@@ -225,6 +259,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.StewardshipPutAsync(reference),
                 GatewayApiVersion.v3_0_0 => beeGatewayApiClient_3_0_0.StewardshipPutAsync(reference),
+                GatewayApiVersion.v3_0_1 => beeGatewayApiClient_3_0_1.StewardshipPutAsync(reference),
                 _ => throw new InvalidOperationException()
             };
 
@@ -237,6 +272,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.PssSendAsync(topic, targets, swarmPostageBatchId, recipient),
                 GatewayApiVersion.v3_0_0 => beeGatewayApiClient_3_0_0.PssSendAsync(topic, targets, swarmPostageBatchId, recipient),
+                GatewayApiVersion.v3_0_1 => beeGatewayApiClient_3_0_1.PssSendAsync(topic, targets, swarmPostageBatchId, recipient),
                 _ => throw new InvalidOperationException()
             };
 
@@ -245,6 +281,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.PssSubscribeAsync(topic),
                 GatewayApiVersion.v3_0_0 => beeGatewayApiClient_3_0_0.PssSubscribeAsync(topic),
+                GatewayApiVersion.v3_0_1 => beeGatewayApiClient_3_0_1.PssSubscribeAsync(topic),
                 _ => throw new InvalidOperationException()
             };
 
@@ -261,6 +298,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     address is null ?
                         null :
                         new V3_0_0.Body4 { Address = address }).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new VersionDto(await beeGatewayApiClient_3_0_1.TagsPatchAsync(
+                    uid,
+                    address is null ?
+                        null :
+                        new V3_0_1.Body4 { Address = address }).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -284,6 +326,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     swarmPin,
                     swarmDeferredUpload,
                     body).ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_1 => new VersionDto(await beeGatewayApiClient_3_0_1.ChunksPostAsync(
+                    swarmPostageBatchId,
+                    swarmTag,
+                    swarmPin,
+                    swarmDeferredUpload,
+                    body).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -295,6 +343,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => beeGatewayApiClient_2_0_0.ChunksStreamAsync(swarmPostageBatchId, swarmTag, swarmPin),
                 GatewayApiVersion.v3_0_0 => beeGatewayApiClient_3_0_0.ChunksStreamAsync(swarmPostageBatchId, swarmTag, swarmPin),
+                GatewayApiVersion.v3_0_1 => beeGatewayApiClient_3_0_1.ChunksStreamAsync(swarmPostageBatchId, swarmTag, swarmPin),
                 _ => throw new InvalidOperationException()
             };
 
@@ -315,6 +364,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     swarmDeferredUpload,
                     body).ConfigureAwait(false)).Reference,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.BytesPostAsync(
+                    swarmPostageBatchId,
+                    swarmTag,
+                    swarmPin,
+                    swarmEncrypt,
+                    swarmDeferredUpload,
+                    body).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.BytesPostAsync(
                     swarmPostageBatchId,
                     swarmTag,
                     swarmPin,
@@ -362,6 +418,18 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     swarmErrorDocument,
                     swarmDeferredUpload,
                     file.Select(f => new V3_0_0.FileParameter(f.Data, f.FileName, f.ContentType))).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.BzzPostAsync(
+                    swarmPostageBatchId,
+                    name,
+                    swarmTag,
+                    swarmPin,
+                    swarmEncrypt,
+                    contentType,
+                    swarmCollection,
+                    swarmIndexDocument,
+                    swarmErrorDocument,
+                    swarmDeferredUpload,
+                    file.Select(f => new V3_0_1.FileParameter(f.Data, f.FileName, f.ContentType))).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -374,6 +442,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.SocAsync(owner, id, sig, swarmPin).ConfigureAwait(false)).Reference,
                 GatewayApiVersion.v3_0_0 => (await beeGatewayApiClient_3_0_0.SocAsync(owner, id, sig, swarmPin).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v3_0_1 => (await beeGatewayApiClient_3_0_1.SocAsync(owner, id, sig, swarmPin).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
     }

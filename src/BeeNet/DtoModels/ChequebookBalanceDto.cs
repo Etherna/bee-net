@@ -47,6 +47,15 @@ namespace Etherna.BeeNet.DtoModels
             AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
         }
 
+        public ChequeBookBalanceDto(Clients.DebugApi.V2_0_1.Response8 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TotalBalance = long.Parse(response.TotalBalance, CultureInfo.InvariantCulture);
+            AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public long TotalBalance { get; }
         public long AvailableBalance { get; }
