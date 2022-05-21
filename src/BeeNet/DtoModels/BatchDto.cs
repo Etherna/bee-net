@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModels
 
             BatchID = batch.BatchID;
             BatchTTL = batch.BatchTTL;
-            BlockNumber = batch.BlockNumber;
+            //BlockNumber = batch.BlockNumber; //TODO review: Missing BlockNumber
             BucketDepth = batch.BucketDepth;
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;

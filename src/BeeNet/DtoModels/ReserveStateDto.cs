@@ -60,8 +60,8 @@ namespace Etherna.BeeNet.DtoModels
 
             Radius = response.Radius;
             Available = response.StorageRadius;
-            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
-            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
+            //TODO review: Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
+            //TODO review: Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
 
         // Properties.

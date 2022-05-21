@@ -185,7 +185,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileAsync(string reference, string path, string? targets = null) => //TODO is required only with old version
+        public async Task<Stream> GetFileAsync(string reference, string path, string? targets = null) => //TODO review: is required only with old version
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.BzzGetAsync(reference, path, targets).ConfigureAwait(false)).Stream,
@@ -194,7 +194,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileAsync(string reference, string? targets = null) => //TODO is required only with old version
+        public async Task<Stream> GetFileAsync(string reference, string? targets = null) => //TODO review:  is required only with old version
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v2_0_0 => (await beeGatewayApiClient_2_0_0.BzzGetAsync(reference, targets, CancellationToken.None).ConfigureAwait(false)).Stream,

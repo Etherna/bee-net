@@ -172,7 +172,7 @@ namespace Etherna.BeeNet.DtoModels
             AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
-            Id = (string)batch.BatchID;
+            Id = batch.BatchID;
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;

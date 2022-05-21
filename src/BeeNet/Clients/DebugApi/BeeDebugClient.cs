@@ -172,6 +172,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 DebugApiVersion.v1_2_0 => ((await beeDebugClient_1_2_0.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques ?? Array.Empty<V1_2_0.Lastcheques>()).Select(i => new ChequeBookChequeGetDto(i)),
                 DebugApiVersion.v1_2_1 => ((await beeDebugClient_1_2_1.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques ?? Array.Empty<V1_2_1.Lastcheques>()).Select(i => new ChequeBookChequeGetDto(i)),
                 DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
+                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.ChequebookChequeGetAsync().ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -260,7 +261,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             {
                 DebugApiVersion.v1_2_0 => (await beeDebugClient_1_2_0.ChequebookAddressAsync().ConfigureAwait(false)).ChequebookAddress,
                 DebugApiVersion.v1_2_1 => (await beeDebugClient_1_2_1.ChequebookAddressAsync().ConfigureAwait(false)).ChequebookAddress,
-                DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.ChequebookAddressAsync().ConfigureAwait(false)).ChequebookAddress
+                DebugApiVersion.v2_0_0 => (await beeDebugClient_2_0_0.ChequebookAddressAsync().ConfigureAwait(false)).ChequebookAddress,
                 DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.ChequebookAddressAsync().ConfigureAwait(false)).ChequebookAddress,
                 _ => throw new InvalidOperationException()
             };
@@ -459,22 +460,22 @@ namespace Etherna.BeeNet.Clients.DebugApi
             CurrentApiVersion switch
             {
                 DebugApiVersion.v1_2_0 => new VersionDto(await beeDebugClient_1_2_0.WelcomeMessagePostAsync(
-                    new DebugApi.V1_2_0.Body
+                    new V1_2_0.Body
                     {
                         WelcomeMessage = welcomeMessage
                     }).ConfigureAwait(false)),
                 DebugApiVersion.v1_2_1 => new VersionDto(await beeDebugClient_1_2_1.WelcomeMessagePostAsync(
-                    new DebugApi.V1_2_1.Body
+                    new V1_2_1.Body
                     {
                         WelcomeMessage = welcomeMessage
                     }).ConfigureAwait(false)),
                 DebugApiVersion.v2_0_0 => new VersionDto(await beeDebugClient_2_0_0.WelcomeMessagePostAsync(
-                    new DebugApi.V2_0_0.Body
+                    new V2_0_0.Body
                     {
                         WelcomeMessage = welcomeMessage
                     }).ConfigureAwait(false)),
                 DebugApiVersion.v2_0_1 => new VersionDto(await beeDebugClient_2_0_1.WelcomeMessagePostAsync(
-                    new DebugApi.V2_0_1.Body
+                    new V2_0_1.Body
                     {
                         WelcomeMessage = welcomeMessage
                     }).ConfigureAwait(false)),
