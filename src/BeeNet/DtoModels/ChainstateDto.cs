@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -45,13 +46,13 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
         // Properties.
         public int Block { get; }
-        public int TotalAmount { get; }
-        public int CurrentPrice { get; }
+        public long TotalAmount { get; }
+        public long CurrentPrice { get; }
     }
 }

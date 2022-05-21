@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Etherna.BeeNet.DtoModels
@@ -48,15 +49,15 @@ namespace Etherna.BeeNet.DtoModels
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
+            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.CurrentCulture);
+            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.CurrentCulture);
             Settlements = response.Settlements
                 .Select(i => new SettlementDataDto(i));
         }
 
         // Properties.
-        public int TotalReceived { get; }
-        public int TotalSent { get; }
+        public long TotalReceived { get; }
+        public long TotalSent { get; }
         public IEnumerable<SettlementDataDto> Settlements { get; }
     }
 }

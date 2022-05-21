@@ -57,9 +57,9 @@ components:
         block:
           type: integer
         totalAmount:
-          type: integer
+          type: string
         currentPrice:
-          type: integer
+          type: string
 
     Balance:
       type: object
@@ -481,17 +481,17 @@ components:
         peer:
           $ref: "#/components/schemas/SwarmAddress"
         received:
-          type: integer
+          type: string
         sent:
-          type: integer
+          type: string
 
     Settlements:
       type: object
       properties:
         totalReceived:
-          type: integer
+          type: string
         totalSent:
-          type: integer
+          type: string
         settlements:
           type: array
           nullable: false
@@ -614,7 +614,7 @@ components:
             $ref: "#/components/schemas/TransactionInfo"
 
     Uid:
-      type: integer
+      type: long
 
     WelcomeMessage:
       type: object

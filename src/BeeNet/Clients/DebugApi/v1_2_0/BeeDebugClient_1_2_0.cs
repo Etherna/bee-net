@@ -291,7 +291,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response30> ChequebookWithdrawAsync(int amount, int? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response30> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2927,7 +2927,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response30> ChequebookWithdrawAsync(int amount, int? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response30> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");

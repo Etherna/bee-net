@@ -2646,7 +2646,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response27>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2942,7 +2942,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response30>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -3043,7 +3043,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response31>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -4632,10 +4632,10 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public int Block { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("totalAmount")]
-        public int TotalAmount { get; set; } = default!;
+        public string TotalAmount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("currentPrice")]
-        public int CurrentPrice { get; set; } = default!;
+        public string CurrentPrice { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -4840,10 +4840,10 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
-        public int TotalReceived { get; set; } = default!;
+        public string TotalReceived { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("totalSent")]
-        public int TotalSent { get; set; } = default!;
+        public string TotalSent { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("settlements")]
         public System.Collections.Generic.ICollection<Settlements> Settlements { get; set; } = default!;
@@ -4864,10 +4864,10 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
-        public int TotalReceived { get; set; } = default!;
+        public string TotalReceived { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("totalSent")]
-        public int TotalSent { get; set; } = default!;
+        public string TotalSent { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("settlements")]
         public System.Collections.Generic.ICollection<Settlements2> Settlements { get; set; } = default!;
@@ -5132,7 +5132,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public int Synced { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
@@ -6790,10 +6790,10 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public string Peer { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("received")]
-        public int Received { get; set; } = default!;
+        public string Received { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public int Sent { get; set; } = default!;
+        public string Sent { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
@@ -6815,10 +6815,10 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public string Peer { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("received")]
-        public int Received { get; set; } = default!;
+        public string Received { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public int Sent { get; set; } = default!;
+        public string Sent { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
 
