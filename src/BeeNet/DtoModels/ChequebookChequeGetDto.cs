@@ -76,12 +76,12 @@ namespace Etherna.BeeNet.DtoModels
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         // Properties.
         public string Peer { get; }
         public LastReceivedDto LastReceived { get; }
-        public LastSentDto LastSent { get; }
+        public LastSentDto? LastSent { get; }
     }
 }

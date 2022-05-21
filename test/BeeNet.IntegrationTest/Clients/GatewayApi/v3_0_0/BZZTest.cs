@@ -4,20 +4,8 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
 {
-    public class BZZTest
+    public class BZZTest : BaseTest_Gateway_v3_0_0
     {
-        private readonly BeeNodeClient beeNodeClient;
-
-        public BZZTest()
-        {
-            beeNodeClient = new BeeNodeClient(
-                "http://localhost/",
-                1633,
-                1635,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_0,
-                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_0);
-        }
-
         [Fact]
         public async Task UploadFileAsync()
         {

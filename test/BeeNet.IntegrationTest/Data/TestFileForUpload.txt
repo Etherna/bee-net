@@ -1,1 +1,0 @@
-File for upload in integration test

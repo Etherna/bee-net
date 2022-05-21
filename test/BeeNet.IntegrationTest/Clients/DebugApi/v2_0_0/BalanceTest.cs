@@ -1,23 +1,10 @@
-﻿using Etherna.BeeNet;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.Clients.DebugApi.v2_0_0
 {
-    public class BalanceTest
+    public class BalanceTest : BaseTest_Debug_v2_0_0
     {
-        private readonly BeeNodeClient beeNodeClient;
-
-        public BalanceTest()
-        {
-            beeNodeClient = new BeeNodeClient(
-                "http://localhost/",
-                1633,
-                1635,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_0,
-                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_0);
-        }
 
         [Fact]
         public async Task GetAllBalancesAsync()

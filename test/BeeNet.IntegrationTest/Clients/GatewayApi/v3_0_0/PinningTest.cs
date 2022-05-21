@@ -4,20 +4,8 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
 {
-    public class PinningTest
+    public class PinningTest : BaseTest_Gateway_v3_0_0
     {
-        private readonly BeeNodeClient beeNodeClient;
-
-        public PinningTest()
-        {
-            beeNodeClient = new BeeNodeClient(
-                "http://localhost/",
-                1633,
-                1635,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_0,
-                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_0);
-        }
-
         [Fact]
         public async Task CreatePinAsync()
         {
@@ -25,7 +13,7 @@ namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync("reference");
+            var result = await beeNodeClient.GatewayClient.CreatePinAsync("a0da79fda8d8e117af98e0f4fe6665dccb2b5ec3b862ad6cf7d20065d03f3a21");
 
 
             // Assert 

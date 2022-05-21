@@ -1,32 +1,21 @@
-﻿using Etherna.BeeNet;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.Clients.DebugApi.v2_0_0
 {
-    public class ChequebookTest
-    {
-        private readonly BeeNodeClient beeNodeClient;
-        private string pathTestFileForUpload = "Data\\TestFileForUpload.txt";
-
-        public ChequebookTest()
-        {
-            beeNodeClient = new BeeNodeClient(
-                "http://localhost/",
-                1633,
-                1635,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_0,
-                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_0);
-        }
-
+    public class ChequebookTest : BaseTest_Debug_v2_0_0
+    { 
         [Fact]
         public async Task CashoutChequeForPeerAsync()
         {
             // Arrange 
             var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var enumerator = peers.GetEnumerator();
+            enumerator.MoveNext();
+            var peerId = enumerator.Current;
 
             // Act 
-            var cashout = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync("peerId");
+            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId);
 
 
             // Assert 
@@ -91,7 +80,7 @@ namespace BeeNet.IntegrationTest.Clients.DebugApi.v2_0_0
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookCashoutForPeerAsync("peerId");
+            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookCashoutForPeerAsync("51f958d7962f66b1dfe555f41ec00b02610cf9ce1aea01b28eb2115695778d6f");
 
 
             // Assert 
@@ -104,7 +93,7 @@ namespace BeeNet.IntegrationTest.Clients.DebugApi.v2_0_0
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookChequeForPeerAsync("peerId");
+            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookChequeForPeerAsync("51f958d7962f66b1dfe555f41ec00b02610cf9ce1aea01b28eb2115695778d6f");
 
 
             // Assert 
