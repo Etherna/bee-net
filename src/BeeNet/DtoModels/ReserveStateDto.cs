@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Radius = response.Radius;
-            Available = response.Available;
+            StorageRadius = response.Available;
             Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
             Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Radius = response.Radius;
-            Available = response.Available;
+            StorageRadius = response.Available;
             Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
             Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
@@ -48,14 +48,25 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Radius = response.Radius;
-            Available = response.Available;
+            StorageRadius = response.Available;
             Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
             Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
         }
 
+        public ReserveStateDto(Clients.DebugApi.V2_0_1.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Commitment = response.Commitment;
+            Radius = response.Radius;
+            StorageRadius = response.StorageRadius;
+        }
+
         // Properties.
+        public int Commitment { get; }
         public int Radius { get; }
-        public int Available { get; }
+        public int StorageRadius { get; }
         public long Outer { get; }
         public long Inner { get; }
     }

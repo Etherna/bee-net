@@ -73,6 +73,15 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
+        public MessageResponseDto(Clients.DebugApi.V2_0_0.Response9 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
         public MessageResponseDto(Clients.DebugApi.V2_0_0.Response10 response)
         {
             if (response is null)
@@ -91,7 +100,25 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.DebugApi.V2_0_0.Response9 response)
+        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response9 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response10 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response17 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -128,6 +155,23 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         public MessageResponseDto(Clients.GatewayApi.V3_0_0.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.GatewayApi.V3_0_1.Response10 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+        public MessageResponseDto(Clients.GatewayApi.V3_0_1.Response12 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

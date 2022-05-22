@@ -35,6 +35,13 @@ namespace Etherna.BeeNet.DtoModels
             IsRetrievable = response.IsRetrievable;
         }
 
+        public StewardShipGetDto(Clients.GatewayApi.V3_0_1.Response17 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            IsRetrievable = response.IsRetrievable;
+        }
 
         // Properties.
         public bool IsRetrievable { get; }

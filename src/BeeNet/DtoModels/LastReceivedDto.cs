@@ -80,6 +80,26 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
+        public LastReceivedDto(Clients.DebugApi.V2_0_1.Lastreceived2 lastReceived)
+        {
+            if (lastReceived is null)
+                throw new ArgumentNullException(nameof(lastReceived));
+
+            Beneficiary = lastReceived.Beneficiary;
+            Chequebook = lastReceived.Chequebook;
+            Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
+        }
+
+        public LastReceivedDto(Clients.DebugApi.V2_0_1.Lastreceived lastReceived)
+        {
+            if (lastReceived is null)
+                throw new ArgumentNullException(nameof(lastReceived));
+
+            Beneficiary = lastReceived.Beneficiary;
+            Chequebook = lastReceived.Chequebook;
+            Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public string Beneficiary { get; }
         public string Chequebook { get; }

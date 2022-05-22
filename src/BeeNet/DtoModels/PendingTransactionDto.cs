@@ -68,6 +68,22 @@ namespace Etherna.BeeNet.DtoModels
             Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
         }
 
+        public PendingTransactionDto(Clients.DebugApi.V2_0_1.PendingTransactions tx)
+        {
+            if (tx is null)
+                throw new ArgumentNullException(nameof(tx));
+
+            TransactionHash = tx.TransactionHash;
+            To = tx.To;
+            Nonce = tx.Nonce;
+            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
+            GasLimit = tx.GasLimit;
+            Data = tx.Data;
+            Created = tx.Created;
+            Description = tx.Description;
+            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public string TransactionHash { get; }
         public string To { get; }
