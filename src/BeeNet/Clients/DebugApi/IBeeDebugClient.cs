@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns></returns>
         /// <returns>Returns an array of all available and currently valid postage batches.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BatchDto>> GetAllValidPostageBatchesFromAllNodesAsync();
+        Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync();
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -250,6 +250,12 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Get info about transaction</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<TransactionsDto> GetTransactionInfoAsync(string txHash);
+
+        /// <summary>
+        /// Get wallet balance for BZZ and xDai
+        /// </summary>
+        /// <returns>Wallet balance info</returns>
+        Task<WalletDto> GetWalletBalance();
 
         /// <summary>Get configured P2P welcome message</summary>
         /// <returns>Welcome message</returns>

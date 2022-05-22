@@ -18,6 +18,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
     {
         v1_2_0,
         v1_2_1,
-        v2_0_0
+        v2_0_0,
+        v2_0_1
     }
 }

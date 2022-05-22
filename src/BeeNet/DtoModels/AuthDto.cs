@@ -35,6 +35,13 @@ namespace Etherna.BeeNet.DtoModels
             Key = response.Key;
         }
 
+        public AuthDto(Clients.GatewayApi.V3_0_1.Response response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Key = response.Key;
+        }
 
         // Properties.
         public string Key { get; }

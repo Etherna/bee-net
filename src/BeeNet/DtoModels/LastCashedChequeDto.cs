@@ -50,6 +50,16 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
         }
 
+        public LastCashedChequeDto(Clients.DebugApi.V2_0_1.LastCashedCheque lastCashedCheque)
+        {
+            if (lastCashedCheque is null)
+                throw new ArgumentNullException(nameof(lastCashedCheque));
+
+            Beneficiary = lastCashedCheque.Beneficiary;
+            Chequebook = lastCashedCheque.Chequebook;
+            Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public string Beneficiary { get; }
         public string Chequebook { get; }

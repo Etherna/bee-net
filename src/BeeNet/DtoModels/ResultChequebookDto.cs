@@ -50,6 +50,16 @@ namespace Etherna.BeeNet.DtoModels
             Bounced = result.Bounced;
         }
 
+        public ResultChequeBookDto(Clients.DebugApi.V2_0_1.Result result)
+        {
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+
+            Recipient = result.Recipient;
+            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
+            Bounced = result.Bounced;
+        }
+
         // Properties.
         public bool Bounced { get; }
         public long LastPayout { get; }

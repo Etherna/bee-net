@@ -50,8 +50,20 @@ namespace Etherna.BeeNet.DtoModels
             CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
+        public ChainStateDto(Clients.DebugApi.V2_0_1.Response13 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Block = response.Block;
+            ChainTip = response.ChainTip;
+            TotalAmount = response.TotalAmount;
+            CurrentPrice = response.CurrentPrice;
+        }
+
         // Properties.
         public int Block { get; }
+        public int ChainTip { get; }
         public long TotalAmount { get; }
         public long CurrentPrice { get; }
     }

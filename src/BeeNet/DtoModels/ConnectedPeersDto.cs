@@ -61,6 +61,20 @@ namespace Etherna.BeeNet.DtoModels
             LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
         }
 
+        public ConnectedPeersDto(Clients.DebugApi.V2_0_1.ConnectedPeers connectedPeers)
+        {
+            if (connectedPeers is null)
+                throw new ArgumentNullException(nameof(connectedPeers));
+
+            Address = connectedPeers.Address;
+            LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
+            SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
+            ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
+            SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
+            SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
+            LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
+        }
+
         // Properties.
         public string Address { get; }
         public int LastSeenTimestamp { get; }

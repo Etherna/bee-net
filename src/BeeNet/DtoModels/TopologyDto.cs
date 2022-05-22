@@ -27,14 +27,16 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             BaseAddr = response.BaseAddr;
-            Population = response.Population;
-            Connected = response.Connected;
-            Timestamp = response.Timestamp;
-            NnLowWatermark = response.NnLowWatermark;
-            Depth = response.Depth;
             Bins = response.Bins.ToDictionary(
                 i => i.Key,
                 i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = NetworkAvailabilityDto.Unknown;
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = ReachabilityDto.Unknown;
+            Timestamp = response.Timestamp;
         }
 
         public TopologyDto(Clients.DebugApi.V1_2_1.Response23 response)
@@ -43,14 +45,16 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             BaseAddr = response.BaseAddr;
-            Population = response.Population;
-            Connected = response.Connected;
-            Timestamp = response.Timestamp;
-            NnLowWatermark = response.NnLowWatermark;
-            Depth = response.Depth;
             Bins = response.Bins.ToDictionary(
                 i => i.Key,
                 i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = NetworkAvailabilityDto.Unknown;
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = ReachabilityDto.Unknown;
+            Timestamp = response.Timestamp;
         }
         public TopologyDto(Clients.DebugApi.V2_0_0.Response23 response)
         {
@@ -58,23 +62,57 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             BaseAddr = response.BaseAddr;
-            Population = response.Population;
-            Connected = response.Connected;
-            Timestamp = response.Timestamp;
-            NnLowWatermark = response.NnLowWatermark;
-            Depth = response.Depth;
             Bins = response.Bins.ToDictionary(
                 i => i.Key,
                 i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = NetworkAvailabilityDto.Unknown;
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = ReachabilityDto.Unknown;
+            Timestamp = response.Timestamp;
+        }
+
+        public TopologyDto(Clients.DebugApi.V2_0_1.Response23 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            BaseAddr = response.BaseAddr;
+            Bins = response.Bins.ToDictionary(
+                i => i.Key,
+                i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = response.NetworkAvailability switch
+            {
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Available => NetworkAvailabilityDto.Available,
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
+                _ => throw new InvalidOperationException(),
+            };
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = response.Reachability switch
+            {
+                Clients.DebugApi.V2_0_1.Response23Reachability.Unknown => ReachabilityDto.Unknown,
+                Clients.DebugApi.V2_0_1.Response23Reachability.Public => ReachabilityDto.Public,
+                Clients.DebugApi.V2_0_1.Response23Reachability.Private => ReachabilityDto.Private,
+                _ => throw new InvalidOperationException(),
+            };
+            Timestamp = response.Timestamp;
         }
 
         // Properties.
         public string BaseAddr { get; }
-        public int Population { get; }
-        public int Connected { get; }
-        public string Timestamp { get; }
-        public int NnLowWatermark { get; }
-        public int Depth { get; }
         public IDictionary<string, AnonymousDto> Bins { get; }
+        public int Connected { get; }
+        public int Depth { get; }
+        public NetworkAvailabilityDto NetworkAvailability { get; }
+        public int NnLowWatermark { get; }
+        public int Population { get; }
+        public ReachabilityDto Reachability { get; }
+        public string Timestamp { get; }
     }
 }

@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -86,9 +87,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="targets">Global pinning targets prefix</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetChunkStreamAsync(
-            string reference,
-            string? targets = null);
+        [Obsolete("This method is no longer supported since GatewayApiVersion.v3_0_1", false)]
+        Task<Stream> GetChunkStreamAsync(string reference, string targets);
+
+        /// <summary>Get Chunk</summary>
+        /// <param name="reference">Swarm address of chunk</param>
+        /// <returns>Retrieved chunk content</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<Stream> GetChunkStreamAsync(string reference);
 
         /// <summary>Get referenced data</summary>
         /// <param name="reference">Swarm address reference to content</param>
@@ -115,17 +121,32 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="targets">Global pinning targets prefix</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetFileAsync(
+        [Obsolete("This method is no longer supported since GatewayApiVersion.v3_0_1", false)]
+        Task<Stream> GetFileWithPathAsync(
             string reference,
             string path,
-            string? targets = null);
+            string targets);
+
+        /// <summary>Get referenced file from a collection of files</summary>
+        /// <param name="reference">Swarm address of content</param>
+        /// <param name="path">Path to the file in the collection.</param>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<Stream> GetFileWithPathAsync(string reference, string path);
 
         /// <summary>Get file or index document from a collection of files</summary>
         /// <param name="reference">Swarm address of content</param>
         /// <param name="targets">Global pinning targets prefix</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetFileAsync(string reference, string? targets = null);
+        [Obsolete("This method is no longer supported since GatewayApiVersion.v3_0_1", false)]
+        Task<Stream> GetFileAsync(string reference, string targets);
+
+        /// <summary>Get file or index document from a collection of files</summary>
+        /// <param name="reference">Swarm address of content</param>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<Stream> GetFileAsync(string reference);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
         /// <param name="reference">Swarm reference of the root hash</param>
