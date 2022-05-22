@@ -6,6 +6,7 @@ namespace BeeNet.IntegrationTest.Clients
     {
         protected readonly BeeNodeClient beeNodeClient;
         protected string pathTestFileForUpload = "Data\\TestFileForUpload_Gateway.txt";
+        protected readonly string ethAddress = "0x26234a2ad3ba8b398a762f279b792cfacd536a3f";
 
         public BaseTest_Gateway_v3_0_0()
         {

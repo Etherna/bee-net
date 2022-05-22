@@ -10,10 +10,11 @@ namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
         public async Task CreateFeedAsync()
         {
             // Arrange 
+            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
 
 
             // Act 
-            await beeNodeClient.GatewayClient.CreateFeedAsync("owner", "topic", "batchid");
+            await beeNodeClient.GatewayClient.CreateFeedAsync(ethAddress, "cf880b8eeac5093fa27b0825906c600685", batch);
 
 
             // Assert 
