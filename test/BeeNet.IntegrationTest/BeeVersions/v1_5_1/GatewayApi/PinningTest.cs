@@ -10,10 +10,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
         public async Task CreatePinAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync("8343797038f5d53ea56daf06a11baa9974585a1f9d2a60360ccf555c064b8a11");
+            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
 
 
             // Assert 

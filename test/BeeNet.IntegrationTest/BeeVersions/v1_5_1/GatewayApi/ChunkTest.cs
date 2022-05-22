@@ -1,4 +1,5 @@
 ﻿using Etherna.BeeNet;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,13 +12,16 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
         public async Task GetChunkStreamAsync()
         {
             // Arrange 
-
+            var reference = await UploadFileAndGetReferenceAsync();
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetChunkStreamAsync("1bfca7c27da7fe1758cfaac017b4b0d7b82020ff471aab34b1b23fd9116deed1");
+            var result = await beeNodeClient.GatewayClient.GetChunkStreamAsync(reference);
 
 
             // Assert
+            var reader = new StreamReader(result);
+            var text = reader.ReadToEnd();
+            Assert.Contains("File for upload in integration test Gateway", text);
         }
 
         [Fact]
@@ -26,15 +30,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32); 
             var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
-            MemoryStream inMemoryCopy = new MemoryStream();
-            using (FileStream fs = File.OpenRead("Data\\TestFileForUpload_Debug.txt"))
-            {
-                fs.CopyTo(inMemoryCopy);
-            }
+            var fs = File.OpenRead("Data\\TestFileForUpload_Gateway.txt");
+            await Task.Delay(90000);
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, tag.Uid, body: inMemoryCopy);
+            var result = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, tag.Uid, body: fs);
 
 
             // Assert
@@ -46,7 +47,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             //var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
-            var stream = System.IO.File.OpenRead("Data\\TestFileForUpload_Debug.txt");
+            var stream = System.IO.File.OpenRead("Data\\TestFileForUpload_Gateway.txt");
 
             // Act 
             await beeNodeClient.GatewayClient.UploadChunksStreamAsync(batch);
@@ -54,6 +55,5 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
 
             // Assert
         }
-
     }
 }

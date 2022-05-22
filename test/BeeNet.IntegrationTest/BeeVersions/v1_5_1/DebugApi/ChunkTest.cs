@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
@@ -9,10 +10,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
         public async Task GetChunkAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.GetChunkAsync("");
+            var result = await beeNodeClient.DebugClient.GetChunkAsync(reference); //TODO address
 
 
             // Assert
@@ -22,13 +24,30 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
         public async Task DeleteChunkAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.DeleteChunkAsync("");
+            var result = await beeNodeClient.DebugClient.DeleteChunkAsync(reference);
 
 
             // Assert
         }
+
+
+        private async Task<string> UploadFileAndGetReferenceAsync()
+        {
+            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
+            var fs = File.OpenRead("Data\\TestFileForUpload_Debug.txt");
+            await Task.Delay(90000);
+
+
+            // Act 
+            var result = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, tag.Uid, body: fs);
+
+            return result.Reference;
+        }
+
     }
 }

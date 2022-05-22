@@ -1,4 +1,5 @@
 ﻿using Etherna.BeeNet;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,10 +24,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
         public async Task GetFileAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync("reference");
+            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
 
 
             // Assert 
@@ -36,10 +38,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
         public async Task GetFilePathAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync("reference");
+            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
 
 
             // Assert 
