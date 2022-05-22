@@ -25,7 +25,7 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.DebugApi.v2_0_0
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetPostageBatchAsync(batch);
+            var reserveState = await beeNodeClient.DebugClient.GetPostageBatchAsync(batch); //TODO missing data in returned json
 
 
             // Assert
@@ -36,9 +36,11 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.DebugApi.v2_0_0
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            await Task.Delay(60000);
+
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetStampsBucketsForBatchAsync(batch);
+            var reserveState = await beeNodeClient.DebugClient.GetStampsBucketsForBatchAsync(batch); //TODO swarm address
 
 
             // Assert
@@ -62,9 +64,10 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.DebugApi.v2_0_0
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            await Task.Delay(60000);
 
             // Act 
-            var result = await beeNodeClient.DebugClient.TopUpPostageBatchAsync(batch, 50);
+            var result = await beeNodeClient.DebugClient.TopUpPostageBatchAsync(batch, 64);
 
 
             // Assert
@@ -75,10 +78,10 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.DebugApi.v2_0_0
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-
+            await Task.Delay(60000);
 
             // Act 
-            var result = await beeNodeClient.DebugClient.DilutePostageBatchAsync(batch, 32);
+            var result = await beeNodeClient.DebugClient.DilutePostageBatchAsync(batch, 64);
 
 
             // Assert

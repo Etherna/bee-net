@@ -11,6 +11,7 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.GatewayApi.v3_0_0
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            await Task.Delay(60000);
 
 
             // Act 

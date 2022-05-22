@@ -13,7 +13,7 @@ namespace BeeNet.IntegrationTest.Clients.v1_5_1.GatewayApi.v3_0_0
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync("a0da79fda8d8e117af98e0f4fe6665dccb2b5ec3b862ad6cf7d20065d03f3a21");
+            var result = await beeNodeClient.GatewayClient.CreatePinAsync("8343797038f5d53ea56daf06a11baa9974585a1f9d2a60360ccf555c064b8a11");
 
 
             // Assert 
