@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.Clients.v1_5_1.GatewayApi.v3_0_0
+namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
 {
     public class ChunkTest : BaseTest_Gateway_v3_0_0
     {
