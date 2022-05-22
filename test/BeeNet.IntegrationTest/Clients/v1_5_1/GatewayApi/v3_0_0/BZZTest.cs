@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
+namespace BeeNet.IntegrationTest.Clients.v1_5_1.GatewayApi.v3_0_0
 {
     public class BZZTest : BaseTest_Gateway_v3_0_0
     {
@@ -39,7 +39,7 @@ namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync("reference", "path", null);
+            var result = await beeNodeClient.GatewayClient.GetFileAsync("reference");
 
 
             // Assert 

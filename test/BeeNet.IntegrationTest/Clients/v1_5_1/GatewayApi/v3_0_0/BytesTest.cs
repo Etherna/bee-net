@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.Clients.GatewayApi.v3_0_0
+namespace BeeNet.IntegrationTest.Clients.v1_5_1.GatewayApi.v3_0_0
 {
     public class BytesTest : BaseTest_Gateway_v3_0_0
     {
