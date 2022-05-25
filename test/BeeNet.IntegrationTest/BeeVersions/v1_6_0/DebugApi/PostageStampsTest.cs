@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class PostageStampsTest : BaseTest_Debug_v2_0_1
     {

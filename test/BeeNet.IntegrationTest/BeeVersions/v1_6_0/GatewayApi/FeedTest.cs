@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 {
     public class FeedTest : BaseTest_Gateway_v3_0_1
     {

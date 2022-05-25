@@ -1,6 +1,6 @@
 ﻿using Etherna.BeeNet;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0
 {
     public abstract class BaseTest_Debug_v2_0_1
     {
