@@ -135,12 +135,20 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync();
 
+        /// <summary>
+        /// Get the balances with all known peers including prepaid services
+        /// </summary>
+        /// <returns>Own balances with all known peers</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<IEnumerable<BalanceDto>> GetBalancesAsync();
+
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetBalanceWithPeerAsync(string address);
+        Task<BalanceDto> GetBalanceWithPeerAsync(string address);
 
+        
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
@@ -183,7 +191,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetConsumedBalanceWithPeerAsync(string address);
+        Task<BalanceDto> GetConsumedBalanceWithPeerAsync(string address);
 
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>

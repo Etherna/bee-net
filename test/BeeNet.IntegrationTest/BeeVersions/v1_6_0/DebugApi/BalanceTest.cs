@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
@@ -17,6 +18,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.Equal(4, balances.Count());
         }
 
         [Fact]
@@ -30,19 +32,21 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.Equal(4, balances.Count());
         }
 
         [Fact]
         public async Task GetBalanceWithPeerAsync()
         {
             // Arrange 
-
+            var address = "5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0";
 
             // Act 
-            var balances = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync("430b505bb0361b7a508559c10a6a9ea2b68a7320dabbddad585d0db78ba96a63");
+            var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(address);
 
 
             // Assert
+            Assert.Equal(address, balance.Peer);
         }
 
 
@@ -50,13 +54,15 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetConsumedBalanceWithPeerAsync()
         {
             // Arrange 
+            var address = "5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0";
 
 
             // Act 
-            var balances = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync("430b505bb0361b7a508559c10a6a9ea2b68a7320dabbddad585d0db78ba96a63");
+            var balance = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync("5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0");
 
 
             // Assert
+            Assert.Equal(address, balance.Peer);
         }
     }
 }
