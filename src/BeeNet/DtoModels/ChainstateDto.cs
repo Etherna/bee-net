@@ -57,8 +57,8 @@ namespace Etherna.BeeNet.DtoModels
 
             Block = response.Block;
             ChainTip = response.ChainTip;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
         // Properties.

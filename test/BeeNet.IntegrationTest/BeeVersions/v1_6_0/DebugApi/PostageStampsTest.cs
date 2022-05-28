@@ -24,6 +24,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
 
+
             // Act 
             var reserveState = await beeNodeClient.DebugClient.GetPostageBatchAsync(batch); //TODO missing data in returned json
 
@@ -57,6 +58,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.StartsWith("0x", result);
         }
 
         [Fact]
@@ -71,6 +73,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.StartsWith("0x", result);
         }
 
         [Fact]
@@ -85,6 +88,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.StartsWith("0x", result);
         }
 
         [Fact]

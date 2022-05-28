@@ -14,7 +14,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference); //TODO Error: The I/O operation has been aborted because of either a thread exit or an application request.
 
 
             // Assert 

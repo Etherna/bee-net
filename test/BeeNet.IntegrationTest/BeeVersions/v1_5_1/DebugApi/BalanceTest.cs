@@ -3,7 +3,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
 {
-    public class BalanceTest : BaseTest_Debug_v2_0_1
+    public class BalanceTest : BaseTest_Debug_v2_0_0
     {
 
         [Fact]

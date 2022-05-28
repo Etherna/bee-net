@@ -47,7 +47,7 @@ components:
         storageRadius:
           type: integer
         commitment:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
 
     ChainState:
       type: object

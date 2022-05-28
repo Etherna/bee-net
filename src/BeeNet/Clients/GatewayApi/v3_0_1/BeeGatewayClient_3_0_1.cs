@@ -3445,7 +3445,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Role { get; set; } = default!;
 
         /// <summary>
@@ -3454,7 +3454,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("expiry")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Expiry { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3474,7 +3474,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Role { get; set; } = default!;
 
         /// <summary>
@@ -3483,7 +3483,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("expiry")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Expiry { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3503,7 +3503,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Address { get; set; } = default!;
 
@@ -3524,7 +3524,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Address { get; set; } = default!;
 
@@ -3545,7 +3545,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Key { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3565,7 +3565,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Key { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3585,7 +3585,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3605,12 +3605,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("version")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Version { get; set; } = default!;
 
         /// <summary>
@@ -3619,7 +3619,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("apiVersion")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string ApiVersion { get; set; } = "0.0.0";
 
         /// <summary>
@@ -3628,7 +3628,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("debugApiVersion")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string DebugApiVersion { get; set; } = "0.0.0";
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3648,7 +3648,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3668,7 +3668,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("tags")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public System.Collections.Generic.ICollection<Tags>? Tags { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3687,28 +3687,18 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
         public System.DateTimeOffset StartedAt { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("total")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+        [System.Text.Json.Serialization.JsonPropertyName("total")] 
         public int Total { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("processed")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
         public int Processed { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("synced")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+        [System.Text.Json.Serialization.JsonPropertyName("synced")] 
         public int Synced { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3728,27 +3718,27 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public System.DateTimeOffset StartedAt { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("total")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Total { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("processed")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Processed { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("synced")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Synced { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3768,12 +3758,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("version")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Version { get; set; } = default!;
 
         /// <summary>
@@ -3782,7 +3772,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("apiVersion")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string ApiVersion { get; set; } = "0.0.0";
 
         /// <summary>
@@ -3791,7 +3781,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("debugApiVersion")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string DebugApiVersion { get; set; } = "0.0.0";
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3811,12 +3801,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3836,12 +3826,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3861,12 +3851,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3886,7 +3876,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("references")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public System.Collections.Generic.ICollection<string> References { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3906,7 +3896,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3926,7 +3916,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3946,7 +3936,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3966,7 +3956,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("isRetrievable")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public bool IsRetrievable { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -3986,12 +3976,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4011,12 +4001,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4036,12 +4026,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4061,12 +4051,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4086,12 +4076,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4111,12 +4101,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4136,12 +4126,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4161,12 +4151,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4186,12 +4176,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4211,12 +4201,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4236,12 +4226,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4261,12 +4251,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4286,12 +4276,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4311,12 +4301,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4336,12 +4326,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4361,12 +4351,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4386,12 +4376,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4411,12 +4401,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4435,13 +4425,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4461,12 +4447,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4486,12 +4472,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4511,12 +4497,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4536,12 +4522,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4561,12 +4547,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4586,12 +4572,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4611,12 +4597,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4636,12 +4622,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4661,12 +4647,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4686,12 +4672,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4711,12 +4697,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4736,12 +4722,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4761,12 +4747,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4786,12 +4772,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4811,12 +4797,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4836,12 +4822,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4861,12 +4847,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4886,12 +4872,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4911,12 +4897,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4936,12 +4922,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4961,12 +4947,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -4986,12 +4972,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5011,12 +4997,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5036,12 +5022,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5061,12 +5047,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5086,12 +5072,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5111,12 +5097,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5136,12 +5122,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5161,12 +5147,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5186,12 +5172,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5211,12 +5197,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5236,12 +5222,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5261,12 +5247,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5286,12 +5272,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5311,12 +5297,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5336,12 +5322,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5361,12 +5347,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5386,12 +5372,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5411,12 +5397,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5436,12 +5422,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5461,12 +5447,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5486,12 +5472,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5511,12 +5497,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5536,12 +5522,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5561,12 +5547,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5586,12 +5572,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5611,12 +5597,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5636,12 +5622,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5661,12 +5647,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5686,12 +5672,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5711,12 +5697,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5736,12 +5722,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5761,12 +5747,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5786,12 +5772,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5811,12 +5797,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5836,12 +5822,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5861,12 +5847,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5886,12 +5872,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5911,12 +5897,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5936,12 +5922,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5961,12 +5947,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5986,12 +5972,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public string Message { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Code { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -6011,27 +5997,27 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public System.DateTimeOffset StartedAt { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("total")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Total { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("processed")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Processed { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("synced")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+          
         public int Synced { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();

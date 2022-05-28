@@ -4,7 +4,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.GatewayApi
 {
-    public class SingleOwnerChunkTest : BaseTest_Gateway_v3_0_1
+    public class SingleOwnerChunkTest : BaseTest_Gateway_v3_0_0
     {
         [Fact]
         public async Task SendPssAsync()

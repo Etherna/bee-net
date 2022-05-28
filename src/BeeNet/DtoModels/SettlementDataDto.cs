@@ -86,8 +86,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
         public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements2 settlement)
@@ -96,8 +96,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
         // Properties.

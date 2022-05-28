@@ -3,7 +3,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_5_1.DebugApi
 {
-    public class StatusResultTest : BaseTest_Debug_v2_0_1
+    public class StatusResultTest : BaseTest_Debug_v2_0_0
     {
         [Fact]
         public async Task GetReserveStateAsync()

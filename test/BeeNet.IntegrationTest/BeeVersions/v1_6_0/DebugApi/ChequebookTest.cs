@@ -47,7 +47,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetAllChequeBookChequesAsync()
         {
             // Arrange 
-            var peer = "9356a84052cd4a1d5d9621bafc1fb4b05cba3cd0fd94e7085ee3998a245dc132";
 
 
             // Act 
@@ -55,8 +54,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert 
-            Assert.Contains(allCheque, i => i.Peer == peer);
-            var cheque = allCheque.First(i => i.Peer == peer);
+            Assert.Contains(allCheque, i => i.Peer == peerId);
+            var cheque = allCheque.First(i => i.Peer == peerId);
             Assert.Equal(3151000000001, cheque.LastReceived.Payout);
         }
 
@@ -93,32 +92,30 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetChequeBookCashoutForPeerAsync()
         {
             // Arrange 
-            var peer = "9356a84052cd4a1d5d9621bafc1fb4b05cba3cd0fd94e7085ee3998a245dc132";
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookCashoutForPeerAsync(peer);
+            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookCashoutForPeerAsync(peerId);
 
 
             // Assert 
             Assert.True(chequeBookBalance.UncashedAmount > 0);
-            Assert.Equal(peer, chequeBookBalance.Peer);
+            Assert.Equal(peerId, chequeBookBalance.Peer);
         }
 
         [Fact]
         public async Task GetChequeBookChequeForPeerAsync()
         {
             // Arrange 
-            var peer = "9356a84052cd4a1d5d9621bafc1fb4b05cba3cd0fd94e7085ee3998a245dc132";
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookChequeForPeerAsync(peer);
+            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookChequeForPeerAsync(peerId);
 
 
             // Assert
             Assert.True(chequeBookBalance.LastReceived.Payout > 0);
-            Assert.Equal(peer, chequeBookBalance.Peer);
+            Assert.Equal(peerId, chequeBookBalance.Peer);
         }
 
         [Fact]

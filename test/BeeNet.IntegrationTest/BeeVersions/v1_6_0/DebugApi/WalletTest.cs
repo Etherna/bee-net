@@ -15,10 +15,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var wallets = await beeNodeClient.DebugClient.GetWalletBalance(); 
+            var wallets = await beeNodeClient.DebugClient.GetWalletBalance();
 
 
             // Assert
+            Assert.StartsWith("9", wallets.Bzz);
+            Assert.StartsWith("9", wallets.XDai);
         }
     }
 }

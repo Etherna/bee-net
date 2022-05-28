@@ -10,10 +10,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
         public async Task CheckIsContentAvailableAsync()
         {
             // Arrange 
+            var reference = await UploadFileAndGetReferenceAsync();
 
 
             // Act 
-            await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync("reference");
+            await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);
         
 
             // Assert 

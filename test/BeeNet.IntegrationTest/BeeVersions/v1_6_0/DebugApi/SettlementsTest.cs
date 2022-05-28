@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
@@ -16,6 +17,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.Contains(reserveState.Settlements, i => i.Peer == peerId);
         }
 
         [Fact]
@@ -29,6 +31,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
+            Assert.Contains(reserveState.Settlements, i => i.Peer == peerId);
         }
 
         [Fact]
@@ -38,10 +41,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetSettlementsWithPeerAsync("430b505bb0361b7a508559c10a6a9ea2b68a7320dabbddad585d0db78ba96a63");
+            var reserveState = await beeNodeClient.DebugClient.GetSettlementsWithPeerAsync(peerId);
 
 
             // Assert
+            Assert.Contains(reserveState, i => i.Peer == peerId);
         }
 
     }

@@ -46,8 +46,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-            //var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
-            var stream = System.IO.File.OpenRead("Data\\TestFileForUpload_Gateway.txt");
+            await Task.Delay(90000);
+
 
             // Act 
             await beeNodeClient.GatewayClient.UploadChunksStreamAsync(batch);
