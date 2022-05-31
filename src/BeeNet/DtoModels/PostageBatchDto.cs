@@ -186,7 +186,7 @@ namespace Etherna.BeeNet.DtoModels
         public string Id { get; }
         public long? AmountPaid { get; }
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
-        public int BatchTTL { get; }
+        public long BatchTTL { get; }
         public int BlockNumber { get; }
         public int BucketDepth { get; }
         public int Depth { get; }

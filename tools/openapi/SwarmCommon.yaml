@@ -427,7 +427,7 @@ components:
         exists:
           type: boolean
         batchTTL:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
 
     PostageBatchNoIssuer:
       type: object
@@ -437,7 +437,7 @@ components:
         exists:
           type: boolean
         batchTTL:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
 
     PostageBatchShort:
       type: object
@@ -455,7 +455,7 @@ components:
         immutableFlag:
           type: boolean
         batchTTL:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
         owner:
           $ref: "#/components/schemas/EthereumAddress"
         storageRadius:
