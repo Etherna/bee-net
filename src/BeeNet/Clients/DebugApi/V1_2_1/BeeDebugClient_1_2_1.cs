@@ -5307,7 +5307,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
     }
 
@@ -7087,7 +7087,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
     }
 
@@ -7190,7 +7190,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_1
         public bool ImmutableFlag { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("owner")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]

@@ -13,7 +13,7 @@
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
         public string BatchID { get; set; } = default!;

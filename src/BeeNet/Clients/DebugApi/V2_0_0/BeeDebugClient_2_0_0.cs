@@ -7118,7 +7118,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_0
         public bool ImmutableFlag { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("owner")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]

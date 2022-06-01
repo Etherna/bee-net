@@ -7853,7 +7853,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_1
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("owner")]
 

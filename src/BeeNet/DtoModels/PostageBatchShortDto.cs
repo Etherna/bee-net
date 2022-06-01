@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.DtoModels
 
         // Properties.
         public string BatchID { get; }
-        public int BatchTTL { get; }
+        public long BatchTTL { get; }
         public int BucketDepth { get; }
         public int Depth { get; }
         public bool ImmutableFlag { get; }

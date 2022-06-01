@@ -5119,7 +5119,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
     }
 
@@ -6863,7 +6863,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V1_2_0
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public int BatchTTL { get; set; } = default!;
+        public long BatchTTL { get; set; } = default!;
 
     }
 
