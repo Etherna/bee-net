@@ -39,14 +39,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetBalanceWithPeerAsync()
         {
             // Arrange 
-            var address = "5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0";
+
 
             // Act 
-            var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(address);
+            var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(peerId);
 
 
             // Assert
-            Assert.Equal(address, balance.Peer);
+            Assert.Equal(peerId, balance.Peer);
         }
 
 
@@ -54,15 +54,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetConsumedBalanceWithPeerAsync()
         {
             // Arrange 
-            var address = "5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0";
 
 
             // Act 
-            var balance = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync("5c53c90b5a2f83db4b096c58327f361a63a797e9f12f20e55a6e7ae3e2be92c0");
+            var balance = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync(peerId);
 
 
             // Assert
-            Assert.Equal(address, balance.Peer);
+            Assert.Equal(peerId, balance.Peer);
         }
     }
 }

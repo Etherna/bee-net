@@ -58,7 +58,9 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
-            Assert.StartsWith("0x", result);
+            await Task.Delay(60000);
+            var batch = await beeNodeClient.DebugClient.GetPostageBatchAsync(result);
+            Assert.Equal(batch.Id, result);
         }
 
         [Fact]
@@ -73,7 +75,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
-            Assert.StartsWith("0x", result);
+            Assert.Equal(batch, result);
         }
 
         [Fact]
@@ -88,7 +90,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert
-            Assert.StartsWith("0x", result);
+            Assert.Equal(batch, result);
         }
 
         [Fact]

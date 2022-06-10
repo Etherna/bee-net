@@ -55,8 +55,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert 
             Assert.Contains(allCheque, i => i.Peer == peerId);
-            var cheque = allCheque.First(i => i.Peer == peerId);
-            Assert.Equal(3151000000001, cheque.LastReceived.Payout);
         }
 
         [Fact]
@@ -99,7 +97,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Assert 
-            Assert.True(chequeBookBalance.UncashedAmount > 0);
             Assert.Equal(peerId, chequeBookBalance.Peer);
         }
 
