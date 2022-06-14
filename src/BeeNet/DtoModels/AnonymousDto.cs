@@ -73,6 +73,19 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(k => new ConnectedPeersDto(k));
         }
 
+        public AnonymousDto(Clients.GatewayApi.V3_0_2.Anonymous anonymous)
+        {
+            if (anonymous is null)
+                throw new ArgumentNullException(nameof(anonymous));
+
+            Population = anonymous.Population;
+            Connected = anonymous.Connected;
+            DisconnectedPeers = anonymous.DisconnectedPeers
+                .Select(k => new DisconnectedPeersDto(k));
+            ConnectedPeers = anonymous.ConnectedPeers
+                .Select(k => new ConnectedPeersDto(k));
+        }
+
         // Properties.
         public int Population { get; }
         public int Connected { get; }

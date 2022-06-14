@@ -83,6 +83,23 @@ namespace Etherna.BeeNet.DtoModels
             StartedAt = response.StartedAt;
         }
 
+        public TagDto(Clients.GatewayApi.V3_0_2.Response8 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+            //TODO remove old variable??????
+            Total = response.Total;
+            //Split = response.Split;
+            //Seen = response.Seen;
+            //Stored = response.Stored;
+            //Sent = response.Sent;
+            Synced = response.Synced;
+            Uid = response.Uid;
+            //Address = response.Address;
+            StartedAt = response.StartedAt;
+            Processed = response.Processed;
+        }
+
         // Properties.
         public int Total { get; }
         public int Split { get; }
@@ -91,7 +108,8 @@ namespace Etherna.BeeNet.DtoModels
         public int Sent { get; }
         public int Synced { get; }
         public int Uid { get; }
-        public string Address { get; }
+        public int Processed { get; }
+        public string? Address { get; }
         public DateTimeOffset StartedAt { get; }
     }
 }

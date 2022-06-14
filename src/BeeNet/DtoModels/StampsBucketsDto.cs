@@ -65,6 +65,17 @@ namespace Etherna.BeeNet.DtoModels
             Buckets = response.Buckets.Select(i => new BucketDto(i));
         }
 
+        public StampsBucketsDto(Clients.GatewayApi.V3_0_2.Response54 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Depth = response.Depth;
+            BucketDepth = response.BucketDepth;
+            BucketUpperBound = response.BucketUpperBound;
+            Buckets = response.Buckets.Select(i => new BucketDto(i));
+        }
+
         // Properties.
         public int Depth { get; }
         public int BucketDepth { get; }

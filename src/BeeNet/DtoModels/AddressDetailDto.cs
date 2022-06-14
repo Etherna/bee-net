@@ -67,6 +67,18 @@ namespace Etherna.BeeNet.DtoModels
             PssPublicKey = response.PssPublicKey;
         }
 
+        public AddressDetailDto(Clients.GatewayApi.V3_0_2.Response18 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
+            Overlay = response.Overlay;
+            Ethereum = response.Ethereum;
+            PublicKey = response.PublicKey;
+            PssPublicKey = response.PssPublicKey;
+        }
+        
         // Properties.
         public string Overlay { get; }
         public IEnumerable<string> Underlay { get; }

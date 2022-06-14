@@ -104,6 +104,36 @@ namespace Etherna.BeeNet.DtoModels
             Timestamp = response.Timestamp;
         }
 
+        public TopologyDto(Clients.GatewayApi.V3_0_2.Response39 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            BaseAddr = response.BaseAddr;
+            Bins = response.Bins.ToDictionary(
+                i => i.Key,
+                i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = response.NetworkAvailability switch
+            {
+                Clients.GatewayApi.V3_0_2.Response39NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
+                Clients.GatewayApi.V3_0_2.Response39NetworkAvailability.Available => NetworkAvailabilityDto.Available,
+                Clients.GatewayApi.V3_0_2.Response39NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
+                _ => throw new InvalidOperationException(),
+            };
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = response.Reachability switch
+            {
+                Clients.GatewayApi.V3_0_2.Response39Reachability.Unknown => ReachabilityDto.Unknown,
+                Clients.GatewayApi.V3_0_2.Response39Reachability.Public => ReachabilityDto.Public,
+                Clients.GatewayApi.V3_0_2.Response39Reachability.Private => ReachabilityDto.Private,
+                _ => throw new InvalidOperationException(),
+            };
+            Timestamp = response.Timestamp;
+        }
+
         // Properties.
         public string BaseAddr { get; }
         public IDictionary<string, AnonymousDto> Bins { get; }

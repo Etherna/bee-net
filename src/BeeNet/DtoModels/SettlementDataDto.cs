@@ -99,6 +99,36 @@ namespace Etherna.BeeNet.DtoModels
             Sent = settlement.Sent;
         }
 
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = settlement.Received;
+            Sent = settlement.Sent;
+        }
+
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements2 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = settlement.Received;
+            Sent = settlement.Sent;
+        }
+
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Response38 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            //Peer = settlement.Settlements;  //TODO manage settlement
+            Received = settlement.TotalReceived;
+            Sent = settlement.TotalSent;
+        }
+
         // Properties.
         public string Peer { get; }
         public int Received { get; }

@@ -63,6 +63,16 @@ namespace Etherna.BeeNet.DtoModels
             StorageRadius = response.StorageRadius;
         }
 
+        public ReserveStateDto(Clients.GatewayApi.V3_0_2.Response30 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Commitment = response.Commitment;
+            Radius = response.Radius;
+            StorageRadius = response.StorageRadius;
+        }
+
         // Properties.
         public int Commitment { get; }
         public int Radius { get; }

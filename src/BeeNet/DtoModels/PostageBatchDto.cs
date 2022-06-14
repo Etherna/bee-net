@@ -182,6 +182,60 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
+        public PostageBatchDto(Clients.GatewayApi.V3_0_2.Stamps batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            BatchTTL = batch.BatchTTL;
+            Exists = batch.Exists;
+            Id = batch.BatchID;
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;
+        }
+
+        public PostageBatchDto(Clients.GatewayApi.V3_0_2.Response52 batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            BatchTTL = batch.BatchTTL;
+            Exists = batch.Exists;
+            Id = batch.BatchID;
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;
+        }
+
+        public PostageBatchDto(Clients.GatewayApi.V3_0_2.Response53 batch)
+        {
+            if (batch is null)
+                throw new ArgumentNullException(nameof(batch));
+
+            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            BatchTTL = batch.BatchTTL;
+            Exists = batch.Exists;
+            Id = batch.BatchID;
+            Utilization = batch.Utilization;
+            Usable = batch.Usable;
+            Label = batch.Label;
+            Depth = batch.Depth;
+            BucketDepth = batch.BucketDepth;
+            BlockNumber = batch.BlockNumber;
+            ImmutableFlag = batch.ImmutableFlag;
+        }
+
         // Properties.
         public string Id { get; }
         public long? AmountPaid { get; }

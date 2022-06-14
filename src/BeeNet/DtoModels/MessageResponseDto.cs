@@ -171,7 +171,44 @@ namespace Etherna.BeeNet.DtoModels
             Message = response.Message;
             Code = response.Code;
         }
+
         public MessageResponseDto(Clients.GatewayApi.V3_0_1.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response10 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response12 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response28 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
+        public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response34 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

@@ -84,6 +84,38 @@ namespace Etherna.BeeNet.DtoModels
             Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
+        public TransactionsDto(Clients.GatewayApi.V3_0_2.Response35 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TransactionHash = response.TransactionHash;
+            To = response.To;
+            Nonce = response.Nonce;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
+            GasLimit = response.GasLimit;
+            Data = response.Data;
+            Created = response.Created;
+            Description = response.Description;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
+        }
+
+        public TransactionsDto(Clients.GatewayApi.V3_0_2.Response49 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TransactionHash = response.TransactionHash;
+            To = response.To;
+            Nonce = response.Nonce;
+            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
+            GasLimit = response.GasLimit;
+            Data = response.Data;
+            Created = response.Created;
+            Description = response.Description;
+            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
+        }
+
         // Properties.
         public string TransactionHash { get; }
         public string To { get; }

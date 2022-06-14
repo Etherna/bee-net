@@ -71,6 +71,19 @@ namespace Etherna.BeeNet.DtoModels
             LatencyEWMA = metrics.LatencyEWMA;
         }
 
+        public MetricsDto(Clients.GatewayApi.V3_0_2.Metrics metrics)
+        {
+            if (metrics is null)
+                throw new ArgumentNullException(nameof(metrics));
+
+            LastSeenTimestamp = metrics.LastSeenTimestamp;
+            SessionConnectionRetry = metrics.SessionConnectionRetry;
+            ConnectionTotalDuration = metrics.ConnectionTotalDuration;
+            SessionConnectionDuration = metrics.SessionConnectionDuration;
+            SessionConnectionDirection = metrics.SessionConnectionDirection;
+            LatencyEWMA = metrics.LatencyEWMA;
+        }
+
         // Properties.
         public int LastSeenTimestamp { get; }
         public int SessionConnectionRetry { get; }
