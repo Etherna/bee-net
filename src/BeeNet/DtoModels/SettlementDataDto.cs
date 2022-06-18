@@ -124,7 +124,8 @@ namespace Etherna.BeeNet.DtoModels
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
 
-            //Peer = settlement.Settlements;  //TODO manage settlement
+            //Peer = settlement.Peer;  //TODO remove peer?
+            Peer = "";
             Received = settlement.TotalReceived;
             Sent = settlement.TotalSent;
         }

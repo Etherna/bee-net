@@ -697,7 +697,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         public async Task<ChainStateDto> GetChainStateAsync() =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => new ChainStateDto(await beeDebugClient_2_0_1.ChainstateAsync().ConfigureAwait(false)),
+                GatewayApiVersion.v3_0_2 => new ChainStateDto(await beeGatewayApiClient_3_0_2.ChainstateAsync().ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -778,13 +778,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<VersionDto> GetReadinessAsync() =>
-            CurrentApiVersion switch
-            {
-                GatewayApiVersion.v3_0_2 => new VersionDto(await beeGatewayApiClient_3_0_2.ReadinessAsync().ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
-
         public async Task<ReserveStateDto> GetReserveStateAsync() =>
             CurrentApiVersion switch
             {
@@ -810,13 +803,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v3_0_2 => new TopologyDto(await beeGatewayApiClient_3_0_2.TopologyAsync().ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
-
-        public async Task<TagDto> GetTagInfoAsync(int uid) =>
-            CurrentApiVersion switch
-            {
-                GatewayApiVersion.v3_0_2 => new TagDto(await beeGatewayApiClient_3_0_2.TagsGetAsync(uid).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
