@@ -5,6 +5,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class PostageStampsTest : BaseTest_Debug_v2_0_1
     {
+        /*
         [Fact]
         public async Task GetOwnedPostageBatchesByNodeAsync()
         {
@@ -105,6 +106,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        */
     }
 }

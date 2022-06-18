@@ -6,6 +6,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class ChequebookTest : BaseTest_Debug_v2_0_1
     {
+        /*
         [Fact]
         public async Task CashoutChequeForPeerAsync()
         {
@@ -134,5 +135,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.Equal(originalChequeBookBalance.AvailableBalance - amount, actualChequeBookBalance.AvailableBalance);
             Assert.Equal(originalChequeBookBalance.TotalBalance - amount, actualChequeBookBalance.TotalBalance);
         }
+        */
     }
 }

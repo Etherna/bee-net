@@ -5,6 +5,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class StatusResultTest : BaseTest_Debug_v2_0_1
     {
+        /*
         [Fact]
         public async Task GetReserveStateAsync()
         {
@@ -50,7 +51,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.False(nodeInfo.GatewayMode);
             Assert.True(nodeInfo.SwapEnabled);
         }
-
+        */
         [Fact]
         public async Task GetHealthAsync()
         {
@@ -67,7 +68,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.Equal("ok", healthAsync.Status);
             Assert.StartsWith("1.6.1-", healthAsync.Version);
         }
-
+        /*
         [Fact]
         public async Task GetReadinessAsync()
         {
@@ -84,6 +85,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.Equal("ok", readiness.Status);
             Assert.StartsWith("1.6.1-", readiness.Version);
         }
+        */
 
     }
 }

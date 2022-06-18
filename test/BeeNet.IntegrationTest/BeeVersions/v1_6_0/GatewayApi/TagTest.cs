@@ -6,6 +6,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 {
     public class TagTest : BaseTest_Gateway_v3_0_1
     {
+        /*
         [Fact]
         public async Task CreateTagAsync()
         {
@@ -83,5 +84,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 
             // Assert 
         }
+        */
     }
 }

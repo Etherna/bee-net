@@ -8,6 +8,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 {
     public class ChunkTest : BaseTest_Gateway_v3_0_1
     {
+        /*
         [Fact]
         public async Task GetChunkStreamAsync()
         {
@@ -55,5 +56,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 
             // Assert
         }
+        */
     }
 }

@@ -7,6 +7,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
     public class BalanceTest : BaseTest_Debug_v2_0_1
     {
 
+        /*
         [Fact]
         public async Task GetAllBalancesAsync()
         {
@@ -63,5 +64,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             // Assert
             Assert.Equal(peerId, balance.Peer);
         }
+        */
     }
 }
