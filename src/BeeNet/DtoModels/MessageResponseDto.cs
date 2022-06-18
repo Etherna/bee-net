@@ -199,6 +199,15 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
+        public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response27 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Message = response.Message;
+            Code = response.Code;
+        }
+
         public MessageResponseDto(Clients.GatewayApi.V3_0_2.Response28 response)
         {
             if (response is null)

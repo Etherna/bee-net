@@ -543,17 +543,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-
-
-
-
-
-
-
-
-
-
-
         public async Task<string> BuyPostageBatchAsync(
             long amount,
             int depth,
@@ -680,10 +669,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<BalanceDto>> GetBalanceWithPeerAsync(string address) =>
+        public async Task<BalanceDto> GetBalanceWithPeerAsync(string address) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.BalancesGetAsync().ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                GatewayApiVersion.v3_0_2 => new BalanceDto(await beeGatewayApiClient_3_0_2.BalancesGetAsync(address).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -736,10 +725,17 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<BalanceDto>> GetConsumedBalanceWithPeerAsync(string address) =>
+        public async Task<MessageResponseDto> ChunksHeadAsync(string address) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.ConsumedGetAsync().ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                GatewayApiVersion.v3_0_2 => new MessageResponseDto(await beeGatewayApiClient_3_0_2.ChunksHeadAsync(address).ConfigureAwait(false)),
+                _ => throw new InvalidOperationException()
+            };
+        
+        public async Task<BalanceDto> GetConsumedBalanceWithPeerAsync(string address) =>
+            CurrentApiVersion switch
+            {
+                GatewayApiVersion.v3_0_2 => new BalanceDto(await beeGatewayApiClient_3_0_2.ConsumedGetAsync(address).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -785,10 +781,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(string address) =>
+        public async Task<SettlementDataDto> GetSettlementsWithPeerAsync(string address) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.SettlementsGetAsync().ConfigureAwait(false)).Settlements.Select(i => new SettlementDataDto(i)),
+                GatewayApiVersion.v3_0_2 => new SettlementDataDto(await beeGatewayApiClient_3_0_2.SettlementsGetAsync(address).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -859,7 +855,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             long? gasPrice = null) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.ChequebookWithdrawAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
