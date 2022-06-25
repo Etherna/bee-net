@@ -5,7 +5,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class TransactionTest : BaseTest_Debug_v2_0_1
     {
-        /*
+
         [Fact]
         public async Task GetPendingTransactionsAsync()
         {
@@ -18,7 +18,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        /*
         [Fact]
         public async Task GetTransactionInfoAsync()
         {
@@ -31,7 +31,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        
         [Fact]
         public async Task RebroadcastTransactionAsync()
         {
@@ -44,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        
         [Fact]
         public async Task DeleteTransactionAsync()
         {

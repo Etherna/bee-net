@@ -5,7 +5,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class StatusResultTest : BaseTest_Debug_v2_0_1
     {
-        /*
+
         [Fact]
         public async Task GetReserveStateAsync()
         {
@@ -51,9 +51,26 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.False(nodeInfo.GatewayMode);
             Assert.True(nodeInfo.SwapEnabled);
         }
-        */
-        [Fact]
+
+        [IgnoreOtherVersionFact(testVersion: version)]
         public async Task GetHealthAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
+
+
+            // Assert
+            Assert.Equal("3.0.1", healthAsync.ApiVersion);
+            Assert.Equal("2.0.1", healthAsync.DebugApiVersion);
+            Assert.Equal("ok", healthAsync.Status);
+            Assert.StartsWith("1.6.1-", healthAsync.Version);
+        }
+
+        [IgnoreOtherVersionFact(testVersion: "1.6.0")]
+        public async Task GetHealth2Async()
         {
             // Arrange 
 

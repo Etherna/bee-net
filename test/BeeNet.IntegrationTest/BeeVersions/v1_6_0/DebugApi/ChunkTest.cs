@@ -34,7 +34,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        */
 
         private async Task<string> UploadFileAndGetReferenceAsync()
         {
@@ -49,6 +49,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             return result.Reference;
         }
-        */
+
     }
 }

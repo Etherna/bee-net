@@ -2,7 +2,9 @@ name: Integration Test
 
 on:
   push:
-    branches: [ "BNET-11-IntegrationTest" ]
+    branches:
+    - main
+    - release/*
 
 jobs:
   build:
@@ -10,16 +12,40 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BeeNet_IT_NodeEndPoint: "http://89.145.161.170/"
+      BeeNet_IT_NodeVersion: "1.6.1"
 
     steps:
     - uses: actions/checkout@v3
+
+    - uses: docker-practice/actions-setup-docker@master
+    - run: |
+        set -x
+
+        docker version
+
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm test
+        npm install -g @ethersphere/bee-factory
+        bee-factory start --detach 1.5.1
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --no-restore
+
     - name: Test
       run: dotnet test --no-build --verbosity normal

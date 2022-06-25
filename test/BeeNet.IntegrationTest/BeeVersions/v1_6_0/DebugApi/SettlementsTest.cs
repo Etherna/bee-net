@@ -6,7 +6,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 {
     public class SettlementsTest : BaseTest_Debug_v2_0_1
     {
-        /*
+
         [Fact]
         public async Task GetAllSettlementsAsync()
         {
@@ -48,6 +48,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             // Assert
             Assert.Contains(reserveState, i => i.Peer == peerId);
         }
-        */
+
     }
 }
