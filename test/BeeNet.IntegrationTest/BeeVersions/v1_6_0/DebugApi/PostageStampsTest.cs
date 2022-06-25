@@ -47,7 +47,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
             // Assert
         }
-
+        /*
         [Fact]
         public async Task BuyPostageBatchAsync()
         {
@@ -63,7 +63,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             var batch = await beeNodeClient.DebugClient.GetPostageBatchAsync(result);
             Assert.Equal(batch.Id, result);
         }
-
+        */
         [Fact]
         public async Task TopUpPostageBatchAsync()
         {
