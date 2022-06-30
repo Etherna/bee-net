@@ -1,4 +1,4 @@
-﻿namespace Etherna.BeeNet.Clients.DebugApi.DtoFixer
+﻿namespace Etherna.BeeNet.Clients.GatewayApi.DtoFixer
 {
     public class PostageBatchDto
     {

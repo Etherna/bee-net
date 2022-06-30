@@ -19,30 +19,6 @@ namespace Etherna.BeeNet.DtoModels
     public class StewardShipGetDto
     {
         // Constructors.
-        public StewardShipGetDto(Clients.GatewayApi.V2_0_0.Response17 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            IsRetrievable = response.IsRetrievable;
-        }
-
-        public StewardShipGetDto(Clients.GatewayApi.V3_0_0.Response17 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            IsRetrievable = response.IsRetrievable;
-        }
-
-        public StewardShipGetDto(Clients.GatewayApi.V3_0_1.Response17 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            IsRetrievable = response.IsRetrievable;
-        }
-
         public StewardShipGetDto(Clients.GatewayApi.V3_0_2.Response17 response)
         {
             if (response is null)

@@ -8746,7 +8746,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response52 : Etherna.BeeNet.Clients.DebugApi.DtoFixer.PostageBatchDto
+    public partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("stamps")]
@@ -8764,7 +8764,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response53 : Etherna.BeeNet.Clients.DebugApi.DtoFixer.PostageBatchDto
+    public partial class Response53 : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -12259,7 +12259,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Stamps : Etherna.BeeNet.Clients.DebugApi.DtoFixer.PostageBatchDto
+    public partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();

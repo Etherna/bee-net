@@ -21,50 +21,6 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDto
     {
         // Constructors.
-        public SettlementDto(Clients.DebugApi.V1_2_0.Response20 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_0.Settlements>())
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        public SettlementDto(Clients.DebugApi.V1_2_1.Response21 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_1.Settlements>())
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        public SettlementDto(Clients.DebugApi.V2_0_0.Response21 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = response.Settlements
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        public SettlementDto(Clients.DebugApi.V2_0_1.Response21 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = response.Settlements
-                .Select(i => new SettlementDataDto(i));
-        }
-
         public SettlementDto(Clients.GatewayApi.V3_0_2.Response37 response)
         {
             if (response is null)

@@ -19,86 +19,6 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDataDto
     {
         // Constructors.
-        public SettlementDataDto(Clients.DebugApi.V1_2_0.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V1_2_0.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V1_2_1.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V1_2_1.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_0.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_0.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
         {
             if (settlement is null)
@@ -127,17 +47,6 @@ namespace Etherna.BeeNet.DtoModels
             Peer = settlement.Peer;
             Received = settlement.Received;
             Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Response38 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            //Peer = settlement.Peer;  //TODO maybe Response38 must be moved in different DTO beacause   SettlmentList is differente with query singleSettlement
-            Peer = "";
-            Received = settlement.TotalReceived;
-            Sent = settlement.TotalSent;
         }
 
         // Properties.
