@@ -1,22 +1,23 @@
-﻿using System.Linq;
+﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 {
-    public class ChequebookTest : BaseTest_Debug_v2_0_1
+    public class ChequebookTest : BaseTest_Gateway_v3_0_2
     {
 
         [Fact]
         public async Task CashoutChequeForPeerAsync()
         {
             // Arrange 
-            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peers = await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
             var peerId = peers.ToList().First();
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); //TODO this call return 500 "message": "cannot cash cheque"
+            var result = await beeNodeClient.GatewayClient.CashoutChequeForPeerAsync(peerId); //TODO this call return 500 "message": "cannot cash cheque"
             //TODO when return 500 there are some problems to deserialize the error message to DTO
 
 
@@ -28,18 +29,18 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task DepositIntoChequeBookAsync()
         {
             // Arrange 
-            var originalChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            var originalChequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookBalanceAsync();
             var amount = 123;
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.DepositIntoChequeBookAsync(amount);
+            var result = await beeNodeClient.GatewayClient.DepositIntoChequeBookAsync(amount);
             await Task.Delay(90000);
 
 
             // Assert 
             Assert.StartsWith("0x", result);
-            var actualChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            var actualChequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookBalanceAsync();
             Assert.Equal(originalChequeBookBalance.AvailableBalance + amount, actualChequeBookBalance.AvailableBalance);
             Assert.Equal(originalChequeBookBalance.TotalBalance + amount, actualChequeBookBalance.TotalBalance);
         }
@@ -51,7 +52,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
 
 
             // Assert 
@@ -65,7 +66,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var cheque = await beeNodeClient.DebugClient.GetChequeBookAddressAsync();
+            var cheque = await beeNodeClient.GatewayClient.GetChequeBookAddressAsync();
 
 
             // Assert 
@@ -79,7 +80,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            var chequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookBalanceAsync();
 
 
             // Assert 
@@ -94,7 +95,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookCashoutForPeerAsync(peerId);
+            var chequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookCashoutForPeerAsync(peerId);
 
 
             // Assert 
@@ -108,7 +109,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookChequeForPeerAsync(peerId);
+            var chequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookChequeForPeerAsync(peerId);
 
 
             // Assert
@@ -120,18 +121,18 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task WithdrawFromChequeBookAsync()
         {
             // Arrange 
-            var originalChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            var originalChequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookBalanceAsync();
             var amount = 123;
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.WithdrawFromChequeBookAsync(amount);
+            var result = await beeNodeClient.GatewayClient.WithdrawFromChequeBookAsync(amount);
             await Task.Delay(90000);
 
 
             // Assert 
             Assert.StartsWith("0x", result);
-            var actualChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            var actualChequeBookBalance = await beeNodeClient.GatewayClient.GetChequeBookBalanceAsync();
             Assert.Equal(originalChequeBookBalance.AvailableBalance - amount, actualChequeBookBalance.AvailableBalance);
             Assert.Equal(originalChequeBookBalance.TotalBalance - amount, actualChequeBookBalance.TotalBalance);
         }

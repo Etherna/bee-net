@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 {
-    public class SettlementsTest : BaseTest_Debug_v2_0_1
+    public class SettlementsTest : BaseTest_Gateway_v3_0_2
     {
 
         [Fact]
@@ -14,7 +15,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetAllSettlementsAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetAllSettlementsAsync();
 
 
             // Assert
@@ -28,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetAllTimeSettlementsAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetAllTimeSettlementsAsync();
 
 
             // Assert
@@ -42,11 +43,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetSettlementsWithPeerAsync(peerId);
+            var reserveState = await beeNodeClient.GatewayClient.GetSettlementsWithPeerAsync(peerId);
 
 
             // Assert
-            Assert.Contains(reserveState, i => i.Peer == peerId);
+            Assert.Equal(peerId, reserveState.Peer);
         }
 
     }

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 {
-    public class StatusResultTest : BaseTest_Debug_v2_0_1
+    public class StatusResultTest : BaseTest_Gateway_v3_0_2
     {
 
         [Fact]
@@ -13,7 +14,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetReserveStateAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetReserveStateAsync();
 
 
             // Assert
@@ -28,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var chainState = await beeNodeClient.DebugClient.GetChainStateAsync();
+            var chainState = await beeNodeClient.GatewayClient.GetChainStateAsync();
 
 
             // Assert
@@ -43,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var nodeInfo = await beeNodeClient.DebugClient.GetNodeInfoAsync();
+            var nodeInfo = await beeNodeClient.GatewayClient.GetNodeInfoAsync();
 
 
             // Assert
@@ -59,7 +60,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
+            var healthAsync = await beeNodeClient.GatewayClient.GetHealthAsync();
 
 
             // Assert
@@ -76,7 +77,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
+            var healthAsync = await beeNodeClient.GatewayClient.GetHealthAsync();
 
 
             // Assert
@@ -85,24 +86,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
             Assert.Equal("ok", healthAsync.Status);
             Assert.StartsWith("1.6.1-", healthAsync.Version);
         }
-        /*
-        [Fact]
-        public async Task GetReadinessAsync()
-        {
-            // Arrange 
 
-
-            // Act 
-            var readiness = await beeNodeClient.DebugClient.GetReadinessAsync();
-
-
-            // Assert
-            Assert.Equal("3.0.1", readiness.ApiVersion);
-            Assert.Equal("2.0.1", readiness.DebugApiVersion);
-            Assert.Equal("ok", readiness.Status);
-            Assert.StartsWith("1.6.1-", readiness.Version);
-        }
-        */
 
     }
 }

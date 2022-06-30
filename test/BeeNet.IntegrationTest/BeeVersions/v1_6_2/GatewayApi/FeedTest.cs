@@ -1,17 +1,18 @@
 ﻿using Etherna.BeeNet;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 {
-    public class FeedTest : BaseTest_Gateway_v3_0_1
+    public class FeedTest : BaseTest_Gateway_v3_0_2
     {
-        /*
+
         [Fact]
         public async Task CreateFeedAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(60000);
 
 
@@ -34,6 +35,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
 
             // Assert 
         }
-        */
+        
+
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 {
-    public class PostageStampsTest : BaseTest_Debug_v2_0_1
+    public class PostageStampsTest : BaseTest_Gateway_v3_0_2
     {
 
         [Fact]
@@ -13,7 +14,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetOwnedPostageBatchesByNodeAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetOwnedPostageBatchesByNodeAsync();
 
 
             // Assert
@@ -37,12 +38,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task GetStampsBucketsForBatchAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(60000);
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetStampsBucketsForBatchAsync(batch); //TODO swarm address
+            var reserveState = await beeNodeClient.GatewayClient.GetStampsBucketsForBatchAsync(batch); //TODO swarm address
 
 
             // Assert
@@ -68,11 +69,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task TopUpPostageBatchAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(60000);
 
             // Act 
-            var result = await beeNodeClient.DebugClient.TopUpPostageBatchAsync(batch, 64);
+            var result = await beeNodeClient.GatewayClient.TopUpPostageBatchAsync(batch, 64);
 
 
             // Assert
@@ -83,11 +84,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
         public async Task DilutePostageBatchAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(60000);
 
             // Act 
-            var result = await beeNodeClient.DebugClient.DilutePostageBatchAsync(batch, 64);
+            var result = await beeNodeClient.GatewayClient.DilutePostageBatchAsync(batch, 64);
 
 
             // Assert
@@ -101,7 +102,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.DebugApi
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.GetAllValidPostageBatchesFromAllNodesAsync();
+            var result = await beeNodeClient.GatewayClient.GetAllValidPostageBatchesFromAllNodesAsync();
 
 
             // Assert
