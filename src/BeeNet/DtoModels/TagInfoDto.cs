@@ -19,7 +19,31 @@ namespace Etherna.BeeNet.DtoModels
     public class TagInfoDto
     {
         // Constructors.
-        public TagInfoDto(Clients.GatewayApi.V2_0_0.Tags tags)
+        public TagInfoDto(Clients.GatewayApi.V3_0_2.Response7 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Uid = response.Uid;
+            StartedAt = response.StartedAt;
+            Total = response.Total;
+            Processed = response.Processed;
+            Synced = response.Synced;
+        }
+
+        public TagInfoDto(Clients.GatewayApi.V3_0_2.Response8 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Uid = response.Uid;
+            StartedAt = response.StartedAt;
+            Total = response.Total;
+            Processed = response.Processed;
+            Synced = response.Synced;
+        }
+
+        public TagInfoDto(Clients.GatewayApi.V3_0_2.Tags tags)
         {
             if (tags is null)
                 throw new ArgumentNullException(nameof(tags));
@@ -29,102 +53,6 @@ namespace Etherna.BeeNet.DtoModels
             Total = tags.Total;
             Processed = tags.Processed;
             Synced = tags.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V2_0_0.Response7 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V2_0_0.Response8 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_0.Tags tags)
-        {
-            if (tags is null)
-                throw new ArgumentNullException(nameof(tags));
-
-            Uid = tags.Uid;
-            StartedAt = tags.StartedAt;
-            Total = tags.Total;
-            Processed = tags.Processed;
-            Synced = tags.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_0.Response7 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_0.Response8 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_1.Tags tags)
-        {
-            if (tags is null)
-                throw new ArgumentNullException(nameof(tags));
-
-            Uid = tags.Uid;
-            StartedAt = tags.StartedAt;
-            Total = tags.Total;
-            Processed = tags.Processed;
-            Synced = tags.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_1.Response7 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
-        }
-
-        public TagInfoDto(Clients.GatewayApi.V3_0_1.Response8 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Uid = response.Uid;
-            StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
-            Synced = response.Synced;
         }
 
         // Properties.

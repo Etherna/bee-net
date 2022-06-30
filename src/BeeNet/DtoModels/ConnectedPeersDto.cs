@@ -19,49 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ConnectedPeersDto
     {
         // Constructors.
-        public ConnectedPeersDto(Clients.DebugApi.V1_2_0.ConnectedPeers connectedPeers)
-        {
-            if (connectedPeers is null)
-                throw new ArgumentNullException(nameof(connectedPeers));
-
-            Address = connectedPeers.Address; 
-            LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
-            SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
-            ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
-            SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
-            SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
-            LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
-        }
-
-        public ConnectedPeersDto(Clients.DebugApi.V1_2_1.ConnectedPeers connectedPeers)
-        {
-            if (connectedPeers is null)
-                throw new ArgumentNullException(nameof(connectedPeers));
-
-            Address = connectedPeers.Address;
-            LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
-            SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
-            ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
-            SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
-            SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
-            LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
-        }
-
-        public ConnectedPeersDto(Clients.DebugApi.V2_0_0.ConnectedPeers connectedPeers)
-        {
-            if (connectedPeers is null)
-                throw new ArgumentNullException(nameof(connectedPeers));
-
-            Address = connectedPeers.Address;
-            LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
-            SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
-            ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
-            SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
-            SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
-            LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
-        }
-
-        public ConnectedPeersDto(Clients.DebugApi.V2_0_1.ConnectedPeers connectedPeers)
+        public ConnectedPeersDto(Clients.GatewayApi.V3_0_2.ConnectedPeers connectedPeers)
         {
             if (connectedPeers is null)
                 throw new ArgumentNullException(nameof(connectedPeers));

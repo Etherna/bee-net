@@ -21,40 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class StampsBucketsDto
     {
         // Constructors.
-        public StampsBucketsDto(Clients.DebugApi.V1_2_0.Response38 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Depth = response.Depth;
-            BucketDepth = response.BucketDepth;
-            BucketUpperBound = response.BucketUpperBound;
-            Buckets = (response.Buckets ?? Array.Empty<Clients.DebugApi.V1_2_0.Buckets>()).Select(i => new BucketDto(i));
-        }
-
-        public StampsBucketsDto(Clients.DebugApi.V1_2_1.Response39 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Depth = response.Depth;
-            BucketDepth = response.BucketDepth;
-            BucketUpperBound = response.BucketUpperBound;
-            Buckets = (response.Buckets ?? Array.Empty<Clients.DebugApi.V1_2_1.Buckets>()).Select(i => new BucketDto(i));
-        }
-
-        public StampsBucketsDto(Clients.DebugApi.V2_0_0.Response39 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Depth = response.Depth;
-            BucketDepth = response.BucketDepth;
-            BucketUpperBound = response.BucketUpperBound;
-            Buckets = response.Buckets.Select(i => new BucketDto(i));
-        }
-
-        public StampsBucketsDto(Clients.DebugApi.V2_0_1.Response40 response)
+        public StampsBucketsDto(Clients.GatewayApi.V3_0_2.Response54 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

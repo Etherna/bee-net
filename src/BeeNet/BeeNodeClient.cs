@@ -1,19 +1,4 @@
-﻿//   Copyright 2021-present Etherna Sagl
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+﻿using Etherna.BeeNet.Clients.GatewayApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -34,17 +19,9 @@ namespace Etherna.BeeNet
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_0,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_0)
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2)
         {
             httpClient = new HttpClient();
-
-            if (debugApiPort is not null)
-            {
-                DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
-            }
 
             if (gatewayApiPort is not null)
             {
@@ -73,8 +50,6 @@ namespace Etherna.BeeNet
 
 
         // Properties.
-        public Uri? DebugApiUrl { get; }
-        public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
         public IBeeGatewayClient? GatewayClient { get; }
 

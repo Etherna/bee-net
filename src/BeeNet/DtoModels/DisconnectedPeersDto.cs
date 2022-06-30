@@ -19,34 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class DisconnectedPeersDto
     {
         // Constructors.
-        public DisconnectedPeersDto(Clients.DebugApi.V1_2_0.DisconnectedPeers disconnectedPeers)
-        {
-            if (disconnectedPeers is null)
-                throw new ArgumentNullException(nameof(disconnectedPeers));
-
-            Address = disconnectedPeers.Address;
-            Metrics = new MetricsDto(disconnectedPeers.Metrics);
-        }
-
-        public DisconnectedPeersDto(Clients.DebugApi.V1_2_1.DisconnectedPeers disconnectedPeers)
-        {
-            if (disconnectedPeers is null)
-                throw new ArgumentNullException(nameof(disconnectedPeers));
-
-            Address = disconnectedPeers.Address;
-            Metrics = new MetricsDto(disconnectedPeers.Metrics);
-        }
-
-        public DisconnectedPeersDto(Clients.DebugApi.V2_0_0.DisconnectedPeers disconnectedPeers)
-        {
-            if (disconnectedPeers is null)
-                throw new ArgumentNullException(nameof(disconnectedPeers));
-
-            Address = disconnectedPeers.Address;
-            Metrics = new MetricsDto(disconnectedPeers.Metrics);
-        }
-
-        public DisconnectedPeersDto(Clients.DebugApi.V2_0_1.DisconnectedPeers disconnectedPeers)
+        public DisconnectedPeersDto(Clients.GatewayApi.V3_0_2.DisconnectedPeers disconnectedPeers)
         {
             if (disconnectedPeers is null)
                 throw new ArgumentNullException(nameof(disconnectedPeers));
