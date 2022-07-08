@@ -21,6 +21,36 @@ namespace Etherna.BeeNet.DtoModels
     public class TopologyDto
     {
         // Constructors.
+        public TopologyDto(Clients.DebugApi.V2_0_1.Response23 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            BaseAddr = response.BaseAddr;
+            Bins = response.Bins.ToDictionary(
+                i => i.Key,
+                i => new AnonymousDto(i.Value));
+            Connected = response.Connected;
+            Depth = response.Depth;
+            NetworkAvailability = response.NetworkAvailability switch
+            {
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Available => NetworkAvailabilityDto.Available,
+                Clients.DebugApi.V2_0_1.Response23NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
+                _ => throw new InvalidOperationException(),
+            };
+            NnLowWatermark = response.NnLowWatermark;
+            Population = response.Population;
+            Reachability = response.Reachability switch
+            {
+                Clients.DebugApi.V2_0_1.Response23Reachability.Unknown => ReachabilityDto.Unknown,
+                Clients.DebugApi.V2_0_1.Response23Reachability.Public => ReachabilityDto.Public,
+                Clients.DebugApi.V2_0_1.Response23Reachability.Private => ReachabilityDto.Private,
+                _ => throw new InvalidOperationException(),
+            };
+            Timestamp = response.Timestamp;
+        }
+
         public TopologyDto(Clients.GatewayApi.V3_0_2.Response39 response)
         {
             if (response is null)

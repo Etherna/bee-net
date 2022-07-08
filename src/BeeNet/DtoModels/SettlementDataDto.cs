@@ -20,6 +20,26 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDataDto
     {
         // Constructors.
+        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = settlement.Received;
+            Sent = settlement.Sent;
+        }
+
+        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements2 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = settlement.Received;
+            Sent = settlement.Sent;
+        }
+
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
         {
             if (settlement is null)

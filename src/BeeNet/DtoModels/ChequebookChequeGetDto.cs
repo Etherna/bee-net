@@ -18,7 +18,27 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class ChequeBookChequeGetDto
     {
-        // Constructors.
+        // Constructors
+        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Lastcheques response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Peer = response.Peer;
+            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastSent = new LastSentDto(response.Lastsent);
+        }
+
+        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Response28 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Peer = response.Peer;
+            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastSent = new LastSentDto(response.Lastsent);
+        }
+
         public ChequeBookChequeGetDto(Clients.GatewayApi.V3_0_2.Lastcheques response)
         {
             if (response is null)
