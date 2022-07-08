@@ -19,6 +19,22 @@ namespace Etherna.BeeNet.DtoModels
     public class NodeInfoDto
     {
         // Constructors.
+        public NodeInfoDto(Clients.DebugApi.V2_0_1.Response14 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            BeeMode = response.BeeMode switch
+            {
+                Clients.DebugApi.V2_0_1.Response14BeeMode.Dev => BeeModeDto.Dev,
+                Clients.DebugApi.V2_0_1.Response14BeeMode.Full => BeeModeDto.Full,
+                Clients.DebugApi.V2_0_1.Response14BeeMode.Light => BeeModeDto.Light,
+                _ => throw new InvalidOperationException()
+            };
+            ChequebookEnabled = response.ChequebookEnabled;
+            GatewayMode = response.GatewayMode;
+            SwapEnabled = response.SwapEnabled;
+        }
 
         public NodeInfoDto(Clients.GatewayApi.V3_0_2.Response32 response)
         {

@@ -1,4 +1,5 @@
-﻿using Etherna.BeeNet.Clients.GatewayApi;
+﻿using Etherna.BeeNet.Clients.DebugApi;
+using Etherna.BeeNet.Clients.GatewayApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,9 +20,17 @@ namespace Etherna.BeeNet
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2)
+            int? debugApiPort = 1635,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
         {
             httpClient = new HttpClient();
+
+            if (debugApiPort is not null)
+            {
+                DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
+                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
+            }
 
             if (gatewayApiPort is not null)
             {
@@ -50,6 +59,8 @@ namespace Etherna.BeeNet
 
 
         // Properties.
+        public Uri? DebugApiUrl { get; }
+        public IBeeDebugClient? DebugClient { get; }
         public Uri? GatewayApiUrl { get; }
         public IBeeGatewayClient? GatewayClient { get; }
 

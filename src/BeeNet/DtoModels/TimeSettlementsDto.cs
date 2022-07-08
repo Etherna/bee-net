@@ -21,6 +21,17 @@ namespace Etherna.BeeNet.DtoModels
     public class TimeSettlementsDto
     {
         // Constructors.
+        public TimeSettlementsDto(Clients.DebugApi.V2_0_1.Response22 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            TotalReceived = response.TotalReceived;
+            TotalSent = response.TotalSent;
+            Settlements = response.Settlements
+                .Select(i => new SettlementDataDto(i));
+        }
+
         public TimeSettlementsDto(Clients.GatewayApi.V3_0_2.Response38 response)
         {
             if (response is null)
