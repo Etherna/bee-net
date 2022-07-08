@@ -1,9 +1,7 @@
-﻿using Etherna.BeeNet;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 {
     public class FeedTest : BaseTest_Gateway_v3_0_2
     {

@@ -1,5 +1,4 @@
-﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Xunit;
 

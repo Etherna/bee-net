@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
         public int Stored { get; }
         public int Sent { get; }
         public int Synced { get; }
-        public int Uid { get; }
+        public long Uid { get; }
         public string Address { get; }
         public DateTimeOffset StartedAt { get; }
     }

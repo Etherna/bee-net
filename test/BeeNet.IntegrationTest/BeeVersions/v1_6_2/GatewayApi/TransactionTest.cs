@@ -1,5 +1,4 @@
-﻿using BeeNet.IntegrationTest.BeeVersions.v1_6_0;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
