@@ -38,6 +38,24 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
+        public BalanceDto(Clients.DebugApi.V2_0_1.Response3 balance)
+        {
+            if (balance is null)
+                throw new ArgumentNullException(nameof(balance));
+
+            Peer = balance.Peer;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+        }
+
+        public BalanceDto(Clients.DebugApi.V2_0_1.Response6 balance)
+        {
+            if (balance is null)
+                throw new ArgumentNullException(nameof(balance));
+
+            Peer = balance.Peer;
+            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+        }
+
         public BalanceDto(Clients.GatewayApi.V3_0_2.Balances balance)
         {
             if (balance is null)

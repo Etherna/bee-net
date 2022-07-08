@@ -17,7 +17,9 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_0
             beeNodeClient = new BeeNodeClient(
                 "http://89.145.161.170/",
                 1633,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_2);
+                1635,
+                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_2,
+                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_1);
         }
 
 
