@@ -52,14 +52,13 @@ components:
     ChainState:
       type: object
       properties:
-        chainTip:
-          type: integer
         block:
           type: integer
+          format: int64
         totalAmount:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
         currentPrice:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
 
     Balance:
       type: object
@@ -427,7 +426,8 @@ components:
         exists:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
 
     PostageBatchNoIssuer:
       type: object
@@ -437,7 +437,8 @@ components:
         exists:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
 
     PostageBatchShort:
       type: object
@@ -455,7 +456,8 @@ components:
         immutableFlag:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
         owner:
           $ref: "#/components/schemas/EthereumAddress"
         storageRadius:
