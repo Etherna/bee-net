@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -25,8 +26,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
+            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
         }
 
         public ChainStateDto(Clients.DebugApi.V1_2_1.Response13 response)
@@ -35,8 +36,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
+            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
         }
 
         public ChainStateDto(Clients.DebugApi.V2_0_0.Response13 response)
@@ -45,8 +46,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
+            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
         }
 
         public ChainStateDto(Clients.DebugApi.V2_0_1.Response13 response)
@@ -55,15 +56,13 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            ChainTip = response.ChainTip;
             TotalAmount = response.TotalAmount;
             CurrentPrice = response.CurrentPrice;
         }
 
         // Properties.
-        public int Block { get; }
-        public int ChainTip { get; }
-        public int TotalAmount { get; }
-        public int CurrentPrice { get; }
+        public long Block { get; }
+        public string TotalAmount { get; }
+        public string CurrentPrice { get; }
     }
 }
