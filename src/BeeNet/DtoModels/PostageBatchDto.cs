@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = ((JsonElement)batch.BatchID).ToString();
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = ((JsonElement)batch.BatchID).ToString();
@@ -62,7 +62,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             Exists = batch.Exists;
             BatchTTL = batch.BatchTTL;
             Id = ((JsonElement)batch.BatchID).ToString();
@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.DtoModels
             Depth = batch.Depth;
             Exists = true;
             ImmutableFlag = batch.ImmutableFlag;
-            NormalisedBalance = long.Parse(batch.Value, CultureInfo.InvariantCulture);
+            NormalisedBalance = batch.Value is null ? null : long.Parse(batch.Value, CultureInfo.InvariantCulture);
             OwnerAddress = batch.Owner;
             Usable = true;
         }
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
@@ -132,11 +132,11 @@ namespace Etherna.BeeNet.DtoModels
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
-            
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
-            Id = (string)batch.BatchID;
+            Id = batch.BatchID;
             Utilization = batch.Utilization;
             Usable = batch.Usable;
             Label = batch.Label;
@@ -151,7 +151,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
@@ -169,7 +169,7 @@ namespace Etherna.BeeNet.DtoModels
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
-            AmountPaid = long.Parse(batch.Amount, CultureInfo.InvariantCulture);
+            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
