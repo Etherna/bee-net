@@ -6,7 +6,9 @@
 
 #nullable enable
 
+using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.Exceptions;
+using System;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -22,7 +24,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IBeeGatewayClient_3_0_2
+    public partial interface IBeeGatewayClient_3_0_2 : IAuthentication
     {
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -31,7 +33,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         /// </summary>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> AuthAsync(Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> AuthAsync(string username, string password, Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -670,7 +672,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BeeGatewayClient_3_0_2 : IBeeGatewayClient_3_0_2
+    public partial class BeeGatewayClient_3_0_2 : BaseGateway, IBeeGatewayClient_3_0_2
     {
         private string _baseUrl = "http://{apiRoot}:{port}/v1";
         private System.Net.Http.HttpClient _httpClient;
@@ -709,7 +711,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         /// </summary>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> AuthAsync(Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> AuthAsync(string username, string password, Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -735,6 +737,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBasicAuthRequest(request_, username, password);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -8746,7 +8750,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
+    public partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("stamps")]
@@ -8764,7 +8768,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response53 : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
+    public partial class Response53 : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -12259,7 +12263,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.DtoFixer.PostageBatchDto
+    public partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();

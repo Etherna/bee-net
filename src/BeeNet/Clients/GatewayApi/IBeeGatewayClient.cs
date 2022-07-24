@@ -12,9 +12,9 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -26,11 +26,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         // Properties.
         GatewayApiVersion CurrentApiVersion { get; set; }
 
+        void SetAuthToken(string token);
+
         // Methods.
         /// <summary>Authenticate - This endpoint is experimental</summary>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<AuthDto> AuthenticateAsync(string role, int expiry);
+        Task<AuthDto> AuthenticateAsync(BeeAuthicationData beeAuthicationData, string role, int expiry);
 
         /// <summary>Check if content is available</summary>
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>

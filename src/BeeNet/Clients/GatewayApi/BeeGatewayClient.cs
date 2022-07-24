@@ -1,4 +1,5 @@
-﻿using Etherna.BeeNet.Clients.GatewayApi.V3_0_2;
+﻿using Etherna.BeeNet.Clients.DebugApi;
+using Etherna.BeeNet.Clients.GatewayApi.V3_0_2;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
 using System;
@@ -31,10 +32,16 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         public GatewayApiVersion CurrentApiVersion { get; set; }
 
         // Methods.
-        public async Task<AuthDto> AuthenticateAsync(string role, int expiry) =>
-            CurrentApiVersion switch
+        public async Task<AuthDto> AuthenticateAsync(BeeAuthicationData beeAuthicationData, string role, int expiry)
+        {
+            if (beeAuthicationData is null)
+                throw new ArgumentNullException(nameof(beeAuthicationData));
+
+            return CurrentApiVersion switch
             {
                 GatewayApiVersion.v3_0_2 => new AuthDto(await beeGatewayApiClient_3_0_2.AuthAsync(
+                    beeAuthicationData.Username,
+                    beeAuthicationData.Password,
                     new V3_0_2.Body
                     {
                         Role = role,
@@ -42,7 +49,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     }).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
-
+        }
         public async Task<StewardShipGetDto> CheckIsContentAvailableAsync(string reference) =>
             CurrentApiVersion switch
             {
@@ -610,5 +617,16 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-    }
+        public void SetAuthToken(string token)
+        {
+            if (CurrentApiVersion == GatewayApiVersion.v3_0_2)
+            {
+                beeGatewayApiClient_3_0_2.SetAuthToken(token);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+}
 }

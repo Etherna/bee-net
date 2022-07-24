@@ -24,6 +24,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             beeDebugClient_2_0_1 = new BeeDebugClient_2_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
+
         // Properties.
         public DebugApiVersion CurrentApiVersion { get; set; }
 
