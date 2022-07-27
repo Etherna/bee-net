@@ -3776,6 +3776,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -3860,6 +3862,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -3951,6 +3955,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4030,6 +4036,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4115,6 +4123,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4206,6 +4216,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4275,6 +4287,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4655,6 +4669,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4745,6 +4761,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4814,6 +4832,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4955,6 +4975,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5029,6 +5051,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5125,6 +5149,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5231,6 +5257,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5321,6 +5349,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5400,6 +5430,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5481,6 +5513,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5550,6 +5584,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5633,6 +5669,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5728,6 +5766,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5832,6 +5872,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5938,6 +5980,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -6027,6 +6071,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -6129,6 +6175,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -6229,6 +6277,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -6690,6 +6740,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -6764,6 +6816,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -6849,6 +6903,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -6953,6 +7009,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -7285,6 +7343,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
