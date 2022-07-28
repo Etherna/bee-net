@@ -33,7 +33,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.DebugApi
 
             // Assert
             Assert.True(chainState.Block > 0);
-            Assert.True(chainState.ChainTip > 0);
         }
 
         [Fact]

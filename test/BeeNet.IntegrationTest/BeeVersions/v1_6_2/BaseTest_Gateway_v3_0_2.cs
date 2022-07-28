@@ -9,7 +9,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2
         protected readonly BeeNodeClient beeNodeClient;
         protected string pathTestFileForUpload = "Data\\TestFileForUpload_Gateway.txt";
         protected readonly string ethAddress = "0x26234a2ad3ba8b398a762f279b792cfacd536a3f";
-        protected readonly string peerId = "8379f8a710eb0f533661c06797a1c21e8ae03983dcbad97feffad2eff409d224";
+        protected readonly string peerId = "03c2d16303362d2ab9e1acc39f4c089cc0669a7a3c11e9e3f30964faca80c6f1";
         protected const string version = "3.0.2";
 
         public BaseTest_Gateway_v3_0_2()

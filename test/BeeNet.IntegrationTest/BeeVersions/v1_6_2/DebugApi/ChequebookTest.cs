@@ -51,7 +51,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.DebugApi
 
 
             // Act 
-            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync(); //TODO this call return only one peer
 
 
             // Assert 
