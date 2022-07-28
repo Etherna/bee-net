@@ -26,9 +26,9 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
+            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
@@ -38,17 +38,17 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
+            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string Peer { get; }
-        public LastCashedChequeDto LastCashedCheque { get; }
+        public LastCashedChequeDto? LastCashedCheque { get; }
         public string TransactionHash { get; }
-        public ResultChequeBookDto Result { get; }
+        public ResultChequeBookDto? Result { get; }
         public long UncashedAmount { get; }
     }
 

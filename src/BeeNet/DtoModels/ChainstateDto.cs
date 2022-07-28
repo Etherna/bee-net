@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -26,8 +27,8 @@ namespace Etherna.BeeNet.DtoModels
 
             Block = response.Block;
             ChainTip = response.ChainTip;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
         public ChainStateDto(Clients.GatewayApi.V3_0_2.Response31 response)
@@ -37,14 +38,14 @@ namespace Etherna.BeeNet.DtoModels
 
             Block = response.Block;
             ChainTip = response.ChainTip;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
         // Properties.
         public int Block { get; }
         public int ChainTip { get; }
-        public int TotalAmount { get; }
-        public int CurrentPrice { get; }
+        public long TotalAmount { get; }
+        public long CurrentPrice { get; }
     }
 }

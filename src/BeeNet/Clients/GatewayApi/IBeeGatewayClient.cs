@@ -77,7 +77,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task DeleteTagAsync(int uid);
+        Task DeleteTagAsync(long uid);
 
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned root hash references</returns>
@@ -132,7 +132,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<TagInfoDto> GetTagInfoAsync(int uid);
+        Task<TagInfoDto> GetTagInfoAsync(long uid);
 
         /// <summary>Get list of tags</summary>
         /// <param name="offset">The number of items to skip before starting to collect the result set.</param>
@@ -179,7 +179,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UpdateTagAsync(
-            int uid,
+            long uid,
             string? address = null);
 
         /// <summary>Upload Chunk</summary>
@@ -192,7 +192,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UploadChunkAsync(
             string swarmPostageBatchId,
-            int? swarmTag = null,
+            long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
             Stream? body = null);

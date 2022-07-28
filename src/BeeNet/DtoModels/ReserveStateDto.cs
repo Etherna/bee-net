@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public int Commitment { get; }
+        public long Commitment { get; }
         public int Radius { get; }
         public int StorageRadius { get; }
     }

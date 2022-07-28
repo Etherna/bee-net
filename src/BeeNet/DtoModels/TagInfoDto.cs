@@ -56,7 +56,7 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public int Uid { get; }
+        public long Uid { get; }
         public DateTimeOffset StartedAt { get; }
         public int Total { get; }
         public int Processed { get; }

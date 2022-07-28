@@ -155,10 +155,10 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<BalanceDto>> GetBalanceWithPeerAsync(string address) =>
+        public async Task<BalanceDto> GetBalanceWithPeerAsync(string address) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.BalancesGetAsync().ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                DebugApiVersion.v2_0_1 => new BalanceDto(await beeDebugClient_2_0_1.BalancesGetAsync(address).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -211,10 +211,10 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<BalanceDto>> GetConsumedBalanceWithPeerAsync(string address) =>
+        public async Task<BalanceDto> GetConsumedBalanceWithPeerAsync(string address) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.ConsumedGetAsync().ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                DebugApiVersion.v2_0_1 => new BalanceDto(await beeDebugClient_2_0_1.ConsumedGetAsync(address).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -288,7 +288,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<TagDto> GetTagInfoAsync(int uid) =>
+        public async Task<TagDto> GetTagInfoAsync(long uid) =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v2_0_1 => new TagDto(await beeDebugClient_2_0_1.TagsAsync(uid).ConfigureAwait(false)),

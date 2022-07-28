@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.DtoModels
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Response28 response)
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         public ChequeBookChequeGetDto(Clients.GatewayApi.V3_0_2.Lastcheques response)
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.DtoModels
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         public ChequeBookChequeGetDto(Clients.GatewayApi.V3_0_2.Response44 response)
@@ -56,12 +56,12 @@ namespace Etherna.BeeNet.DtoModels
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         // Properties.
         public string Peer { get; }
         public LastReceivedDto LastReceived { get; }
-        public LastSentDto LastSent { get; }
+        public LastSentDto? LastSent { get; }
     }
 }
