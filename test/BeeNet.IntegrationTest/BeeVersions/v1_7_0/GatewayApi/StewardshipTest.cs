@@ -11,21 +11,22 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task CheckIsContentAvailableAsync()
         {
             // Arrange 
-            var reference = await UploadChunkFileAndGetReferenceAsync();
+            var reference = await UploadBZZFileAndGetReferenceAsync();
             await Task.Delay(90000);
 
             // Act 
             var result = await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);
-        
+
 
             // Assert 
+            Assert.True(result.IsRetrievable);
         }
 
         [Fact]
         public async Task ReuploadContentAsync()
         {
             // Arrange 
-            var reference = await UploadChunkFileAndGetReferenceAsync();
+            var reference = await UploadBZZFileAndGetReferenceAsync();
 
 
             // Act 
