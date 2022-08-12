@@ -6,9 +6,14 @@
 
 #nullable enable
 
+using Etherna.BeeNet.Clients.DebugApi.V2_0_1;
 using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.Exceptions;
 using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -1378,6 +1383,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(string swarm_postage_batch_id, string? name = null, int? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, bool? swarm_deferred_upload = null, System.Collections.Generic.IEnumerable<FileParameter>? file = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (file == null ||
+                file.Count() != 1)
+                throw new System.ArgumentException("file");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/bzz?");
             if (name != null)
@@ -1420,26 +1429,39 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
 
                     if (swarm_deferred_upload != null)
                         request_.Headers.TryAddWithoutValidation("swarm-deferred-upload", ConvertToString(swarm_deferred_upload, System.Globalization.CultureInfo.InvariantCulture));
-                    var boundary_ = System.Guid.NewGuid().ToString();
-                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
-                    content_.Headers.Remove("Content-Type");
-                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
 
-                    if (file == null)
-                        throw new System.ArgumentNullException("file");
+                    HttpContent content_;
+                    if (file.First().ContentType == "text/plain")
+                    {
+                        var reader = new StreamReader(file.First().Data);
+                        content_ = new System.Net.Http.StringContent(await reader.ReadToEndAsync());
+                    }
                     else
                     {
-                        foreach (var item_ in file)
-                        {
-                            var content_file_ = new System.Net.Http.StreamContent(item_.Data);
-                            if (!string.IsNullOrEmpty(item_.ContentType))
-                                content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(item_.ContentType);
-                            content_.Add(content_file_, "file", item_.FileName ?? "file");
-                        }
+                        content_ = new System.Net.Http.StreamContent(file.First().Data);
+                        content_.Headers.TryAddWithoutValidation("Content-Type", file.First().ContentType);
                     }
+                    
+
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.First().ContentType);
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("*/*"));
+
+                    /*
+                    //var content_ = new System.Net.Http.StreamContent(file.First().Data);
+                    var content_ = new System.Net.Http.MultipartFormDataContent();
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.First().ContentType);
+
+                    var content_file_ = new System.Net.Http.StreamContent(file.First(.Data);
+                    if (!string.IsNullOrEmpty(file.First().ContentType))
+                        content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.First().ContentType);
+                    content_.Add(content_file_, "string", file.First().FileName ?? "file");
+                    request_.Content = content_;
+
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    */
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

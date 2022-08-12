@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class BalanceTest : BaseTest_Gateway_v3_0_2
+    public class BalanceTest : BaseTest_Debug_v2_0_1
     {
 
 
@@ -15,7 +15,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            var balances = await beeNodeClient.GatewayClient.GetAllBalancesAsync();
+            var balances = await beeNodeClient.DebugClient.GetAllBalancesAsync();
 
 
             // Assert
@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            var balances = await beeNodeClient.GatewayClient.GetAllConsumedBalancesAsync();
+            var balances = await beeNodeClient.DebugClient.GetAllConsumedBalancesAsync();
 
 
             // Assert
@@ -43,7 +43,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            var balance = await beeNodeClient.GatewayClient.GetBalanceWithPeerAsync(peerId);
+            var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(peerId);
 
 
             // Assert
@@ -58,7 +58,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            var balance = await beeNodeClient.GatewayClient.GetConsumedBalanceWithPeerAsync(peerId);
+            var balance = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync(peerId);
 
 
             // Assert

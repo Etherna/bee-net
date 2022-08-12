@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
     public class TagTest : BaseTest_Debug_v2_0_1
     {

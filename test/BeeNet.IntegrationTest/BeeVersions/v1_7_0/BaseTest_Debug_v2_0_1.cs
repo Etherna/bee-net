@@ -2,32 +2,31 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0
 {
-    public abstract class BaseTest_Gateway_v3_0_2
+    public abstract class BaseTest_Debug_v2_0_1
     {
         protected readonly BeeNodeClient beeNodeClient;
-        protected string pathTestFileForUpload = "Data\\TestFileForUpload_Gateway.txt";
+        protected string pathTestFileForUpload = "Data\\TestFileForUpload_Debug.txt";
         protected readonly string ethAddress = "0x26234a2ad3ba8b398a762f279b792cfacd536a3f";
-        protected readonly string peerId = "03c2d16303362d2ab9e1acc39f4c089cc0669a7a3c11e9e3f30964faca80c6f1";
-        protected const string version = "3.0.2";
+        protected readonly string peerId = "34e8c7d19f82a1116f0b7b6354d9c913b254bbc099ac15516814973fb70b91a9";
+        protected const string version = "2.0.1";
 
-        public BaseTest_Gateway_v3_0_2()
+        public BaseTest_Debug_v2_0_1()
         {
             beeNodeClient = new BeeNodeClient(
-                "http://89.145.161.170/",
-                1633,
-                1635,
+                System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.103/",
+                1624,
+                1625,
                 Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_2,
                 Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v2_0_1);
         }
 
-
-        protected async Task<string> UploadFileAndGetReferenceAsync()
+        protected async Task<string> UploadChunkFileAndGetReferenceAsync()
         {
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
-            var fs = File.OpenRead("Data\\TestFileForUpload_Gateway.txt");
+            var fs = File.OpenRead("Data\\TestFileForUpload_Debug.txt");
             await Task.Delay(90000);
 
 

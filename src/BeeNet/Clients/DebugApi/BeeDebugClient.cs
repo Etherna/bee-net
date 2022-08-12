@@ -355,7 +355,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             long? gasPrice = null) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.ChequebookDepositAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,
+                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.ChequebookWithdrawAsync(amount, gasPrice).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
     }

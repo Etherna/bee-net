@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 {
     public class ConnectivityTest : BaseTest_Gateway_v3_0_2
     {
@@ -13,7 +13,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.GetAddressesAsync();
+            var result = await beeNodeClient.GatewayClient.GetAddressesAsync();
 
 
             // Assert 
@@ -27,7 +27,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.GetBlocklistedPeerAddressesAsync();
+            var result = await beeNodeClient.GatewayClient.GetBlocklistedPeerAddressesAsync();
 
 
             // Assert 
@@ -41,7 +41,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.ConnectToPeerAsync("address");
+            var result = await beeNodeClient.GatewayClient.ConnectToPeerAsync("address");
 
 
             // Assert 
@@ -55,7 +55,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
+            var result = await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
 
 
             // Assert 

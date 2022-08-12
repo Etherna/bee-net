@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class TransactionTest : BaseTest_Gateway_v3_0_2
+    public class TransactionTest : BaseTest_Debug_v2_0_1
     {
 
         [Fact]
@@ -13,7 +13,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
 
 
             // Act 
-            var pendingTransactions = await beeNodeClient.GatewayClient.GetPendingTransactionsAsync(); //TODO How to get transaction
+            var pendingTransactions = await beeNodeClient.DebugClient.GetPendingTransactionsAsync(); //TODO How to get transaction
 
 
             // Assert

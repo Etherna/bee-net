@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 {
     public class StewardshipTest : BaseTest_Gateway_v3_0_2
     {
@@ -11,11 +11,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
         public async Task CheckIsContentAvailableAsync()
         {
             // Arrange 
-            var reference = await UploadFileAndGetReferenceAsync();
-
+            var reference = await UploadChunkFileAndGetReferenceAsync();
+            await Task.Delay(90000);
 
             // Act 
-            await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);
+            var result = await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);
         
 
             // Assert 
@@ -25,7 +25,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_6_2.GatewayApi
         public async Task ReuploadContentAsync()
         {
             // Arrange 
-            var reference = await UploadFileAndGetReferenceAsync();
+            var reference = await UploadChunkFileAndGetReferenceAsync();
 
 
             // Act 
