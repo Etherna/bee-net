@@ -1,4 +1,5 @@
 ﻿using Etherna.BeeNet;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -6,19 +7,21 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 {
     public class PinningTest : BaseTest_Gateway_v3_0_2
     {
-        /*
+        
         [Fact]
         public async Task CreatePinAsync()
         {
             // Arrange 
-            var reference = await UploadFileAndGetReferenceAsync();
+            var reference = await UploadBZZFileAndGetReferenceAsync();
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference); //TODO Error: The I/O operation has been aborted because of either a thread exit or an application request.
+            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
 
 
             // Assert 
+            Assert.Equal("OK", result.Message);
+            Assert.Equal(200, result.Code);
         }
 
         [Fact]
@@ -38,10 +41,13 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetPinStatusAsync()
         {
             // Arrange 
+            var reference = await UploadBZZFileAndGetReferenceAsync();
+            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await Task.Delay(10000);
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetPinStatusAsync("reference");
+            var result = await beeNodeClient.GatewayClient.GetPinStatusAsync(reference);
 
 
             // Assert 
@@ -51,6 +57,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetAllPinsAsync()
         {
             // Arrange 
+            var reference = await UploadBZZFileAndGetReferenceAsync();
+            var pinCreated = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
 
 
             // Act 
@@ -58,7 +66,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
 
             // Assert 
+            Assert.NotEmpty(results);
         }
-        */
+        
     }
 }
