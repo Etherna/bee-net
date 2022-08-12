@@ -11,6 +11,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetAllSettlementsAsync()
         {
             // Arrange 
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
@@ -25,6 +27,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetAllTimeSettlementsAsync()
         {
             // Arrange 
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
@@ -39,6 +43,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetSettlementsWithPeerAsync()
         {
             // Arrange 
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 

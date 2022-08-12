@@ -11,8 +11,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task CashoutChequeForPeerAsync()
         {
             // Arrange 
-            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
-            var peerId = peers.ToList().First();
+            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
@@ -48,6 +48,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task GetAllChequeBookChequesAsync()
         {
             // Arrange 
+            var allCheques = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheques.ToList().First().Peer;
 
 
             // Act 
@@ -91,6 +93,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task GetChequeBookCashoutForPeerAsync()
         {
             // Arrange 
+            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
@@ -105,6 +109,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task GetChequeBookChequeForPeerAsync()
         {
             // Arrange 
+            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 

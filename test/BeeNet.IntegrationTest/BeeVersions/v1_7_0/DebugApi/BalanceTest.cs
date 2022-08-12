@@ -40,6 +40,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task GetBalanceWithPeerAsync()
         {
             // Arrange 
+            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peerId = peers.ToList().First();
 
 
             // Act 
@@ -55,6 +57,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         public async Task GetConsumedBalanceWithPeerAsync()
         {
             // Arrange 
+            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peerId = peers.ToList().First();
 
 
             // Act 

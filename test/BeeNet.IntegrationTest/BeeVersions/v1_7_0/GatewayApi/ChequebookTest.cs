@@ -48,6 +48,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetAllChequeBookChequesAsync()
         {
             // Arrange 
+            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peerId = peers.ToList().First();
 
 
             // Act 
@@ -91,6 +93,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetChequeBookCashoutForPeerAsync()
         {
             // Arrange 
+            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peerId = peers.ToList().First();
 
 
             // Act 
@@ -105,6 +109,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetChequeBookChequeForPeerAsync()
         {
             // Arrange 
+            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peerId = peers.ToList().First();
 
 
             // Act 
