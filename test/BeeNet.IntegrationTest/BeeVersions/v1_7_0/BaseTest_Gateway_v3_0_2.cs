@@ -39,11 +39,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0
         {
             var batch = "855f9389cf57a01369cff81901e4f5191ec03191f9a2d4d806486e9d856f9cdc";//await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             //await Task.Delay(90000);
-            var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
-            //var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\TestFileForUpload_Gateway.txt"), "TestFileForUpload_Gateway.txt", "text/plain");
+            //var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
+            var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\TestFileForUpload_Gateway.txt"), "TestFileForUpload_Gateway.txt", "text/plain");
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.UploadFileAsync(batch, file: new List<FileParameterInput> { fileParameterInput }, swarmCollection: true);
+            var result = await beeNodeClient.GatewayClient.UploadFileAsync(batch, file: new List<FileParameterInput> { fileParameterInput }, swarmCollection: false);
 
             return result;
         }

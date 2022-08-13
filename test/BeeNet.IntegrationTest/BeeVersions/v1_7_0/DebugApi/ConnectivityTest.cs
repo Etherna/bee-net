@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Etherna.BeeNet.DtoModels;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -107,7 +108,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Assert 
-            throw new NotImplementedException();
+            Assert.Equal(NetworkAvailabilityDto.Available, result.NetworkAvailability);
+            Assert.Equal(4, result.Connected);
+            Assert.Equal(3, result.NnLowWatermark);
+            Assert.Equal(3, result.NnLowWatermark);
+            Assert.Equal(ReachabilityDto.Unknown, result.Reachability);
         }
 
         [Fact]

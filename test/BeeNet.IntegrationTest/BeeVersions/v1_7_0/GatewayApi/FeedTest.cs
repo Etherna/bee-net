@@ -34,7 +34,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             var addresses = await beeNodeClient.DebugClient.GetAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";
             var feed = await beeNodeClient.GatewayClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
-
+            await Task.Delay(90000);
+            
 
             // Act 
             var result = await beeNodeClient.GatewayClient.GetFeedAsync(addresses.Ethereum.Replace("0x", ""), topic);

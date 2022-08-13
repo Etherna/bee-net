@@ -26,7 +26,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetFileAsync()
         {
             // Arrange 
-            var reference = await UploadChunkFileAndGetReferenceAsync();
+            var reference = await UploadBZZFileAndGetReferenceAsync();
 
 
             // Act 
@@ -41,7 +41,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task GetFilePathAsync()
         {
             // Arrange 
-            var reference = await UploadChunkFileAndGetReferenceAsync();
+            var reference = await UploadBZZFileAndGetReferenceAsync();
 
 
             // Act 

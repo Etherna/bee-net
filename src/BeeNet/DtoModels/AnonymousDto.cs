@@ -29,9 +29,9 @@ namespace Etherna.BeeNet.DtoModels
             Population = anonymous.Population;
             Connected = anonymous.Connected;
             DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
+                ?.Select(k => new DisconnectedPeersDto(k)) ?? new List<DisconnectedPeersDto>();
             ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
+                ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
         public AnonymousDto(Clients.GatewayApi.V3_0_2.Anonymous anonymous)
@@ -42,9 +42,9 @@ namespace Etherna.BeeNet.DtoModels
             Population = anonymous.Population;
             Connected = anonymous.Connected;
             DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
+                ?.Select(k => new DisconnectedPeersDto(k)) ?? new List<DisconnectedPeersDto>();
             ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
+                ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
         // Properties.
