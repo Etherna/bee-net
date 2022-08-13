@@ -27,13 +27,16 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         public async Task DeletePinAsync()
         {
             // Arrange 
+            var reference = await UploadBZZFileAndGetReferenceAsync();
+            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.DeletePinAsync("reference");
+            var result = await beeNodeClient.GatewayClient.DeletePinAsync(reference);
 
 
             // Assert 
+            Assert.Equal(200, result.Code);
         }
 
         [Fact]
