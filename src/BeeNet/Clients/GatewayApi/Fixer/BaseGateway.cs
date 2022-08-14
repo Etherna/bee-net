@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Etherna.BeeNet.InputModels;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
 {
@@ -13,7 +19,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             AuthenticatedToken = token;
         }
 
-        static protected void PrepareBasicAuthRequest(System.Net.Http.HttpRequestMessage request, string username, string password)
+        static protected void PrepareBasicAuthRequest(HttpRequestMessage request, string username, string password)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -23,7 +29,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             request.Headers.Add("Authorization", $"Basic {base64EncodedAuthenticationString}");
         }
 
-        protected void PrepareBearAuthRequest(System.Net.Http.HttpRequestMessage request)
+        protected void PrepareBearAuthRequest(HttpRequestMessage request)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -31,6 +37,40 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
                 throw new InvalidOperationException("AuthenticatedToken is null");
 
             request.Headers.Add("Authorization", $"Bearer {AuthenticatedToken}");
+        }
+
+
+        static protected async Task PrepareUploadBzzFilesAsync(HttpRequestMessage httpRequestMessage, IEnumerable<FileParameterInput> fileParameterInputs)
+        {
+            if (fileParameterInputs == null ||
+                !fileParameterInputs.Any())
+            {
+                throw new ArgumentOutOfRangeException(nameof(fileParameterInputs));
+            }
+            if (httpRequestMessage == null)
+            {
+                throw new ArgumentNullException(nameof(httpRequestMessage));
+            }
+
+            HttpContent content_;
+            if (fileParameterInputs.First().ContentType == "text/plain")
+            {
+#pragma warning disable CA2000 // Dispose objects before losing scope
+                var reader = new StreamReader(fileParameterInputs.First().Data);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+                content_ = new StringContent(await reader.ReadToEndAsync().ConfigureAwait(false));
+            }
+            else
+            {
+                content_ = new StreamContent(fileParameterInputs.First().Data);
+                content_.Headers.TryAddWithoutValidation("Content-Type", fileParameterInputs.First().ContentType);
+            }
+
+
+            content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(fileParameterInputs.First().ContentType);
+            httpRequestMessage.Content = content_;
+            httpRequestMessage.Method = new HttpMethod("POST");
+            httpRequestMessage.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("*/*"));
         }
     }
 }

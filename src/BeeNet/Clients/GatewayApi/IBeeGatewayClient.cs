@@ -244,6 +244,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> UploadFileAsync(
             string swarmPostageBatchId,
+            IEnumerable<FileParameterInput> files,
             string? name = null,
             int? swarmTag = null,
             bool? swarmPin = null,
@@ -252,8 +253,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmCollection = null,
             string? swarmIndexDocument = null,
             string? swarmErrorDocument = null,
-            bool? swarmDeferredUpload = null,
-            IEnumerable<FileParameterInput>? file = null);
+            bool? swarmDeferredUpload = null);
 
         /// <summary>Upload single owner chunk</summary>
         /// <param name="owner">Owner</param>

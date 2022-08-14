@@ -20,7 +20,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
 
             // Assert 
-            Assert.Equal(200, result.Code);
+            Assert.True(result.Code == 200 || result.Code == 201);
         }
 
         [Fact]

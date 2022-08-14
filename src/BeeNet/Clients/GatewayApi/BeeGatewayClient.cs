@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace Etherna.BeeNet.Clients.GatewayApi
 {
@@ -263,6 +264,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
         public async Task<string> UploadFileAsync(
             string swarmPostageBatchId,
+            IEnumerable<FileParameterInput> files,
             string? name,
             int? swarmTag,
             bool? swarmPin,
@@ -271,24 +273,35 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmCollection,
             string? swarmIndexDocument,
             string? swarmErrorDocument,
-            bool? swarmDeferredUpload,
-            IEnumerable<FileParameterInput>? file) =>
-            CurrentApiVersion switch
+            bool? swarmDeferredUpload)
+        {
+            if (files == null)
             {
-                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.BzzPostAsync(
-                    swarmPostageBatchId,
-                    name,
-                    swarmTag,
-                    swarmPin,
-                    swarmEncrypt,
-                    contentType,
-                    swarmCollection,
-                    swarmIndexDocument,
-                    swarmErrorDocument,
-                    swarmDeferredUpload,
-                    file.Select(f => new V3_0_2.FileParameter(f.Data, f.FileName, f.ContentType))).ConfigureAwait(false)).Reference,
+                throw new ArgumentNullException(nameof(files));
+            }
+            if (files.Count() != 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(files));
+            }
+
+            return CurrentApiVersion switch
+            {
+                
+            GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.BzzPostAsync(
+                swarmPostageBatchId,
+                name,
+                swarmTag,
+                swarmPin,
+                swarmEncrypt,
+                contentType,
+                swarmCollection,
+                swarmIndexDocument,
+                swarmErrorDocument,
+                swarmDeferredUpload,
+                files.Select(f => new V3_0_2.FileParameter(f.Data, f.FileName, f.ContentType))).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
+    }
 
         public async Task<string> UploadSocAsync(
             string owner,
