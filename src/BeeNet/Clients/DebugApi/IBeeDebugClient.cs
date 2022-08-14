@@ -213,7 +213,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(string address);
+        Task<SettlementDataDto> GetSettlementsWithPeerAsync(string address);
 
         /// <summary>Get extended bucket data of a batch</summary>
         /// <param name="batchId">Swarm address of the stamp</param>

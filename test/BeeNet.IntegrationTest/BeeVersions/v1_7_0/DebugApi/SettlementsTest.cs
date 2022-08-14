@@ -51,7 +51,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Assert
-            Assert.Contains(reserveState, i => i.Peer == peerId);
+            Assert.Equal(peerId, reserveState.Peer);
         }
 
     }
