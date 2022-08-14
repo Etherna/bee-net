@@ -291,14 +291,12 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<SettlementDataDto> GetSettlementsWithPeerAsync(string address) =>
-        public async Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(
+        public async Task<SettlementDataDto> GetSettlementsWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default(CancellationToken)) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v2_0_1 => new SettlementDataDto(await beeDebugClient_2_0_1.SettlementsGetAsync(address).ConfigureAwait(false)),
-                DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.SettlementsGetAsync(cancellationToken).ConfigureAwait(false)).Settlements.Select(i => new SettlementDataDto(i)),
+                DebugApiVersion.v2_0_1 => new SettlementDataDto(await beeDebugClient_2_0_1.SettlementsGetAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
