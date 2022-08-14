@@ -45,7 +45,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
             await beeNodeClient.GatewayClient.CreatePinAsync(reference);
-            await Task.Delay(10000);
+            await Task.Delay(60000);
 
 
             // Act 
