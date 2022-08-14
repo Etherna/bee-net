@@ -27,13 +27,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Clients.DebugApi
 {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
     public class BeeDebugClient : IBeeDebugClient
     {
         // Fields.
-        private readonly IBeeDebugClient_1_2_0 beeDebugClient_1_2_0;
-        private readonly IBeeDebugClient_1_2_1 beeDebugClient_1_2_1;
-        private readonly IBeeDebugClient_2_0_0 beeDebugClient_2_0_0;
-        private readonly IBeeDebugClient_2_0_1 beeDebugClient_2_0_1;
+        private readonly IBeeDebugClient_1_2_0? beeDebugClient_1_2_0;
+        private readonly IBeeDebugClient_1_2_1? beeDebugClient_1_2_1;
+        private readonly IBeeDebugClient_2_0_0? beeDebugClient_2_0_0;
+        private readonly IBeeDebugClient_2_0_1? beeDebugClient_2_0_1;
 
         // Constructors.
         public BeeDebugClient(HttpClient httpClient, Uri baseUrl, DebugApiVersion apiVersion)
@@ -41,10 +42,15 @@ namespace Etherna.BeeNet.Clients.DebugApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeDebugClient_1_2_0 = new BeeDebugClient_1_2_0(httpClient) { BaseUrl = baseUrl.ToString() };
-            beeDebugClient_1_2_1 = new BeeDebugClient_1_2_1(httpClient) { BaseUrl = baseUrl.ToString() };
-            beeDebugClient_2_0_0 = new BeeDebugClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
-            beeDebugClient_2_0_1 = new BeeDebugClient_2_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            if (apiVersion == DebugApiVersion.v1_2_0)
+                beeDebugClient_1_2_0 = new BeeDebugClient_1_2_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            else if (apiVersion == DebugApiVersion.v1_2_1)
+                beeDebugClient_1_2_1 = new BeeDebugClient_1_2_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            else if (apiVersion == DebugApiVersion.v2_0_0)
+                beeDebugClient_2_0_0 = new BeeDebugClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            else if (apiVersion == DebugApiVersion.v2_0_1)
+                beeDebugClient_2_0_1 = new BeeDebugClient_2_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
+
             CurrentApiVersion = apiVersion;
         }
 
@@ -57,6 +63,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             int depth,
             string? label = null,
             bool? immutable = null,
+
             long? gasPrice = null) =>
             CurrentApiVersion switch
             {
@@ -523,4 +530,5 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
     }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 }

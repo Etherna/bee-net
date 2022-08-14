@@ -27,12 +27,13 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Clients.GatewayApi
 {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
     public class BeeGatewayClient : IBeeGatewayClient
     {
         // Fields.
-        private readonly IBeeGatewayClient_2_0_0 beeGatewayApiClient_2_0_0;
-        private readonly IBeeGatewayClient_3_0_0 beeGatewayApiClient_3_0_0;
-        private readonly IBeeGatewayClient_3_0_1 beeGatewayApiClient_3_0_1;
+        private readonly IBeeGatewayClient_2_0_0? beeGatewayApiClient_2_0_0;
+        private readonly IBeeGatewayClient_3_0_0? beeGatewayApiClient_3_0_0;
+        private readonly IBeeGatewayClient_3_0_1? beeGatewayApiClient_3_0_1;
 
         // Constructors.
         public BeeGatewayClient(HttpClient httpClient, Uri baseUrl, GatewayApiVersion apiVersion)
@@ -40,9 +41,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeGatewayApiClient_2_0_0 = new BeeGatewayClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
-            beeGatewayApiClient_3_0_0 = new BeeGatewayClient_3_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
-            beeGatewayApiClient_3_0_1 = new BeeGatewayClient_3_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            if (apiVersion == GatewayApiVersion.v2_0_0)
+                beeGatewayApiClient_2_0_0 = new BeeGatewayClient_2_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            else if (apiVersion == GatewayApiVersion.v3_0_0)
+                beeGatewayApiClient_3_0_0 = new BeeGatewayClient_3_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            else if (apiVersion == GatewayApiVersion.v3_0_1)
+                beeGatewayApiClient_3_0_1 = new BeeGatewayClient_3_0_1(httpClient) { BaseUrl = baseUrl.ToString() };
+            
             CurrentApiVersion = apiVersion;
         }
 
@@ -473,4 +478,5 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
     }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 }

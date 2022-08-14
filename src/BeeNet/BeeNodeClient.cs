@@ -53,6 +53,27 @@ namespace Etherna.BeeNet
             }
         }
 
+        public BeeNodeClient(
+            HttpClient httpClient,
+            GatewayApiVersion? gatewayApiVersion = GatewayApiVersion.v3_0_0,
+            DebugApiVersion? debugApiVersion = DebugApiVersion.v2_0_0)
+        {
+            if (httpClient is null)
+                throw new ArgumentNullException(nameof(httpClient));
+
+            this.httpClient = httpClient;
+
+            if (debugApiVersion is not null)
+            {
+                DebugClient = new BeeDebugClient(httpClient, httpClient.BaseAddress, debugApiVersion.Value);
+            }
+
+            if (gatewayApiVersion is not null)
+            {
+                GatewayClient = new BeeGatewayClient(httpClient, httpClient.BaseAddress, gatewayApiVersion.Value);
+            }
+        }
+
         // Dispose.
         public void Dispose()
         {
