@@ -40,6 +40,16 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
+        public SettlementDataDto(Clients.DebugApi.V2_0_1.Response20 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+        }
+
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
         {
             if (settlement is null)

@@ -242,6 +242,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default(CancellationToken));
+        Task<SettlementDataDto> GetSettlementsWithPeerAsync(string address);
 
         /// <summary>Get extended bucket data of a batch</summary>
         /// <param name="batchId">Swarm address of the stamp</param>
