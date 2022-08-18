@@ -5405,7 +5405,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public System.DateTimeOffset StartedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
@@ -5513,7 +5513,7 @@ namespace Etherna.BeeNet.Clients.DebugApi.V2_0_1
 
         [System.Text.Json.Serialization.JsonPropertyName("created")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]   
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public System.DateTimeOffset Created { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
