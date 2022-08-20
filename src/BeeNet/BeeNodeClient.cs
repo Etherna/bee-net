@@ -20,24 +20,17 @@ namespace Etherna.BeeNet
             Justification = "A string is required by Nswag generated client")]
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
-            int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
+            int gatewayApiPort = 1633,
+            int debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
             DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
         {
             httpClient = new HttpClient();
 
-            if (debugApiPort is not null)
-            {
-                DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
-            }
-
-            if (gatewayApiPort is not null)
-            {
-                GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
-            }
+            DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort));
+            DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
+            GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
+            GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
         }
 
         [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
@@ -45,17 +38,14 @@ namespace Etherna.BeeNet
         static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
             BeeAuthicationData beeAuthicationData,
             string baseUrl = "http://localhost/",
-            int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
+            int gatewayApiPort = 1633,
+            int debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
             DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
         {
 #pragma warning disable CA2000 // Dispose objects must be done by client
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
 #pragma warning restore CA2000 
-
-            if (nodeClient.GatewayClient is null)
-                return null;
 
             var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(authDto.Key))
@@ -87,10 +77,10 @@ namespace Etherna.BeeNet
 
 
         // Properties.
-        public Uri? DebugApiUrl { get; }
-        public IBeeDebugClient? DebugClient { get; }
-        public Uri? GatewayApiUrl { get; }
-        public IBeeGatewayClient? GatewayClient { get; }
+        public Uri DebugApiUrl { get; }
+        public IBeeDebugClient DebugClient { get; }
+        public Uri GatewayApiUrl { get; }
+        public IBeeGatewayClient GatewayClient { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)
