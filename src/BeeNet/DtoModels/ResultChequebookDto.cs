@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ResultChequeBookDto
     {
         // Constructors.
-        public ResultChequeBookDto(Clients.DebugApi.V1_2_0.Result result)
+        public ResultChequeBookDto(Clients.DebugApi.V3_0_2.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));
@@ -30,27 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Bounced = result.Bounced;
         }
 
-        public ResultChequeBookDto(Clients.DebugApi.V1_2_1.Result result)
-        {
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
-
-            Recipient = result.Recipient;
-            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
-            Bounced = result.Bounced;
-        }
-
-        public ResultChequeBookDto(Clients.DebugApi.V2_0_0.Result result)
-        {
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
-
-            Recipient = result.Recipient;
-            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
-            Bounced = result.Bounced;
-        }
-
-        public ResultChequeBookDto(Clients.DebugApi.V2_0_1.Result result)
+        public ResultChequeBookDto(Clients.GatewayApi.V3_0_2.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));

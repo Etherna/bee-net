@@ -47,7 +47,7 @@ components:
         storageRadius:
           type: integer
         commitment:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
 
     ChainState:
       type: object
@@ -497,17 +497,17 @@ components:
         peer:
           $ref: "#/components/schemas/SwarmAddress"
         received:
-          type: integer
+          type: string
         sent:
-          type: integer
+          type: string
 
     Settlements:
       type: object
       properties:
         totalReceived:
-          type: integer
+          type: string
         totalSent:
-          type: integer
+          type: string
         settlements:
           type: array
           nullable: false
@@ -643,6 +643,7 @@ components:
 
     Uid:
       type: integer
+      format: int64
 
     WelcomeMessage:
       type: object

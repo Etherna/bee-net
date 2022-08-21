@@ -19,6 +19,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet
 {
@@ -35,8 +36,8 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_0,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_0)
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
         {
             httpClient = new HttpClient();
 
@@ -51,6 +52,32 @@ namespace Etherna.BeeNet
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
                 GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
             }
+        }
+
+        [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
+            Justification = "A string is required by Nswag generated client")]
+        static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
+            BeeAuthicationData beeAuthicationData,
+            string baseUrl = "http://localhost/",
+            int? gatewayApiPort = 1633,
+            int? debugApiPort = 1635,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
+        {
+#pragma warning disable CA2000 // Dispose objects must be done by client
+            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
+#pragma warning restore CA2000 
+
+            if (nodeClient.GatewayClient is null)
+                return null;
+
+            var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(authDto.Key))
+                return null;
+
+            nodeClient.GatewayClient.SetAuthToken(authDto.Key);
+
+            return nodeClient;
         }
 
         // Dispose.

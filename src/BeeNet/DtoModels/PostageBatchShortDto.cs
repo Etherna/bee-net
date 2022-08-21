@@ -1,25 +1,12 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
     public class PostageBatchShortDto
     {
-        public PostageBatchShortDto(Clients.DebugApi.V1_2_1.Stamps2 stamps)
-        {
-            if (stamps is null)
-                throw new ArgumentNullException(nameof(stamps));
-
-            BatchID = stamps.BatchID;
-            BatchTTL = stamps.BatchTTL;
-            BucketDepth = stamps.BucketDepth;
-            Depth = stamps.Depth;
-            ImmutableFlag = stamps.ImmutableFlag;
-            Owner = stamps.Owner;
-            StartBlockNumber = stamps.BlockNumber;
-            Value = stamps.Value;
-        }
-
-        public PostageBatchShortDto(Clients.DebugApi.V2_0_0.Batches batch)
+        // Constructors.
+        public PostageBatchShortDto(Clients.DebugApi.V3_0_2.Batches batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -30,17 +17,18 @@ namespace Etherna.BeeNet.DtoModels
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;
             Owner = batch.Owner;
-            StartBlockNumber = batch.BlockNumber;
+            StartBlockNumber = batch.Start;
+            StorageRadius = batch.StorageRadius;
             Value = batch.Value;
         }
 
-        public PostageBatchShortDto(Clients.DebugApi.V2_0_1.Batches batch)
+        public PostageBatchShortDto(Clients.GatewayApi.V3_0_2.Batches batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             BatchID = batch.BatchID;
-            BatchTTL = batch.BatchTTL;
+            BatchTTL = Convert.ToInt64(batch.BatchTTL, CultureInfo.InvariantCulture); //TODO CAST to Long or change return type in String
             BucketDepth = batch.BucketDepth;
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;

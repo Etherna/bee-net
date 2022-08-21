@@ -21,78 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PostageBatchDto
     {
         // Constructors.
-        public PostageBatchDto(Clients.DebugApi.V1_2_0.Stamps batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
-            Exists = batch.Exists;
-            Id = ((JsonElement)batch.BatchID).ToString();
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V1_2_0.Response37 batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
-            Exists = batch.Exists;
-            Id = ((JsonElement)batch.BatchID).ToString();
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V1_2_1.Stamps batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            Exists = batch.Exists;
-            BatchTTL = batch.BatchTTL;
-            Id = ((JsonElement)batch.BatchID).ToString();
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V1_2_1.Stamps2 batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            Id = batch.BatchID;
-            BatchTTL = batch.BatchTTL;
-            BlockNumber = batch.BlockNumber;
-            BucketDepth = batch.BucketDepth;
-            Depth = batch.Depth;
-            Exists = true;
-            ImmutableFlag = batch.ImmutableFlag;
-            NormalisedBalance = batch.Value is null ? null : long.Parse(batch.Value, CultureInfo.InvariantCulture);
-            OwnerAddress = batch.Owner;
-            Usable = true;
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V1_2_1.Response38 batch)
+        public PostageBatchDto(Clients.DebugApi.V3_0_2.Response39 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -110,7 +39,7 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public PostageBatchDto(Clients.DebugApi.V2_0_0.Stamps batch)
+        public PostageBatchDto(Clients.DebugApi.V3_0_2.Stamps batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -128,7 +57,7 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public PostageBatchDto(Clients.DebugApi.V2_0_0.Response38 batch)
+        public PostageBatchDto(Clients.GatewayApi.V3_0_2.Stamps batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -146,25 +75,7 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        public PostageBatchDto(Clients.DebugApi.V2_0_1.Stamps batch)
-        {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
-            Exists = batch.Exists;
-            Id = batch.BatchID;
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
-        public PostageBatchDto(Clients.DebugApi.V2_0_1.Response39 batch)
+        public PostageBatchDto(Clients.GatewayApi.V3_0_2.Response53 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -193,8 +104,6 @@ namespace Etherna.BeeNet.DtoModels
         public bool Exists { get; }
         public bool ImmutableFlag { get; }
         public string? Label { get; }
-        public long? NormalisedBalance { get; }
-        public string? OwnerAddress { get; }
         /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
         public bool Usable { get; }
         public int? Utilization { get; }

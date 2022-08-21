@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  beenode.dev:
+    hostname: beenode
+    image: ethersphere/bee:1.5.1
+    networks:
+      - swarm-test-network
+    ports:
+      - 127.0.0.1:1633:1633
+      - 127.0.0.1:1634:1634
+      - 127.0.0.1:1635:1635
+    restart: unless-stopped
+    command: [ "dev" ]
+
+  beenet.integrationtest:
+    image: ${DOCKER_REGISTRY-}beenetintegrationtest
+    build:
+      context: .
+      dockerfile: test/BeeNet.IntegrationTest/Dockerfile
+
+networks:
+  swarm-test-network:

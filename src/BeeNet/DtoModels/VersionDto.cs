@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class VersionDto
     {
         // Constructors.
-        public VersionDto(Clients.DebugApi.V1_2_0.Response14 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response15 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V1_2_0.Response18 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V1_2_0.Response24 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -52,7 +52,22 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V1_2_1.Response15 response)
+        public VersionDto(Clients.GatewayApi.V3_0_2.Response4 response)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            Status = response.Status;
+            Version = response.Version;
+            ApiVersion = response.ApiVersion;
+            DebugApiVersion = response.DebugApiVersion;
+            if (response.AdditionalProperties.ContainsKey("reference"))
+            {
+                Reference = response.AdditionalProperties["reference"].ToString();
+            }
+        }
+
+        public VersionDto(Clients.GatewayApi.V3_0_2.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -63,7 +78,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V1_2_1.Response19 response)
+        public VersionDto(Clients.GatewayApi.V3_0_2.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -74,7 +89,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V1_2_1.Response25 response)
+        public VersionDto(Clients.GatewayApi.V3_0_2.Response41 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -83,142 +98,17 @@ namespace Etherna.BeeNet.DtoModels
             Version = response.Version;
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
-        }
-        public VersionDto(Clients.DebugApi.V2_0_0.Response15 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
+            if (response.AdditionalProperties.ContainsKey("reference"))
+            {
+                Reference = response.AdditionalProperties["reference"].ToString();
+            }
         }
 
-        public VersionDto(Clients.DebugApi.V2_0_0.Response19 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.DebugApi.V2_0_0.Response25 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.DebugApi.V2_0_1.Response15 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.DebugApi.V2_0_1.Response19 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.DebugApi.V2_0_1.Response25 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V2_0_0.Response4 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V2_0_0.Response9 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V3_0_0.Response4 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V3_0_0.Response9 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V3_0_1.Response4 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        public VersionDto(Clients.GatewayApi.V3_0_1.Response9 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status;
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
         // Properties.
         public string Status { get; }
         public string Version { get; }
         public string ApiVersion { get; }
         public string DebugApiVersion { get; }
+        public string? Reference { get; }
     }
 }

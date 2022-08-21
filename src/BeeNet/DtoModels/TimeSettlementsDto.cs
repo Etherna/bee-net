@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Etherna.BeeNet.DtoModels
@@ -21,40 +22,18 @@ namespace Etherna.BeeNet.DtoModels
     public class TimeSettlementsDto
     {
         // Constructors.
-        public TimeSettlementsDto(Clients.DebugApi.V1_2_0.Response21 response)
+        public TimeSettlementsDto(Clients.DebugApi.V3_0_2.Response22 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_0.Settlements2>())
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        public TimeSettlementsDto(Clients.DebugApi.V1_2_1.Response22 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
-            Settlements = (response.Settlements ?? Array.Empty<Clients.DebugApi.V1_2_1.Settlements2>())
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        public TimeSettlementsDto(Clients.DebugApi.V2_0_0.Response22 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = response.TotalReceived;
-            TotalSent = response.TotalSent;
+            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.CurrentCulture);
+            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.CurrentCulture);
             Settlements = response.Settlements
                 .Select(i => new SettlementDataDto(i));
         }
 
-        public TimeSettlementsDto(Clients.DebugApi.V2_0_1.Response22 response)
+        public TimeSettlementsDto(Clients.GatewayApi.V3_0_2.Response38 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -66,8 +45,8 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public int TotalReceived { get; }
-        public int TotalSent { get; }
+        public long TotalReceived { get; }
+        public long TotalSent { get; }
         public IEnumerable<SettlementDataDto> Settlements { get; }
     }
 }
