@@ -24,6 +24,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             Assert.NotEmpty(result);
         }
 
+        /*
         [Fact]
         public async Task GetFeedAsync()
         {
@@ -44,7 +45,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Assert 
             Assert.Equal(feed, result);
         }
-        
+        */
 
     }
 }

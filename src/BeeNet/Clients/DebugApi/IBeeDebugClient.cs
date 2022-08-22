@@ -200,7 +200,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <summary>Get all owned postage batches by this node</summary>
         /// <returns>List of all owned postage batches</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred</exception>
-        Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync();
+        Task<IEnumerable<PostageBatchDto>> GetPostageBatchesAsync();
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>

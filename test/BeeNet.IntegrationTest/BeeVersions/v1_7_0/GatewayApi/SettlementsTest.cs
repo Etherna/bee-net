@@ -7,7 +7,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
     public class SettlementsTest : BaseTest_Gateway_v3_0_2
     {
         /*
-                NEED LOGIN ENABLED
-                */
+        NEED LOGIN ENABLED
+        */
     }
 }

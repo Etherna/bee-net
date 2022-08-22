@@ -1,5 +1,4 @@
-﻿using Etherna.BeeNet;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,10 +48,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetPinStatusAsync(reference);
-
-
-            // Assert 
+            await beeNodeClient.GatewayClient.GetPinStatusAsync(reference);
         }
 
         [Fact]
@@ -60,7 +56,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-            var pinCreated = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await Task.Delay(60000);
 
 
             // Act 

@@ -16,8 +16,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); //TODO this call return 500 "message": "cannot cash cheque"
-            //TODO when return 500 there are some problems to deserialize the error message to DTO
+            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); 
 
 
             // Assert 

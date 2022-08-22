@@ -246,7 +246,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync() =>
+        public async Task<IEnumerable<PostageBatchDto>> GetPostageBatchesAsync() =>
             CurrentApiVersion switch
             {
                 DebugApiVersion.v2_0_1 => (await beeDebugClient_2_0_1.StampsGetAsync().ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
