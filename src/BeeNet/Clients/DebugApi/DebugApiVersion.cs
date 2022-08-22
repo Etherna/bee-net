@@ -16,6 +16,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
 {
     public enum DebugApiVersion
     {
-        v2_0_1
+        v3_0_2
     }
 }

@@ -37,7 +37,7 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
             httpClient = new HttpClient();
 
@@ -62,7 +62,7 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
 #pragma warning disable CA2000 // Dispose objects must be done by client
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);

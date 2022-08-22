@@ -62,8 +62,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Assert
-            Assert.Equal("3.0.1", healthAsync.ApiVersion);
-            Assert.Equal("2.0.1", healthAsync.DebugApiVersion);
+            Assert.Equal("3.0.2", healthAsync.ApiVersion);
+            Assert.Equal("3.0.2", healthAsync.DebugApiVersion);
             Assert.Equal("ok", healthAsync.Status);
             Assert.StartsWith("1.7.0-", healthAsync.Version);
         }

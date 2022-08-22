@@ -46,7 +46,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
             StreamReader reader = new StreamReader(result);
-            Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
+            Assert.Equal(File.ReadAllText("Data\\BzzFIleForUpload.tar"), reader.ReadToEnd());
         }
         /*
         [Fact]
