@@ -7,13 +7,13 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0
     public abstract class BaseTest_Debug_v3_0_2
     {
         protected readonly BeeNodeClient beeNodeClient;
-        protected string pathTestFileForUpload = "Data\\TestFileForUpload_Debug.txt";
+        protected string pathTestFileForUpload = "Data/TestFileForUpload_Debug.txt";
         protected const string version = "3.0.2";
 
         public BaseTest_Debug_v3_0_2()
         {
             beeNodeClient = new BeeNodeClient(
-                System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://89.145.161.170/",
+                System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
                 1635,
                 Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v3_0_2,
@@ -24,7 +24,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0
         {
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
-            var fs = File.OpenRead("Data\\TestFileForUpload_Debug.txt");
+            var fs = File.OpenRead("Data/TestFileForUpload_Debug.txt");
             await Task.Delay(90000);
 
 

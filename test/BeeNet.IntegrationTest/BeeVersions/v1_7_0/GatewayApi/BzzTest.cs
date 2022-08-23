@@ -1,14 +1,12 @@
-﻿using Etherna.BeeNet;
-using Etherna.BeeNet.InputModels;
+﻿using Etherna.BeeNet.InputModels;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 {
-    public class BZZTest : BaseTest_Gateway_v3_0_2
+    public class BzzTest : BaseTest_Gateway_v3_0_2
     {
         
         [Fact]
@@ -17,7 +15,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(90000);
-            var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\TestFileForUpload_Gateway.txt"), "TestFileForUpload_Gateway.txt", "text/plain");
+            var fileParameterInput = new FileParameterInput(File.OpenRead("Data/TestFileForUpload_Gateway.txt"), "TestFileForUpload_Gateway.txt", "text/plain");
 
 
             // Act 
@@ -36,7 +34,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(90000);
-            var fileParameterInput = new FileParameterInput(File.OpenRead("Data\\BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
+            var fileParameterInput = new FileParameterInput(File.OpenRead("Data/BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
 
 
             // Act 
@@ -46,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
             StreamReader reader = new(result);
-            Assert.Equal(File.ReadAllText("Data\\BzzFIleForUpload.tar"), reader.ReadToEnd());
+            Assert.Equal(File.ReadAllText("Data/BzzFIleForUpload.tar"), reader.ReadToEnd());
         }
         /*
         [Fact]
