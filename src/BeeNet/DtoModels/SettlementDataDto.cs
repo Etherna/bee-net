@@ -13,13 +13,44 @@
 //   limitations under the License.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
     public class SettlementDataDto
     {
         // Constructors.
-        public SettlementDataDto(Clients.DebugApi.V1_2_0.Settlements settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+        }
+
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements2 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+        }
+
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Response20 settlement)
+        {
+            if (settlement is null)
+                throw new ArgumentNullException(nameof(settlement));
+
+            Peer = settlement.Peer;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+        }
+
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -29,7 +60,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = settlement.Sent;
         }
 
-        public SettlementDataDto(Clients.DebugApi.V1_2_0.Settlements2 settlement)
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements2 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -39,69 +70,19 @@ namespace Etherna.BeeNet.DtoModels
             Sent = settlement.Sent;
         }
 
-        public SettlementDataDto(Clients.DebugApi.V1_2_1.Settlements settlement)
+        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Response36 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V1_2_1.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_0.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_0.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
-        }
-
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements2 settlement)
-        {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
         // Properties.
         public string Peer { get; }
-        public int Received { get; }
-        public int Sent { get; }
+        public long Received { get; }
+        public long Sent { get; }
     }
 }

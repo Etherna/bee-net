@@ -20,59 +20,35 @@ namespace Etherna.BeeNet.DtoModels
     public class ChequeBookCashoutGetDto
     {
         // Constructors.
-        public ChequeBookCashoutGetDto(Clients.DebugApi.V1_2_0.Response25 response)
+        public ChequeBookCashoutGetDto(Clients.DebugApi.V3_0_2.Response26 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
+            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
-        public ChequeBookCashoutGetDto(Clients.DebugApi.V1_2_1.Response26 response)
+        public ChequeBookCashoutGetDto(Clients.GatewayApi.V3_0_2.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
+            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
-            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
-        }
-
-        public ChequeBookCashoutGetDto(Clients.DebugApi.V2_0_0.Response26 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
-            TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
-            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
-        }
-
-        public ChequeBookCashoutGetDto(Clients.DebugApi.V2_0_1.Response26 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Peer = response.Peer;
-            LastCashedCheque = new LastCashedChequeDto(response.LastCashedCheque);
-            TransactionHash = response.TransactionHash;
-            Result = new ResultChequeBookDto(response.Result);
+            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public string Peer { get; }
-        public LastCashedChequeDto LastCashedCheque { get; }
+        public LastCashedChequeDto? LastCashedCheque { get; }
         public string TransactionHash { get; }
-        public ResultChequeBookDto Result { get; }
+        public ResultChequeBookDto? Result { get; }
         public long UncashedAmount { get; }
     }
 

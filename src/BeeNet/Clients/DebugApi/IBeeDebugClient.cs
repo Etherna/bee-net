@@ -139,7 +139,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetBalanceWithPeerAsync(string address);
+        Task<BalanceDto> GetBalanceWithPeerAsync(string address);
 
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
@@ -183,7 +183,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetConsumedBalanceWithPeerAsync(string address);
+        Task<BalanceDto> GetConsumedBalanceWithPeerAsync(string address);
 
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>
@@ -200,7 +200,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <summary>Get all owned postage batches by this node</summary>
         /// <returns>List of all owned postage batches</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred</exception>
-        Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync();
+        Task<IEnumerable<PostageBatchDto>> GetPostageBatchesAsync();
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
@@ -227,7 +227,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<SettlementDataDto>> GetSettlementsWithPeerAsync(string address);
+        Task<SettlementDataDto> GetSettlementsWithPeerAsync(string address);
 
         /// <summary>Get extended bucket data of a batch</summary>
         /// <param name="batchId">Swarm address of the stamp</param>
@@ -243,7 +243,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TagDto> GetTagInfoAsync(int uid);
+        Task<TagDto> GetTagInfoAsync(long uid);
 
         /// <summary>Get information about a sent transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>

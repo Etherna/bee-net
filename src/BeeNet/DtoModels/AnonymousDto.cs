@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AnonymousDto
     {
         // Constructors.
-        public AnonymousDto(Clients.DebugApi.V1_2_0.Anonymous anonymous)
+        public AnonymousDto(Clients.DebugApi.V3_0_2.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
@@ -29,12 +29,12 @@ namespace Etherna.BeeNet.DtoModels
             Population = anonymous.Population;
             Connected = anonymous.Connected;
             DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
+                ?.Select(k => new DisconnectedPeersDto(k)) ?? new List<DisconnectedPeersDto>();
             ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
+                ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
-        public AnonymousDto(Clients.DebugApi.V1_2_1.Anonymous anonymous)
+        public AnonymousDto(Clients.GatewayApi.V3_0_2.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
@@ -42,35 +42,9 @@ namespace Etherna.BeeNet.DtoModels
             Population = anonymous.Population;
             Connected = anonymous.Connected;
             DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
+                ?.Select(k => new DisconnectedPeersDto(k)) ?? new List<DisconnectedPeersDto>();
             ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
-        }
-
-        public AnonymousDto(Clients.DebugApi.V2_0_0.Anonymous anonymous)
-        {
-            if (anonymous is null)
-                throw new ArgumentNullException(nameof(anonymous));
-
-            Population = anonymous.Population;
-            Connected = anonymous.Connected;
-            DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
-            ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
-        }
-
-        public AnonymousDto(Clients.DebugApi.V2_0_1.Anonymous anonymous)
-        {
-            if (anonymous is null)
-                throw new ArgumentNullException(nameof(anonymous));
-
-            Population = anonymous.Population;
-            Connected = anonymous.Connected;
-            DisconnectedPeers = anonymous.DisconnectedPeers
-                .Select(k => new DisconnectedPeersDto(k));
-            ConnectedPeers = anonymous.ConnectedPeers
-                .Select(k => new ConnectedPeersDto(k));
+                ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
         // Properties.

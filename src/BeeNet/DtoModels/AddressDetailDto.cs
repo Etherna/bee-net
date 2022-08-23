@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AddressDetailDto
     {
         // Constructors.
-        public AddressDetailDto(Clients.DebugApi.V1_2_0.Response response)
+        public AddressDetailDto(Clients.DebugApi.V3_0_2.Response response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             PssPublicKey = response.PssPublicKey;
         }
 
-        public AddressDetailDto(Clients.DebugApi.V1_2_1.Response response)
+        public AddressDetailDto(Clients.GatewayApi.V3_0_2.Response18 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -44,29 +44,7 @@ namespace Etherna.BeeNet.DtoModels
             PublicKey = response.PublicKey;
             PssPublicKey = response.PssPublicKey;
         }
-        public AddressDetailDto(Clients.DebugApi.V2_0_0.Response response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
-            Overlay = response.Overlay;
-            Ethereum = response.Ethereum;
-            PublicKey = response.PublicKey;
-            PssPublicKey = response.PssPublicKey;
-        }
-        public AddressDetailDto(Clients.DebugApi.V2_0_1.Response response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
-            Overlay = response.Overlay;
-            Ethereum = response.Ethereum;
-            PublicKey = response.PublicKey;
-            PssPublicKey = response.PssPublicKey;
-        }
-
+        
         // Properties.
         public string Overlay { get; }
         public IEnumerable<string> Underlay { get; }

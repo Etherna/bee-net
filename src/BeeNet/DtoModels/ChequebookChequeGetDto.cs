@@ -18,90 +18,50 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class ChequeBookChequeGetDto
     {
-        // Constructors.
-        public ChequeBookChequeGetDto(Clients.DebugApi.V1_2_0.Response27 response)
+        // Constructors
+        public ChequeBookChequeGetDto(Clients.DebugApi.V3_0_2.Lastcheques response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        public ChequeBookChequeGetDto(Clients.DebugApi.V1_2_0.Lastcheques lastcheques)
-        {
-            if (lastcheques is null)
-                throw new ArgumentNullException(nameof(lastcheques));
-
-            Peer = lastcheques.Peer;
-            LastReceived = new LastReceivedDto(lastcheques.Lastreceived);
-            LastSent = new LastSentDto(lastcheques.Lastsent);
-        }
-
-        public ChequeBookChequeGetDto(Clients.DebugApi.V1_2_1.Lastcheques lastcheques)
-        {
-            if (lastcheques is null)
-                throw new ArgumentNullException(nameof(lastcheques));
-
-            Peer = lastcheques.Peer;
-            LastReceived = new LastReceivedDto(lastcheques.Lastreceived);
-            LastSent = new LastSentDto(lastcheques.Lastsent);
-        }
-
-        public ChequeBookChequeGetDto(Clients.DebugApi.V1_2_1.Response28 response)
+        public ChequeBookChequeGetDto(Clients.DebugApi.V3_0_2.Response28 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_0.Lastcheques lastcheques)
-        {
-            if (lastcheques is null)
-                throw new ArgumentNullException(nameof(lastcheques));
-
-            Peer = lastcheques.Peer;
-            LastReceived = new LastReceivedDto(lastcheques.Lastreceived);
-            LastSent = new LastSentDto(lastcheques.Lastsent);
-        }
-
-        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_0.Response28 response)
+        public ChequeBookChequeGetDto(Clients.GatewayApi.V3_0_2.Lastcheques response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Lastcheques lastcheques)
-        {
-            if (lastcheques is null)
-                throw new ArgumentNullException(nameof(lastcheques));
-
-            Peer = lastcheques.Peer;
-            LastReceived = new LastReceivedDto(lastcheques.Lastreceived);
-            LastSent = new LastSentDto(lastcheques.Lastsent);
-        }
-
-        public ChequeBookChequeGetDto(Clients.DebugApi.V2_0_1.Response28 response)
+        public ChequeBookChequeGetDto(Clients.GatewayApi.V3_0_2.Response44 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
             LastReceived = new LastReceivedDto(response.Lastreceived);
-            LastSent = new LastSentDto(response.Lastsent);
+            LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         // Properties.
         public string Peer { get; }
         public LastReceivedDto LastReceived { get; }
-        public LastSentDto LastSent { get; }
+        public LastSentDto? LastSent { get; }
     }
 }

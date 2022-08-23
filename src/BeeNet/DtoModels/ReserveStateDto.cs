@@ -20,40 +20,17 @@ namespace Etherna.BeeNet.DtoModels
     public class ReserveStateDto
     {
         // Constructors.
-        public ReserveStateDto(Clients.DebugApi.V1_2_0.Response12 response)
+        public ReserveStateDto(Clients.DebugApi.V3_0_2.Response12 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
+            Commitment = response.Commitment;
             Radius = response.Radius;
-            StorageRadius = response.Available;
-            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
-            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
+            StorageRadius = response.StorageRadius;
         }
 
-        public ReserveStateDto(Clients.DebugApi.V1_2_1.Response12 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Radius = response.Radius;
-            StorageRadius = response.Available;
-            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
-            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
-        }
-
-        public ReserveStateDto(Clients.DebugApi.V2_0_0.Response12 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Radius = response.Radius;
-            StorageRadius = response.Available;
-            Outer = long.Parse(response.Outer, CultureInfo.InvariantCulture);
-            Inner = long.Parse(response.Inner, CultureInfo.InvariantCulture);
-        }
-
-        public ReserveStateDto(Clients.DebugApi.V2_0_1.Response12 response)
+        public ReserveStateDto(Clients.GatewayApi.V3_0_2.Response30 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -64,10 +41,8 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public int Commitment { get; }
+        public long Commitment { get; }
         public int Radius { get; }
         public int StorageRadius { get; }
-        public long Outer { get; }
-        public long Inner { get; }
     }
 }
