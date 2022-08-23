@@ -159,21 +159,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<string> GetPinStatusAsync(string reference)
-        {
-            var response = CurrentApiVersion switch
+        public async Task<string> GetPinStatusAsync(string reference) =>
+            CurrentApiVersion switch
             {
-                GatewayApiVersion.v3_0_2 => await beeGatewayApiClient_3_0_2.PinsGetAsync(reference).ConfigureAwait(false),
+                GatewayApiVersion.v3_0_2 => (await beeGatewayApiClient_3_0_2.PinsGetAsync(reference).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
-            if (response.AdditionalProperties.ContainsKey("reference"))
-            {
-                return response.AdditionalProperties["reference"].ToString();
-            }
-
-            return "";
-        }
         public async Task<TagInfoDto> GetTagInfoAsync(long uid) =>
             CurrentApiVersion switch
             {

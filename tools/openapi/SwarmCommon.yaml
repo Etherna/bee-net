@@ -544,6 +544,12 @@ components:
         - $ref: "#/components/schemas/SwarmAddress"
         - $ref: "#/components/schemas/SwarmEncryptedReference"
 
+    SwarmOnlyReferenceResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
+
     SwarmOnlyReferencesList:
       type: object
       properties:
