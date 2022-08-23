@@ -20,7 +20,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
             // Assert
             var result = await beeNodeClient.GatewayClient.GetDataAsync(reference);
-            StreamReader reader = new StreamReader(result);
+            StreamReader reader = new(result);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
 
@@ -38,7 +38,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
 
             // Assert
-            StreamReader reader = new StreamReader(result);
+            StreamReader reader = new(result);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
         
