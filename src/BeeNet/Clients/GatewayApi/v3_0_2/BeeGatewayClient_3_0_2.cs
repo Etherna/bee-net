@@ -7780,7 +7780,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
@@ -7820,7 +7820,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
@@ -12202,7 +12202,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V3_0_2
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
-        public int Uid { get; set; } = default!;
+        public long Uid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
 
