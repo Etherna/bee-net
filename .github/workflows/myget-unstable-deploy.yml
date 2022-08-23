@@ -36,7 +36,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
-    - name: Run unit tests
+    - name: Run integration tests
       run: dotnet test --configuration Release
       
     - name: Generate nuget package

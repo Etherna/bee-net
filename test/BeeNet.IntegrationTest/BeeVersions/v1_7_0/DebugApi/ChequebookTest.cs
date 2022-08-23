@@ -14,13 +14,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
             var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
             var peerId = allCheque.ToList().First().Peer;
 
-
             // Act 
             var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); 
 
-
             // Assert 
             Assert.StartsWith("0x", result);
+
+            // Wait for avoid interferences with next tests.
+            await Task.Delay(90000);
         }
 
         [Fact]
