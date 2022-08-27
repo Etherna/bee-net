@@ -1,5 +1,18 @@
-﻿using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi.V3_0_2;
+﻿//   Copyright 2021-present Etherna Sagl
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+
+using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
 using System;
@@ -16,7 +29,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     public class BeeGatewayClient : IBeeGatewayClient
     {
         // Fields.
-        private readonly IBeeGatewayClient_3_0_2 beeGatewayApiClient_3_0_2;
+        private readonly V3_0_2.IBeeGatewayClient_3_0_2 beeGatewayApiClient_3_0_2;
 
         // Constructors.
         public BeeGatewayClient(HttpClient httpClient, Uri baseUrl, GatewayApiVersion apiVersion)
@@ -24,7 +37,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeGatewayApiClient_3_0_2 = new BeeGatewayClient_3_0_2(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeGatewayApiClient_3_0_2 = new V3_0_2.BeeGatewayClient_3_0_2(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
 
@@ -682,7 +695,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v3_0_2 => new VersionDto(await beeGatewayApiClient_3_0_2.WelcomeMessagePostAsync(
-                    new Body5
+                    new V3_0_2.Body5
                     {
                         WelcomeMessage = welcomeMessage
                     },

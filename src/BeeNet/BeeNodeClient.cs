@@ -1,4 +1,18 @@
-﻿using Etherna.BeeNet.Clients.DebugApi;
+﻿//   Copyright 2021-present Etherna Sagl
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+
+using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.Clients.GatewayApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,7 +37,7 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
             httpClient = new HttpClient();
 
@@ -48,7 +62,7 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v2_0_1)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
 #pragma warning disable CA2000 // Dispose objects must be done by client
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
@@ -65,7 +79,6 @@ namespace Etherna.BeeNet
 
             return nodeClient;
         }
-
 
         // Dispose.
         public void Dispose()

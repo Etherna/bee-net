@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class BalanceDto
     {
         // Constructors.
-        public BalanceDto(Clients.DebugApi.V2_0_1.Balances balance)
+        public BalanceDto(Clients.DebugApi.V3_0_2.Balances balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V2_0_1.Balances2 balance)
+        public BalanceDto(Clients.DebugApi.V3_0_2.Balances2 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V2_0_1.Response3 balance)
+        public BalanceDto(Clients.DebugApi.V3_0_2.Response3 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V2_0_1.Response6 balance)
+        public BalanceDto(Clients.DebugApi.V3_0_2.Response6 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));

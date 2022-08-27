@@ -52,14 +52,13 @@ components:
     ChainState:
       type: object
       properties:
-        chainTip:
-          type: integer
         block:
           type: integer
+          format: int64
         totalAmount:
-          type: string
+          $ref: "#/components/schemas/BigInt"
         currentPrice:
-          type: string
+          $ref: "#/components/schemas/BigInt"
 
     Balance:
       type: object
@@ -427,7 +426,8 @@ components:
         exists:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
 
     PostageBatchNoIssuer:
       type: object
@@ -437,7 +437,8 @@ components:
         exists:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
 
     PostageBatchShort:
       type: object
@@ -455,7 +456,8 @@ components:
         immutableFlag:
           type: boolean
         batchTTL:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
         owner:
           $ref: "#/components/schemas/EthereumAddress"
         storageRadius:
@@ -541,6 +543,12 @@ components:
       oneOf:
         - $ref: "#/components/schemas/SwarmAddress"
         - $ref: "#/components/schemas/SwarmEncryptedReference"
+
+    SwarmOnlyReferenceResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
 
     SwarmOnlyReferencesList:
       type: object
@@ -640,7 +648,8 @@ components:
             $ref: "#/components/schemas/TransactionInfo"
 
     Uid:
-      type: long
+      type: integer
+      format: int64
 
     WelcomeMessage:
       type: object

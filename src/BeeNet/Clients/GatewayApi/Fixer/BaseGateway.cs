@@ -8,27 +8,18 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
 {
-    abstract public class BaseGateway : IAuthentication
+    public abstract class BaseGateway : IAuthentication
     {
-        // Properties.
+        // Protected properties.
         protected string? AuthenticatedToken { get; private set; }
 
-        // Methods.
+        // Public methods.
         public void SetAuthToken(string token)
         {
             AuthenticatedToken = token;
         }
 
-        static protected void PrepareBasicAuthRequest(HttpRequestMessage request, string username, string password)
-        {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
-
-            var authenticationString = $"{username}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
-            request.Headers.Add("Authorization", $"Basic {base64EncodedAuthenticationString}");
-        }
-
+        // Protected methods.
         protected void PrepareBearAuthRequest(HttpRequestMessage request)
         {
             if (request is null)
@@ -39,8 +30,18 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             request.Headers.Add("Authorization", $"Bearer {AuthenticatedToken}");
         }
 
+        // Protected static methods.
+        protected static void PrepareBasicAuthRequest(HttpRequestMessage request, string username, string password)
+        {
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
 
-        static protected async Task PrepareUploadBzzFilesAsync(HttpRequestMessage httpRequestMessage, IEnumerable<FileParameterInput> fileParameterInputs)
+            var authenticationString = $"{username}:{password}";
+            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
+            request.Headers.Add("Authorization", $"Basic {base64EncodedAuthenticationString}");
+        }
+
+        protected static async Task PrepareUploadBzzFilesAsync(HttpRequestMessage httpRequestMessage, IEnumerable<FileParameterInput> fileParameterInputs)
         {
             if (fileParameterInputs == null ||
                 !fileParameterInputs.Any())

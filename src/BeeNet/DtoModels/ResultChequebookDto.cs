@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ResultChequeBookDto
     {
         // Constructors.
-        public ResultChequeBookDto(Clients.DebugApi.V2_0_1.Result result)
+        public ResultChequeBookDto(Clients.DebugApi.V3_0_2.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));

@@ -6,13 +6,13 @@ namespace Etherna.BeeNet.DtoModels
     public class PostageBatchShortDto
     {
         // Constructors.
-        public PostageBatchShortDto(Clients.DebugApi.V2_0_1.Batches batch)
+        public PostageBatchShortDto(Clients.DebugApi.V3_0_2.Batches batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
 
             BatchID = batch.BatchID;
-            BatchTTL = Convert.ToInt64(batch.BatchTTL, CultureInfo.InvariantCulture); //TODO CAST to Long or change return type in String
+            BatchTTL = batch.BatchTTL;
             BucketDepth = batch.BucketDepth;
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;

@@ -3,9 +3,9 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions
 {
-    public sealed class IgnoreOtherVersionFact : FactAttribute
+    public sealed class IgnoreOtherVersionFactAttribute : FactAttribute
     {
-        public IgnoreOtherVersionFact(string testVersion)
+        public IgnoreOtherVersionFactAttribute(string testVersion)
         {
             if (CurrentTestVersion(testVersion))
             {
@@ -14,6 +14,6 @@ namespace BeeNet.IntegrationTest.BeeVersions
         }
 
         private static bool CurrentTestVersion(string testVersion)
-            => Environment.GetEnvironmentVariable("CurrentTestVersion") != testVersion;
+            => (Environment.GetEnvironmentVariable("CurrentTestVersion") ?? "3.0.2") != testVersion;
     }
 }

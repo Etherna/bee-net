@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LastSentDto
     {
         // Constructors.
-        public LastSentDto(Clients.DebugApi.V2_0_1.Lastsent lastsent)
+        public LastSentDto(Clients.DebugApi.V3_0_2.Lastsent lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastsent.Payout, CultureInfo.InvariantCulture);
         }
 
-        public LastSentDto(Clients.DebugApi.V2_0_1.Lastsent2 lastsent)
+        public LastSentDto(Clients.DebugApi.V3_0_2.Lastsent2 lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
