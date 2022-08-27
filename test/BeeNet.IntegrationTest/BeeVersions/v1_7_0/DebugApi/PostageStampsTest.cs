@@ -16,11 +16,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetPostageBatchesAsync();
+            var postageBatch = await beeNodeClient.DebugClient.GetPostageBatchAsync(batch);
 
 
             // Assert
-            Assert.Contains(reserveState, i => i.Id == batch);
+            Assert.Equal(batch, postageBatch.Id);
         }
 
         [Fact]
