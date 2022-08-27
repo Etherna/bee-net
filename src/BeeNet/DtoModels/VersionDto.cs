@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class VersionDto
     {
         // Constructors.
-        public VersionDto(Clients.DebugApi.V2_0_1.Response15 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response15 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V2_0_1.Response19 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V2_0_1.Response25 response)
+        public VersionDto(Clients.DebugApi.V3_0_2.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

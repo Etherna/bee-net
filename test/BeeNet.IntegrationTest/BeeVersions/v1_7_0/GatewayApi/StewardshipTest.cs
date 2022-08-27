@@ -31,9 +31,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.GatewayApi
 
             // Act 
             await beeNodeClient.GatewayClient.ReuploadContentAsync(reference);
-
-
-            // Assert 
         }
 
     }

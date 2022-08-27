@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChainStateDto
     {
         // Constructors.
-        public ChainStateDto(Clients.DebugApi.V2_0_1.Response13 response)
+        public ChainStateDto(Clients.DebugApi.V3_0_2.Response13 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public int Block { get; }
+        public long Block { get; }
         public int ChainTip { get; }
         public long TotalAmount { get; }
         public long CurrentPrice { get; }

@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDto
     {
         // Constructors.
-        public SettlementDto(Clients.DebugApi.V2_0_1.Response21 response)
+        public SettlementDto(Clients.DebugApi.V3_0_2.Response21 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

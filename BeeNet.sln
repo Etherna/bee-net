@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31019.35
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet", "src\BeeNet\BeeNet.csproj", "{653BEB35-743E-4612-BEF4-7B26C6FB3D8F}"
 EndProject
@@ -34,7 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F6289FE6-5CC0-4225-98BC-2DCFE85C767F}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\integration-test-1_6_1.yml = .github\workflows\integration-test-1_6_1.yml
 		.github\workflows\myget-unstable-deploy.yml = .github\workflows\myget-unstable-deploy.yml
 		.github\workflows\nuget-stable-deploy.yml = .github\workflows\nuget-stable-deploy.yml
 	EndProjectSection

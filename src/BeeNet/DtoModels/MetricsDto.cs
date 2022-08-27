@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class MetricsDto
     {
         // Constructors
-        public MetricsDto(Clients.DebugApi.V2_0_1.Metrics metrics)
+        public MetricsDto(Clients.DebugApi.V3_0_2.Metrics metrics)
         {
             if (metrics is null)
                 throw new ArgumentNullException(nameof(metrics));

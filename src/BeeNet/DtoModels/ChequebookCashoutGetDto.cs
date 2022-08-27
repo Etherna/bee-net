@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChequeBookCashoutGetDto
     {
         // Constructors.
-        public ChequeBookCashoutGetDto(Clients.DebugApi.V2_0_1.Response26 response)
+        public ChequeBookCashoutGetDto(Clients.DebugApi.V3_0_2.Response26 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

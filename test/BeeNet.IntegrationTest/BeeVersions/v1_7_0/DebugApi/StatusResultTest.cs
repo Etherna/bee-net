@@ -3,7 +3,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class StatusResultTest : BaseTest_Debug_v2_0_1
+    public class StatusResultTest : BaseTest_Debug_v3_0_2
     {
 
         [Fact]
@@ -62,46 +62,10 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Assert
-            Assert.Equal("3.0.1", healthAsync.ApiVersion);
-            Assert.Equal("2.0.1", healthAsync.DebugApiVersion);
+            Assert.Equal("3.0.2", healthAsync.ApiVersion);
+            Assert.Equal("3.0.2", healthAsync.DebugApiVersion);
             Assert.Equal("ok", healthAsync.Status);
             Assert.StartsWith("1.7.0-", healthAsync.Version);
         }
-
-        [IgnoreOtherVersionFact(testVersion: "1.6.0")]
-        public async Task GetHealth2Async()
-        {
-            // Arrange 
-
-
-            // Act 
-            var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
-
-
-            // Assert
-            Assert.Equal("3.0.1", healthAsync.ApiVersion);
-            Assert.Equal("2.0.1", healthAsync.DebugApiVersion);
-            Assert.Equal("ok", healthAsync.Status);
-            Assert.StartsWith("1.6.1-", healthAsync.Version);
-        }
-        /*
-        [Fact]
-        public async Task GetReadinessAsync()
-        {
-            // Arrange 
-
-
-            // Act 
-            var readiness = await beeNodeClient.DebugClient.GetReadinessAsync();
-
-
-            // Assert
-            Assert.Equal("3.0.1", readiness.ApiVersion);
-            Assert.Equal("2.0.1", readiness.DebugApiVersion);
-            Assert.Equal("ok", readiness.Status);
-            Assert.StartsWith("1.6.1-", readiness.Version);
-        }
-        */
-
     }
 }

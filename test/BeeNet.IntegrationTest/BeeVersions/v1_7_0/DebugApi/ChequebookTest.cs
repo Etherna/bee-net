@@ -4,7 +4,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class ChequebookTest : BaseTest_Debug_v2_0_1
+    public class ChequebookTest : BaseTest_Debug_v3_0_2
     {
 
         [Fact]
@@ -14,14 +14,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
             var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
             var peerId = allCheque.ToList().First().Peer;
 
-
             // Act 
-            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); //TODO this call return 500 "message": "cannot cash cheque"
-            //TODO when return 500 there are some problems to deserialize the error message to DTO
-
+            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); 
 
             // Assert 
             Assert.StartsWith("0x", result);
+
+            // Wait for avoid interferences with next tests.
+            await Task.Delay(90000);
         }
 
         [Fact]

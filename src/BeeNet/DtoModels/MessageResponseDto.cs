@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class MessageResponseDto
     {
         // Constructors.
-        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response9 response)
+        public MessageResponseDto(Clients.DebugApi.V3_0_2.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response10 response)
+        public MessageResponseDto(Clients.DebugApi.V3_0_2.Response10 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        public MessageResponseDto(Clients.DebugApi.V2_0_1.Response17 response)
+        public MessageResponseDto(Clients.DebugApi.V3_0_2.Response17 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

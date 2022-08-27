@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDataDto
     {
         // Constructors.
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Settlements2 settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements2 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
         }
 
-        public SettlementDataDto(Clients.DebugApi.V2_0_1.Response20 settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_0_2.Response20 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));

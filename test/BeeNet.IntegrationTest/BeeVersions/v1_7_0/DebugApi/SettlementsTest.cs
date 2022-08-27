@@ -4,7 +4,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class SettlementsTest : BaseTest_Debug_v2_0_1
+    public class SettlementsTest : BaseTest_Debug_v3_0_2
     {
 
         [Fact]

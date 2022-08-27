@@ -3,7 +3,7 @@ using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 {
-    public class TransactionTest : BaseTest_Debug_v2_0_1
+    public class TransactionTest : BaseTest_Debug_v3_0_2
     {
 
         [Fact]
@@ -11,13 +11,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
         {
             // Arrange 
 
-
             // Act 
-            var pendingTransactions = await beeNodeClient.DebugClient.GetPendingTransactionsAsync(); //TODO How to get transaction
-
+            await beeNodeClient.DebugClient.GetPendingTransactionsAsync(); //TODO How to get transaction
 
             // Assert
         }
+
         /*
         [Fact]
         public async Task GetTransactionInfoAsync()
