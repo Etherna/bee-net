@@ -64,26 +64,17 @@ namespace Etherna.BeeNet
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
             DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
-#pragma warning disable CA2000 // Dispose objects must be done by client
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
-#pragma warning restore CA2000 
 
-            if (nodeClient.GatewayClient is null)
-                return null;
-
-            var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(authDto.Key))
-                return null;
-
-            nodeClient.GatewayClient.SetAuthToken(authDto.Key);
+            await ExecuteAuthenticateAsync(nodeClient, beeAuthicationData).ConfigureAwait(false);
 
             return nodeClient;
         }
 
         public BeeNodeClient(
             HttpClient httpClient,
-            GatewayApiVersion? gatewayApiVersion = GatewayApiVersion.v3_0_0,
-            DebugApiVersion? debugApiVersion = DebugApiVersion.v2_0_0)
+            GatewayApiVersion? gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion? debugApiVersion = DebugApiVersion.v3_0_2)
         {
             if (httpClient is null)
                 throw new ArgumentNullException(nameof(httpClient));
@@ -99,6 +90,32 @@ namespace Etherna.BeeNet
             {
                 GatewayClient = new BeeGatewayClient(httpClient, httpClient.BaseAddress, gatewayApiVersion.Value);
             }
+        }
+
+        static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
+            BeeAuthicationData beeAuthicationData,
+            HttpClient httpClient,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
+        {
+            var nodeClient = new BeeNodeClient(httpClient, gatewayApiVersion, debugApiVersion);
+
+            await ExecuteAuthenticateAsync(nodeClient, beeAuthicationData).ConfigureAwait(false);
+
+            return nodeClient;
+        }
+
+        // Private Methods.
+        private static async Task ExecuteAuthenticateAsync(BeeNodeClient nodeClient, BeeAuthicationData beeAuthicationData)
+        {
+            if (nodeClient.GatewayClient is null)
+                return;
+
+            var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(authDto.Key))
+                return;
+
+            nodeClient.GatewayClient.SetAuthToken(authDto.Key);
         }
 
         // Dispose.
