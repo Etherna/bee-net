@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -26,6 +27,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     {
         // Properties.
         GatewayApiVersion CurrentApiVersion { get; set; }
+        Uri ApiUrl { get; }
 
         void SetAuthToken(string token);
 

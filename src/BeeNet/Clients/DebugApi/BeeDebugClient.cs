@@ -37,11 +37,13 @@ namespace Etherna.BeeNet.Clients.DebugApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
+            ApiUrl = baseUrl;
             beeDebugClient_3_0_2 = new BeeDebugClient_3_0_2(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
 
         // Properties.
+        public Uri ApiUrl { get; }
         public DebugApiVersion CurrentApiVersion { get; set; }
 
         // Methods.

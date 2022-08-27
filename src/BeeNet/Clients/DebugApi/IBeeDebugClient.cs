@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.DtoModels;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
     {
         // Properties.
         DebugApiVersion CurrentApiVersion { get; set; }
+        Uri ApiUrl { get; }
 
         // Methods.
         /// <summary>Buy a new postage batch.</summary>

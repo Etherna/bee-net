@@ -41,10 +41,10 @@ namespace Etherna.BeeNet
         {
             httpClient = new HttpClient();
 
-            DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort));
-            DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
-            GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
-            GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
+            var debugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort));
+            DebugClient = new BeeDebugClient(httpClient, debugApiUrl, debugApiVersion);
+            var gatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
+            GatewayClient = new BeeGatewayClient(httpClient, gatewayApiUrl, gatewayApiVersion);
         }
 
         [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
@@ -66,23 +66,16 @@ namespace Etherna.BeeNet
 
         public BeeNodeClient(
             HttpClient httpClient,
-            GatewayApiVersion? gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion? debugApiVersion = DebugApiVersion.v3_0_2)
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
         {
             if (httpClient is null)
                 throw new ArgumentNullException(nameof(httpClient));
 
             this.httpClient = httpClient;
 
-            if (debugApiVersion is not null)
-            {
-                DebugClient = new BeeDebugClient(httpClient, httpClient.BaseAddress, debugApiVersion.Value);
-            }
-
-            if (gatewayApiVersion is not null)
-            {
-                GatewayClient = new BeeGatewayClient(httpClient, httpClient.BaseAddress, gatewayApiVersion.Value);
-            }
+            DebugClient = new BeeDebugClient(httpClient, httpClient.BaseAddress, debugApiVersion);
+            GatewayClient = new BeeGatewayClient(httpClient, httpClient.BaseAddress, gatewayApiVersion);
         }
 
         static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
@@ -131,9 +124,9 @@ namespace Etherna.BeeNet
 
 
         // Properties.
-        public Uri DebugApiUrl { get; }
+        public Uri DebugApiUrl { get { return DebugClient.ApiUrl; } }
         public IBeeDebugClient DebugClient { get; }
-        public Uri GatewayApiUrl { get; }
+        public Uri GatewayApiUrl { get { return GatewayClient.ApiUrl; } }
         public IBeeGatewayClient GatewayClient { get; }
 
         // Helpers.

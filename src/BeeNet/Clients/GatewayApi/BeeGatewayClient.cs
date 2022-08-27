@@ -38,11 +38,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
+            ApiUrl = baseUrl;
             beeGatewayApiClient_3_0_2 = new V3_0_2.BeeGatewayClient_3_0_2(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
 
         // Properties.
+        public Uri ApiUrl { get; }
         public GatewayApiVersion CurrentApiVersion { get; set; }
 
         // Methods.
