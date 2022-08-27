@@ -20,49 +20,32 @@ namespace Etherna.BeeNet.DtoModels
     public class ChainStateDto
     {
         // Constructors.
-        public ChainStateDto(Clients.DebugApi.V1_2_0.Response13 response)
+        public ChainStateDto(Clients.DebugApi.V3_0_2.Response13 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
-            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
+            ChainTip = response.ChainTip;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
-        public ChainStateDto(Clients.DebugApi.V1_2_1.Response13 response)
+        public ChainStateDto(Clients.GatewayApi.V3_0_2.Response31 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
-            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
-        }
-
-        public ChainStateDto(Clients.DebugApi.V2_0_0.Response13 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Block = response.Block;
-            TotalAmount = response.TotalAmount.ToString(CultureInfo.InvariantCulture);
-            CurrentPrice = response.CurrentPrice.ToString(CultureInfo.InvariantCulture);
-        }
-
-        public ChainStateDto(Clients.DebugApi.V2_0_1.Response13 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Block = response.Block;
-            TotalAmount = response.TotalAmount;
-            CurrentPrice = response.CurrentPrice;
+            ChainTip = response.ChainTip;
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.CurrentCulture);
+            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.CurrentCulture);
         }
 
         // Properties.
         public long Block { get; }
-        public string TotalAmount { get; }
-        public string CurrentPrice { get; }
+        public int ChainTip { get; }
+        public long TotalAmount { get; }
+        public long CurrentPrice { get; }
     }
 }
