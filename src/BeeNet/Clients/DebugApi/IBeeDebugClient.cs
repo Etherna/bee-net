@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string? label = null,
             bool? immutable = null,
             long? gasPrice = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Cashout the last cheque for the peer</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string peerId,
             long? gasPrice = null,
             long? gasLimit = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Connect to address</summary>
         /// <param name="address">Underlay address of peer</param>
@@ -58,7 +58,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> ConnectToPeerAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Delete a chunk from local storage</summary>
         /// <param name="address">Swarm address of chunk</param>
@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<MessageResponseDto> DeleteChunkAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<MessageResponseDto> DeletePeerAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Cancel existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> DeleteTransactionAsync(
             string txHash,
             long? gasPrice = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Deposit tokens from overlay address into chequebook</summary>
         /// <param name="amount">amount of tokens to deposit</param>
@@ -94,7 +94,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> DepositIntoChequeBookAsync(
             long amount,
             long? gasPrice = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Dilute an existing postage batch.</summary>
         /// <param name="id">Batch ID to dilute</param>
@@ -104,42 +104,42 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> DilutePostageBatchAsync(
             string id, 
             int depth,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get overlay and underlay addresses of the node</summary>
         /// <returns>Own node underlay and overlay addresses</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<AddressDetailDto> GetAddressesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<AddressDetailDto> GetAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balances with all known peers including prepaid services</summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetAllBalancesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<BalanceDto>> GetAllBalancesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the past due consumption balances with all known peers</summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<BalanceDto>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<BalanceDto>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of peers</summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get settlements with all known peers and total amount sent or received</summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<SettlementDto> GetAllSettlementsAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<SettlementDto> GetAllSettlementsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get time based settlements with all known peers and total amount sent or received</summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TimeSettlementsDto> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<TimeSettlementsDto> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get all globally available batches that were purchased by all nodes.
@@ -147,7 +147,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns></returns>
         /// <returns>Returns an array of all available and currently valid postage batches.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -155,27 +155,27 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<BalanceDto> GetBalanceWithPeerAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get chain state</summary>
         /// <returns>Chain State</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChainStateDto> GetChainStateAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<ChainStateDto> GetChainStateAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the address of the chequebook contract used</summary>
         /// <returns>Ethereum address of chequebook contract</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<string> GetChequeBookAddressAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<string> GetChequeBookAddressAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balance of the chequebook</summary>
         /// <returns>Balance of the chequebook</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ChequeBookBalanceDto> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<ChequeBookBalanceDto> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get last cashout action for the peer</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -183,7 +183,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<ChequeBookCashoutGetDto> GetChequeBookCashoutForPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get last cheques for the peer</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -191,7 +191,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<ChequeBookChequeGetDto> GetChequeBookChequeForPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Check if chunk at address exists locally</summary>
         /// <param name="address">Swarm address of chunk</param>
@@ -199,7 +199,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<MessageResponseDto> GetChunkAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get the past due consumption balance with a specific peer</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -207,29 +207,29 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<BalanceDto> GetConsumedBalanceWithPeerAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<VersionDto> GetHealthAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<VersionDto> GetHealthAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get information about the node
         /// </summary>
         /// <returns>Information about the node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<NodeInfoDto> GetNodeInfoAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<NodeInfoDto> GetNodeInfoAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get all owned postage batches by this node</summary>
         /// <returns>List of all owned postage batches</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred</exception>
-        Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<IEnumerable<PendingTransactionDto>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<PendingTransactionDto>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get an individual postage batch status</summary>
         /// <param name="id">Swarm address of the stamp</param>
@@ -237,17 +237,17 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<PostageBatchDto> GetPostageBatchAsync(
             string id,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get readiness state of node</summary>
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<VersionDto> GetReadinessAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<VersionDto> GetReadinessAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get reserve state</summary>
         /// <returns>Reserve State</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<ReserveStateDto> GetReserveStateAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<ReserveStateDto> GetReserveStateAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get amount of sent and received from settlements with a peer</summary>
         /// <param name="address">Swarm address of peer</param>
@@ -255,7 +255,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<SettlementDataDto> GetSettlementsWithPeerAsync(
             string address,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get extended bucket data of a batch</summary>
         /// <param name="batchId">Swarm address of the stamp</param>
@@ -263,11 +263,11 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<StampsBucketsDto> GetStampsBucketsForBatchAsync(
             string batchId,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <returns>Swarm topology of the bee node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TopologyDto> GetSwarmTopologyAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<TopologyDto> GetSwarmTopologyAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get Tag information using Uid</summary>
         /// <param name="uid">Uid</param>
@@ -275,7 +275,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<TagDto> GetTagInfoAsync(
             long uid,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get information about a sent transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
@@ -283,18 +283,18 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<TransactionsDto> GetTransactionInfoAsync(
             string txHash,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get wallet balance for BZZ and xDai
         /// </summary>
         /// <returns>Wallet balance info</returns>
-        Task<WalletDto> GetWalletBalance(CancellationToken cancellationToken = default(CancellationToken));
+        Task<WalletDto> GetWalletBalance(CancellationToken cancellationToken = default);
 
         /// <summary>Get configured P2P welcome message</summary>
         /// <returns>Welcome message</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
@@ -302,13 +302,13 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> RebroadcastTransactionAsync(
             string txHash,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Set P2P welcome message</summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<VersionDto> SetWelcomeMessageAsync(string welcomeMessage,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Top up an existing postage batch.</summary>
         /// <param name="id">Batch ID to top up</param>
@@ -318,7 +318,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> TopUpPostageBatchAsync(
             string id, 
             long amount,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Try connection to node</summary>
         /// <param name="peerId">Swarm address of peer</param>
@@ -326,7 +326,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> TryConnectToPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
 
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
         /// <param name="amount">amount of tokens to withdraw</param>
@@ -336,6 +336,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> WithdrawFromChequeBookAsync(
             long amount,
             long? gasPrice = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
     }
 }
