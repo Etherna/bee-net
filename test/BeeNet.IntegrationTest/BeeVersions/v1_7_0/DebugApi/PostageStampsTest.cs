@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
@@ -16,11 +15,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetPostageBatchesAsync();
+            var postageBatches = await beeNodeClient.DebugClient.GetOwnedPostageBatchesByNodeAsync();
 
 
             // Assert
-            Assert.Contains(reserveState, i => i.Id == batch);
+            Assert.Contains(postageBatches, i => i.Id == batch);
         }
 
         [Fact]
