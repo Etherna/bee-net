@@ -47,7 +47,8 @@ components:
         storageRadius:
           type: integer
         commitment:
-          $ref: "#/components/schemas/BigInt"
+          type: integer
+          format: int64
 
     ChainState:
       type: object
@@ -134,6 +135,7 @@ components:
 
     Cheque:
       type: object
+      nullable: true
       properties:
         beneficiary:
           $ref: "#/components/schemas/EthereumAddress"

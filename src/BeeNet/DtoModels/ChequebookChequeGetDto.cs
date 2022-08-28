@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
@@ -55,13 +55,13 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Peer = response.Peer;
-            LastReceived = new LastReceivedDto(response.Lastreceived);
+            LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
         // Properties.
         public string Peer { get; }
-        public LastReceivedDto LastReceived { get; }
+        public LastReceivedDto? LastReceived { get; }
         public LastSentDto? LastSent { get; }
     }
 }

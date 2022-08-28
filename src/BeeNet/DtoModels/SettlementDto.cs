@@ -27,8 +27,8 @@ namespace Etherna.BeeNet.DtoModels
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.CurrentCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.CurrentCulture);
+            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
+            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
             Settlements = response.Settlements
                 .Select(i => new SettlementDataDto(i));
         }
@@ -38,8 +38,8 @@ namespace Etherna.BeeNet.DtoModels
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.CurrentCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.CurrentCulture);
+            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
+            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
             Settlements = response.Settlements
                 .Select(i => new SettlementDataDto(i));
         }

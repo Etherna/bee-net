@@ -26,8 +26,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements2 settlement)
@@ -36,8 +36,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         public SettlementDataDto(Clients.DebugApi.V3_0_2.Response20 settlement)
@@ -46,8 +46,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
@@ -56,8 +56,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements2 settlement)
@@ -66,8 +66,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = settlement.Received;
-            Sent = settlement.Sent;
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         public SettlementDataDto(Clients.GatewayApi.V3_0_2.Response36 settlement)
@@ -76,8 +76,8 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.CurrentCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.CurrentCulture);
+            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
         // Properties.
