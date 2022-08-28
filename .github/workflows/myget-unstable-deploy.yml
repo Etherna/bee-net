@@ -18,15 +18,6 @@ jobs:
       uses: actions/checkout@master
       with:
         fetch-depth: 0
-
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3.3.0
-
-    - name: Install BeeFactory
-      run: npm install -g @ethersphere/bee-factory
-      
-    - name: Star Bee Nodes
-      run: bee-factory start --detach "${{env.BeeNet_IT_NodeVersion}}" 
         
     - name: Setup dotnet
       uses: actions/setup-dotnet@v2
@@ -35,6 +26,15 @@ jobs:
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.3.0
+
+    - name: Install BeeFactory
+      run: npm install -g @ethersphere/bee-factory
+      
+    - name: Start Bee Nodes
+      run: bee-factory start --detach "${{env.BeeNet_IT_NodeVersion}}" 
 
     - name: Run integration tests
       run: dotnet test --configuration Release
