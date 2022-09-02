@@ -37,9 +37,10 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2,
+            HttpClient? customHttpClient = null)
         {
-            httpClient = new HttpClient();
+            httpClient = customHttpClient ?? new HttpClient();
 
             if (debugApiPort is not null)
             {
@@ -62,60 +63,21 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2,
+            HttpClient? customHttpClient = null)
         {
-            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
+            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion, customHttpClient);
 
-            await ExecuteAuthenticateAsync(nodeClient, beeAuthicationData).ConfigureAwait(false);
-
-            return nodeClient;
-        }
-
-        public BeeNodeClient(
-            HttpClient httpClient,
-            GatewayApiVersion? gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion? debugApiVersion = DebugApiVersion.v3_0_2)
-        {
-            if (httpClient is null)
-                throw new ArgumentNullException(nameof(httpClient));
-
-            this.httpClient = httpClient;
-
-            if (debugApiVersion is not null)
-            {
-                DebugClient = new BeeDebugClient(httpClient, httpClient.BaseAddress, debugApiVersion.Value);
-            }
-
-            if (gatewayApiVersion is not null)
-            {
-                GatewayClient = new BeeGatewayClient(httpClient, httpClient.BaseAddress, gatewayApiVersion.Value);
-            }
-        }
-
-        static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
-            BeeAuthicationData beeAuthicationData,
-            HttpClient httpClient,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
-        {
-            var nodeClient = new BeeNodeClient(httpClient, gatewayApiVersion, debugApiVersion);
-
-            await ExecuteAuthenticateAsync(nodeClient, beeAuthicationData).ConfigureAwait(false);
-
-            return nodeClient;
-        }
-
-        // Private Methods.
-        private static async Task ExecuteAuthenticateAsync(BeeNodeClient nodeClient, BeeAuthicationData beeAuthicationData)
-        {
             if (nodeClient.GatewayClient is null)
-                return;
+                return nodeClient;
 
             var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(authDto.Key))
-                return;
+                return nodeClient;
 
             nodeClient.GatewayClient.SetAuthToken(authDto.Key);
+
+            return nodeClient;
         }
 
         // Dispose.
