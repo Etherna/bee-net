@@ -30,9 +30,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_7_0
                 new BeeAuthicationData("admin", "$2a$10$DjfxmdPKiT9eBzSAZ2uiPe2hlaxYfBNBwAKPvi18M/ZZl7ultyDLW"),
                 System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
-                1635,
-                GatewayApiVersion.v3_0_2,
-                DebugApiVersion.v3_0_2);
+                GatewayApiVersion.v3_0_2);
         }
 
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
