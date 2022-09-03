@@ -37,9 +37,10 @@ namespace Etherna.BeeNet
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2,
+            HttpClient? customHttpClient = null)
         {
-            httpClient = new HttpClient();
+            httpClient = customHttpClient ?? new HttpClient();
 
             if (debugApiPort is not null)
             {
@@ -56,24 +57,18 @@ namespace Etherna.BeeNet
 
         [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
             Justification = "A string is required by Nswag generated client")]
-        static public async Task<BeeNodeClient?> AuthenticatedBeeNodeClientAsync(
+        static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
             BeeAuthicationData beeAuthicationData,
             string baseUrl = "http://localhost/",
-            int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
+            int gatewayApiPort = 1633,
             GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2)
+            HttpClient? customHttpClient = null)
         {
-#pragma warning disable CA2000 // Dispose objects must be done by client
-            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, debugApiPort, gatewayApiVersion, debugApiVersion);
-#pragma warning restore CA2000 
-
-            if (nodeClient.GatewayClient is null)
-                return null;
-
-            var authDto = await nodeClient.GatewayClient.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
+            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, gatewayApiVersion, customHttpClient: customHttpClient);
+            
+            var authDto = await nodeClient.GatewayClient!.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(authDto.Key))
-                return null;
+                throw new InvalidOperationException();
 
             nodeClient.GatewayClient.SetAuthToken(authDto.Key);
 
