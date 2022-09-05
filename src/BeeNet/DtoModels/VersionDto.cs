@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class VersionDto
     {
         // Constructors.
-        public VersionDto(Clients.DebugApi.V3_0_2.Response15 response)
+        internal VersionDto(Clients.DebugApi.V3_0_2.Response15 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V3_0_2.Response19 response)
+        internal VersionDto(Clients.DebugApi.V3_0_2.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V3_0_2.Response25 response)
+        internal VersionDto(Clients.DebugApi.V3_0_2.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_0_2.Response4 response)
+        internal VersionDto(Clients.GatewayApi.V3_0_2.Response4 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -67,7 +67,7 @@ namespace Etherna.BeeNet.DtoModels
             }
         }
 
-        public VersionDto(Clients.GatewayApi.V3_0_2.Response9 response)
+        internal VersionDto(Clients.GatewayApi.V3_0_2.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_0_2.Response19 response)
+        internal VersionDto(Clients.GatewayApi.V3_0_2.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -89,7 +89,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_0_2.Response41 response)
+        internal VersionDto(Clients.GatewayApi.V3_0_2.Response41 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class NodeInfoDto
     {
         // Constructors.
-        public NodeInfoDto(Clients.DebugApi.V3_0_2.Response14 response)
+        internal NodeInfoDto(Clients.DebugApi.V3_0_2.Response14 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
             SwapEnabled = response.SwapEnabled;
         }
 
-        public NodeInfoDto(Clients.GatewayApi.V3_0_2.Response32 response)
+        internal NodeInfoDto(Clients.GatewayApi.V3_0_2.Response32 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

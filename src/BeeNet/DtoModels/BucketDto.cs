@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class BucketDto
     {
         // Constructors.
-        public BucketDto(Clients.DebugApi.V3_0_2.Buckets bucket)
+        internal BucketDto(Clients.DebugApi.V3_0_2.Buckets bucket)
         {
             if (bucket is null)
                 throw new ArgumentNullException(nameof(bucket));
@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.DtoModels
             Collisions = bucket.Collisions;
         }
 
-        public BucketDto(Clients.GatewayApi.V3_0_2.Buckets bucket)
+        internal BucketDto(Clients.GatewayApi.V3_0_2.Buckets bucket)
         {
             if (bucket is null)
                 throw new ArgumentNullException(nameof(bucket));

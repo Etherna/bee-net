@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AuthDto
     {
         // Constructors.
-        public AuthDto(Clients.GatewayApi.V3_0_2.Response response)
+        internal AuthDto(Clients.GatewayApi.V3_0_2.Response response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

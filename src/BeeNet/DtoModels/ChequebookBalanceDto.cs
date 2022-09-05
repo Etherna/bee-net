@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChequeBookBalanceDto
     {
         // Constructors.
-        public ChequeBookBalanceDto(Clients.DebugApi.V3_0_2.Response8 response)
+        internal ChequeBookBalanceDto(Clients.DebugApi.V3_0_2.Response8 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
         }
 
-        public ChequeBookBalanceDto(Clients.GatewayApi.V3_0_2.Response26 response)
+        internal ChequeBookBalanceDto(Clients.GatewayApi.V3_0_2.Response26 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
