@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.0.1
+  version: 2.1.0
   title: Bee Debug API
   description: "A list of the currently provided debug interfaces to interact with the bee node"
 
@@ -34,6 +34,23 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Addresses"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+
+  "/accounting":
+    get:
+      summary: Get all accounting associated values with all known peers
+      tags:
+        - Balance
+      responses:
+        "200":
+          description: Own accounting associated values with all known peers
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/PeerAccountingData"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -294,21 +311,6 @@ paths:
         default:
           description: Default response
 
-  "/health":
-    get:
-      summary: Get health of node
-      tags:
-        - Status
-      responses:
-        "200":
-          description: Health State of node
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
-        default:
-          description: Default response
-
   "/peers":
     get:
       summary: Get a list of peers
@@ -378,18 +380,37 @@ paths:
         default:
           description: Default response
 
-  "/readiness":
+  "/health":
     get:
-      summary: Get readiness state of node
+      summary: Get node overall health Status
+      description: |
+        Health Status will indicate node healthiness.
+
+        If node is unhealthy please check node logs for errors.
       tags:
         - Status
       responses:
         "200":
-          description: Health State of node
+          description: Health Status of node
           content:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Status"
+        default:
+          description: Default response
+
+  "/readiness":
+    get:
+      summary: Readiness endpoint indicates if node is ready to start accepting traffic
+      tags:
+        - Status
+      responses:
+        "200":
+          description: Indicates that node is ready
+          $ref: "SwarmCommon.yaml#/components/responses/200"
+        "400":
+          description: Indicates that node is not ready
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
           description: Default response
 
@@ -796,13 +817,19 @@ paths:
           description: Default response
 
   "/stamps":
+    parameters:
+      - in: query
+        name: all
+        schema:
+          $ref: "SwarmCommon.yaml#/components/schemas/isAll"
+        description: Gets all stamps. Default is null.
     get:
-      summary: Get all available stamps for this node
+      summary: Get stamps for this node
       tags:
         - Postage Stamps
       responses:
         "200":
-          description: Returns an array of all available postage batches.
+          description: Returns an array of postage batches.
           content:
             application/json:
               schema:
@@ -992,5 +1019,64 @@ paths:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/DebugPostageAllBatchesResponse"
 
+        default:
+          description: Default response
+
+  "/loggers":
+    get:
+      summary: Get all available loggers.
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: Returns an array of all available loggers, also represented in short form in a tree.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/LoggerResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+            description: Default response
+
+  "/loggers/{exp}":
+    get:
+      summary: Get all available loggers that match the specified expression.
+      parameters:
+        - in: path
+          name: exp
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/LoggerExp"
+          required: true
+          description: Regular expression or a subsystem that matches the logger(s).
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: Returns an array of all available loggers that matches given expression, also represented in short form in a tree.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/LoggerResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response
+    put:
+      summary: Set logger(s) verbosity level.
+      parameters:
+        - in: path
+          name: exp
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/LoggerExp"
+          required: true
+          description: Regular expression or a subsystem that matches the logger(s).
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: The verbosity was changed successfully.
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
           description: Default response

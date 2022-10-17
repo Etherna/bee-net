@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.0.3
+  version: 2.2.0
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -59,6 +59,32 @@ components:
         totalAmount:
           $ref: "#/components/schemas/BigInt"
         currentPrice:
+          $ref: "#/components/schemas/BigInt"
+
+    PeerAccountingData:
+      type: object
+      properties:
+        peerData:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/AccountingInfo"
+
+    AccountingInfo:
+      type: object
+      properties:
+        balance:
+          $ref: "#/components/schemas/BigInt"
+        thresholdReceived:
+          $ref: "#/components/schemas/BigInt"
+        thresholdGiven:
+          $ref: "#/components/schemas/BigInt"
+        surplusBalance:
+          $ref: "#/components/schemas/BigInt"
+        reservedBalance:
+          $ref: "#/components/schemas/BigInt"
+        shadowReservedBalance:
+          $ref: "#/components/schemas/BigInt"
+        ghostBalance:
           $ref: "#/components/schemas/BigInt"
 
     Balance:
@@ -197,12 +223,14 @@ components:
       type: string
 
     GasLimit:
+      description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
       type: integer
       format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
+      description: Gas price refers to the amount you’re willing to pay for every unit of gas.
       type: integer
       format: int64
 
@@ -380,8 +408,6 @@ components:
             * `light` - light node; does not participate in forwarding or storing chunks
             * `full` - full node
             * `dev` - development mode; Bee client for development purposes, blockchain operations are mocked
-        gatewayMode:
-          type: boolean
         chequebookEnabled:
           type: boolean
         swapEnabled:
@@ -392,6 +418,11 @@ components:
       properties:
         status:
           type: string
+          enum: [ok, nok]
+          description: >
+            Indicates health state of node
+            * `ok` - node is healthy
+            * `nok` - node is not healthy
         version:
           type: string
         apiVersion:
@@ -430,6 +461,8 @@ components:
         batchTTL:
           type: integer
           format: int64
+        expired:
+          type: boolean
 
     PostageBatchNoIssuer:
       type: object
@@ -536,10 +569,20 @@ components:
       pattern: '^[A-Za-z0-9]+\.[A-Za-z0-9]+$'
       example: "swarm.eth"
 
+    isAll:
+      type: string
+      required: false
+
     BatchID:
       type: string
       pattern: "^[A-Fa-f0-9]{64}$"
       example: "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
+
+    GetStakeResponse:
+      type: object
+      properties:
+        stakedAmount:
+           $ref: "#/components/schemas/BigInt"
 
     SwarmOnlyReference:
       oneOf:
@@ -635,10 +678,10 @@ components:
           $ref: "#/components/schemas/BigInt"
         xDai:
           $ref: "#/components/schemas/BigInt"
-      chainID:
-          type: integer
-      contractAddress:
-          $ref: "#/components/schemas/EthereumAddress"
+        chainID:
+            type: integer
+        contractAddress:
+            $ref: "#/components/schemas/EthereumAddress"
 
     PendingTransactionsResponse:
       type: object
@@ -686,6 +729,52 @@ components:
         key:
           type: string
           nullable: false
+
+    LoggerExp:
+      type: string
+      description: Base 64 encoded regular expression or subsystem string.
+      pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+      example: "b25lL25hbWU="
+
+    LoggerTreeData:
+      type: object
+      nullable: true
+      properties:
+        /:
+          $ref: "#/components/schemas/LoggerTreeNode"
+        +:
+          type: array
+          items:
+            type: string
+          description: The combination of the logger verbosity and its subsystem separated by |.
+          example: "warning|one/name[0][]>>824634860360"
+
+    LoggerTreeNode:
+      type: object
+      additionalProperties:
+          $ref: "#/components/schemas/LoggerTreeData"
+
+    Logger:
+      type: object
+      properties:
+        logger:
+          type: string
+        verbosity:
+          type: string
+        subsystem:
+          type: string
+        id:
+          type: string
+
+    LoggerResponse:
+      type: object
+      properties:
+        tree:
+            $ref: "#/components/schemas/LoggerTreeNode"
+        loggers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Logger"
 
   headers:
     SwarmTag:
@@ -748,8 +837,6 @@ components:
       description: >
         Represents if the uploaded data should be also locally pinned on the node.
 
-        Warning! Not available for nodes that run in Gateway mode!
-
     SwarmEncryptParameter:
       in: header
       name: swarm-encrypt
@@ -758,8 +845,6 @@ components:
       required: false
       description: >
         Represents the encrypting state of the file
-
-        Warning! Not available for nodes that run in Gateway mode!
 
     ContentTypePreserved:
       in: header
@@ -847,13 +932,6 @@ components:
             $ref: "#/components/schemas/ProblemDetails"
     "500":
       description: Internal Server Error
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/ProblemDetails"
-
-    "GatewayForbidden":
-      description: "Endpoint or header (pinning or encryption headers) forbidden in Gateway mode"
       content:
         application/problem+json:
           schema:
