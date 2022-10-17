@@ -740,8 +740,9 @@ components:
       type: object
       nullable: true
       properties:
-        /:
-          $ref: "#/components/schemas/LoggerTreeNode"
+### commented because of https://github.com/ethersphere/bee/issues/3433
+#        /:
+#          $ref: "#/components/schemas/LoggerTreeNode"
         +:
           type: array
           items:
