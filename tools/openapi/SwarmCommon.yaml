@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.1.0
+  version: 2.2.0
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -222,11 +222,13 @@ components:
       type: string
 
     GasLimit:
+      description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
       type: integer
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
+      description: Gas price refers to the amount you’re willing to pay for every unit of gas.
       type: integer
 
     Hash:
@@ -403,8 +405,6 @@ components:
             * `light` - light node; does not participate in forwarding or storing chunks
             * `full` - full node
             * `dev` - development mode; Bee client for development purposes, blockchain operations are mocked
-        gatewayMode:
-          type: boolean
         chequebookEnabled:
           type: boolean
         swapEnabled:
@@ -415,6 +415,11 @@ components:
       properties:
         status:
           type: string
+          enum: [ok, nok]
+          description: >
+            Indicates health state of node
+            * `ok` - node is healthy
+            * `nok` - node is not healthy
         version:
           type: string
         apiVersion:
@@ -566,6 +571,12 @@ components:
       type: string
       pattern: "^[A-Fa-f0-9]{64}$"
       example: "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
+
+    GetStakeResponse:
+      type: object
+      properties:
+        stakedAmount:
+           $ref: "#/components/schemas/BigInt"
 
     SwarmOnlyReference:
       oneOf:
@@ -812,8 +823,6 @@ components:
       description: >
         Represents if the uploaded data should be also locally pinned on the node.
 
-        Warning! Not available for nodes that run in Gateway mode!
-
     SwarmEncryptParameter:
       in: header
       name: swarm-encrypt
@@ -822,8 +831,6 @@ components:
       required: false
       description: >
         Represents the encrypting state of the file
-
-        Warning! Not available for nodes that run in Gateway mode!
 
     ContentTypePreserved:
       in: header
@@ -911,13 +918,6 @@ components:
             $ref: "#/components/schemas/ProblemDetails"
     "500":
       description: Internal Server Error
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/ProblemDetails"
-
-    "GatewayForbidden":
-      description: "Endpoint or header (pinning or encryption headers) forbidden in Gateway mode"
       content:
         application/problem+json:
           schema:
