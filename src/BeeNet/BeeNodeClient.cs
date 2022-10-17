@@ -36,8 +36,8 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_0_2,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_2_0,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v3_2_0,
             HttpClient? customHttpClient = null)
         {
             httpClient = customHttpClient ?? new HttpClient();
@@ -58,15 +58,14 @@ namespace Etherna.BeeNet
         [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
             Justification = "A string is required by Nswag generated client")]
         static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
-            BeeAuthicationData beeAuthicationData,
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_0_2,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_2_0,
             HttpClient? customHttpClient = null)
         {
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, gatewayApiVersion, customHttpClient: customHttpClient);
             
-            var authDto = await nodeClient.GatewayClient!.AuthenticateAsync(beeAuthicationData, "", 0).ConfigureAwait(false);
+            var authDto = await nodeClient.GatewayClient!.AuthenticateAsync("", 0).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(authDto.Key))
                 throw new InvalidOperationException();
 

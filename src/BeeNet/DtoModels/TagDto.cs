@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TagDto
     {
         // Constructors.
-        public TagDto(Clients.DebugApi.V3_0_2.Response32 response)
+        public TagDto(Clients.DebugApi.V3_2_0.Response32 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

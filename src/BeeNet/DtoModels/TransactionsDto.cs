@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TransactionsDto
     {
         // Constructors.
-        public TransactionsDto(Clients.DebugApi.V3_0_2.Response35 response)
+        public TransactionsDto(Clients.DebugApi.V3_2_0.Response35 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
             Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
-        public TransactionsDto(Clients.GatewayApi.V3_0_2.Response49 response)
+        public TransactionsDto(Clients.GatewayApi.V3_2_0.Response50 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

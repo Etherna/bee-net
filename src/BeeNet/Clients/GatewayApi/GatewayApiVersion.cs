@@ -16,6 +16,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 {
     public enum GatewayApiVersion
     {
-        v3_0_2
+        v3_2_0
     }
 }
