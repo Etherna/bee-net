@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDataDto
     {
         // Constructors.
-        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_2_0.Settlements settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        public SettlementDataDto(Clients.DebugApi.V3_0_2.Settlements2 settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_2_0.Settlements2 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        public SettlementDataDto(Clients.DebugApi.V3_0_2.Response20 settlement)
+        public SettlementDataDto(Clients.DebugApi.V3_2_0.Response20 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements settlement)
+        public SettlementDataDto(Clients.GatewayApi.V3_2_0.Settlements settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -60,7 +60,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Settlements2 settlement)
+        public SettlementDataDto(Clients.GatewayApi.V3_2_0.Settlements2 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        public SettlementDataDto(Clients.GatewayApi.V3_0_2.Response36 settlement)
+        public SettlementDataDto(Clients.GatewayApi.V3_2_0.Response37 settlement)
         {
             if (settlement is null)
                 throw new ArgumentNullException(nameof(settlement));

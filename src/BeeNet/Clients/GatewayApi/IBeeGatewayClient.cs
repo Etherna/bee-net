@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <summary>Authenticate - This endpoint is experimental</summary>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<AuthDto> AuthenticateAsync(BeeAuthicationData beeAuthicationData, string role, int expiry);
+        Task<AuthDto> AuthenticateAsync(string role, int expiry);
 
         /// <summary>Check if content is available</summary>
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
@@ -307,6 +307,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string owner,
             string id,
             string sig,
+            string swarmPostageBatchId,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default);
 
@@ -324,6 +325,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string? label = null,
             bool? immutable = null,
             long? gasPrice = null,
+            long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Cashout the last cheque for the peer</summary>
@@ -390,6 +392,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<string> DilutePostageBatchAsync(
             string id, 
             int depth,
+            long? gasPrice = null,
+            long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get overlay and underlay addresses of the node</summary>
@@ -597,6 +601,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<string> TopUpPostageBatchAsync(
             string id, 
             long amount,
+            long? gasPrice,
+            long? gasLimit,
             CancellationToken cancellationToken = default);
 
         /// <summary>Try connection to node</summary>

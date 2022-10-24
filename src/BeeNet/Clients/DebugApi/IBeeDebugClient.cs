@@ -242,7 +242,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <summary>Get readiness state of node</summary>
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<VersionDto> GetReadinessAsync(CancellationToken cancellationToken = default);
+        Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get reserve state</summary>
         /// <returns>Reserve State</returns>

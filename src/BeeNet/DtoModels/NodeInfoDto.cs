@@ -19,37 +19,35 @@ namespace Etherna.BeeNet.DtoModels
     public class NodeInfoDto
     {
         // Constructors.
-        public NodeInfoDto(Clients.DebugApi.V3_0_2.Response14 response)
+        public NodeInfoDto(Clients.DebugApi.V3_2_0.Response15 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             BeeMode = response.BeeMode switch
             {
-                Clients.DebugApi.V3_0_2.Response14BeeMode.Dev => BeeModeDto.Dev,
-                Clients.DebugApi.V3_0_2.Response14BeeMode.Full => BeeModeDto.Full,
-                Clients.DebugApi.V3_0_2.Response14BeeMode.Light => BeeModeDto.Light,
+                Clients.DebugApi.V3_2_0.Response15BeeMode.Dev => BeeModeDto.Dev,
+                Clients.DebugApi.V3_2_0.Response15BeeMode.Full => BeeModeDto.Full,
+                Clients.DebugApi.V3_2_0.Response15BeeMode.Light => BeeModeDto.Light,
                 _ => throw new InvalidOperationException()
             };
             ChequebookEnabled = response.ChequebookEnabled;
-            GatewayMode = response.GatewayMode;
             SwapEnabled = response.SwapEnabled;
         }
 
-        public NodeInfoDto(Clients.GatewayApi.V3_0_2.Response32 response)
+        public NodeInfoDto(Clients.GatewayApi.V3_2_0.Response33 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             BeeMode = response.BeeMode switch
             {
-                Clients.GatewayApi.V3_0_2.Response32BeeMode.Dev => BeeModeDto.Dev,
-                Clients.GatewayApi.V3_0_2.Response32BeeMode.Full => BeeModeDto.Full,
-                Clients.GatewayApi.V3_0_2.Response32BeeMode.Light => BeeModeDto.Light,
+                Clients.GatewayApi.V3_2_0.Response33BeeMode.Dev => BeeModeDto.Dev,
+                Clients.GatewayApi.V3_2_0.Response33BeeMode.Full => BeeModeDto.Full,
+                Clients.GatewayApi.V3_2_0.Response33BeeMode.Light => BeeModeDto.Light,
                 _ => throw new InvalidOperationException()
             };
             ChequebookEnabled = response.ChequebookEnabled;
-            GatewayMode = response.GatewayMode;
             SwapEnabled = response.SwapEnabled;
         }
 
@@ -59,7 +57,6 @@ namespace Etherna.BeeNet.DtoModels
         /// </summary>
         public BeeModeDto BeeMode { get; }
         public bool ChequebookEnabled { get; }
-        public bool GatewayMode { get; }
         public bool SwapEnabled { get; }
     }
 }
