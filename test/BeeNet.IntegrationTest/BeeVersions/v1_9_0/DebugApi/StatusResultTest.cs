@@ -54,12 +54,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
         [IgnoreOtherVersionFact(testVersion: version)]
         public async Task GetHealthAsync()
         {
-            // Arrange 
-
-
             // Act 
             var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
-
 
             // Assert
             Assert.Equal("3.0.2", healthAsync.ApiVersion);

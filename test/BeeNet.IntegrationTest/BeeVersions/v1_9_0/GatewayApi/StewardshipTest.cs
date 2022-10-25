@@ -12,7 +12,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-            await Task.Delay(90000);
+            await Task.Delay(180000);
 
             // Act 
             var result = await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);

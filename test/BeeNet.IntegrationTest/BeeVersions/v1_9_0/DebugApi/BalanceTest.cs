@@ -11,44 +11,28 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
         [Fact]
         public async Task GetAllBalancesAsync()
         {
-            // Arrange 
-
-
-            // Act 
-            var balances = await beeNodeClient.DebugClient.GetAllBalancesAsync();
-
-
-            // Assert
-            Assert.Equal(4, balances.Count());
+            // Act.
+            await beeNodeClient.DebugClient.GetAllBalancesAsync();
         }
 
         [Fact]
         public async Task GetAllConsumedBalancesAsync()
         {
-            // Arrange 
-
-
-            // Act 
-            var balances = await beeNodeClient.DebugClient.GetAllConsumedBalancesAsync();
-
-
-            // Assert
-            Assert.Equal(4, balances.Count());
+            // Act.
+            await beeNodeClient.DebugClient.GetAllConsumedBalancesAsync();
         }
 
         [Fact]
         public async Task GetBalanceWithPeerAsync()
         {
-            // Arrange 
+            // Arrange .
             var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
             var peerId = peers.ToList().First();
 
-
-            // Act 
+            // Act.
             var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(peerId);
 
-
-            // Assert
+            // Assert.
             Assert.Equal(peerId, balance.Peer);
         }
 

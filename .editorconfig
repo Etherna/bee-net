@@ -15,3 +15,6 @@ indent_size = 2
 
 # C# files
 [*.cs]
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = none # It's required to be public in case of readonly fields, used like consts

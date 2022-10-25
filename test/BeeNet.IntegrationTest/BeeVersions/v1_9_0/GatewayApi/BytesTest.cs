@@ -11,7 +11,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
 
 
             // Act 
@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
         {
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
             var reference = await beeNodeClient.GatewayClient.UploadDataAsync(batch, body: File.OpenRead(pathTestFileForUpload));
 
 

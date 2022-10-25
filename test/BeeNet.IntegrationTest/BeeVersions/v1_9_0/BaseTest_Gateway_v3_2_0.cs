@@ -2,6 +2,7 @@
 using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.InputModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
         public BaseTest_Gateway_V3_2_0()
         {
             beeNodeClient = new BeeNodeClient(
-                System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.124/",
                 1633,
                 1635,
                 GatewayApiVersion.v3_2_0,
@@ -27,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
         public async Task CreateAuthenticatedClientAsync()
         {
             beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
-                System.Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.124/",
                 1633,
                 GatewayApiVersion.v3_2_0);
         }
@@ -35,7 +36,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
             //var fileParameterInput = new FileParameterInput(File.OpenRead("Data/BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
             var fileParameterInput = new FileParameterInput(File.OpenRead(filePath ?? pathTestFileForUpload), Path.GetFileName(filePath) ?? Path.GetFileName(pathTestFileForUpload), "text/plain");
 
@@ -48,7 +49,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
         protected async Task<string> UploadChunkFileAndGetReferenceAsync()
         {
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 
 

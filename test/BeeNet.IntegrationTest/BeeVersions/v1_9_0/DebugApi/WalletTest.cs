@@ -12,16 +12,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
         [Fact]
         public async Task GetWalletBalance()
         {
-            // Arrange 
+            // Act.
+            var wallet = await beeNodeClient.DebugClient.GetWalletBalance();
 
-
-            // Act 
-            var wallets = await beeNodeClient.DebugClient.GetWalletBalance();
-
-
-            // Assert
-            Assert.StartsWith("9", wallets.Bzz);
-            Assert.StartsWith("9", wallets.XDai);
+            // Assert.
+            Assert.NotEqual(0, wallet.Bzz);
+            Assert.NotEqual(0, wallet.XDai);
         }
 
     }

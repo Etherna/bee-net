@@ -24,15 +24,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
         [Fact]
         public async Task GetBlocklistedPeerAddressesAsync()
         {
-            // Arrange 
-
-
-            // Act 
-            var result = await beeNodeClient.DebugClient.GetBlocklistedPeerAddressesAsync();
-
-
-            // Assert 
-            Assert.Empty(result);
+            // Act.
+            await beeNodeClient.DebugClient.GetBlocklistedPeerAddressesAsync();
         }
 
         /*
@@ -100,19 +93,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
         [Fact]
         public async Task GetSwarmTopologyAsync()
         {
-            // Arrange 
-
-
-            // Act 
-            var result = await beeNodeClient.DebugClient.GetSwarmTopologyAsync();
-
-
-            // Assert 
-            Assert.Equal(NetworkAvailabilityDto.Available, result.NetworkAvailability);
-            Assert.Equal(4, result.Connected);
-            Assert.Equal(3, result.NnLowWatermark);
-            Assert.Equal(3, result.NnLowWatermark);
-            Assert.Equal(ReachabilityDto.Unknown, result.Reachability);
+            // Act.
+            await beeNodeClient.DebugClient.GetSwarmTopologyAsync();
         }
 
         [Fact]

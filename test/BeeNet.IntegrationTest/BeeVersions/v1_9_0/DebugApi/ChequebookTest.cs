@@ -21,7 +21,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
             Assert.StartsWith("0x", result);
 
             // Wait for avoid interferences with next tests.
-            await Task.Delay(90000);
+            await Task.Delay(180000);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
 
             // Act 
             var result = await beeNodeClient.DebugClient.DepositIntoChequeBookAsync(amount);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
 
 
             // Assert 
@@ -132,7 +132,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
 
             // Act 
             var result = await beeNodeClient.DebugClient.WithdrawFromChequeBookAsync(amount);
-            await Task.Delay(90000);
+            await Task.Delay(180000);
 
 
             // Assert 

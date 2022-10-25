@@ -25,6 +25,9 @@ namespace Etherna.BeeNet
 {
     public class BeeNodeClient : IBeeNodeClient, IDisposable
     {
+        // Consts.
+        public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
+
         // Fields.
         private readonly HttpClient httpClient;
         private bool disposed;
@@ -40,7 +43,7 @@ namespace Etherna.BeeNet
             DebugApiVersion debugApiVersion = DebugApiVersion.v3_2_0,
             HttpClient? customHttpClient = null)
         {
-            httpClient = customHttpClient ?? new HttpClient();
+            httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
             if (debugApiPort is not null)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.DtoModels
 {
@@ -9,11 +10,11 @@ namespace Etherna.BeeNet.DtoModels
             if (response33 is null)
                 throw new ArgumentNullException(nameof(response33));
 
-            Bzz = response33.Bzz;
-            XDai = response33.XDai;
+            Bzz = long.Parse(response33.Bzz, CultureInfo.InvariantCulture);
+            XDai = long.Parse(response33.XDai, CultureInfo.InvariantCulture);
         }
 
-        public string Bzz { get; }
-        public string XDai { get; }
+        public long Bzz { get; }
+        public long XDai { get; }
     }
 }
