@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChainStateDto
     {
         // Constructors.
-        public ChainStateDto(Clients.DebugApi.V3_2_0.Response14 response)
+        public ChainStateDto(Clients.DebugApi.V4_0_0.Response14 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
         }
 
-        public ChainStateDto(Clients.GatewayApi.V3_2_0.Response32 response)
+        public ChainStateDto(Clients.GatewayApi.V4_0_0.Response32 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

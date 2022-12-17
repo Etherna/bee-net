@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TagInfoDto
     {
         // Constructors.
-        public TagInfoDto(Clients.GatewayApi.V3_2_0.Response7 response)
+        public TagInfoDto(Clients.GatewayApi.V4_0_0.Response7 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.DtoModels
             Synced = response.Synced;
         }
 
-        public TagInfoDto(Clients.GatewayApi.V3_2_0.Response8 response)
+        public TagInfoDto(Clients.GatewayApi.V4_0_0.Response8 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.DtoModels
             Synced = response.Synced;
         }
 
-        public TagInfoDto(Clients.GatewayApi.V3_2_0.Tags tags)
+        public TagInfoDto(Clients.GatewayApi.V4_0_0.Tags tags)
         {
             if (tags is null)
                 throw new ArgumentNullException(nameof(tags));

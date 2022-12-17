@@ -1273,7 +1273,6 @@ paths:
         name: all
         schema:
           type: string
-          required: false
         description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node

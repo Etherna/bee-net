@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AnonymousDto
     {
         // Constructors.
-        public AnonymousDto(Clients.DebugApi.V3_2_0.Anonymous2 anonymous)
+        public AnonymousDto(Clients.DebugApi.V4_0_0.Anonymous2 anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.DtoModels
                 ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
-        public AnonymousDto(Clients.GatewayApi.V3_2_0.Anonymous anonymous)
+        public AnonymousDto(Clients.GatewayApi.V4_0_0.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));

@@ -227,11 +227,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UploadChunkAsync(
+            Stream? body,
             string swarmPostageBatchId,
             long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
-            Stream? body = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
@@ -258,12 +258,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> UploadDataAsync(
-            string swarmPostageBatchId, 
+            Stream? body,
+            string swarmPostageBatchId,
             int? swarmTag = null, 
             bool? swarmPin = null, 
             bool? swarmEncrypt = null, 
             bool? swarmDeferredUpload = null, 
-            Stream? body = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload file or a collection of files</summary>

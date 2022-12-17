@@ -39,8 +39,8 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_2_0,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v3_2_0,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v4_0_0,
+            DebugApiVersion debugApiVersion = DebugApiVersion.v4_0_0,
             HttpClient? customHttpClient = null)
         {
             httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
@@ -63,7 +63,7 @@ namespace Etherna.BeeNet
         static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v3_2_0,
+            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v4_0_0,
             HttpClient? customHttpClient = null)
         {
             var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, gatewayApiVersion, customHttpClient: customHttpClient);

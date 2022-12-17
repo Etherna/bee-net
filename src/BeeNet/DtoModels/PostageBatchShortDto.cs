@@ -6,7 +6,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PostageBatchShortDto
     {
         // Constructors.
-        public PostageBatchShortDto(Clients.DebugApi.V3_2_0.Batches batch)
+        public PostageBatchShortDto(Clients.DebugApi.V4_0_0.Batches batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModels
             Value = batch.Value;
         }
 
-        public PostageBatchShortDto(Clients.GatewayApi.V3_2_0.Batches batch)
+        public PostageBatchShortDto(Clients.GatewayApi.V4_0_0.Batches batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
