@@ -44,12 +44,19 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public DebugApiVersion CurrentApiVersion { get; set; }
 
         // Methods.
+        public async Task<Dictionary<string, AccountDto>> AccountingAsync(CancellationToken cancellationToken = default) =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v4_0_0 => (await beeDebugClient_4_0_0.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new AccountDto(i.Value)),
+                _ => throw new InvalidOperationException()
+            };
+
         public async Task<string> BuyPostageBatchAsync(
             long amount,
             int depth,
             string? label = null,
             bool? immutable = null,
-            long? gasPrice = null, 
+            long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
@@ -373,6 +380,28 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
+        public async Task<LogDataDto> LoggersGetAsync(CancellationToken cancellationToken = default) =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v4_0_0 => new LogDataDto(await beeDebugClient_4_0_0.LoggersGetAsync(cancellationToken).ConfigureAwait(false)),
+                _ => throw new InvalidOperationException()
+            };
+
+        public async Task<LogDataDto> LoggersGetAsync(string exp, CancellationToken cancellationToken = default) =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v4_0_0 => new LogDataDto(await beeDebugClient_4_0_0.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false)),
+                _ => throw new InvalidOperationException()
+            };
+
+        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                await beeDebugClient_4_0_0.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
+            else
+                throw new InvalidOperationException();
+        }
+
         public async Task<string> RebroadcastTransactionAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
@@ -395,6 +424,30 @@ namespace Etherna.BeeNet.Clients.DebugApi
                     cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
+
+        public async Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                await beeDebugClient_4_0_0.StakeDeleteAsync(gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
+            else
+                throw new InvalidOperationException();
+        }
+
+        public async Task StakeGetAsync(CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                await beeDebugClient_4_0_0.StakeGetAsync(cancellationToken).ConfigureAwait(false);
+            else
+                throw new InvalidOperationException();
+        }
+
+        public async Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                await beeDebugClient_4_0_0.StakePostAsync(amount, gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
+            else
+                throw new InvalidOperationException();
+        }
 
         public async Task<string> TopUpPostageBatchAsync(
             string id,

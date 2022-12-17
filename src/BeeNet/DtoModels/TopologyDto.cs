@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             BaseAddr = response.BaseAddr;
             Bins = response.Bins.ToDictionary(
                 i => i.Key,
-                i => new AnonymousDto(i.Value));
+                i => new PeersAggregateDto(i.Value));
             Connected = response.Connected;
             Depth = response.Depth;
             NetworkAvailability = response.NetworkAvailability switch
@@ -59,7 +59,7 @@ namespace Etherna.BeeNet.DtoModels
             BaseAddr = response.BaseAddr;
             Bins = response.Bins.ToDictionary(
                 i => i.Key,
-                i => new AnonymousDto(i.Value));
+                i => new PeersAggregateDto(i.Value));
             Connected = response.Connected;
             Depth = response.Depth;
             NetworkAvailability = response.NetworkAvailability switch
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.DtoModels
 
         // Properties.
         public string BaseAddr { get; }
-        public IDictionary<string, AnonymousDto> Bins { get; }
+        public IDictionary<string, PeersAggregateDto> Bins { get; }
         public int Connected { get; }
         public int Depth { get; }
         public NetworkAvailabilityDto NetworkAvailability { get; }

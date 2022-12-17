@@ -18,10 +18,10 @@ using System.Linq;
 
 namespace Etherna.BeeNet.DtoModels
 {
-    public class AnonymousDto
+    public class PeersAggregateDto
     {
         // Constructors.
-        public AnonymousDto(Clients.DebugApi.V4_0_0.Anonymous2 anonymous)
+        public PeersAggregateDto(Clients.DebugApi.V4_0_0.Anonymous2 anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.DtoModels
                 ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
 
-        public AnonymousDto(Clients.GatewayApi.V4_0_0.Anonymous anonymous)
+        public PeersAggregateDto(Clients.GatewayApi.V4_0_0.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
