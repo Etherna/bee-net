@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.0.0
+  version: 2.2.0
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -48,14 +48,14 @@ components:
           type: integer
         commitment:
           type: integer
+          format: int64
 
     ChainState:
       type: object
       properties:
-        chainTip:
-          type: integer
         block:
           type: integer
+          format: int64
         totalAmount:
           $ref: "#/components/schemas/BigInt"
         currentPrice:
@@ -161,6 +161,7 @@ components:
 
     Cheque:
       type: object
+      nullable: true
       properties:
         beneficiary:
           $ref: "#/components/schemas/EthereumAddress"
@@ -224,12 +225,14 @@ components:
     GasLimit:
       description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
       type: integer
+      format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
       description: Gas price refers to the amount you’re willing to pay for every unit of gas.
       type: integer
+      format: int64
 
     Hash:
       type: object
@@ -345,16 +348,10 @@ components:
     ProblemDetails:
       type: object
       properties:
-        code:
-          type: integer
         message:
           type: string
-        reasons:
-          type: array
-          nullable: true
-          description: List of reasons for the error message.
-          items:
-            type: string
+        code:
+          type: integer
 
     ReferenceResponse:
       type: object
@@ -385,8 +382,6 @@ components:
       properties:
         batchID:
           $ref: "#/components/schemas/BatchID"
-        txHash:
-          $ref: "#/components/schemas/TransactionHash"
 
     Response:
       type: object
@@ -465,6 +460,7 @@ components:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
         expired:
           type: boolean
 
@@ -477,6 +473,7 @@ components:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
 
     PostageBatchShort:
       type: object
@@ -495,6 +492,7 @@ components:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
         owner:
           $ref: "#/components/schemas/EthereumAddress"
         storageRadius:
@@ -534,17 +532,17 @@ components:
         peer:
           $ref: "#/components/schemas/SwarmAddress"
         received:
-          type: integer
+          type: string
         sent:
-          type: integer
+          type: string
 
     Settlements:
       type: object
       properties:
         totalReceived:
-          type: integer
+          type: string
         totalSent:
-          type: integer
+          type: string
         settlements:
           type: array
           nullable: false
@@ -586,22 +584,16 @@ components:
         stakedAmount:
            $ref: "#/components/schemas/BigInt"
 
-    StakeDepositResponse:
-          type: object
-          properties:
-            txHash:
-               $ref: "#/components/schemas/TransactionHash"
-
-    WithdrawAllStakeResponse:
-              type: object
-              properties:
-                txHash:
-                   $ref: "#/components/schemas/TransactionHash"
-
     SwarmOnlyReference:
       oneOf:
         - $ref: "#/components/schemas/SwarmAddress"
         - $ref: "#/components/schemas/SwarmEncryptedReference"
+
+    SwarmOnlyReferenceResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
 
     SwarmOnlyReferencesList:
       type: object
@@ -669,12 +661,7 @@ components:
           $ref: "#/components/schemas/BigInt"
         gasLimit:
           type: integer
-        gasTipCap:
-          $ref: "#/components/schemas/BigInt"
-        gasTipBoost:
-          type: integer
-        gasFeeCap:
-          $ref: "#/components/schemas/BigInt"
+          format: int64
         data:
           type: string
         created:
@@ -687,16 +674,14 @@ components:
     WalletResponse:
       type: object
       properties:
-        bzzBalance:
+        bzz:
           $ref: "#/components/schemas/BigInt"
-        nativeTokenBalance:
+        xDai:
           $ref: "#/components/schemas/BigInt"
         chainID:
-          type: integer
-        chequebookContractAddress:
-          $ref: "#/components/schemas/EthereumAddress"
-        walletAddress:
-          $ref: "#/components/schemas/EthereumAddress"
+            type: integer
+        contractAddress:
+            $ref: "#/components/schemas/EthereumAddress"
 
     PendingTransactionsResponse:
       type: object
@@ -709,6 +694,7 @@ components:
 
     Uid:
       type: integer
+      format: int64
 
     WelcomeMessage:
       type: object
@@ -754,8 +740,9 @@ components:
       type: object
       nullable: true
       properties:
-        /:
-          $ref: "#/components/schemas/LoggerTreeNode"
+### commented because of https://github.com/ethersphere/bee/issues/3433
+#        /:
+#          $ref: "#/components/schemas/LoggerTreeNode"
         +:
           type: array
           items:
