@@ -266,11 +266,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<VersionDto> UploadChunkAsync(
-            Stream? body,
             string swarmPostageBatchId,
             long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
+            Stream? body = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {

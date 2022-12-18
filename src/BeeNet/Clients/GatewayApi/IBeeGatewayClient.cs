@@ -227,11 +227,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<VersionDto> UploadChunkAsync(
-            Stream? body,
             string swarmPostageBatchId,
             long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
+            Stream? body = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
