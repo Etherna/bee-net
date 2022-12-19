@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TopologyDto
     {
         // Constructors.
-        public TopologyDto(Clients.DebugApi.V3_2_0.Response23 response)
+        internal TopologyDto(Clients.DebugApi.V3_2_0.Response23 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             Timestamp = response.Timestamp;
         }
 
-        public TopologyDto(Clients.GatewayApi.V3_2_0.Response40 response)
+        internal TopologyDto(Clients.GatewayApi.V3_2_0.Response40 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

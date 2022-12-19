@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class BalanceDto
     {
         // Constructors.
-        public BalanceDto(Clients.DebugApi.V3_2_0.Balances balance)
+        internal BalanceDto(Clients.DebugApi.V3_2_0.Balances balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V3_2_0.Balances2 balance)
+        internal BalanceDto(Clients.DebugApi.V3_2_0.Balances2 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V3_2_0.Response4 balance)
+        internal BalanceDto(Clients.DebugApi.V3_2_0.Response4 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.DebugApi.V3_2_0.Response7 balance)
+        internal BalanceDto(Clients.DebugApi.V3_2_0.Response7 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -56,7 +56,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.GatewayApi.V3_2_0.Balances balance)
+        internal BalanceDto(Clients.GatewayApi.V3_2_0.Balances balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.GatewayApi.V3_2_0.Balances2 balance)
+        internal BalanceDto(Clients.GatewayApi.V3_2_0.Balances2 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.GatewayApi.V3_2_0.Response22 balance)
+        internal BalanceDto(Clients.GatewayApi.V3_2_0.Response22 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        public BalanceDto(Clients.GatewayApi.V3_2_0.Response25 balance)
+        internal BalanceDto(Clients.GatewayApi.V3_2_0.Response25 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));

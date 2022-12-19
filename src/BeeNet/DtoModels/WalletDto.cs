@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class WalletDto
     {
-        public WalletDto(Clients.DebugApi.V3_2_0.Response33 response33)
+        internal WalletDto(Clients.DebugApi.V3_2_0.Response33 response33)
         {
             if (response33 is null)
                 throw new ArgumentNullException(nameof(response33));

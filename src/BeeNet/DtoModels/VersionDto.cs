@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class VersionDto
     {
         // Constructors.
-        public VersionDto(Clients.DebugApi.V3_2_0.Response19 response)
+        internal VersionDto(Clients.DebugApi.V3_2_0.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.DebugApi.V3_2_0.Response25 response)
+        internal VersionDto(Clients.DebugApi.V3_2_0.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_2_0.Response4 response)
+        internal VersionDto(Clients.GatewayApi.V3_2_0.Response4 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -71,7 +71,7 @@ namespace Etherna.BeeNet.DtoModels
             }
         }
 
-        public VersionDto(Clients.GatewayApi.V3_2_0.Response9 response)
+        internal VersionDto(Clients.GatewayApi.V3_2_0.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_2_0.Response20 response)
+        internal VersionDto(Clients.GatewayApi.V3_2_0.Response20 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -103,7 +103,7 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        public VersionDto(Clients.GatewayApi.V3_2_0.Response42 response)
+        internal VersionDto(Clients.GatewayApi.V3_2_0.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
