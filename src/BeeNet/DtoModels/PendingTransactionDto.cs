@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PendingTransactionDto
     {
         // Constructors.
-        internal PendingTransactionDto(Clients.DebugApi.V3_2_0.PendingTransactions tx)
+        internal PendingTransactionDto(Clients.DebugApi.V4_0_0.PendingTransactions tx)
         {
             if (tx is null)
                 throw new ArgumentNullException(nameof(tx));
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
             Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
         }
 
-        internal PendingTransactionDto(Clients.GatewayApi.V3_2_0.PendingTransactions tx)
+        internal PendingTransactionDto(Clients.GatewayApi.V4_0_0.PendingTransactions tx)
         {
             if (tx is null)
                 throw new ArgumentNullException(nameof(tx));

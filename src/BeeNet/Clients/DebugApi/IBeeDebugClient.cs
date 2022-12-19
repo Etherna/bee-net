@@ -25,6 +25,14 @@ namespace Etherna.BeeNet.Clients.DebugApi
         DebugApiVersion CurrentApiVersion { get; set; }
 
         // Methods.
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all accounting associated values with all known peers
+        /// </summary>
+        /// <returns>Own accounting associated values with all known peers</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<Dictionary<string, AccountDto>> AccountingAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
         /// <summary>Buy a new postage batch.</summary>
         /// <param name="amount">Amount of BZZ added that the postage batch will have.</param>
         /// <param name="depth">Batch depth which specifies how many chunks can be signed with the batch. It is a logarithm. Must be higher than default bucket depth (16)</param>
@@ -296,6 +304,15 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default);
 
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Set logger(s) verbosity level.
+        /// </summary>
+        /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
+        /// <returns>The verbosity was changed successfully.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LoggersPutAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
@@ -309,6 +326,58 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<VersionDto> SetWelcomeMessageAsync(string welcomeMessage,
             CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Deposit some amount for staking.
+        /// </summary>
+        /// <remarks>
+        /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+        /// </remarks>
+        /// <param name="amount">Amount of BZZ added that will be deposited for staking.</param>
+        /// <param name="gas_price">Gas price for transaction</param>
+        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the staked amount.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint fetches the staked amount from the blockchain.
+        /// </remarks>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakeGetAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Withdraw all staked amount.
+        /// </summary>
+        /// <remarks>
+        /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+        /// </remarks>
+        /// <param name="gas_price">Gas price for transaction</param>
+        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all available loggers.
+        /// </summary>
+        /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<LogDataDto> LoggersGetAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all available loggers that match the specified expression.
+        /// </summary>
+        /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
+        /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<LogDataDto> LoggersGetAsync(string exp, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>Top up an existing postage batch.</summary>
         /// <param name="id">Batch ID to top up</param>

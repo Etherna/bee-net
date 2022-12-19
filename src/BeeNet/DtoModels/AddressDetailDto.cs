@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AddressDetailDto
     {
         // Constructors.
-        internal AddressDetailDto(Clients.DebugApi.V3_2_0.Response response)
+        internal AddressDetailDto(Clients.DebugApi.V4_0_0.Response response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             PssPublicKey = response.PssPublicKey;
         }
 
-        internal AddressDetailDto(Clients.GatewayApi.V3_2_0.Response19 response)
+        internal AddressDetailDto(Clients.GatewayApi.V4_0_0.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

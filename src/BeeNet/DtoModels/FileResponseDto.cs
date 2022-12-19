@@ -6,7 +6,7 @@ namespace Etherna.BeeNet.DtoModels
     public class FileResponseDto
     {
         // Constructors.
-        internal FileResponseDto(Clients.GatewayApi.V3_2_0.FileResponse response)
+        internal FileResponseDto(Clients.GatewayApi.V4_0_0.FileResponse response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

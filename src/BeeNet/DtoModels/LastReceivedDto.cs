@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LastReceivedDto
     {
         // Constructors.
-        internal LastReceivedDto(Clients.DebugApi.V3_2_0.Lastreceived lastReceived)
+        internal LastReceivedDto(Clients.DebugApi.V4_0_0.Lastreceived lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastReceivedDto(Clients.DebugApi.V3_2_0.Lastreceived2 lastReceived)
+        internal LastReceivedDto(Clients.DebugApi.V4_0_0.Lastreceived2 lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastReceivedDto(Clients.GatewayApi.V3_2_0.Lastreceived lastReceived)
+        internal LastReceivedDto(Clients.GatewayApi.V4_0_0.Lastreceived lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastReceivedDto(Clients.GatewayApi.V3_2_0.Lastreceived2 lastReceived)
+        internal LastReceivedDto(Clients.GatewayApi.V4_0_0.Lastreceived2 lastReceived)
         {
             if (lastReceived is null)
                 throw new ArgumentNullException(nameof(lastReceived));

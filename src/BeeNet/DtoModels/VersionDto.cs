@@ -19,15 +19,15 @@ namespace Etherna.BeeNet.DtoModels
     public class VersionDto
     {
         // Constructors.
-        internal VersionDto(Clients.DebugApi.V3_2_0.Response19 response)
+        internal VersionDto(Clients.DebugApi.V4_0_0.Response19 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.DebugApi.V3_2_0.Response19Status.Ok => StatusEnumDto.Ok,
-                Clients.DebugApi.V3_2_0.Response19Status.Nok => StatusEnumDto.Nok,
+                Clients.DebugApi.V4_0_0.Response19Status.Ok => StatusEnumDto.Ok,
+                Clients.DebugApi.V4_0_0.Response19Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -35,15 +35,15 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal VersionDto(Clients.DebugApi.V3_2_0.Response25 response)
+        internal VersionDto(Clients.DebugApi.V4_0_0.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.DebugApi.V3_2_0.Response25Status.Ok => StatusEnumDto.Ok,
-                Clients.DebugApi.V3_2_0.Response25Status.Nok => StatusEnumDto.Nok,
+                Clients.DebugApi.V4_0_0.Response25Status.Ok => StatusEnumDto.Ok,
+                Clients.DebugApi.V4_0_0.Response25Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -51,15 +51,15 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal VersionDto(Clients.GatewayApi.V3_2_0.Response4 response)
+        internal VersionDto(Clients.GatewayApi.V4_0_0.Response4 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.V3_2_0.Response4Status.Ok => StatusEnumDto.Ok,
-                Clients.GatewayApi.V3_2_0.Response4Status.Nok => StatusEnumDto.Nok,
+                Clients.GatewayApi.V4_0_0.Response4Status.Ok => StatusEnumDto.Ok,
+                Clients.GatewayApi.V4_0_0.Response4Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -71,15 +71,15 @@ namespace Etherna.BeeNet.DtoModels
             }
         }
 
-        internal VersionDto(Clients.GatewayApi.V3_2_0.Response9 response)
+        internal VersionDto(Clients.GatewayApi.V4_0_0.Response9 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.V3_2_0.Response9Status.Ok => StatusEnumDto.Ok,
-                Clients.GatewayApi.V3_2_0.Response9Status.Nok => StatusEnumDto.Nok,
+                Clients.GatewayApi.V4_0_0.Response9Status.Ok => StatusEnumDto.Ok,
+                Clients.GatewayApi.V4_0_0.Response9Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -87,15 +87,15 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal VersionDto(Clients.GatewayApi.V3_2_0.Response20 response)
+        internal VersionDto(Clients.GatewayApi.V4_0_0.Response20 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.V3_2_0.Response20Status.Ok => StatusEnumDto.Ok,
-                Clients.GatewayApi.V3_2_0.Response20Status.Nok => StatusEnumDto.Nok,
+                Clients.GatewayApi.V4_0_0.Response20Status.Ok => StatusEnumDto.Ok,
+                Clients.GatewayApi.V4_0_0.Response20Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -103,15 +103,15 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal VersionDto(Clients.GatewayApi.V3_2_0.Response42 response)
+        internal VersionDto(Clients.GatewayApi.V4_0_0.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.V3_2_0.Response42Status.Ok => StatusEnumDto.Ok,
-                Clients.GatewayApi.V3_2_0.Response42Status.Nok => StatusEnumDto.Nok,
+                Clients.GatewayApi.V4_0_0.Response42Status.Ok => StatusEnumDto.Ok,
+                Clients.GatewayApi.V4_0_0.Response42Status.Nok => StatusEnumDto.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;

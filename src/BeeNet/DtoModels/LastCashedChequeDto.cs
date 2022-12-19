@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LastCashedChequeDto
     {
         // Constructors.
-        internal LastCashedChequeDto(Clients.DebugApi.V3_2_0.LastCashedCheque lastCashedCheque)
+        internal LastCashedChequeDto(Clients.DebugApi.V4_0_0.LastCashedCheque lastCashedCheque)
         {
             if (lastCashedCheque is null)
                 throw new ArgumentNullException(nameof(lastCashedCheque));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastCashedCheque.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastCashedChequeDto(Clients.GatewayApi.V3_2_0.LastCashedCheque lastCashedCheque)
+        internal LastCashedChequeDto(Clients.GatewayApi.V4_0_0.LastCashedCheque lastCashedCheque)
         {
             if (lastCashedCheque is null)
                 throw new ArgumentNullException(nameof(lastCashedCheque));
