@@ -56,9 +56,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             HttpContent content_;
             if (fileParameterInputs.First().ContentType == "text/plain")
             {
-#pragma warning disable CA2000 // Dispose objects before losing scope
                 var reader = new StreamReader(fileParameterInputs.First().Data);
-#pragma warning restore CA2000 // Dispose objects before losing scope
                 content_ = new StringContent(await reader.ReadToEndAsync().ConfigureAwait(false));
             }
             else

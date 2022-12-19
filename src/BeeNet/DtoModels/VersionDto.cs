@@ -65,9 +65,9 @@ namespace Etherna.BeeNet.DtoModels
             Version = response.Version;
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
-            if (response.AdditionalProperties.ContainsKey("reference"))
+            if (response.AdditionalProperties.TryGetValue("reference", out object reference))
             {
-                Reference = response.AdditionalProperties["reference"].ToString();
+                Reference = reference.ToString();
             }
         }
 
@@ -117,10 +117,8 @@ namespace Etherna.BeeNet.DtoModels
             Version = response.Version;
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
-            if (response.AdditionalProperties.ContainsKey("reference"))
-            {
-                Reference = response.AdditionalProperties["reference"].ToString();
-            }
+            if (response.AdditionalProperties.TryGetValue("reference", out object reference))
+                Reference = reference.ToString();
         }
 
         // Properties.

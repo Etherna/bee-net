@@ -33,8 +33,6 @@ namespace Etherna.BeeNet
         private bool disposed;
 
         // Constructors.
-        [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
-            Justification = "A string is required by Nswag generated client")]
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
@@ -58,8 +56,6 @@ namespace Etherna.BeeNet
             }
         }
 
-        [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings",
-            Justification = "A string is required by Nswag generated client")]
         static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
