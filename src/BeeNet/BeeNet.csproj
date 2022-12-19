@@ -8,7 +8,7 @@
     <Authors>Etherna Sagl</Authors>
     <Description>A .Net client for Swarm Bee</Description>
     
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <Nullable>enable</Nullable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
