@@ -18,7 +18,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
         public BaseTest_Gateway_V3_2_0()
         {
             beeNodeClient = new BeeNodeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.107/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
                 1635,
                 GatewayApiVersion.v4_0_0,
@@ -28,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
         public async Task CreateAuthenticatedClientAsync()
         {
             beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.107/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
                 GatewayApiVersion.v4_0_0);
         }
