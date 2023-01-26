@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.GatewayApi
 {
     public class BzzTest : BaseTest_Gateway_V3_2_0
     {

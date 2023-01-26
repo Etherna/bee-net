@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
 {
     public class WalletTest : BaseTest_Debug_V3_2_0
     {
@@ -16,8 +16,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
             var wallet = await beeNodeClient.DebugClient.GetWalletBalance();
 
             // Assert.
-            Assert.NotEqual(0, wallet.Bzz);
-            Assert.NotEqual(0, wallet.XDai);
+            Assert.NotEqual("0", wallet.Bzz);
+            Assert.NotEqual("0", wallet.NativeTokenBalance);
         }
 
     }

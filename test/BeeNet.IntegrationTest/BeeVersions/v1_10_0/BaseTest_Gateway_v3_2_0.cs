@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
 {
     public abstract class BaseTest_Gateway_V3_2_0
     {
@@ -18,19 +18,19 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0
         public BaseTest_Gateway_V3_2_0()
         {
             beeNodeClient = new BeeNodeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.124/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
                 1635,
-                GatewayApiVersion.v3_2_0,
-                DebugApiVersion.v3_2_0);
+                GatewayApiVersion.v4_0_0,
+                DebugApiVersion.v4_0_0);
         }
 
         public async Task CreateAuthenticatedClientAsync()
         {
             beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.124/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
-                GatewayApiVersion.v3_2_0);
+                GatewayApiVersion.v4_0_0);
         }
 
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
