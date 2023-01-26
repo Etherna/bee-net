@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.GatewayApi
 {
     public class BytesTest : BaseTest_Gateway_V3_2_0
     {
@@ -15,7 +15,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
 
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadDataAsync(batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.GatewayClient.UploadDataAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Assert
@@ -30,7 +30,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var reference = await beeNodeClient.GatewayClient.UploadDataAsync(batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.GatewayClient.UploadDataAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Act 
