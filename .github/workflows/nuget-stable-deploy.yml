@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BeeNet_IT_NodeEndPoint: "http://127.0.0.1/"
-      BeeNet_IT_NodeVersion: "1.9.0"
+      BeeNet_IT_NodeVersion: "1.10.1"
 
     steps:
     - name: Checkout
