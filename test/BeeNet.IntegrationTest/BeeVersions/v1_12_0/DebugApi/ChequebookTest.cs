@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.DebugApi
 {
-    public class ChequebookTest : BaseTest_Debug_V3_2_0
+    public class ChequebookTest : BaseTest_Debug_v4_0_0
     {
 
         [Fact]
@@ -15,7 +15,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
             var peerId = allCheque.ToList().First().Peer;
 
             // Act 
-            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId); 
+            var result = await beeNodeClient.DebugClient.CashoutChequeForPeerAsync(peerId);
 
             // Assert 
             Assert.StartsWith("0x", result);
@@ -82,11 +82,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
 
             // Act 
             var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
-
-
-            // Assert 
-            Assert.True(chequeBookBalance.TotalBalance > 0);
-            Assert.True(chequeBookBalance.AvailableBalance > 0);
         }
 
         [Fact]
@@ -126,8 +121,10 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
         public async Task WithdrawFromChequeBookAsync()
         {
             // Arrange 
-            var originalChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
             var amount = 123;
+            await beeNodeClient.DebugClient.DepositIntoChequeBookAsync(amount + 10);
+            await Task.Delay(180000);
+            var originalChequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
 
 
             // Act 

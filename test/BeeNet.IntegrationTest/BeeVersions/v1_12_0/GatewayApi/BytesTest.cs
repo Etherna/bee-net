@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.GatewayApi
 {
-    public class BytesTest : BaseTest_Gateway_V3_2_0
+    public class BytesTest : BaseTest_Gateway_v4_0_0
     {
         [Fact]
         public async Task UploadDataAsync()

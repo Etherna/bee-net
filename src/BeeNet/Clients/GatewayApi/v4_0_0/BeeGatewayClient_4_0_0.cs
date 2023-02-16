@@ -2365,7 +2365,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 ||
+                            status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response10>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2373,16 +2374,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                                 throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 201)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response11>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BeeNetGatewayApiException<Response11>("New pin with root reference was created", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)

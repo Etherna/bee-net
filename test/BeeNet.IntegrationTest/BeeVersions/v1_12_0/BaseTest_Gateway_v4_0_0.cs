@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
+namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0
 {
-    public abstract class BaseTest_Gateway_V3_2_0
+    public abstract class BaseTest_Gateway_v4_0_0
     {
         protected BeeNodeClient beeNodeClient;
         protected string pathTestFileForUpload = "Data/TestFileForUpload_Gateway.txt";
-        protected const string version = "3.2.0";
+        protected const string version = "4.0.0";
 
-        public BaseTest_Gateway_V3_2_0()
+        public BaseTest_Gateway_v4_0_0()
         {
             beeNodeClient = new BeeNodeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.11/",
                 1633,
                 1635,
                 GatewayApiVersion.v4_0_0,
@@ -28,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
         public async Task CreateAuthenticatedClientAsync()
         {
             beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.11/",
                 1633,
                 GatewayApiVersion.v4_0_0);
         }
@@ -54,9 +54,9 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
 
-            return result.Reference;
+            return reference;
         }
 
     }
