@@ -152,11 +152,13 @@ paths:
             in: header
             name: swarm-postage-batch-id
             description: ID of Postage Batch that is used to upload data with
+            required: true
             schema:
               type: string
               pattern: ^[A-Fa-f0-9]{64}$
               example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
           name: swarm-postage-batch-id
+          required: true
         - in: header
           schema:
             &a7
@@ -166,8 +168,10 @@ paths:
               &a6
               type: integer
               format: int64
+            required: false
             description: Associate upload with an existing Tag UID
           name: swarm-tag
+          required: false
         - in: header
           schema:
             &a8
@@ -175,10 +179,12 @@ paths:
             name: swarm-pin
             schema:
               type: boolean
+            required: false
             description: >
               Represents if the uploaded data should be also locally pinned on
               the node.
           name: swarm-pin
+          required: false
         - in: header
           schema:
             &a10
@@ -186,22 +192,26 @@ paths:
             name: swarm-deferred-upload
             schema:
               type: boolean
-              default: true
+              default: "true"
+            required: false
             description: >
               Determines if the uploaded data should be sent to the network
               immediately or in a deferred fashion. By default the upload will
               be deferred.
           name: swarm-deferred-upload
+          required: false
         - in: header
           schema:
-            &a12
+            &a13
             in: header
             name: swarm-encrypt
             schema:
               type: boolean
+            required: false
             description: |
               Represents the encrypting state of the file
           name: swarm-encrypt
+          required: false
       requestBody:
         content:
           application/octet-stream:
@@ -213,13 +223,13 @@ paths:
           description: Ok
           headers:
             swarm-tag:
-              &a13
+              &a14
               description: Tag UID
               schema: *a6
           content:
             application/json:
               schema:
-                &a14
+                &a11
                 type: object
                 properties:
                   reference:
@@ -235,7 +245,7 @@ paths:
                         example: swarm.eth
         "400": *a3
         "402":
-          &a11
+          &a12
           description: Payment Required
           content:
             application/problem+json:
@@ -314,32 +324,9 @@ paths:
               schema: *a6
           content:
             application/json:
-              schema:
-                &a18
-                type: object
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - ok
-                      - nok
-                    description: >
-                      Indicates health state of node * `ok` - node is healthy *
-                      `nok` - node is not healthy
-                  version:
-                    type: string
-                  apiVersion:
-                    type: string
-                    default: 0.0.0
-                    description: The default value is set in case the bee binary was not build
-                      correctly.
-                  debugApiVersion:
-                    type: string
-                    default: 0.0.0
-                    description: The default value is set in case the bee binary was not build
-                      correctly.
+              schema: *a11
         "400": *a3
-        "402": *a11
+        "402": *a12
         "500": *a5
         default:
           description: Default response
@@ -384,7 +371,7 @@ paths:
           description: Filename when uploading single file
         - *a7
         - *a8
-        - *a12
+        - *a13
         - in: header
           name: Content-Type
           schema:
@@ -435,7 +422,7 @@ paths:
         "201":
           description: Ok
           headers:
-            swarm-tag: *a13
+            swarm-tag: *a14
             etag:
               description: >
                 The RFC7232 ETag header field in a response provides the current
@@ -452,9 +439,9 @@ paths:
                 type: string
           content:
             application/json:
-              schema: *a14
+              schema: *a11
         "400": *a3
-        "402": *a11
+        "402": *a12
         "500": *a5
         default:
           description: Default response
@@ -693,7 +680,30 @@ paths:
           description: Ok
           content:
             application/json:
-              schema: *a18
+              schema:
+                &a24
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+                      - nok
+                    description: >
+                      Indicates health state of node * `ok` - node is healthy *
+                      `nok` - node is not healthy
+                  version:
+                    type: string
+                  apiVersion:
+                    type: string
+                    default: 0.0.0
+                    description: The default value is set in case the bee binary was not build
+                      correctly.
+                  debugApiVersion:
+                    type: string
+                    default: 0.0.0
+                    description: The default value is set in case the bee binary was not build
+                      correctly.
         "404": *a16
         "500": *a5
         default:
@@ -722,7 +732,7 @@ paths:
           content:
             application/json:
               schema:
-                &a19
+                &a18
                 type: object
                 properties:
                   message:
@@ -733,7 +743,7 @@ paths:
           description: New pin with root reference was created
           content:
             application/json:
-              schema: *a19
+              schema: *a18
         "400": *a3
         "404": *a16
         "500": *a5
@@ -748,7 +758,7 @@ paths:
           description: Unpinning root hash with reference
           content:
             application/json:
-              schema: *a19
+              schema: *a18
         "400": *a3
         "500": *a5
         default:
@@ -814,7 +824,7 @@ paths:
         - in: path
           name: topic
           schema:
-            &a20
+            &a19
             type: string
           required: true
           description: Topic name
@@ -839,7 +849,7 @@ paths:
         "201":
           description: Subscribed to topic
         "400": *a3
-        "402": *a11
+        "402": *a12
         "500": *a5
         default:
           description: Default response
@@ -851,7 +861,7 @@ paths:
       parameters:
         - in: path
           name: topic
-          schema: *a20
+          schema: *a19
           required: true
           description: Topic name
       responses:
@@ -870,7 +880,7 @@ paths:
         - in: path
           name: owner
           schema:
-            &a22
+            &a21
             type: string
             pattern: ^[A-Fa-f0-9]{40}$
             example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
@@ -879,7 +889,7 @@ paths:
         - in: path
           name: id
           schema:
-            &a21
+            &a20
             type: string
             pattern: ^([A-Fa-f0-9]+)$
             example: cf880b8eeac5093fa27b0825906c600685
@@ -887,7 +897,7 @@ paths:
           description: Id
         - in: query
           name: sig
-          schema: *a21
+          schema: *a20
           required: true
           description: Signature
         - *a8
@@ -900,10 +910,10 @@ paths:
           description: Created
           content:
             application/json:
-              schema: *a14
+              schema: *a11
         "400": *a3
         "401": *a4
-        "402": *a11
+        "402": *a12
         "500": *a5
         default:
           description: Default response
@@ -915,18 +925,18 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a22
+          schema: *a21
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a21
+          schema: *a20
           required: true
           description: Topic
         - in: query
           name: type
           schema:
-            &a23
+            &a22
             type: string
             pattern: ^(sequence|epoch)$
           required: false
@@ -938,10 +948,10 @@ paths:
           description: Created
           content:
             application/json:
-              schema: *a14
+              schema: *a11
         "400": *a3
         "401": *a4
-        "402": *a11
+        "402": *a12
         "500": *a5
         default:
           description: Default response
@@ -952,12 +962,12 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a22
+          schema: *a21
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a21
+          schema: *a20
           required: true
           description: Topic
         - in: query
@@ -968,7 +978,7 @@ paths:
           description: "Timestamp of the update (default: now)"
         - in: query
           name: type
-          schema: *a23
+          schema: *a22
           required: false
           description: "Feed indexing scheme (default: sequence)"
       responses:
@@ -989,7 +999,7 @@ paths:
                 example: cf880b8eeac5093fa27b0825906c600685
           content:
             application/json:
-              schema: *a14
+              schema: *a11
         "400": *a3
         "401": *a4
         "500": *a5
@@ -1067,11 +1077,11 @@ paths:
                     pattern: ^[A-Fa-f0-9]{40}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
                   publicKey:
-                    &a24
+                    &a23
                     type: string
                     pattern: ^[A-Fa-f0-9]{66}$
                     example: 02ab7473879005929d10ce7d4f626412dad9fe56b0a6622038931d26bd79abf0a4
-                  pssPublicKey: *a24
+                  pssPublicKey: *a23
         "500": *a5
         default:
           description: Default response
@@ -1089,7 +1099,7 @@ paths:
           description: Health Status of node
           content:
             application/json:
-              schema: *a18
+              schema: *a24
         default:
           description: Default response
   /readiness:
@@ -1346,7 +1356,7 @@ paths:
           description: Chunk exists
           content:
             application/json:
-              schema: *a19
+              schema: *a18
         "400": *a3
         "404": *a16
         default:
@@ -1366,7 +1376,7 @@ paths:
           description: Chunk exists
           content:
             application/json:
-              schema: *a19
+              schema: *a18
         "400": *a3
         "404": *a16
         default:
@@ -1528,7 +1538,7 @@ paths:
           description: Disconnected peer
           content:
             application/json:
-              schema: *a19
+              schema: *a18
         "400": *a3
         "500": *a5
         default:
@@ -1794,7 +1804,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: *a18
+              schema: *a24
         "400": *a3
         "500": *a5
         default:
@@ -2253,6 +2263,7 @@ paths:
         name: all
         schema:
           type: string
+          required: false
         description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
@@ -2540,7 +2551,7 @@ paths:
             application/json:
               schema: *a52
         "400": *a3
-        "402": *a11
+        "402": *a12
         "429": *a51
         "500": *a5
         default:

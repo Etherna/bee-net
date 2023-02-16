@@ -264,7 +264,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<VersionDto> UploadChunkAsync(
+        public async Task<string> UploadChunkAsync(
             string swarmPostageBatchId,
             long? swarmTag = null,
             bool? swarmPin = null,
@@ -273,13 +273,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new VersionDto(await beeGatewayApiClient_4_0_0.ChunksPostAsync(
+                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChunksPostAsync(
                     swarmTag,
                     swarmPin,
                     swarmPostageBatchId,
                     swarmDeferredUpload,
                     body,
-                    cancellationToken).ConfigureAwait(false)),
+                    cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 

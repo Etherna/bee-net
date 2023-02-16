@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TransactionsDto
     {
         // Constructors.
-        internal TransactionsDto(Clients.DebugApi.V4_0_0.Response35 response)
+        internal TransactionsDto(Clients.DebugApi.V4_0_0.Response36 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
