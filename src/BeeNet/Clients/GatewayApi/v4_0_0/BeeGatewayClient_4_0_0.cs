@@ -8,7 +8,9 @@
 
 using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.Exceptions;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -1523,26 +1525,24 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     if (swarm_deferred_upload != null)
                         request_.Headers.TryAddWithoutValidation("swarm-deferred-upload", ConvertToString(swarm_deferred_upload, System.Globalization.CultureInfo.InvariantCulture));
-                    var boundary_ = System.Guid.NewGuid().ToString();
-                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
-                    content_.Headers.Remove("Content-Type");
-                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
 
-                    if (file == null)
-                        throw new System.ArgumentNullException("file");
+                    HttpContent content_;
+                    if (file.First().ContentType == "text/plain")
+                    {
+                        var reader = new StreamReader(file.First().Data);
+                        content_ = new System.Net.Http.StringContent(await reader.ReadToEndAsync());
+                    }
                     else
                     {
-                        foreach (var item_ in file)
-                        {
-                            var content_file_ = new System.Net.Http.StreamContent(item_.Data);
-                            if (!string.IsNullOrEmpty(item_.ContentType))
-                                content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(item_.ContentType);
-                            content_.Add(content_file_, "file", item_.FileName ?? "file");
-                        }
+                        content_ = new System.Net.Http.StreamContent(file.First().Data);
+                        content_.Headers.TryAddWithoutValidation("Content-Type", file.First().ContentType);
                     }
+
+
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.First().ContentType);
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("*/*"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1553,6 +1553,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
+
                     try
                     {
                         var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
@@ -2574,7 +2575,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 ||
+                            status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response13>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)

@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.GatewayApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.GatewayApi
 {
-    public class ChequebookTest : BaseTest_Gateway_V3_2_0
+    public class BalanceTest : BaseTest_Gateway_V3_2_0
     {
         /*
         NEED LOGIN ENABLED

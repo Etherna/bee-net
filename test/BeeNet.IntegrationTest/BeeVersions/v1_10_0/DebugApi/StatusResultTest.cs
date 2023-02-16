@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_9_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
 {
     public class StatusResultTest : BaseTest_Debug_V3_2_0
     {

@@ -258,8 +258,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> UploadDataAsync(
-            Stream? body,
             string swarmPostageBatchId,
+            Stream? body,
             int? swarmTag = null, 
             bool? swarmPin = null, 
             bool? swarmEncrypt = null, 

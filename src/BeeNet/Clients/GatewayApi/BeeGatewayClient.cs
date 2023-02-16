@@ -295,8 +295,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<string> UploadDataAsync(
-            Stream? body,
             string swarmPostageBatchId,
+            Stream? body,
             int? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,

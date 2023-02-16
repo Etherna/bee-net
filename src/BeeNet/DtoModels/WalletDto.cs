@@ -10,11 +10,11 @@ namespace Etherna.BeeNet.DtoModels
             if (response33 is null)
                 throw new ArgumentNullException(nameof(response33));
 
-            Bzz = long.Parse(response33.BzzBalance, CultureInfo.InvariantCulture);
-            NativeTokenBalance = long.Parse(response33.NativeTokenBalance, CultureInfo.InvariantCulture);
+            Bzz = response33.BzzBalance;
+            NativeTokenBalance = response33.NativeTokenBalance;
         }
 
-        public long Bzz { get; }
-        public long NativeTokenBalance { get; }
+        public string Bzz { get; }
+        public string NativeTokenBalance { get; }
     }
 }
