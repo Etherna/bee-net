@@ -22,14 +22,14 @@ namespace Etherna.BeeNet.DtoModels
         }
 
         // Properties.
-        public bool IsFrozen { get; set; } = default!;
-        public bool IsFullySynced { get; set; } = default!;
-        public int Round { get; set; } = default!;
-        public int LastWonRound { get; set; } = default!;
-        public int LastPlayedRound { get; set; } = default!;
-        public int LastFrozenRound { get; set; } = default!;
-        public int Block { get; set; } = default!;
-        public string Reward { get; set; } = default!;
-        public string Fees { get; set; } = default!;
+        public bool IsFrozen { get; set; }
+        public bool IsFullySynced { get; set; }
+        public int Round { get; set; } 
+        public int LastWonRound { get; set; } 
+        public int LastPlayedRound { get; set; } 
+        public int LastFrozenRound { get; set; } 
+        public int Block { get; set; } 
+        public string Reward { get; set; }
+        public string Fees { get; set; } 
     }
 }
