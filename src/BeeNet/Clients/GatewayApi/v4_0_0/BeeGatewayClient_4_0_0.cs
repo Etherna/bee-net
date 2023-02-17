@@ -4973,6 +4973,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5151,6 +5153,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
