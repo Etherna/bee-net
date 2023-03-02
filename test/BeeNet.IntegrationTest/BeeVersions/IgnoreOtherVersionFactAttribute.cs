@@ -14,6 +14,6 @@ namespace BeeNet.IntegrationTest.BeeVersions
         }
 
         private static bool CurrentTestVersion(string testVersion)
-            => (Environment.GetEnvironmentVariable("CurrentTestVersion") ?? "3.0.2") != testVersion;
+            => (Environment.GetEnvironmentVariable("CurrentTestVersion") ?? "4.0.0") != testVersion;
     }
 }

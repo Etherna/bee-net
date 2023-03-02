@@ -51,26 +51,6 @@ namespace Etherna.BeeNet.DtoModels
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal VersionDto(Clients.GatewayApi.V4_0_0.Response4 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Status = response.Status switch
-            {
-                Clients.GatewayApi.V4_0_0.Response4Status.Ok => StatusEnumDto.Ok,
-                Clients.GatewayApi.V4_0_0.Response4Status.Nok => StatusEnumDto.Nok,
-                _ => throw new InvalidOperationException()
-            };
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-            if (response.AdditionalProperties.TryGetValue("reference", out object reference))
-            {
-                Reference = reference.ToString();
-            }
-        }
-
         internal VersionDto(Clients.GatewayApi.V4_0_0.Response9 response)
         {
             if (response is null)

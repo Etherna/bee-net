@@ -9,7 +9,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LogDataDto
     {
         // Constructors.
-        internal LogDataDto(Clients.DebugApi.V4_0_0.Response45 response45)
+        internal LogDataDto(Clients.DebugApi.V4_0_0.Response47 response45)
         {
             if (response45 is null)
                 throw new ArgumentNullException(nameof(response45));

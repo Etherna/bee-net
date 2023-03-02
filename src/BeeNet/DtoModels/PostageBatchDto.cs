@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PostageBatchDto
     {
         // Constructors.
-        internal PostageBatchDto(Clients.DebugApi.V4_0_0.Response39 batch)
+        internal PostageBatchDto(Clients.DebugApi.V4_0_0.Response40 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));

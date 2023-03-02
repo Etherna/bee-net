@@ -411,6 +411,13 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
+        public async Task<RedistributionStateDto> RedistributionStateAsync(CancellationToken cancellationToken = default) =>
+            CurrentApiVersion switch
+            {
+                DebugApiVersion.v4_0_0 => new RedistributionStateDto(await beeDebugClient_4_0_0.RedistributionstateAsync(cancellationToken).ConfigureAwait(false)),
+                _ => throw new InvalidOperationException()
+            };
+        
         public async Task<VersionDto> SetWelcomeMessageAsync(
             string welcomeMessage,
             CancellationToken cancellationToken = default) =>

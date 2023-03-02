@@ -1063,8 +1063,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
 
-                    if (swarm_postage_batch_id != null)
-                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
+                    if (swarm_postage_batch_id == null)
+                        throw new System.ArgumentNullException("swarm_postage_batch_id");
+                    request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_tag != null)
                         request_.Headers.TryAddWithoutValidation("swarm-tag", ConvertToString(swarm_tag, System.Globalization.CultureInfo.InvariantCulture));
@@ -2364,7 +2365,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 ||
+                            status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response10>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2372,16 +2374,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                                 throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 201)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response11>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BeeNetGatewayApiException<Response11>("New pin with root reference was created", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -4113,6 +4105,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4367,6 +4361,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4665,8 +4661,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
-
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4759,8 +4753,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
-
-                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -7760,39 +7752,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Response4
     {
-        /// <summary>
-        /// Indicates health state of node * `ok` - node is healthy * `nok` - node is not healthy
-        /// <br/>
-        /// </summary>
 
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.Text.Json.Serialization.JsonPropertyName("reference")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public Response4Status Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("version")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Version { get; set; } = default!;
-
-        /// <summary>
-        /// The default value is set in case the bee binary was not build correctly.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("apiVersion")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string ApiVersion { get; set; } = "0.0.0";
-
-        /// <summary>
-        /// The default value is set in case the bee binary was not build correctly.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("debugApiVersion")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string DebugApiVersion { get; set; } = "0.0.0";
+        public string Reference { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -13630,18 +13594,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response4Status
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ok")]
-        Ok = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"nok")]
-        Nok = 1,
 
     }
 

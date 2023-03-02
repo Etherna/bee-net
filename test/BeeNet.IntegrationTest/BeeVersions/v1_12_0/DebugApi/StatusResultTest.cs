@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.DebugApi
 {
-    public class StatusResultTest : BaseTest_Debug_V3_2_0
+    public class StatusResultTest : BaseTest_Debug_v4_0_0
     {
 
         [Fact]
@@ -58,10 +58,10 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
             var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
 
             // Assert
-            Assert.Equal("3.0.2", healthAsync.ApiVersion);
-            Assert.Equal("3.0.2", healthAsync.DebugApiVersion);
+            Assert.Equal("4.0.0", healthAsync.ApiVersion);
+            Assert.Equal("4.0.0", healthAsync.DebugApiVersion);
             Assert.Equal(StatusEnumDto.Ok, healthAsync.Status);
-            Assert.StartsWith("1.7.0-", healthAsync.Version);
+            Assert.StartsWith("1.12.0-", healthAsync.Version);
         }
     }
 }

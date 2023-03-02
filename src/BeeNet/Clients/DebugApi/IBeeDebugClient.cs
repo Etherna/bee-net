@@ -321,6 +321,14 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string txHash,
             CancellationToken cancellationToken = default);
 
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current status of node in redistribution game
+        /// </summary>
+        /// <returns>Redistribution status info</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<RedistributionStateDto> RedistributionStateAsync(CancellationToken cancellationToken = default(CancellationToken));
+
         /// <summary>Set P2P welcome message</summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>

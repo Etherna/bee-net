@@ -226,7 +226,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<VersionDto> UploadChunkAsync(
+        Task<string> UploadChunkAsync(
             string swarmPostageBatchId,
             long? swarmTag = null,
             bool? swarmPin = null,

@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_10_0.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.DebugApi
 {
-    public class BalanceTest : BaseTest_Debug_V3_2_0
+    public class BalanceTest : BaseTest_Debug_v4_0_0
     {
 
 
