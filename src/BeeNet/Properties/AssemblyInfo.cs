@@ -13,5 +13,7 @@
 //   limitations under the License.
 
 using System;
+using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(false)]
+[assembly: InternalsVisibleTo("BeeNet.Tests")]

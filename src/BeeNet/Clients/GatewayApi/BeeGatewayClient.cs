@@ -126,7 +126,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.PinsGetAsync(cancellationToken).ConfigureAwait(false)).References,
                 _ => throw new InvalidOperationException()
             };
-        public async Task<Stream> GetChunkStreamAsync(
+
+        public async Task<Stream> GetChunkAsync(
             string reference,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
@@ -563,15 +564,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v4_0_0 => new ChequeBookChequeGetDto(await beeGatewayApiClient_4_0_0.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
-
-        public async Task<FileResponseDto> GetChunkAsync(
-            string address,
-            CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                GatewayApiVersion.v4_0_0 => new FileResponseDto(await beeGatewayApiClient_4_0_0.ChunksGetAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// </summary>
         /// <returns>Own accounting associated values with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<Dictionary<string, AccountDto>> AccountingAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        Task<Dictionary<string, AccountDto>> AccountingAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Buy a new postage batch.</summary>
         /// <param name="amount">Amount of BZZ added that the postage batch will have.</param>
@@ -311,7 +311,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>The verbosity was changed successfully.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LoggersPutAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default);
 
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
@@ -338,7 +338,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -348,7 +348,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// This endpoint fetches the staked amount from the blockchain.
         /// </remarks>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakeGetAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task StakeGetAsync(CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -360,7 +360,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -368,7 +368,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// </summary>
         /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<LogDataDto> LoggersGetAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<LogDataDto> LoggersGetAsync(CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -377,7 +377,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<LogDataDto> LoggersGetAsync(string exp, CancellationToken cancellationToken = default(CancellationToken));
+        Task<LogDataDto> LoggersGetAsync(string exp, CancellationToken cancellationToken = default);
 
         /// <summary>Top up an existing postage batch.</summary>
         /// <param name="id">Batch ID to top up</param>

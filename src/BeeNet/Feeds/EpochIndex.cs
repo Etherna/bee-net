@@ -3,7 +3,7 @@ using System;
 
 namespace Etherna.BeeNet.Feeds
 {
-    public class EpochIndex : IFeedIndex
+    internal class EpochIndex : IFeedIndex
     {
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
