@@ -10,7 +10,11 @@ namespace Etherna.BeeNet.Feeds
 
         string GetReferenceHash(string account, byte[] topic, IFeedIndex index);
 
+        string GetReferenceHash(byte[] account, byte[] topic, IFeedIndex index);
+
         string GetReferenceHash(string account, byte[] identifier);
+
+        string GetReferenceHash(byte[] account, byte[] identifier);
 
         /// <summary>
         /// Try to find epoch feed at a given time
@@ -19,8 +23,8 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="topic">The feed topic</param>
         /// <param name="at">The time to search</param>
         /// <returns>The found feed soc hash and its payload stream</returns>
-        Task<(string, Stream)?> TryFindEpochFeedAtAsync(string account, byte[] topic, DateTime at);
+        Task<(string, Stream)?> TryFindEpochFeedAsync(string account, byte[] topic, DateTime at);
 
-        Task<string> UpdateEpochFeedAt(DateTime at, string payload);
+        Task<string> UpdateEpochFeed(DateTime at, string payload);
     }
 }

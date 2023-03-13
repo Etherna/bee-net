@@ -38,30 +38,40 @@ namespace Etherna.BeeNet.Feeds
             return Keccak256.ComputeHash(newArray);
         }
 
-        public string GetReferenceAddress(string account, byte[] topic, IFeedIndex index) =>
-            GetReferenceAddress(account, GetIdentifier(topic, index));
+        public string GetReferenceHash(string account, byte[] topic, IFeedIndex index) =>
+            GetReferenceHash(account, GetIdentifier(topic, index));
 
-        public string GetReferenceAddress(string account, byte[] identifier)
+        public string GetReferenceHash(byte[] account, byte[] topic, IFeedIndex index) =>
+            GetReferenceHash(account, GetIdentifier(topic, index));
+
+        public string GetReferenceHash(string account, byte[] identifier)
         {
             if (!account.IsValidEthereumAddressHexFormat())
                 throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
+
+            return GetReferenceHash(account.HexToByteArray(), identifier);
+        }
+
+        public string GetReferenceHash(byte[] account, byte[] identifier)
+        {
+            if (account.Length != AccountBytesLength)
+                throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
             if (identifier.Length != IdentifierBytesLength)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
 
             var newArray = new byte[IdentifierBytesLength + AccountBytesLength];
             identifier.CopyTo(newArray, 0);
-            account.HexToByteArray().CopyTo(newArray, IdentifierBytesLength);
+            account.CopyTo(newArray, IdentifierBytesLength);
 
-            var referenceByteArray = Keccak256.ComputeHash(newArray);
-            return referenceByteArray.ToHex();
+            return Keccak256.ComputeHash(newArray).ToHex();
         }
 
-        public Task<(string, Stream)?> TryFindEpochFeedAtAsync(string account, byte[] topic, DateTime at)
+        public Task<(string, Stream)?> TryFindEpochFeedAsync(string account, byte[] topic, DateTime at)
         {
             var atUnixTime = (ulong)new DateTimeOffset(at).ToUnixTimeSeconds();
         }
 
-        public Task<string> UpdateEpochFeedAt(DateTime at, string payload)
+        public Task<string> UpdateEpochFeed(DateTime at, string payload)
         {
             throw new NotImplementedException();
         }
