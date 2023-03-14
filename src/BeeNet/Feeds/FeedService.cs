@@ -1,8 +1,6 @@
-﻿using Epoche;
-using Etherna.BeeNet.Clients.GatewayApi;
+﻿using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.Threading.Tasks;
 
@@ -11,10 +9,6 @@ namespace Etherna.BeeNet.Feeds
     public class FeedService : IFeedService
     {
         // Consts.
-        public const int AccountBytesLength = 20;
-        public const int IdentifierBytesLength = 32;
-        public const int IndexBytesLength = 32;
-        public const int TopicBytesLength = 32;
 
         // Fields.
         private readonly IBeeGatewayClient gatewayClient;
@@ -26,51 +20,34 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Methods.
-        public byte[] GetIdentifier(byte[] topic, FeedIndexBase index)
-        {
-            if (topic.Length != TopicBytesLength)
-                throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
-
-            var newArray = new byte[TopicBytesLength + IndexBytesLength];
-            topic.CopyTo(newArray, 0);
-            index.MarshalBinary.CopyTo(newArray, topic.Length);
-
-            return Keccak256.ComputeHash(newArray);
-        }
-
-        public string GetReferenceHash(string account, byte[] topic, FeedIndexBase index) =>
-            GetReferenceHash(account, GetIdentifier(topic, index));
-
-        public string GetReferenceHash(byte[] account, byte[] topic, FeedIndexBase index) =>
-            GetReferenceHash(account, GetIdentifier(topic, index));
-
-        public string GetReferenceHash(string account, byte[] identifier)
-        {
-            if (!account.IsValidEthereumAddressHexFormat())
-                throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
-
-            return GetReferenceHash(account.HexToByteArray(), identifier);
-        }
-
-        public string GetReferenceHash(byte[] account, byte[] identifier)
-        {
-            if (account.Length != AccountBytesLength)
-                throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
-            if (identifier.Length != IdentifierBytesLength)
-                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
-
-            var newArray = new byte[IdentifierBytesLength + AccountBytesLength];
-            identifier.CopyTo(newArray, 0);
-            account.CopyTo(newArray, IdentifierBytesLength);
-
-            return Keccak256.ComputeHash(newArray).ToHex();
-        }
-
-        public Task<FeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at)
+        public Task<FeedChunk?> TryFindEpochFeedAsync(
+            string account,
+            byte[] topic,
+            DateTimeOffset at,
+            EpochFeedIndex? knownNearEpochIndex)
         {
             var atUnixTime = (ulong)at.ToUnixTimeSeconds();
-            var startEpoch = new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
 
+            // Find starting epoch index (bottom->up)
+            var startEpoch = knownNearEpochIndex;
+            if (startEpoch is not null)
+            {
+                //traverse parents until find a common ancestor
+                while (startEpoch.Level != EpochFeedIndex.MaxLevel &&
+                    !startEpoch.ContainsTime(atUnixTime))
+                    startEpoch = startEpoch.GetParent();
+
+                //if max level is reached and start epoch still doesn't contain the time, drop it
+                if (!startEpoch.ContainsTime(atUnixTime))
+                    startEpoch = null;
+            }
+
+            //if start epoch is null (known near was null or it was under the brother at max epoch level)
+            startEpoch ??= new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
+            if (!startEpoch.ContainsTime(atUnixTime))
+                startEpoch = startEpoch.Right;
+
+            // Find searched epoch index (top->down)
             return TryFindEpochFeedHelperAsync(
                 account.HexToByteArray(),
                 topic,
@@ -89,40 +66,40 @@ namespace Etherna.BeeNet.Feeds
         /// Recursive finder function to find the version update chunk at time `at`
         /// </summary>
         /// <param name="at"></param>
-        /// <param name="epoch"></param>
-        /// <param name="ch"></param>
+        /// <param name="currentEpoch"></param>
+        /// <param name="prevFoundChunk"></param>
         /// <returns></returns>
         private async Task<FeedChunk?> TryFindEpochFeedHelperAsync(
-            byte[] account, byte[] topic, ulong at, EpochFeedIndex epoch, FeedChunk ch)
+            byte[] account, byte[] topic, ulong at, EpochFeedIndex currentEpoch, FeedChunk? prevFoundChunk)
         {
-            var uch = await gatewayClient.GetChunkAsync(GetReferenceHash(account, topic, epoch));
+            var currentChunk = await gatewayClient.GetChunkAsync(BuildReferenceHash(account, topic, currentEpoch));
 
-            if (uch == null)
+            if (currentChunk == null)
             {
                 // epoch not found on branch
-                if (epoch.IsLeft) // no lower resolution
-                    return ch;
+                if (currentEpoch.IsLeft) // no lower resolution
+                    return prevFoundChunk;
 
                 // traverse earlier branch
-                return await TryFindEpochFeedHelperAsync(epoch.Start - 1, epoch.Left, ch);
+                return await TryFindEpochFeedHelperAsync(currentEpoch.Start - 1, currentEpoch.Left, prevFoundChunk);
             }
 
             // epoch found
             // check if timestamp is later then target
-            var ts = feeds.UpdatedAt(uch);
+            var ts = feeds.UpdatedAt(currentChunk);
 
             if (ts > at)
             {
-                if (epoch.IsLeft)
-                    return ch;
+                if (currentEpoch.IsLeft)
+                    return prevFoundChunk;
 
-                return await TryFindEpochFeedHelperAsync(epoch.Start - 1, epoch.Left, ch);
+                return await TryFindEpochFeedHelperAsync(currentEpoch.Start - 1, currentEpoch.Left, prevFoundChunk);
             }
 
-            if (epoch.Level == 0)
-                return uch;
+            if (currentEpoch.Level == 0)
+                return currentChunk;
 
-            return await TryFindEpochFeedAtHelperAsync(at, epoch.GetChildAt(at), uch);
+            return await TryFindEpochFeedAtHelperAsync(at, currentEpoch.GetChildAt(at), currentChunk);
         }
     }
 }

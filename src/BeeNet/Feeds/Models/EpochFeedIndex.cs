@@ -1,4 +1,5 @@
 ﻿using Epoche;
+using Etherna.BeeNet.Extensions;
 using System;
 
 namespace Etherna.BeeNet.Feeds.Models
@@ -49,7 +50,7 @@ namespace Etherna.BeeNet.Feeds.Models
         {
             get
             {
-                var epochBytes = FeedUtils.UnixDateTimeToByteArray(Start);
+                var epochBytes = Start.UnixDateTimeToByteArray();
                 var newArray = new byte[epochBytes.Length + 1];
                 epochBytes.CopyTo(newArray, 0);
                 newArray[epochBytes.Length] = Level;
@@ -64,6 +65,9 @@ namespace Etherna.BeeNet.Feeds.Models
         public ulong Start { get; }
 
         // Methods.
+        public bool ContainsTime(ulong at) =>
+            at >= Start && at < Start + Length;
+
         public EpochFeedIndex GetChildAt(ulong at)
         {
             if (Level == 0)
