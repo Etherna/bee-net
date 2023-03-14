@@ -1,9 +1,9 @@
 ﻿using Epoche;
 using Etherna.BeeNet.Clients.GatewayApi;
+using Etherna.BeeNet.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Feeds
@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Methods.
-        public byte[] GetIdentifier(byte[] topic, IFeedIndex index)
+        public byte[] GetIdentifier(byte[] topic, FeedIndexBase index)
         {
             if (topic.Length != TopicBytesLength)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
@@ -38,10 +38,10 @@ namespace Etherna.BeeNet.Feeds
             return Keccak256.ComputeHash(newArray);
         }
 
-        public string GetReferenceHash(string account, byte[] topic, IFeedIndex index) =>
+        public string GetReferenceHash(string account, byte[] topic, FeedIndexBase index) =>
             GetReferenceHash(account, GetIdentifier(topic, index));
 
-        public string GetReferenceHash(byte[] account, byte[] topic, IFeedIndex index) =>
+        public string GetReferenceHash(byte[] account, byte[] topic, FeedIndexBase index) =>
             GetReferenceHash(account, GetIdentifier(topic, index));
 
         public string GetReferenceHash(string account, byte[] identifier)
@@ -66,14 +66,63 @@ namespace Etherna.BeeNet.Feeds
             return Keccak256.ComputeHash(newArray).ToHex();
         }
 
-        public Task<(string, Stream)?> TryFindEpochFeedAsync(string account, byte[] topic, DateTime at)
+        public Task<FeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at)
         {
-            var atUnixTime = (ulong)new DateTimeOffset(at).ToUnixTimeSeconds();
+            var atUnixTime = (ulong)at.ToUnixTimeSeconds();
+            var startEpoch = new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
+
+            return TryFindEpochFeedHelperAsync(
+                account.HexToByteArray(),
+                topic,
+                atUnixTime,
+                startEpoch,
+                null);
         }
 
         public Task<string> UpdateEpochFeed(DateTime at, string payload)
         {
             throw new NotImplementedException();
+        }
+
+        // Helpers.
+        /// <summary>
+        /// Recursive finder function to find the version update chunk at time `at`
+        /// </summary>
+        /// <param name="at"></param>
+        /// <param name="epoch"></param>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        private async Task<FeedChunk?> TryFindEpochFeedHelperAsync(
+            byte[] account, byte[] topic, ulong at, EpochFeedIndex epoch, FeedChunk ch)
+        {
+            var uch = await gatewayClient.GetChunkAsync(GetReferenceHash(account, topic, epoch));
+
+            if (uch == null)
+            {
+                // epoch not found on branch
+                if (epoch.IsLeft) // no lower resolution
+                    return ch;
+
+                // traverse earlier branch
+                return await TryFindEpochFeedHelperAsync(epoch.Start - 1, epoch.Left, ch);
+            }
+
+            // epoch found
+            // check if timestamp is later then target
+            var ts = feeds.UpdatedAt(uch);
+
+            if (ts > at)
+            {
+                if (epoch.IsLeft)
+                    return ch;
+
+                return await TryFindEpochFeedHelperAsync(epoch.Start - 1, epoch.Left, ch);
+            }
+
+            if (epoch.Level == 0)
+                return uch;
+
+            return await TryFindEpochFeedAtHelperAsync(at, epoch.GetChildAt(at), uch);
         }
     }
 }

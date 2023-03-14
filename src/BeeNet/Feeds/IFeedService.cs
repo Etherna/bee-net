@@ -1,16 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
+using Etherna.BeeNet.Feeds.Models;
 
 namespace Etherna.BeeNet.Feeds
 {
     public interface IFeedService
     {
-        byte[] GetIdentifier(byte[] topic, IFeedIndex index);
+        byte[] GetIdentifier(byte[] topic, FeedIndexBase index);
 
-        string GetReferenceHash(string account, byte[] topic, IFeedIndex index);
+        string GetReferenceHash(string account, byte[] topic, FeedIndexBase index);
 
-        string GetReferenceHash(byte[] account, byte[] topic, IFeedIndex index);
+        string GetReferenceHash(byte[] account, byte[] topic, FeedIndexBase index);
 
         string GetReferenceHash(string account, byte[] identifier);
 
@@ -22,8 +22,8 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="account">The ethereum account address</param>
         /// <param name="topic">The feed topic</param>
         /// <param name="at">The time to search</param>
-        /// <returns>The found feed soc hash and its payload stream</returns>
-        Task<(string, Stream)?> TryFindEpochFeedAsync(string account, byte[] topic, DateTime at);
+        /// <returns>The found epoch feed chunk, or null</returns>
+        Task<FeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at);
 
         Task<string> UpdateEpochFeed(DateTime at, string payload);
     }

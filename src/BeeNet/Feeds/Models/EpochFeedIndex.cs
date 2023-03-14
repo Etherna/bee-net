@@ -1,9 +1,9 @@
 ﻿using Epoche;
 using System;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Feeds.Models
 {
-    internal class EpochIndex : IFeedIndex
+    public class EpochFeedIndex : FeedIndexBase
     {
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
@@ -11,7 +11,7 @@ namespace Etherna.BeeNet.Feeds
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
         /// <param name="level">Epoch level</param>
-        public EpochIndex(ulong start, byte level)
+        public EpochFeedIndex(ulong start, byte level)
         {
             if (start >= (ulong)1 << MaxLevel + 1)
                 throw new ArgumentOutOfRangeException(nameof(start));
@@ -28,9 +28,9 @@ namespace Etherna.BeeNet.Feeds
         // Properties.
         public bool IsLeft => (Start & Length) == 0;
 
-        public EpochIndex Left => IsLeft ? this : new(Start - Length, Level);
+        public EpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
 
-        public EpochIndex Right => !IsLeft ? this : new(Start + Length, Level);
+        public EpochFeedIndex Right => !IsLeft ? this : new(Start + Length, Level);
 
         /// <summary>
         /// Epoch length in seconds
@@ -45,13 +45,11 @@ namespace Etherna.BeeNet.Feeds
         /// <summary>
         /// Index represenentation as keccak256 hash
         /// </summary>
-        public byte[] MarshalBinary
+        public override byte[] MarshalBinary
         {
             get
             {
-                var epochBytes = BitConverter.GetBytes(Start);
-                if (BitConverter.IsLittleEndian) Array.Reverse(epochBytes);
-
+                var epochBytes = FeedUtils.UnixDateTimeToByteArray(Start);
                 var newArray = new byte[epochBytes.Length + 1];
                 epochBytes.CopyTo(newArray, 0);
                 newArray[epochBytes.Length] = Level;
@@ -66,7 +64,7 @@ namespace Etherna.BeeNet.Feeds
         public ulong Start { get; }
 
         // Methods.
-        public EpochIndex GetChildAt(ulong at)
+        public EpochFeedIndex GetChildAt(ulong at)
         {
             if (Level == 0)
                 throw new InvalidOperationException();
@@ -79,10 +77,10 @@ namespace Etherna.BeeNet.Feeds
             if ((at & childLength) > 0)
                 childStart |= childLength;
 
-            return new EpochIndex(childStart, (byte)(Level - 1));
+            return new EpochFeedIndex(childStart, (byte)(Level - 1));
         }
 
-        public IFeedIndex GetNext(ulong at)
+        public override FeedIndexBase GetNext(ulong at)
         {
             if (at < Start)
                 throw new ArgumentOutOfRangeException(nameof(at));
@@ -92,14 +90,14 @@ namespace Etherna.BeeNet.Feeds
                 LowestCommonAncestor(Start, at).GetChildAt(at);
         }
 
-        public EpochIndex GetParent()
+        public EpochFeedIndex GetParent()
         {
             if (Level == MaxLevel)
                 throw new InvalidOperationException();
 
             var parentLevel = (byte)(Level + 1);
             var parentStart = Start >> parentLevel << parentLevel;
-            return new EpochIndex(parentStart, parentLevel);
+            return new EpochFeedIndex(parentStart, parentLevel);
         }
 
         public override string ToString() => $"{Start}/{Level}";
@@ -111,7 +109,7 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="t0"></param>
         /// <param name="t1"></param>
         /// <returns>Lowest common ancestor epoch index</returns>
-        public static EpochIndex LowestCommonAncestor(ulong t0, ulong t1)
+        public static EpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1)
         {
             byte level = 0;
             while (t0 >> level != t1 >> level)
