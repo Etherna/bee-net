@@ -1,7 +1,9 @@
 ﻿using Etherna.BeeNet.Clients.GatewayApi;
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Feeds
@@ -30,6 +32,8 @@ namespace Etherna.BeeNet.Feeds
                 at > DateTimeOffset.FromUnixTimeSeconds((long)EpochFeedIndex.MaxUnixTimeStamp))
                 throw new ArgumentOutOfRangeException(nameof(at), "Date is out of allowed range");
 
+            var atUnixTime = (ulong)at.ToUnixTimeSeconds();
+
             /*
              * This look up is composed by different phases:
              * 
@@ -43,10 +47,10 @@ namespace Etherna.BeeNet.Feeds
              * -> Output a starting epoch index that could not exist as a chunk, or chunk timestamp could be subsequent to searched date,
              *    but epoch contains the date.
              * 
-             * Phase 2) Find a starting point prior to the searched date. (bottom->up)
+             * Phase 2) Find a starting chunk prior to the searched date. (bottom->up)
              * Verify if selected chunk on phase 1 exists, and if its timestamp is prior to the searched date.
-             * If it doesn't exist, or if its time stamp is subsequent to searched date
-             *   if epoch is right, try to search on left and adjust date as "chunk.Start - 1"
+             * If it doesn't exist, or if its time stamp is subsequent to searched date,
+             *   if epoch is right, try to search on left,
              *   else if epoch is left, try to search on parent.
              * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
              * -> Output an existing chunk with previous date, or null if not found. If null, or chunk is found as a parent, skip phase 3.
@@ -61,34 +65,17 @@ namespace Etherna.BeeNet.Feeds
              * -> Output the chunk with nearest timestamp prior to searched date.
              */
 
-            var atUnixTime = (ulong)at.ToUnixTimeSeconds();
+            // Phase 1)
+            var startEpoch = FindStartingEpochOffline(knownNearEpochIndex, atUnixTime);
 
-            // Find starting epoch index (bottom->up)
-            var startEpoch = knownNearEpochIndex;
-            if (startEpoch is not null)
-            {
-                //traverse parents until find a common ancestor
-                while (startEpoch.Level != EpochFeedIndex.MaxLevel &&
-                    !startEpoch.ContainsTime(atUnixTime))
-                    startEpoch = startEpoch.GetParent();
-
-                //if max level is reached and start epoch still doesn't contain the time, drop it
-                if (!startEpoch.ContainsTime(atUnixTime))
-                    startEpoch = null;
-            }
-
-            //if start epoch is null (known near was null or it was under the brother at max epoch level)
-            startEpoch ??= new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
-            if (!startEpoch.ContainsTime(atUnixTime))
-                startEpoch = startEpoch.Right;
-
-            // Find searched epoch index (top->down)
-            return TryFindEpochFeedHelperAsync(
+            // Phase 2)
+            var startChunk = TryFindStartingChunkOnlineAsync(
                 account.HexToByteArray(),
                 topic,
                 atUnixTime,
-                startEpoch,
-                null);
+                startEpoch);
+
+            // Phase 3)
         }
 
         public Task<string> UpdateEpochFeed(DateTime at, string payload)
@@ -97,44 +84,80 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Helpers.
-        /// <summary>
-        /// Recursive finder function to find the version update chunk at time `at`
-        /// </summary>
-        /// <param name="at"></param>
-        /// <param name="currentEpoch"></param>
-        /// <param name="prevFoundChunk"></param>
-        /// <returns></returns>
-        private async Task<FeedChunk?> TryFindEpochFeedHelperAsync(
-            byte[] account, byte[] topic, ulong at, EpochFeedIndex currentEpoch, FeedChunk? prevFoundChunk)
+        private static EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
         {
-            var currentChunk = await gatewayClient.GetChunkAsync(BuildReferenceHash(account, topic, currentEpoch));
-
-            if (currentChunk == null)
+            var startEpoch = knownNearEpoch;
+            if (startEpoch is not null)
             {
-                // epoch not found on branch
-                if (currentEpoch.IsLeft) // no lower resolution
+                //traverse parents until find a common ancestor
+                while (startEpoch.Level != EpochFeedIndex.MaxLevel &&
+                    !startEpoch.ContainsTime(at))
+                    startEpoch = startEpoch.GetParent();
+
+                //if max level is reached and start epoch still doesn't contain the time, drop it
+                if (!startEpoch.ContainsTime(at))
+                    startEpoch = null;
+            }
+
+            //if start epoch is null (known near was null or max epoch level is hit)
+            startEpoch ??= new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
+            if (!startEpoch.ContainsTime(at))
+                startEpoch = startEpoch.Right;
+            return startEpoch;
+        }
+
+        /// <summary>
+        /// Implement phase 2 of chunk look up.
+        /// </summary>
+        /// <param name="account">The SOC owner account</param>
+        /// <param name="topic">The SOC topic</param>
+        /// <param name="at">The searched date</param>
+        /// <param name="epochIndex">The epoch to analyze containing current date</param>
+        /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
+        private async Task<FeedChunk?> TryFindStartingChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
+        {
+            // Try find the chunk on node.
+            var chunkReference = FeedChunk.BuildReferenceHash(account, topic, epochIndex);
+            Stream? chunkStream = null;
+            try { chunkStream = await gatewayClient.GetChunkAsync(chunkReference); }
+            catch (BeeNetGatewayApiException) { }
+
+            // If chunk is not found.
+            if (chunkStream == null)
+            {
+                if (epochIndex.IsRight)
+                    return await TryFindStartingChunkOnlineAsync(account, topic, at, epochIndex.Left);
+                else if (epochIndex.Level != EpochFeedIndex.MaxLevel) //if is left and is not at max level
+                    return await TryFindStartingChunkOnlineAsync(account, topic, at, epochIndex.GetParent());
+
+
+
+                if (epochIndex.IsLeft) // no lower resolution
                     return prevFoundChunk;
 
                 // traverse earlier branch
-                return await TryFindEpochFeedHelperAsync(currentEpoch.Start - 1, currentEpoch.Left, prevFoundChunk);
             }
 
-            // epoch found
-            // check if timestamp is later then target
-            var ts = feeds.UpdatedAt(currentChunk);
-
-            if (ts > at)
+            // Else, if chunk exists.
+            else
             {
-                if (currentEpoch.IsLeft)
-                    return prevFoundChunk;
+                // epoch found
+                // check if timestamp is later then target
+                var ts = feeds.UpdatedAt(chunkStream);
 
-                return await TryFindEpochFeedHelperAsync(currentEpoch.Start - 1, currentEpoch.Left, prevFoundChunk);
+                if (ts > at)
+                {
+                    if (epochIndex.IsLeft)
+                        return prevFoundChunk;
+
+                    return await TryFindEpochFeedHelperAsync(epochIndex.Start - 1, epochIndex.Left, prevFoundChunk);
+                }
+
+                if (epochIndex.Level == 0)
+                    return chunkStream;
+
+                return await TryFindEpochFeedAtHelperAsync(at, epochIndex.GetChildAt(at), chunkStream);
             }
-
-            if (currentEpoch.Level == 0)
-                return currentChunk;
-
-            return await TryFindEpochFeedAtHelperAsync(at, currentEpoch.GetChildAt(at), currentChunk);
         }
     }
 }
