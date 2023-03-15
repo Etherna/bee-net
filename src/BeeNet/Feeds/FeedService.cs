@@ -26,6 +26,41 @@ namespace Etherna.BeeNet.Feeds
             DateTimeOffset at,
             EpochFeedIndex? knownNearEpochIndex)
         {
+            if (at < DateTimeOffset.FromUnixTimeSeconds((long)EpochFeedIndex.MinUnixTimeStamp) ||
+                at > DateTimeOffset.FromUnixTimeSeconds((long)EpochFeedIndex.MaxUnixTimeStamp))
+                throw new ArgumentOutOfRangeException(nameof(at), "Date is out of allowed range");
+
+            /*
+             * This look up is composed by different phases:
+             * 
+             * Phase 1) Find a starting epoch to look up containing the date. (bottom->up)
+             * This doesn't access to swarm network, so it ignore chunks' timestamps.
+             * It starts from an optional well known existing epoch index passed by user,
+             * and tries to find the index of an existing chunk to use as start.
+             * Starting chunk should be as near as possibile to the final chunk, without need to access the net.
+             * It tries to find common anchestor between date and existing previously known epoch, if passed.
+             * If a previously known epoch is not passed, start at max level with epoch containing the date.
+             * -> Output a starting epoch index that could not exist as a chunk, or chunk timestamp could be subsequent to searched date,
+             *    but epoch contains the date.
+             * 
+             * Phase 2) Find a starting point prior to the searched date. (bottom->up)
+             * Verify if selected chunk on phase 1 exists, and if its timestamp is prior to the searched date.
+             * If it doesn't exist, or if its time stamp is subsequent to searched date
+             *   if epoch is right, try to search on left and adjust date as "chunk.Start - 1"
+             *   else if epoch is left, try to search on parent.
+             * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
+             * -> Output an existing chunk with previous date, or null if not found. If null, or chunk is found as a parent, skip phase 3.
+             * 
+             * Phase 3) Find the existing chunk with timestamp nearest and prior to the searched date. (top->down)
+             * It starts from the output chunk of phase 2, and tries to get near as possibile to the final chunk.
+             * It tries to get child epoch at date. If chunk exists and is prior, make recursion on it.
+             * If it doesn't exist or it has timestamp subsequent to date.
+             *   If child is right, try to get left and adjust date as "rightChild.Start - 1". Check again end eventually make recursion on it.
+             *   If child is left return current chunk.
+             * It stops when a valid chunk to continue recursion is not found, or when current chunk hit level 0 (max resolution).
+             * -> Output the chunk with nearest timestamp prior to searched date.
+             */
+
             var atUnixTime = (ulong)at.ToUnixTimeSeconds();
 
             // Find starting epoch index (bottom->up)

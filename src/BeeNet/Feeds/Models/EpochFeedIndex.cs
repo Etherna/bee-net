@@ -8,6 +8,8 @@ namespace Etherna.BeeNet.Feeds.Models
     {
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
+        public const ulong MaxUnixTimeStamp = ((ulong)1 << (MaxLevel + 1)) - 1;
+        public const ulong MinUnixTimeStamp = 0;
 
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
@@ -29,9 +31,11 @@ namespace Etherna.BeeNet.Feeds.Models
         // Properties.
         public bool IsLeft => (Start & Length) == 0;
 
+        public bool IsRight => !IsLeft;
+
         public EpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
 
-        public EpochFeedIndex Right => !IsLeft ? this : new(Start + Length, Level);
+        public EpochFeedIndex Right => IsRight ? this : new(Start + Length, Level);
 
         /// <summary>
         /// Epoch length in seconds
