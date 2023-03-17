@@ -5,6 +5,7 @@ using Nethereum.Util;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Etherna.BeeNet.Feeds.Models
 {
@@ -17,6 +18,8 @@ namespace Etherna.BeeNet.Feeds.Models
         public const int MaxPayloadBytesSize = 4096; //4kB
         public const int MaxContentPayloadBytesSize = MaxPayloadBytesSize
                                                     - TimeStampByteSize; //creation timestamp
+        public const int MinPayloadByteSize = TimeStampByteSize;
+        public const string ReferenceHashRegex = "^[A-Fa-f0-9]{64}$";
         public const int TimeStampByteSize = sizeof(ulong);
         public const int TopicBytesLength = 32;
 
@@ -28,16 +31,22 @@ namespace Etherna.BeeNet.Feeds.Models
         {
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
-            if (payload.Length < TimeStampByteSize)
+            if (referenceHash is null)
+                throw new ArgumentNullException(nameof(referenceHash));
+
+            if (payload.Length < MinPayloadByteSize)
                 throw new ArgumentOutOfRangeException(nameof(payload),
                     $"Payload can't be shorter than {TimeStampByteSize} bytes");
             if (payload.Length > MaxPayloadBytesSize)
                 throw new ArgumentOutOfRangeException(nameof(payload),
                     $"Payload can't be longer than {MaxPayloadBytesSize} bytes");
 
+            if (!Regex.IsMatch(referenceHash, ReferenceHashRegex))
+                throw new ArgumentException("Not a valid swarm hash", nameof(referenceHash));
+
             Index = index ?? throw new ArgumentNullException(nameof(index));
             Payload = Array.AsReadOnly(payload);
-            ReferenceHash = referenceHash ?? throw new ArgumentNullException(nameof(referenceHash));
+            ReferenceHash = referenceHash;
         }
 
         // Properties.

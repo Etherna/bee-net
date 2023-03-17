@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Feeds
 
             // Phase 2)
             var accountByteArray = account.HexToByteArray();
-            var startChunk = await TryFindStartingChunkOnlineAsync(
+            var startChunk = await TryFindStartingEpochChunkOnlineAsync(
                 accountByteArray,
                 topic,
                 atUnixTime,
@@ -85,6 +85,27 @@ namespace Etherna.BeeNet.Feeds
                 topic,
                 atUnixTime,
                 startChunk);
+        }
+
+        public Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index) =>
+            TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
+
+        public Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
+            TryGetFeedChunkAsync(FeedChunk.BuildReferenceHash(account, topic, index), index);
+
+        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index)
+        {
+            try
+            {
+                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference);
+                using var chunkMemoryStream = new MemoryStream();
+                chunkStream.CopyTo(chunkMemoryStream);
+                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
+            }
+            catch (BeeNetGatewayApiException)
+            {
+                return null;
+            }
         }
 
         public Task<string> UpdateEpochFeed(DateTime at, string payload)
@@ -148,7 +169,7 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="at">The searched date</param>
         /// <param name="epochIndex">The epoch to analyze containing current date</param>
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
-        private async Task<FeedChunk?> TryFindStartingChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
+        private async Task<FeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
         {
             // Try get chunk payload on network.
             var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex);
@@ -159,27 +180,11 @@ namespace Etherna.BeeNet.Feeds
 
             // Else, if chunk is not found, or if chunk timestamp is later than target date.
             if (epochIndex.IsRight)                               //try left
-                return await TryFindStartingChunkOnlineAsync(account, topic, at, epochIndex.Left);
+                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.Left);
             else if (epochIndex.Level != EpochFeedIndex.MaxLevel) //try parent
-                return await TryFindStartingChunkOnlineAsync(account, topic, at, epochIndex.GetParent());
+                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.GetParent());
 
             return null;
-        }
-
-        private async Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index)
-        {
-            var chunkReference = FeedChunk.BuildReferenceHash(account, topic, index);
-            try
-            {
-                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference);
-                using var chunkMemoryStream = new MemoryStream();
-                chunkStream.CopyTo(chunkMemoryStream);
-                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
-            }
-            catch (BeeNetGatewayApiException)
-            {
-                return null;
-            }
         }
     }
 }

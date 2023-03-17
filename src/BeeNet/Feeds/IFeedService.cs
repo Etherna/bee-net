@@ -15,7 +15,9 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="knownNearEpochIndex">Another known existing epoch index, near to looked time. Helps to perform lookup quicker</param>
         /// <returns>The found epoch feed chunk, or null</returns>
         Task<FeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at, EpochFeedIndex? knownNearEpochIndex);
-
+        Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index);
+        Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
+        Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index);
         Task<string> UpdateEpochFeed(DateTime at, string payload);
     }
 }
