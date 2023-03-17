@@ -48,6 +48,19 @@ namespace Etherna.BeeNet.Feeds.Models
         }
 
         [Theory]
+        [InlineData(0, 0, false)]
+        [InlineData(1, 0, true)]
+        [InlineData(2, 1, true)]
+        [InlineData(4, 1, false)]
+        [InlineData(0, 32, false)]
+        [InlineData(4_294_967_296, 32, true)]
+        public void IsRight(ulong start, byte level, bool expected)
+        {
+            var index = new EpochFeedIndex(start, level);
+            Assert.Equal(expected, index.IsRight);
+        }
+
+        [Theory]
         [InlineData(0, 0, 0, 0)]
         [InlineData(1, 0, 0, 0)]
         [InlineData(2, 1, 0, 1)]
@@ -98,6 +111,22 @@ namespace Etherna.BeeNet.Feeds.Models
         {
             var index = new EpochFeedIndex(start, level);
             Assert.Equal(expected, index.MarshalBinary);
+        }
+
+        [Theory]
+        [InlineData(1, 0, 0, false)]
+        [InlineData(1, 0, 1, true)]
+        [InlineData(1, 0, 2, false)]
+        [InlineData(0, 32, 0, true)]
+        [InlineData(0, 32, 4_294_967_295, true)]
+        [InlineData(0, 32, 4_294_967_296, false)]
+        [InlineData(4_294_967_296, 32, 4_294_967_295, false)]
+        [InlineData(4_294_967_296, 32, 4_294_967_296, true)]
+        public void ContainsTime(ulong start, byte level, ulong at, bool expected)
+        {
+            var index = new EpochFeedIndex(start, level);
+            var result = index.ContainsTime(at);
+            Assert.Equal(expected, result);
         }
 
         [Fact]
