@@ -9,6 +9,7 @@ namespace Etherna.BeeNet.Feeds.Models
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
         public const ulong MaxUnixTimeStamp = ((ulong)1 << (MaxLevel + 1)) - 1;
+        public const ulong MinLevel = 0;
         public const ulong MinUnixTimeStamp = 0;
 
         // Constructor.
