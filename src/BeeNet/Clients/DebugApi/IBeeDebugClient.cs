@@ -327,7 +327,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// </summary>
         /// <returns>Redistribution status info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<RedistributionStateDto> RedistributionStateAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<RedistributionStateDto> RedistributionStateAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Set P2P welcome message</summary>
         /// <returns>OK</returns>

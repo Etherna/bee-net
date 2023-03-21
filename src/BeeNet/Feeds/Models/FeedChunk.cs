@@ -80,9 +80,6 @@ namespace Etherna.BeeNet.Feeds.Models
         }
 
         // Static helpers.
-        public static byte[] BuildChunkPayload(byte[] contentPayload, DateTimeOffset? timestamp = null) =>
-            BuildChunkPayload(contentPayload, timestamp.HasValue ? (ulong)timestamp.Value.ToUnixTimeSeconds() : null);
-
         public static byte[] BuildChunkPayload(byte[] contentPayload, ulong? timestamp = null)
         {
             if (contentPayload.Length > MaxContentPayloadBytesSize)

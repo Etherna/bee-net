@@ -79,9 +79,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.DebugApi
         {
             // Arrange 
 
-
             // Act 
-            var chequeBookBalance = await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
+            await beeNodeClient.DebugClient.GetChequeBookBalanceAsync();
         }
 
         [Fact]

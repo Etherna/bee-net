@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Feeds
                 nextEpochIndex = (EpochFeedIndex)lastEpochFeedChunk.Index.GetNext(at);
 
             // Create new chunk.
-            var chunkPayload = FeedChunk.BuildChunkPayload(contentPayload, at);
+            var chunkPayload = FeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
             var chunkReferenceHash = FeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
 
             return new FeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
