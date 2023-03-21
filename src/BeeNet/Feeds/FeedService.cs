@@ -68,6 +68,8 @@ namespace Etherna.BeeNet.Feeds
              * Phase 3) Find the existing chunk with timestamp nearest and prior to the searched date. (top->down)
              * 
              * It starts from the output chunk of phase 2, and tries to get near as possibile to searched date, without pass it.
+             * Is possible that, if the passed chunk is a left chunk, epoch index of passed chunk could not contain the "at" date.
+             * In this case adjust the date as (chunk.Index.Right.Start - 1).
              * 
              * It tries to get child epoch at date from existing chunk. If chunk exists and is prior, make recursion on it.
              * If it doesn't exist or it has timestamp subsequent to date.
@@ -135,6 +137,10 @@ namespace Etherna.BeeNet.Feeds
             if (currentIndex.Level == EpochFeedIndex.MinLevel)
                 return currentChunk;
 
+            // Normalize "at" date. Possibile if we are trying a left epoch, but date is contained at right.
+            if (!currentIndex.ContainsTime(at))
+                at = currentIndex.Right.Start - 1;
+
             // Try chunk on child epoch at date.
             var childIndexAtDate = currentIndex.GetChildAt(at);
             var childChunkAtDate = await TryGetFeedChunkAsync(account, topic, childIndexAtDate);
@@ -145,7 +151,7 @@ namespace Etherna.BeeNet.Feeds
             if (childIndexAtDate.IsRight)
             {
                 var childLeftChunk = await TryGetFeedChunkAsync(account, topic, childIndexAtDate.Left);
-                if (childLeftChunk != null && (ulong)childLeftChunk.GetTimeStamp().ToUnixTimeSeconds() <= at)
+                if (childLeftChunk != null) //to check timestamp is superfluous in this case
                     return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childLeftChunk);
             }
 
