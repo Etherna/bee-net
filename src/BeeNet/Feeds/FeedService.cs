@@ -23,8 +23,51 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Methods.
-        public async Task<FeedChunk?> TryFindEpochFeedAsync(
+        public Task<FeedChunk> CreateNextEpochFeedChunkAsync(
             string account,
+            byte[] topic,
+            byte[] contentPayload,
+            EpochFeedIndex? knownNearEpochIndex) =>
+            CreateNextEpochFeedChunkAsync(account.HexToByteArray(), topic, contentPayload, knownNearEpochIndex);
+
+        public async Task<FeedChunk> CreateNextEpochFeedChunkAsync(
+            byte[] account,
+            byte[] topic,
+            byte[] contentPayload,
+            EpochFeedIndex? knownNearEpochIndex)
+        {
+            var at = DateTimeOffset.UtcNow;
+
+            // Find last published chunk.
+            var lastEpochFeedChunk = await TryFindEpochFeedAsync(account, topic, at, knownNearEpochIndex);
+
+            // Define next epoch index.
+            EpochFeedIndex nextEpochIndex;
+            if (lastEpochFeedChunk is null)
+            {
+                nextEpochIndex = new EpochFeedIndex(0, EpochFeedIndex.MaxLevel);
+                if (!nextEpochIndex.ContainsTime(at))
+                    nextEpochIndex = nextEpochIndex.Right;
+            }
+            else
+                nextEpochIndex = (EpochFeedIndex)lastEpochFeedChunk.Index.GetNext(at);
+
+            // Create new chunk.
+            var chunkPayload = FeedChunk.BuildChunkPayload(contentPayload, at);
+            var chunkReferenceHash = FeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
+
+            return new FeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
+        }
+
+        public Task<FeedChunk?> TryFindEpochFeedAsync(
+            string account,
+            byte[] topic,
+            DateTimeOffset at,
+            EpochFeedIndex? knownNearEpochIndex) =>
+            TryFindEpochFeedAsync(account.HexToByteArray(), topic, at, knownNearEpochIndex);
+
+        public async Task<FeedChunk?> TryFindEpochFeedAsync(
+            byte[] account,
             byte[] topic,
             DateTimeOffset at,
             EpochFeedIndex? knownNearEpochIndex)
@@ -85,9 +128,8 @@ namespace Etherna.BeeNet.Feeds
             var startEpoch = FindStartingEpochOffline(knownNearEpochIndex, atUnixTime);
 
             // Phase 2)
-            var accountByteArray = account.HexToByteArray();
             var startChunk = await TryFindStartingEpochChunkOnlineAsync(
-                accountByteArray,
+                account,
                 topic,
                 atUnixTime,
                 startEpoch);
@@ -97,7 +139,7 @@ namespace Etherna.BeeNet.Feeds
 
             // Phase 3)
             return await FindLastEpochChunkBeforeDateAsync(
-                accountByteArray,
+                account,
                 topic,
                 atUnixTime,
                 startChunk);
@@ -122,11 +164,6 @@ namespace Etherna.BeeNet.Feeds
             {
                 return null;
             }
-        }
-
-        public Task<string> UpdateEpochFeed(DateTime at, string payload)
-        {
-            throw new NotImplementedException();
         }
 
         // Helpers.

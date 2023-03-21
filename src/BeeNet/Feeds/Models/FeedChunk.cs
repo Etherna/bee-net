@@ -80,15 +80,18 @@ namespace Etherna.BeeNet.Feeds.Models
         }
 
         // Static helpers.
-        public static byte[] BuildChunkPayload(byte[] contentPayload)
+        public static byte[] BuildChunkPayload(byte[] contentPayload, DateTimeOffset? timestamp = null) =>
+            BuildChunkPayload(contentPayload, timestamp.HasValue ? (ulong)timestamp.Value.ToUnixTimeSeconds() : null);
+
+        public static byte[] BuildChunkPayload(byte[] contentPayload, ulong? timestamp = null)
         {
             if (contentPayload.Length > MaxContentPayloadBytesSize)
                 throw new ArgumentOutOfRangeException(nameof(contentPayload),
                     $"Content payload can't be longer than {MaxContentPayloadBytesSize} bytes");
 
             var chunkPayload = new byte[TimeStampByteSize + contentPayload.Length];
-            var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            unixNow.UnixDateTimeToByteArray().CopyTo(chunkPayload, 0);
+            timestamp ??= (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            timestamp.Value.UnixDateTimeToByteArray().CopyTo(chunkPayload, 0);
             contentPayload.CopyTo(chunkPayload, TimeStampByteSize);
 
             return chunkPayload;

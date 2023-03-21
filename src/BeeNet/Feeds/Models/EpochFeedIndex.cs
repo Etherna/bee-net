@@ -70,6 +70,9 @@ namespace Etherna.BeeNet.Feeds.Models
         public ulong Start { get; }
 
         // Methods.
+        public bool ContainsTime(DateTimeOffset at) =>
+            ContainsTime((ulong)at.ToUnixTimeSeconds());
+
         public bool ContainsTime(ulong at) =>
             at >= Start && at < Start + Length;
 
@@ -79,6 +82,9 @@ namespace Etherna.BeeNet.Feeds.Models
             if (obj is not EpochFeedIndex epochObj) return false;
             return Level == epochObj.Level && Start == epochObj.Start;
         }
+
+        public EpochFeedIndex GetChildAt(DateTimeOffset at) =>
+            GetChildAt((ulong)at.ToUnixTimeSeconds());
 
         public EpochFeedIndex GetChildAt(ulong at)
         {
