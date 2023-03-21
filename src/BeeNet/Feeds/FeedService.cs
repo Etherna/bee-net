@@ -3,6 +3,7 @@ using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -37,32 +38,45 @@ namespace Etherna.BeeNet.Feeds
             /*
              * This look up is composed by different phases:
              * 
-             * Phase 1) Find a starting epoch to look up containing the date. (bottom->up)
-             * This doesn't access to swarm network, so it ignore chunks' timestamps.
-             * It starts from an optional well known existing epoch index passed by user,
-             * and tries to find the index of an existing chunk to use as start.
-             * Starting chunk should be as near as possibile to the final chunk, without need to access the net.
+             * Phase 1) Find a starting epoch index to look up containing the date. (bottom->up)
+             * 
+             * This doesn't access to swarm network, so it ignores chunks' timestamps.
+             * It starts from an optional well known existing epoch index passed by user, and tries to find index of an existing starting chunk.
+             * Passed epoch index should be as near as possibile to the final chunk to maximize optimization.
+             * Process is tollerant to wrong initial passed index, even if in this case it is not optimized.
+             * 
              * It tries to find common anchestor between date and existing previously known epoch, if passed.
              * If a previously known epoch is not passed, start at max level with epoch containing the date.
-             * -> Output a starting epoch index that could not exist as a chunk, or chunk timestamp could be subsequent to searched date,
+             * 
+             * -> Input: optional known existing epoch index, near to searched date.
+             * <- Output: starting epoch index that could not exist as a chunk, or chunk timestamp could be subsequent to searched date,
              *    but epoch contains the date.
              * 
+             * ------------
              * Phase 2) Find a starting chunk prior to the searched date. (bottom->up)
-             * Verify if selected chunk on phase 1 exists, and if its timestamp is prior to the searched date.
-             * If it doesn't exist, or if its time stamp is subsequent to searched date,
-             *   if epoch is right, try to search on left,
-             *   else if epoch is left, try to search on parent.
-             * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
-             * -> Output an existing chunk with previous date, or null if not found. If null skip phase 3.
              * 
+             * Verify if selected chunk on phase 1 exists, and if its timestamp is prior to the searched date.
+             * If it doesn't exist, or if time stamp is subsequent to searched date,
+             *   if epoch index is right, try to search on left,
+             *   else if epoch index is left, try to search on parent.
+             * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
+             * 
+             * -> Input: starting epoch index from phase 1.
+             * <- Output: an existing chunk with prior date, or null if a chunk is not found. If null, skip phase 3.
+             * 
+             * ------------
              * Phase 3) Find the existing chunk with timestamp nearest and prior to the searched date. (top->down)
-             * It starts from the output chunk of phase 2, and tries to get near as possibile to the final chunk.
-             * It tries to get child epoch at date. If chunk exists and is prior, make recursion on it.
+             * 
+             * It starts from the output chunk of phase 2, and tries to get near as possibile to searched date, without pass it.
+             * 
+             * It tries to get child epoch at date from existing chunk. If chunk exists and is prior, make recursion on it.
              * If it doesn't exist or it has timestamp subsequent to date.
              *   If child is right, try to get left. Check again end eventually make recursion on it.
              *   If child is left return current chunk.
              * It stops when a valid chunk to continue recursion is not found, or when current chunk hit level 0 (max resolution).
-             * -> Output the chunk with nearest timestamp prior to searched date.
+             * 
+             * -> Input: starting chunk from phase 2.
+             * <- Output: the chunk with nearest timestamp prior to searched date.
              */
 
             // Phase 1)
@@ -93,14 +107,14 @@ namespace Etherna.BeeNet.Feeds
         public Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
             TryGetFeedChunkAsync(FeedChunk.BuildReferenceHash(account, topic, index), index);
 
-        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index)
+        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReferenceHash, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference);
+                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReferenceHash);
                 using var chunkMemoryStream = new MemoryStream();
                 chunkStream.CopyTo(chunkMemoryStream);
-                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
+                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReferenceHash);
             }
             catch (BeeNetGatewayApiException)
             {
@@ -114,16 +128,15 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Helpers.
-        private async Task<FeedChunk> FindLastEpochChunkBeforeDateAsync(byte[] account, byte[] topic, ulong at, FeedChunk currentChunk)
+        internal async Task<FeedChunk> FindLastEpochChunkBeforeDateAsync(byte[] account, byte[] topic, ulong at, FeedChunk currentChunk)
         {
-            var currentIndex = (EpochFeedIndex)currentChunk.Index;
-            var childIndexAtDate = currentIndex.GetChildAt(at);
-
             // If currentChunk is at max resolution, return it.
+            var currentIndex = (EpochFeedIndex)currentChunk.Index;
             if (currentIndex.Level == EpochFeedIndex.MinLevel)
                 return currentChunk;
 
             // Try chunk on child epoch at date.
+            var childIndexAtDate = currentIndex.GetChildAt(at);
             var childChunkAtDate = await TryGetFeedChunkAsync(account, topic, childIndexAtDate);
             if (childChunkAtDate != null && (ulong)childChunkAtDate.GetTimeStamp().ToUnixTimeSeconds() <= at)
                 return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childChunkAtDate);
@@ -131,7 +144,7 @@ namespace Etherna.BeeNet.Feeds
             // Try left brother if different.
             if (childIndexAtDate.IsRight)
             {
-                var childLeftChunk = await TryGetFeedChunkAsync(account, topic, childIndexAtDate);
+                var childLeftChunk = await TryGetFeedChunkAsync(account, topic, childIndexAtDate.Left);
                 if (childLeftChunk != null && (ulong)childLeftChunk.GetTimeStamp().ToUnixTimeSeconds() <= at)
                     return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childLeftChunk);
             }
@@ -139,7 +152,14 @@ namespace Etherna.BeeNet.Feeds
             return currentChunk;
         }
 
-        private static EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
+        /// <summary>
+        /// Implement phase 1 of epoch chunk look up.
+        /// </summary>
+        /// <param name="knownNearEpoch">An optional epoch index with known existing chunk</param>
+        /// <param name="at">The searched date</param>
+        /// <returns>A starting epoch index</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It is only used inside of an instance")]
+        internal EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
         {
             var startEpoch = knownNearEpoch;
             if (startEpoch is not null)
@@ -162,14 +182,14 @@ namespace Etherna.BeeNet.Feeds
         }
 
         /// <summary>
-        /// Implement phase 2 of chunk look up.
+        /// Implement phase 2 of epoch chunk look up.
         /// </summary>
         /// <param name="account">The SOC owner account</param>
         /// <param name="topic">The SOC topic</param>
         /// <param name="at">The searched date</param>
         /// <param name="epochIndex">The epoch to analyze containing current date</param>
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
-        private async Task<FeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
+        internal async Task<FeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
         {
             // Try get chunk payload on network.
             var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex);

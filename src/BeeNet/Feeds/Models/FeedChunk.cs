@@ -55,8 +55,23 @@ namespace Etherna.BeeNet.Feeds.Models
         public string ReferenceHash { get; }
 
         // Methods.
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is not FeedChunk objFeedChunk) return false;
+            return GetType() == obj.GetType() &&
+                Index.Equals(objFeedChunk.Index) &&
+                Payload.SequenceEqual(objFeedChunk.Payload) &&
+                ReferenceHash.Equals(objFeedChunk.ReferenceHash);
+        }
+
         public byte[] GetContentPayload() =>
             Payload.Skip(TimeStampByteSize).ToArray();
+
+        public override int GetHashCode() =>
+            Index.GetHashCode() ^
+            Payload.GetHashCode() ^
+            ReferenceHash.GetHashCode();
 
         public DateTimeOffset GetTimeStamp()
         {
