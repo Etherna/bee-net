@@ -100,7 +100,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="reference">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetChunkStreamAsync(
+        Task<Stream> GetChunkAsync(
             string reference,
             CancellationToken cancellationToken = default);
 
@@ -481,14 +481,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<ChequeBookChequeGetDto> GetChequeBookChequeForPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Check if chunk at address exists locally</summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<FileResponseDto> GetChunkAsync(
-            string address,
             CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
