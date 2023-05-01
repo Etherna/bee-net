@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.DtoModels
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        internal BalanceDto(Clients.GatewayApi.V4_0_0.Response25 balance)
+        internal BalanceDto(Clients.GatewayApi.V4_0_0.Response24 balance)
         {
             if (balance is null)
                 throw new ArgumentNullException(nameof(balance));

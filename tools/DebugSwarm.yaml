@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.0.0
+  version: 3.1.0
   title: Bee Debug API
   description: A list of the currently provided debug interfaces to interact with
     the bee node
@@ -1097,10 +1097,20 @@ paths:
               schema:
                 type: object
                 properties:
+                  minimumFunds:
+                    &a26
+                    description: Numeric string that represents integer which might exceeds
+                      `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+                    type: string
+                    example: "1000000000000000000"
+                  hasSufficientFunds:
+                    type: boolean
                   isFrozen:
                     type: boolean
                   isFullySynced:
                     type: boolean
+                  phase:
+                    type: string
                   round:
                     type: integer
                   lastWonRound:
@@ -1111,13 +1121,9 @@ paths:
                     type: integer
                   block:
                     type: integer
-                  reward:
-                    &a26
-                    description: Numeric string that represents integer which might exceeds
-                      `Number.MAX_SAFE_INTEGER` limit (2^53-1)
-                    type: string
-                    example: "1000000000000000000"
+                  reward: *a26
                   fees: *a26
+        "400": *a7
         "500": *a3
         default:
           description: Default response
@@ -1823,3 +1829,97 @@ paths:
         "400": *a7
         default:
           description: Default response
+  /status:
+    get:
+      summary: Get the current status snapshot of this node.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the current node status snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  peer:
+                    type: string
+                    pattern: ^[A-Fa-f0-9]{64}$
+                    example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
+                  beeMode:
+                    type: string
+                    enum:
+                      - light
+                      - full
+                      - ultra-light
+                      - unknown
+                  proximity:
+                    type: integer
+                  reserveSize:
+                    type: integer
+                  pullsyncRate:
+                    type: number
+                  storageRadius:
+                    type: integer
+                  connectedPeers:
+                    type: integer
+                  neighborhoodSize:
+                    type: integer
+                  requestFailed:
+                    nullable: true
+                    type: boolean
+                  batchTotalAmount:
+                    type: string
+        "400": *a7
+        default:
+          description: Default response.
+  /status/peers:
+    get:
+      summary: Get the current status snapshot of this node connected peers.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the status snapshot of this node connected peers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stamps:
+                    type: array
+                    nullable: false
+                    items:
+                      type: object
+                      properties:
+                        peer:
+                          type: string
+                          pattern: ^[A-Fa-f0-9]{64}$
+                          example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
+                        beeMode:
+                          type: string
+                          enum:
+                            - light
+                            - full
+                            - ultra-light
+                            - unknown
+                        proximity:
+                          type: integer
+                        reserveSize:
+                          type: integer
+                        pullsyncRate:
+                          type: number
+                        storageRadius:
+                          type: integer
+                        connectedPeers:
+                          type: integer
+                        neighborhoodSize:
+                          type: integer
+                        requestFailed:
+                          nullable: true
+                          type: boolean
+                        batchTotalAmount:
+                          type: string
+        "400": *a7
+        default:
+          description: Default response.

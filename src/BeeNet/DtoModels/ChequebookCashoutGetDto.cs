@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
-        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V4_0_0.Response43 response)
+        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V4_0_0.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

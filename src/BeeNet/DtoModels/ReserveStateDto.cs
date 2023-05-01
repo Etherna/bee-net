@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             StorageRadius = response.StorageRadius;
         }
 
-        internal ReserveStateDto(Clients.GatewayApi.V4_0_0.Response31 response)
+        internal ReserveStateDto(Clients.GatewayApi.V4_0_0.Response30 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

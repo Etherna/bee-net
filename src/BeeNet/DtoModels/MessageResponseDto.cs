@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        internal MessageResponseDto(Clients.GatewayApi.V4_0_0.Response29 response)
+        internal MessageResponseDto(Clients.GatewayApi.V4_0_0.Response34 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -82,7 +82,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        internal MessageResponseDto(Clients.GatewayApi.V4_0_0.Response35 response)
+        internal MessageResponseDto(Clients.GatewayApi.V4_0_0.Response27 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

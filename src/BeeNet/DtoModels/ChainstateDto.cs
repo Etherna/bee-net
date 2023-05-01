@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
         }
 
-        internal ChainStateDto(Clients.GatewayApi.V4_0_0.Response32 response)
+        internal ChainStateDto(Clients.GatewayApi.V4_0_0.Response31 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

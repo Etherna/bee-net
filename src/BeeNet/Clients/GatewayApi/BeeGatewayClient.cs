@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     new V4_0_0.Body3
                     {
                         Address = address
-                    }, 
+                    },
                     cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
@@ -112,7 +112,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public Task DeleteTagAsync(
-            long uid, 
+            long uid,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<Stream> GetFileWithPathAsync(
-            string reference, 
+            string reference,
             string path,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
@@ -195,7 +195,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<IEnumerable<TagInfoDto>> GetTagsListAsync(
-            int? offset = null, 
+            int? offset = null,
             int? limit = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
@@ -205,7 +205,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<string> RefreshAuthAsync(
-            string role, 
+            string role,
             int expiry,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
@@ -215,7 +215,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     {
                         Role = role,
                         Expiry = expiry
-                    }, 
+                    },
                     cancellationToken).ConfigureAwait(false)).Key,
                 _ => throw new InvalidOperationException()
             };
@@ -251,7 +251,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             };
 
         public async Task<VersionDto> UpdateTagAsync(
-            long uid, 
+            long uid,
             string? address = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
@@ -260,7 +260,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     uid,
                     address is null ?
                         null :
-                        new V4_0_0.Body4 { Address = address }, 
+                        new V4_0_0.Body4 { Address = address },
                     cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
@@ -341,23 +341,23 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
             return CurrentApiVersion switch
             {
-                
-            GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BzzPostAsync(
-                name,
-                swarmTag,
-                swarmPin,
-                swarmEncrypt,
-                contentType,
-                swarmCollection,
-                swarmIndexDocument,
-                swarmErrorDocument,
-                swarmPostageBatchId,
-                swarmDeferredUpload,
-                files.Select(f => new V4_0_0.FileParameter(f.Data, f.FileName, f.ContentType)), 
-                cancellationToken).ConfigureAwait(false)).Reference,
+
+                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BzzPostAsync(
+                    name,
+                    swarmTag,
+                    swarmPin,
+                    swarmEncrypt,
+                    contentType,
+                    swarmCollection,
+                    swarmIndexDocument,
+                    swarmErrorDocument,
+                    swarmPostageBatchId,
+                    swarmDeferredUpload,
+                    files.Select(f => new V4_0_0.FileParameter(f.Data, f.FileName, f.ContentType)),
+                    cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
-    }
+        }
 
         public async Task<string> UploadSocAsync(
             string owner,
@@ -524,7 +524,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address),
+                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1),
                 _ => throw new InvalidOperationException()
             };
 
@@ -575,7 +575,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.ChunksHeadAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
-        
+
         public async Task<BalanceDto> GetConsumedBalanceWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
@@ -736,5 +736,5 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 throw new InvalidOperationException();
             }
         }
-}
+    }
 }
