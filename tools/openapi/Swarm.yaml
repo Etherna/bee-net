@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 4.0.0
+  version: 4.1.0
   title: Bee API
   description: "A list of the currently provided Interfaces to interact with the swarm, implementing file operations and sending messages"
 
@@ -488,7 +488,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "404":
           $ref: "SwarmCommon.yaml#/components/responses/404"
         "500":
@@ -862,7 +862,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         default:
           description: Default response
 
@@ -944,7 +944,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Peers"
+                $ref: "SwarmCommon.yaml#/components/schemas/BlockListedPeers"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -1394,7 +1394,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
