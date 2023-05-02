@@ -8,6 +8,9 @@
 
 using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.Exceptions;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -1059,9 +1062,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (swarm_postage_batch_id != null)
-                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
+                    if (swarm_postage_batch_id == null)
+                        throw new System.ArgumentNullException("swarm_postage_batch_id");
+                    request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_tag != null)
                         request_.Headers.TryAddWithoutValidation("swarm-tag", ConvertToString(swarm_tag, System.Globalization.CultureInfo.InvariantCulture));
@@ -1476,6 +1479,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, System.Collections.Generic.IEnumerable<FileParameter>? file = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (file == null ||
+                file.Count() != 1)
+                throw new System.ArgumentException("file");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/bzz?");
             if (name != null)
@@ -1517,26 +1524,23 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     if (swarm_deferred_upload != null)
                         request_.Headers.TryAddWithoutValidation("swarm-deferred-upload", ConvertToString(swarm_deferred_upload, System.Globalization.CultureInfo.InvariantCulture));
-                    var boundary_ = System.Guid.NewGuid().ToString();
-                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
-                    content_.Headers.Remove("Content-Type");
-                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
-
-                    if (file == null)
-                        throw new System.ArgumentNullException("file");
+                    HttpContent content_;
+                    if (file.First().ContentType == "text/plain")
+                    {
+                        var reader = new StreamReader(file.First().Data);
+                        content_ = new System.Net.Http.StringContent(await reader.ReadToEndAsync());
+                    }
                     else
                     {
-                        foreach (var item_ in file)
-                        {
-                            var content_file_ = new System.Net.Http.StreamContent(item_.Data);
-                            if (!string.IsNullOrEmpty(item_.ContentType))
-                                content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(item_.ContentType);
-                            content_.Add(content_file_, "file", item_.FileName ?? "file");
-                        }
+                        content_ = new System.Net.Http.StreamContent(file.First().Data);
+                        content_.Headers.TryAddWithoutValidation("Content-Type", file.First().ContentType);
                     }
+
+
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.First().ContentType);
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("*/*"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2358,7 +2362,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 ||
+                           status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Response10>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -2366,16 +2371,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                                 throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 201)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response11>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BeeNetGatewayApiException<Response11>("New pin with root reference was created", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -3929,6 +3924,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4011,6 +4008,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4099,6 +4098,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4193,6 +4194,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4265,6 +4268,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4350,6 +4355,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -4960,6 +4967,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5037,6 +5046,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5136,6 +5147,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -5245,6 +5258,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5338,6 +5353,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5421,6 +5438,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
 
                     PrepareRequest(client_, request_, url_);
 
+                    PrepareBearAuthRequest(request_);
+
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5503,6 +5522,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V4_0_0
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
                     PrepareRequest(client_, request_, url_);
+
+                    PrepareBearAuthRequest(request_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
