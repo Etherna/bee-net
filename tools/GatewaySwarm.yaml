@@ -152,11 +152,13 @@ paths:
             in: header
             name: swarm-postage-batch-id
             description: ID of Postage Batch that is used to upload data with
+            required: true
             schema:
               type: string
               pattern: ^[A-Fa-f0-9]{64}$
               example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
           name: swarm-postage-batch-id
+          required: true
         - in: header
           schema:
             &a7
@@ -166,8 +168,10 @@ paths:
               &a6
               type: integer
               format: int64
+            required: false
             description: Associate upload with an existing Tag UID
           name: swarm-tag
+          required: false
         - in: header
           schema:
             &a8
@@ -1767,6 +1771,10 @@ paths:
                                   latencyEWMA:
                                     type: integer
                                     nullable: false
+                                  reachability:
+                                    type: string
+                                  healthy:
+                                    type: boolean
                         connectedPeers:
                           type: array
                           items:

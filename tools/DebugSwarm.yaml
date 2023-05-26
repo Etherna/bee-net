@@ -734,6 +734,10 @@ paths:
                                   latencyEWMA:
                                     type: integer
                                     nullable: false
+                                  reachability:
+                                    type: string
+                                  healthy:
+                                    type: boolean
                         connectedPeers:
                           type: array
                           items:
@@ -1316,6 +1320,7 @@ paths:
         name: all
         schema:
           type: string
+          required: false
         description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
@@ -1868,8 +1873,10 @@ paths:
                   requestFailed:
                     nullable: true
                     type: boolean
-                  batchTotalAmount:
-                    type: string
+                  BatchCommitment:
+                    type: integer
+                  isReachable:
+                    type: boolean
         "400": *a7
         default:
           description: Default response.
@@ -1918,8 +1925,10 @@ paths:
                         requestFailed:
                           nullable: true
                           type: boolean
-                        batchTotalAmount:
-                          type: string
+                        BatchCommitment:
+                          type: integer
+                        isReachable:
+                          type: boolean
         "400": *a7
         default:
           description: Default response.
