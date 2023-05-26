@@ -456,6 +456,22 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 throw new InvalidOperationException();
         }
 
+        public async Task<StatusNodeDto> StatusNodeAsync(CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                return new StatusNodeDto(await beeDebugClient_4_0_0.StatusAsync(cancellationToken).ConfigureAwait(false));
+            else
+                throw new InvalidOperationException();
+        }
+
+        public async Task<IEnumerable<StatusNodeDto>> StatusPeersAsync(CancellationToken cancellationToken = default)
+        {
+            if (CurrentApiVersion == DebugApiVersion.v4_0_0)
+                return (await beeDebugClient_4_0_0.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNodeDto(p));
+            else
+                throw new InvalidOperationException();
+        }
+
         public async Task<string> TopUpPostageBatchAsync(
             string id,
             long amount,
