@@ -41,7 +41,7 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "BeeDebugClient_4_0_0",
+      "className": "BeeDebugClient_5_0_0",
       "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [
         "Etherna.BeeNet.Exceptions"
@@ -58,7 +58,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "Etherna.BeeNet.Clients.DebugApi.V4_0_0",
+      "namespace": "Etherna.BeeNet.Clients.DebugApi.V5_0_0",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -95,7 +95,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet/Clients/DebugApi/v4_0_0/BeeDebugClient_4_0_0.cs",
+      "output": "../src/BeeNet/Clients/DebugApi/v5_0_0/BeeDebugClient_5_0_0.cs",
       "newLineBehavior": "Auto"
     }
   }

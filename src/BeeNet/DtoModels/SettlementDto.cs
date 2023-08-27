@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDto
     {
         // Constructors.
-        internal SettlementDto(Clients.DebugApi.V4_0_0.Response20 response)
+        internal SettlementDto(Clients.DebugApi.V5_0_0.Response20 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
-        internal SettlementDto(Clients.GatewayApi.V4_0_0.Response37 response)
+        internal SettlementDto(Clients.GatewayApi.V5_0_0.Response37 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
-        internal SettlementDto(Clients.GatewayApi.V4_0_0.Response36 response)
+        internal SettlementDto(Clients.GatewayApi.V5_0_0.Response36 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

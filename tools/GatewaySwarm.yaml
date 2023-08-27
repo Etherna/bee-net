@@ -152,11 +152,13 @@ paths:
             in: header
             name: swarm-postage-batch-id
             description: ID of Postage Batch that is used to upload data with
+            required: true
             schema:
               type: string
               pattern: ^[A-Fa-f0-9]{64}$
               example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
           name: swarm-postage-batch-id
+          required: true
         - in: header
           schema:
             &a7
@@ -166,8 +168,10 @@ paths:
               &a6
               type: integer
               format: int64
+            required: false
             description: Associate upload with an existing Tag UID
           name: swarm-tag
+          required: false
         - in: header
           schema:
             &a11
@@ -175,10 +179,12 @@ paths:
             name: swarm-pin
             schema:
               type: boolean
+            required: false
             description: >
               Represents if the uploaded data should be also locally pinned on
               the node.
           name: swarm-pin
+          required: false
         - in: header
           schema:
             &a13
@@ -187,11 +193,13 @@ paths:
             schema:
               type: boolean
               default: "true"
+            required: false
             description: >
               Determines if the uploaded data should be sent to the network
               immediately or in a deferred fashion. By default the upload will
               be deferred.
           name: swarm-deferred-upload
+          required: false
         - in: header
           schema:
             &a12
@@ -199,9 +207,11 @@ paths:
             name: swarm-encrypt
             schema:
               type: boolean
+            required: false
             description: |
               Represents the encrypting state of the file
           name: swarm-encrypt
+          required: false
       requestBody:
         content:
           application/octet-stream:
@@ -290,7 +300,7 @@ paths:
           description: Default response
   /chunks:
     post:
-      summary: Upload Chunk
+      summary: Upload chunk
       tags:
         - Chunk
       parameters:
@@ -321,6 +331,14 @@ paths:
   /chunks/stream:
     get:
       summary: Upload stream of chunks
+      description: Returns a WebSocket connection on which stream of chunks can be
+        uploaded. Each chunk sent is acknowledged using a binary response `0`
+        which serves as confirmation of upload of single chunk. Chunks should be
+        packaged as binary messages for uploading. If a tag is specified, the
+        chunks will be streamed into local storage and then be uploaded to the
+        network once the stream is closed. If a tag is not specified, the chunks
+        will bypass local storage and be directly uploaded to the network
+        through the stream as they arrive.
       tags:
         - Chunk
       parameters:
@@ -328,13 +346,7 @@ paths:
         - *a8
       responses:
         "200":
-          description: Returns a Websocket connection on which stream of chunks can be
-            uploaded. Each chunk sent is acknowledged using a binary response
-            `0` which serves as confirmation of upload of single chunk. Chunks
-            should be packaged as binary messages for uploading. If a tag is
-            specified, a deferred upload will be done for the chunks once the
-            stream is closed, if not, the chunks will be directly uploaded as
-            they arrive.
+          description: Connection established
         "400": *a3
         default:
           description: Default response
@@ -1004,6 +1016,12 @@ paths:
           required: false
           description: "Timestamp of the update (default: now)"
         - in: query
+          name: after
+          schema:
+            type: integer
+          required: false
+          description: "Start index (default: 0)"
+        - in: query
           name: type
           schema: *a22
           required: false
@@ -1058,7 +1076,7 @@ paths:
         default:
           description: Default response
     put:
-      summary: Reupload a root hash to the network
+      summary: Re-upload content for specified root hash
       tags:
         - Stewardship
       parameters:
@@ -1066,14 +1084,15 @@ paths:
           name: reference
           schema: *a15
           required: true
-          description: "Root hash of content (can be of any type: collection, file, chunk)"
+          description: "Re-uploads content for specified root hash (can be of any type:
+            collection, file, chunk, etc.)"
         - in: header
           schema: *a8
           name: swarm-postage-batch-id
-          description: Postage batch to use for reupload. If none is provided and the file
-            was uploaded on the same node before, it will re-use the same batch.
-            If not found, it will return error. If a new batch is provided, the
-            chunks are stamped again with the new batch.
+          description: Postage batch to use for re-upload. If none is provided and the
+            file was uploaded on the same node before, it will re-use the same
+            batch. If not found, it will return error. If a new batch is
+            provided, the chunks are stamped again with the new batch.
       responses:
         "200":
           description: Ok
@@ -1357,7 +1376,7 @@ paths:
           description: Default response
   "/chunks/{address}":
     get:
-      summary: Get Chunk
+      summary: Get chunk
       tags:
         - Chunk
       parameters:
@@ -1392,9 +1411,6 @@ paths:
       responses:
         "200":
           description: Chunk exists
-          content:
-            application/json:
-              schema: *a18
         "400": *a3
         "404": *a16
         default:

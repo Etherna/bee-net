@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.InputModels;
 using System;
@@ -28,7 +29,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     public class BeeGatewayClient : IBeeGatewayClient
     {
         // Fields.
-        private readonly V4_0_0.IBeeGatewayClient_4_0_0 beeGatewayApiClient_4_0_0;
+        private readonly V5_0_0.IBeeGatewayClient_5_0_0 beeGatewayApiClient_5_0_0;
 
         // Constructors.
         public BeeGatewayClient(HttpClient httpClient, Uri baseUrl, GatewayApiVersion apiVersion)
@@ -36,7 +37,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeGatewayApiClient_4_0_0 = new V4_0_0.BeeGatewayClient_4_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
+            beeGatewayApiClient_5_0_0 = new V5_0_0.BeeGatewayClient_5_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
             CurrentApiVersion = apiVersion;
         }
 
@@ -48,8 +49,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         {
             return CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new AuthDto(await beeGatewayApiClient_4_0_0.AuthAsync(
-                    new V4_0_0.Body
+                GatewayApiVersion.v5_0_0 => new AuthDto(await beeGatewayApiClient_5_0_0.AuthAsync(
+                    new V5_0_0.Body
                     {
                         Role = role,
                         Expiry = expiry
@@ -62,7 +63,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new StewardShipGetDto(await beeGatewayApiClient_4_0_0.StewardshipGetAsync(reference, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new StewardShipGetDto(await beeGatewayApiClient_5_0_0.StewardshipGetAsync(reference, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -75,7 +76,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.FeedsPostAsync(owner, topic, type, swarmPin, swarmPostageBatchId, cancellationToken).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.FeedsPostAsync(owner, topic, type, swarmPin, swarmPostageBatchId, cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -84,7 +85,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.PinsPostAsync(reference, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new MessageResponseDto(await beeGatewayApiClient_5_0_0.PinsPostAsync(reference, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -93,8 +94,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new TagInfoDto(await beeGatewayApiClient_4_0_0.TagsPostAsync(
-                    new V4_0_0.Body3
+                GatewayApiVersion.v5_0_0 => new TagInfoDto(await beeGatewayApiClient_5_0_0.TagsPostAsync(
+                    new V5_0_0.Body3
                     {
                         Address = address
                     },
@@ -107,7 +108,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.PinsDeleteAsync(reference, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new MessageResponseDto(await beeGatewayApiClient_5_0_0.PinsDeleteAsync(reference, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -116,14 +117,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.TagsDeleteAsync(uid, cancellationToken),
+                GatewayApiVersion.v5_0_0 => beeGatewayApiClient_5_0_0.TagsDeleteAsync(uid, cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<string>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.PinsGetAsync(cancellationToken).ConfigureAwait(false)).References,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.PinsGetAsync(cancellationToken).ConfigureAwait(false)).References,
                 _ => throw new InvalidOperationException()
             };
 
@@ -132,7 +133,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChunksGetAsync(reference, cancellationToken).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChunksGetAsync(reference, cancellationToken).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
@@ -141,7 +142,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BytesGetAsync(reference, cancellationToken).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BytesGetAsync(reference, cancellationToken).ConfigureAwait(false)).Stream,
                 _ => throw new InvalidOperationException()
             };
 
@@ -153,7 +154,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.FeedsGetAsync(owner, topic, at, type, cancellationToken).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.FeedsGetAsync(owner, topic, at, type, cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -163,7 +164,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new FileResponseDto(await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, path, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new FileResponseDto(await beeGatewayApiClient_5_0_0.BzzGetAsync(reference, path, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -172,7 +173,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new FileResponseDto(await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new FileResponseDto(await beeGatewayApiClient_5_0_0.BzzGetAsync(reference, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -181,7 +182,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.PinsGetAsync(reference, cancellationToken).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.PinsGetAsync(reference, cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -190,7 +191,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new TagInfoDto(await beeGatewayApiClient_4_0_0.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new TagInfoDto(await beeGatewayApiClient_5_0_0.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -200,7 +201,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -210,8 +211,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.RefreshAsync(
-                    new V4_0_0.Body2
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.RefreshAsync(
+                    new V5_0_0.Body2
                     {
                         Role = role,
                         Expiry = expiry
@@ -225,7 +226,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.StewardshipPutAsync(reference, cancellationToken),
+                GatewayApiVersion.v5_0_0 => beeGatewayApiClient_5_0_0.StewardshipPutAsync(reference, cancellationToken: cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
@@ -237,7 +238,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.PssSendAsync(topic, targets, swarmPostageBatchId, recipient, cancellationToken),
+                GatewayApiVersion.v5_0_0 => beeGatewayApiClient_5_0_0.PssSendAsync(topic, targets, swarmPostageBatchId, recipient, cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
@@ -246,7 +247,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.PssSubscribeAsync(topic, cancellationToken),
+                GatewayApiVersion.v5_0_0 => beeGatewayApiClient_5_0_0.PssSubscribeAsync(topic, cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
@@ -256,11 +257,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new VersionDto(await beeGatewayApiClient_4_0_0.TagsPatchAsync(
+                GatewayApiVersion.v5_0_0 => new VersionDto(await beeGatewayApiClient_5_0_0.TagsPatchAsync(
                     uid,
                     address is null ?
                         null :
-                        new V4_0_0.Body4 { Address = address },
+                        new V5_0_0.Body4 { Address = address },
                     cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
@@ -274,7 +275,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChunksPostAsync(
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChunksPostAsync(
                     swarmTag,
                     swarmPostageBatchId,
                     body,
@@ -289,7 +290,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.ChunksStreamAsync(swarmTag, swarmPostageBatchId, cancellationToken),
+                GatewayApiVersion.v5_0_0 => beeGatewayApiClient_5_0_0.ChunksStreamAsync(swarmTag, swarmPostageBatchId, cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
@@ -303,7 +304,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BytesPostAsync(
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BytesPostAsync(
                     swarmPostageBatchId,
                     swarmTag,
                     swarmPin,
@@ -340,7 +341,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             return CurrentApiVersion switch
             {
 
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BzzPostAsync(
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BzzPostAsync(
                     name,
                     swarmTag,
                     swarmPin,
@@ -351,7 +352,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     swarmErrorDocument,
                     swarmPostageBatchId,
                     swarmDeferredUpload,
-                    files.Select(f => new V4_0_0.FileParameter(f.Data, f.FileName, f.ContentType)),
+                    files.Select(f => new V5_0_0.FileParameter(f.Data, f.FileName, f.ContentType)),
                     cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
@@ -366,7 +367,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.SocAsync(owner, id, sig, swarmPostageBatchId, swarmPin, cancellationToken).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.SocAsync(owner, id, sig, swarmPostageBatchId, swarmPin, cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -380,7 +381,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
                 _ => throw new InvalidOperationException()
             };
 
@@ -391,7 +392,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
@@ -400,7 +401,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ConnectAsync(address, cancellationToken).ConfigureAwait(false)).Address,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ConnectAsync(address, cancellationToken).ConfigureAwait(false)).Address,
                 _ => throw new InvalidOperationException()
             };
 
@@ -409,7 +410,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.PeersDeleteAsync(address, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new MessageResponseDto(await beeGatewayApiClient_5_0_0.PeersDeleteAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -419,7 +420,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.TransactionsDeleteAsync(txHash, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.TransactionsDeleteAsync(txHash, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
@@ -429,7 +430,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
@@ -441,63 +442,63 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.StampsDiluteAsync(id, depth, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsDiluteAsync(id, depth, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<AddressDetailDto> GetAddressesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new AddressDetailDto(await beeGatewayApiClient_4_0_0.AddressesAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new AddressDetailDto(await beeGatewayApiClient_5_0_0.AddressesAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<BalanceDto>> GetAllBalancesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BalancesGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BalancesGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<BalanceDto>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ConsumedGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ConsumedGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<SettlementDto> GetAllSettlementsAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new SettlementDto(await beeGatewayApiClient_4_0_0.SettlementsGetAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new SettlementDto(await beeGatewayApiClient_5_0_0.SettlementsGetAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<TimeSettlementsDto> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new TimeSettlementsDto(await beeGatewayApiClient_4_0_0.TimesettlementsAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new TimeSettlementsDto(await beeGatewayApiClient_5_0_0.TimesettlementsAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BatchesAsync(cancellationToken).ConfigureAwait(false)).Batches.Select(i => new PostageBatchShortDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BatchesAsync(cancellationToken).ConfigureAwait(false)).Batches.Select(i => new PostageBatchShortDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -506,35 +507,35 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new BalanceDto(await beeGatewayApiClient_4_0_0.BalancesGetAsync(address, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new BalanceDto(await beeGatewayApiClient_5_0_0.BalancesGetAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<ChainStateDto> GetChainStateAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new ChainStateDto(await beeGatewayApiClient_4_0_0.ChainstateAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new ChainStateDto(await beeGatewayApiClient_5_0_0.ChainstateAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<string> GetChequeBookAddressAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress,
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<ChequeBookBalanceDto> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new ChequeBookBalanceDto(await beeGatewayApiClient_4_0_0.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new ChequeBookBalanceDto(await beeGatewayApiClient_5_0_0.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -543,7 +544,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new ChequeBookCashoutGetDto(await beeGatewayApiClient_4_0_0.ChequebookCashoutGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new ChequeBookCashoutGetDto(await beeGatewayApiClient_5_0_0.ChequebookCashoutGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -552,7 +553,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new ChequeBookChequeGetDto(await beeGatewayApiClient_4_0_0.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new ChequeBookChequeGetDto(await beeGatewayApiClient_5_0_0.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -561,7 +562,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.ChunksHeadAsync(address, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new MessageResponseDto(await beeGatewayApiClient_5_0_0.ChunksHeadAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -570,51 +571,51 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new BalanceDto(await beeGatewayApiClient_4_0_0.ConsumedGetAsync(address, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new BalanceDto(await beeGatewayApiClient_5_0_0.ConsumedGetAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<VersionDto> GetHealthAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new VersionDto(await beeGatewayApiClient_4_0_0.HealthAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new VersionDto(await beeGatewayApiClient_5_0_0.HealthAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<NodeInfoDto> GetNodeInfoAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new NodeInfoDto(await beeGatewayApiClient_4_0_0.NodeAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new NodeInfoDto(await beeGatewayApiClient_5_0_0.NodeAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
+        public async Task<IEnumerable<DtoModels.PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.StampsGetAllAsync(null, cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsGetAllAsync(null, cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new DtoModels.PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<IEnumerable<PendingTransactionDto>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<PostageBatchDto> GetPostageBatchAsync(
+        public async Task<DtoModels.PostageBatchDto> GetPostageBatchAsync(
             string id,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new PostageBatchDto(await beeGatewayApiClient_4_0_0.StampsGetAsync(id, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new DtoModels.PostageBatchDto(await beeGatewayApiClient_5_0_0.StampsGetAsync(id, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<ReserveStateDto> GetReserveStateAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new ReserveStateDto(await beeGatewayApiClient_4_0_0.ReservestateAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new ReserveStateDto(await beeGatewayApiClient_5_0_0.ReservestateAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -623,7 +624,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new SettlementDataDto(await beeGatewayApiClient_4_0_0.SettlementsGetAsync(address, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new SettlementDataDto(await beeGatewayApiClient_5_0_0.SettlementsGetAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -632,14 +633,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new StampsBucketsDto(await beeGatewayApiClient_4_0_0.StampsBucketsAsync(batchId, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new StampsBucketsDto(await beeGatewayApiClient_5_0_0.StampsBucketsAsync(batchId, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<TopologyDto> GetSwarmTopologyAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new TopologyDto(await beeGatewayApiClient_4_0_0.TopologyAsync(cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new TopologyDto(await beeGatewayApiClient_5_0_0.TopologyAsync(cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -648,14 +649,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new TransactionsDto(await beeGatewayApiClient_4_0_0.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new TransactionsDto(await beeGatewayApiClient_5_0_0.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage,
                 _ => throw new InvalidOperationException()
             };
 
@@ -664,7 +665,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
@@ -673,8 +674,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => new VersionDto(await beeGatewayApiClient_4_0_0.WelcomeMessagePostAsync(
-                    new V4_0_0.Body5
+                GatewayApiVersion.v5_0_0 => new VersionDto(await beeGatewayApiClient_5_0_0.WelcomeMessagePostAsync(
+                    new V5_0_0.Body5
                     {
                         WelcomeMessage = welcomeMessage
                     },
@@ -690,7 +691,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.StampsTopupAsync(id, amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsTopupAsync(id, amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID,
                 _ => throw new InvalidOperationException()
             };
 
@@ -699,7 +700,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt,
                 _ => throw new InvalidOperationException()
             };
 
@@ -709,16 +710,16 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
                 _ => throw new InvalidOperationException()
             };
 
         public void SetAuthToken(
             string token)
         {
-            if (CurrentApiVersion == GatewayApiVersion.v4_0_0)
+            if (CurrentApiVersion == GatewayApiVersion.v5_0_0)
             {
-                beeGatewayApiClient_4_0_0.SetAuthToken(token);
+                beeGatewayApiClient_5_0_0.SetAuthToken(token);
             }
             else
             {

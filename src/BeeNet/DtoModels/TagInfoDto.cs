@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi.V4_0_0;
 using System;
 
 namespace Etherna.BeeNet.DtoModels
@@ -20,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TagInfoDto
     {
         // Constructors.
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Response7 response)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Response7 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -34,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             Synced = response.Synced;
         }
 
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Response8 response)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Response8 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -48,7 +47,7 @@ namespace Etherna.BeeNet.DtoModels
             Synced = response.Synced;
         }
 
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Tags tags)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Tags tags)
         {
             if (tags is null)
                 throw new ArgumentNullException(nameof(tags));

@@ -1,4 +1,4 @@
-﻿using Etherna.BeeNet.Clients.DebugApi.V4_0_0;
+﻿using Etherna.BeeNet.Clients.DebugApi.V5_0_0;
 
 namespace Etherna.BeeNet.DtoModels
 {
