@@ -157,22 +157,22 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileWithPathAsync(
+        public async Task<FileResponseDto> GetFileWithPathAsync(
             string reference,
             string path,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, path, cancellationToken).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v4_0_0 => new FileResponseDto(await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, path, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<Stream> GetFileAsync(
+        public async Task<FileResponseDto> GetFileAsync(
             string reference,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, cancellationToken).ConfigureAwait(false)).Stream,
+                GatewayApiVersion.v4_0_0 => new FileResponseDto(await beeGatewayApiClient_4_0_0.BzzGetAsync(reference, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -276,9 +276,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             {
                 GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ChunksPostAsync(
                     swarmTag,
-                    swarmPin,
                     swarmPostageBatchId,
-                    swarmDeferredUpload,
                     body,
                     cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
@@ -291,7 +289,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.ChunksStreamAsync(swarmTag, swarmPin, swarmPostageBatchId, cancellationToken),
+                GatewayApiVersion.v4_0_0 => beeGatewayApiClient_4_0_0.ChunksStreamAsync(swarmTag, swarmPostageBatchId, cancellationToken),
                 _ => throw new InvalidOperationException()
             };
 
@@ -403,15 +401,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v4_0_0 => (await beeGatewayApiClient_4_0_0.ConnectAsync(address, cancellationToken).ConfigureAwait(false)).Address,
-                _ => throw new InvalidOperationException()
-            };
-
-        public async Task<MessageResponseDto> DeleteChunkAsync(
-            string address,
-            CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                GatewayApiVersion.v4_0_0 => new MessageResponseDto(await beeGatewayApiClient_4_0_0.ChunksDeleteAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

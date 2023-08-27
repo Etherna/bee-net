@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModels
     public class TimeSettlementsDto
     {
         // Constructors.
-        internal TimeSettlementsDto(Clients.DebugApi.V4_0_0.Response22 response)
+        internal TimeSettlementsDto(Clients.DebugApi.V4_0_0.Response21 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
-        internal TimeSettlementsDto(Clients.GatewayApi.V4_0_0.Response38 response)
+        internal TimeSettlementsDto(Clients.GatewayApi.V4_0_0.Response37 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

@@ -24,7 +24,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.GatewayApi
 
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
-            StreamReader reader = new(result);
+            StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
 
@@ -43,7 +43,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.GatewayApi
 
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
-            StreamReader reader = new(result);
+            StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText("Data/BzzFIleForUpload.tar"), reader.ReadToEnd());
         }
         /*
@@ -78,7 +78,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.GatewayApi
 
 
             // Assert 
-            StreamReader reader = new(result);
+            StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
 
@@ -94,7 +94,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0.GatewayApi
 
 
             // Assert 
-            StreamReader reader = new(result);
+            StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
         

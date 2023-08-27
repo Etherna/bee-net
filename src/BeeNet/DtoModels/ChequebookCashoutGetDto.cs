@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChequeBookCashoutGetDto
     {
         // Constructors.
-        internal ChequeBookCashoutGetDto(Clients.DebugApi.V4_0_0.Response26 response)
+        internal ChequeBookCashoutGetDto(Clients.DebugApi.V4_0_0.Response25 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
-        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V4_0_0.Response42 response)
+        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V4_0_0.Response41 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

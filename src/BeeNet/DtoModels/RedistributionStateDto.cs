@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModels
     public class RedistributionStateDto
     {
         // Constructors.
-        internal RedistributionStateDto(Clients.DebugApi.V4_0_0.Response33 response)
+        internal RedistributionStateDto(Clients.DebugApi.V4_0_0.Response31 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

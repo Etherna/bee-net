@@ -84,15 +84,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<MessageResponseDto> DeleteChunkAsync(
-            string address,
-            CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v4_0_0 => new MessageResponseDto(await beeDebugClient_4_0_0.ChunksDeleteAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
-
         public async Task<MessageResponseDto> DeletePeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
@@ -248,7 +239,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v4_0_0 => new MessageResponseDto(await beeDebugClient_4_0_0.ChunksGetAsync(address, cancellationToken).ConfigureAwait(false)),
+                DebugApiVersion.v4_0_0 => new MessageResponseDto(await beeDebugClient_4_0_0.ChunksAsync(address, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -345,15 +336,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
             CurrentApiVersion switch
             {
                 DebugApiVersion.v4_0_0 => new TopologyDto(await beeDebugClient_4_0_0.TopologyAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
-
-        public async Task<TagDto> GetTagInfoAsync(
-            long uid,
-            CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v4_0_0 => new TagDto(await beeDebugClient_4_0_0.TagsAsync(uid, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

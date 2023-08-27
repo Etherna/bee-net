@@ -131,7 +131,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="path">Path to the file in the collection.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetFileWithPathAsync(
+        Task<FileResponseDto> GetFileWithPathAsync(
             string reference, 
             string path,
             CancellationToken cancellationToken = default);
@@ -140,7 +140,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="reference">Swarm address of content</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetFileAsync(
+        Task<FileResponseDto> GetFileAsync(
             string reference,
             CancellationToken cancellationToken = default);
 
@@ -345,14 +345,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> ConnectToPeerAsync(
-            string address,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Delete a chunk from local storage</summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<MessageResponseDto> DeleteChunkAsync(
             string address,
             CancellationToken cancellationToken = default);
 

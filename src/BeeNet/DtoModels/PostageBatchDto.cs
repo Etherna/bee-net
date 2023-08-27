@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PostageBatchDto
     {
         // Constructors.
-        internal PostageBatchDto(Clients.DebugApi.V4_0_0.Response40 batch)
+        internal PostageBatchDto(Clients.DebugApi.V4_0_0.Response38 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));
@@ -75,7 +75,7 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        internal PostageBatchDto(Clients.GatewayApi.V4_0_0.Response53 batch)
+        internal PostageBatchDto(Clients.GatewayApi.V4_0_0.Response52 batch)
         {
             if (batch is null)
                 throw new ArgumentNullException(nameof(batch));

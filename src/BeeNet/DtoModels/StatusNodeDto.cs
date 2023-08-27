@@ -5,32 +5,32 @@ namespace Etherna.BeeNet.DtoModels
     public class StatusNodeDto
     {
         // Constructors.
-        public StatusNodeDto(Response48 response48) 
+        public StatusNodeDto(Response46 response46) 
         {
-            switch (response48.BeeMode)
+            switch (response46.BeeMode)
             {
-                case Response48BeeMode.Light:
+                case Response46BeeMode.Light:
                     BeeMode = BeeMode.Light;
                     break;
-                case Response48BeeMode.UltraLight:
+                case Response46BeeMode.UltraLight:
                     BeeMode = BeeMode.UltraLight;
                     break;
-                case Response48BeeMode.Full:
+                case Response46BeeMode.Full:
                     BeeMode = BeeMode.Full;
                     break;
-                case Response48BeeMode.Unknown:
+                case Response46BeeMode.Unknown:
                     BeeMode = BeeMode.Unknown;
                     break;
             }
-            BatchTotalAmount = response48.BatchTotalAmount;
-            ConnectedPeers = response48.ConnectedPeers;
-            NeighborhoodSize = response48.NeighborhoodSize;
-            Peer = response48.Peer;
-            Proximity = response48.Proximity;
-            PullsyncRate = response48.PullsyncRate;
-            ReserveSize = response48.ReserveSize;
-            RequestFailed = response48.RequestFailed;
-            StorageRadius = response48.StorageRadius;
+            BatchCommitment = response46.BatchCommitment;
+            ConnectedPeers = response46.ConnectedPeers;
+            NeighborhoodSize = response46.NeighborhoodSize;
+            Peer = response46.Peer;
+            Proximity = response46.Proximity;
+            PullsyncRate = response46.PullsyncRate;
+            ReserveSize = response46.ReserveSize;
+            RequestFailed = response46.RequestFailed;
+            StorageRadius = response46.StorageRadius;
         }
 
         public StatusNodeDto(Stamps2 stampss)
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
                     BeeMode = BeeMode.Unknown;
                     break;
             }
-            BatchTotalAmount = stampss.BatchTotalAmount;
+            BatchCommitment = stampss.BatchCommitment;
             ConnectedPeers = stampss.ConnectedPeers;
             NeighborhoodSize = stampss.NeighborhoodSize;
             Peer = stampss.Peer;
@@ -63,7 +63,7 @@ namespace Etherna.BeeNet.DtoModels
 
         // Properties.
         public BeeMode BeeMode { get; set; } = default!;
-        public string BatchTotalAmount { get; set; } = default!;
+        public int BatchCommitment { get; set; } = default!;
         public int ConnectedPeers { get; set; } = default!;
         public int NeighborhoodSize { get; set; } = default!;
         public string Peer { get; set; } = default!;

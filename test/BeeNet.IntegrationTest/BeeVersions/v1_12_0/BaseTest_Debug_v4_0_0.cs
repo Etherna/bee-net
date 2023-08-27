@@ -14,7 +14,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_12_0
         public BaseTest_Debug_v4_0_0()
         {
             beeNodeClient = new BeeNodeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
+                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://192.168.1.110/",
                 1633,
                 1635,
                 Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v4_0_0,

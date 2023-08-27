@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients.GatewayApi.V4_0_0;
 using System;
 
 namespace Etherna.BeeNet.DtoModels
@@ -26,8 +27,10 @@ namespace Etherna.BeeNet.DtoModels
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
             Synced = response.Synced;
         }
 
@@ -38,8 +41,10 @@ namespace Etherna.BeeNet.DtoModels
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
             Synced = response.Synced;
         }
 
@@ -50,16 +55,20 @@ namespace Etherna.BeeNet.DtoModels
 
             Uid = tags.Uid;
             StartedAt = tags.StartedAt;
-            Total = tags.Total;
-            Processed = tags.Processed;
+            Split = tags.Split;
+            Seen = tags.Seen;
+            Stored = tags.Stored;
+            Sent = tags.Sent;
             Synced = tags.Synced;
         }
 
         // Properties.
         public long Uid { get; }
         public DateTimeOffset StartedAt { get; }
-        public int Total { get; }
-        public int Processed { get; }
+        public int Split { get; }
+        public int Seen { get; }
+        public int Stored { get; }
+        public int Sent { get; }
         public int Synced { get; }
     }
 }

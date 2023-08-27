@@ -68,14 +68,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string address,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Delete a chunk from local storage</summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<MessageResponseDto> DeleteChunkAsync(
-            string address,
-            CancellationToken cancellationToken = default);
-
         /// <summary>Remove peer</summary>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Disconnected peer</returns>
@@ -276,14 +268,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// <returns>Swarm topology of the bee node</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<TopologyDto> GetSwarmTopologyAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>Get Tag information using Uid</summary>
-        /// <param name="uid">Uid</param>
-        /// <returns>Tag info</returns>
-        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task<TagDto> GetTagInfoAsync(
-            long uid,
-            CancellationToken cancellationToken = default);
 
         /// <summary>Get information about a sent transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
