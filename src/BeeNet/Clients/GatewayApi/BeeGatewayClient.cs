@@ -305,12 +305,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CurrentApiVersion switch
             {
                 GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.BytesPostAsync(
-                    swarmPostageBatchId,
-                    swarmTag,
-                    swarmPin,
-                    swarmEncrypt,
-                    swarmDeferredUpload,
-                    body,
+                    swarm_postage_batch_id: swarmPostageBatchId,
+                    swarm_tag: swarmTag,
+                    swarm_pin: swarmPin,
+                    swarm_deferred_upload: swarmDeferredUpload,
+                    swarm_encrypt: swarmEncrypt,
+                    body: body,
                     cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
