@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 4.0.0
+  version: 5.0.0
   title: Bee API
   description: "A list of the currently provided Interfaces to interact with the swarm, implementing file operations and sending messages"
 
@@ -173,14 +173,12 @@ paths:
 
   "/chunks":
     post:
-      summary: "Upload Chunk"
+      summary: "Upload chunk"
       tags:
         - Chunk
       parameters:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmTagParameter"
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPinParameter"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmDeferredUpload"
       requestBody:
         description: Chunk binary data that has to have at least 8 bytes.
         content:
@@ -212,15 +210,15 @@ paths:
   "/chunks/stream":
     get:
       summary: "Upload stream of chunks"
+      description: "Returns a WebSocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading. If a tag is specified, the chunks will be streamed into local storage and then be uploaded to the network once the stream is closed. If a tag is not specified, the chunks will bypass local storage and be directly uploaded to the network through the stream as they arrive."
       tags:
         - Chunk
       parameters:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmTagParameter"
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPinParameter"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
       responses:
         "200":
-          description: "Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading."
+          description: "Connection established"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
@@ -396,6 +394,7 @@ paths:
       summary: "Create Tag"
       tags:
         - Tag
+      description: Tags can be thought of as upload sessions which can be tracked using the tags endpoint. It will keep track of the chunks that are uploaded as part of the tag and will push them out to the network once a done split is called on the Tag. This happens internally if you use the `Swarm-Deferred-Upload` header.
       requestBody:
         required: true
         content:
@@ -488,7 +487,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "404":
           $ref: "SwarmCommon.yaml#/components/responses/404"
         "500":
@@ -755,6 +754,12 @@ paths:
           required: false
           description: "Timestamp of the update (default: now)"
         - in: query
+          name: after
+          schema:
+            type: integer
+          required: false
+          description: "Start index (default: 0)"
+        - in: query
           name: type
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/FeedType"
@@ -807,7 +812,7 @@ paths:
         default:
           description: Default response
     put:
-      summary: "Reupload a root hash to the network"
+      summary: "Re-upload content for specified root hash"
       tags:
         - Stewardship
       parameters:
@@ -816,7 +821,12 @@ paths:
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
-          description: "Root hash of content (can be of any type: collection, file, chunk)"
+          description: "Re-uploads content for specified root hash (can be of any type: collection, file, chunk, etc.)"
+        - in: header
+          schema:
+            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+          name: swarm-postage-batch-id
+          description: Postage batch to use for re-upload. If none is provided and the file was uploaded on the same node before, it will re-use the same batch. If not found, it will return error. If a new batch is provided, the chunks are stamped again with the new batch.
       responses:
         "200":
           description: Ok
@@ -862,7 +872,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         default:
           description: Default response
 
@@ -944,7 +954,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Peers"
+                $ref: "SwarmCommon.yaml#/components/schemas/BlockListedPeers"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -1037,7 +1047,7 @@ paths:
 
   "/chunks/{address}":
     get:
-      summary: "Get Chunk"
+      summary: "Get chunk"
       tags:
         - Chunk
       parameters:
@@ -1077,34 +1087,6 @@ paths:
       responses:
         "200":
           description: Chunk exists
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Response"
-        "400":
-          $ref: "SwarmCommon.yaml#/components/responses/400"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
-        default:
-          description: Default response
-    delete:
-      summary: Delete a chunk from local storage
-      tags:
-        - Chunk
-      parameters:
-        - in: path
-          name: address
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
-          required: true
-          description: Swarm address of chunk
-      responses:
-        "200":
-          description: Chunk exists
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Response"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "404":
@@ -1394,7 +1376,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":

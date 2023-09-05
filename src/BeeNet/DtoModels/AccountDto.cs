@@ -5,7 +5,7 @@ namespace Etherna.BeeNet.DtoModels
     public class AccountDto
     {
         // Constructors.
-        internal AccountDto(Clients.DebugApi.V4_0_0.Anonymous anonymous)
+        internal AccountDto(Clients.DebugApi.V5_0_0.Anonymous anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));

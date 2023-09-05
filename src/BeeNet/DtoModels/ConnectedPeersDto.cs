@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ConnectedPeersDto
     {
         // Constructors.
-        internal ConnectedPeersDto(Clients.DebugApi.V4_0_0.ConnectedPeers connectedPeers)
+        internal ConnectedPeersDto(Clients.DebugApi.V5_0_0.ConnectedPeers connectedPeers)
         {
             if (connectedPeers is null)
                 throw new ArgumentNullException(nameof(connectedPeers));
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
         }
 
-        internal ConnectedPeersDto(Clients.GatewayApi.V4_0_0.ConnectedPeers connectedPeers)
+        internal ConnectedPeersDto(Clients.GatewayApi.V5_0_0.ConnectedPeers connectedPeers)
         {
             if (connectedPeers is null)
                 throw new ArgumentNullException(nameof(connectedPeers));

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.0.0
+  version: 3.2.4
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -261,34 +261,21 @@ components:
           $ref: "#/components/schemas/Uid"
         startedAt:
           $ref: "#/components/schemas/DateTime"
-        total:
-          type: integer
-        processed:
-          type: integer
-        synced:
-          type: integer
-
-    NewTagDebugResponse:
-      type: object
-      properties:
-        total:
-          type: integer
         split:
           type: integer
+          description: Number of chunks created by the splitter.
         seen:
           type: integer
+          description: Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
         stored:
           type: integer
+          description: Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
         sent:
           type: integer
+          description: Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
         synced:
           type: integer
-        uid:
-          $ref: "#/components/schemas/Uid"
-        address:
-          $ref: "#/components/schemas/SwarmAddress"
-        startedAt:
-          $ref: "#/components/schemas/DateTime"
+          description: Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
 
     TagsList:
       type: object
@@ -324,6 +311,10 @@ components:
         latencyEWMA:
           type: integer
           nullable: false
+        reachability:
+          type: string
+        healthy:
+          type: boolean
 
     Peers:
       type: object
@@ -333,6 +324,20 @@ components:
           nullable: false
           items:
             $ref: "#/components/schemas/Address"
+
+    BlockListedPeers:
+      type: array
+      items:
+        type: object
+        properties:
+          address:
+            $ref: "#/components/schemas/Address"
+          fullNode:
+            type: boolean
+          reason:
+            type: string
+          duration:
+            type: integer
 
     PssRecipient:
       type: string
@@ -421,7 +426,7 @@ components:
         swapEnabled:
           type: boolean
 
-    Status:
+    HealthStatus:
       type: object
       properties:
         status:
@@ -577,10 +582,6 @@ components:
       pattern: '^[A-Za-z0-9]+\.[A-Za-z0-9]+$'
       example: "swarm.eth"
 
-    isAll:
-      type: string
-      required: false
-
     BatchID:
       type: string
       pattern: "^[A-Fa-f0-9]{64}$"
@@ -710,13 +711,21 @@ components:
         walletAddress:
           $ref: "#/components/schemas/EthereumAddress"
 
-    RedistributionStateResponse:
+    RedistributionStatusResponse:
       type: object
       properties:
+        minimumGasFunds:
+          $ref: "#/components/schemas/BigInt"
+        hasSufficientFunds:
+          type: boolean
         isFrozen:
           type: boolean
         isFullySynced:
           type: boolean
+        isHealthy:
+          type: boolean
+        phase:
+          type: string
         round:
           type: integer
         lastWonRound:
@@ -725,6 +734,10 @@ components:
           type: integer
         lastFrozenRound:
           type: integer
+        lastSelectedRound:
+          type: integer
+        lastSampleDuration:
+          $ref: "#/components/schemas/Duration"
         block:
           type: integer
         reward:
@@ -825,6 +838,47 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Logger"
+
+    StatusSnapshotResponse:
+      type: object
+      properties:
+        peer:
+          $ref: "#/components/schemas/SwarmAddress"
+        beeMode:
+          type: string
+          enum:
+            - "light"
+            - "full"
+            - "ultra-light"
+            - "unknown"
+        proximity:
+          type: integer
+        reserveSize:
+          type: integer
+        pullsyncRate:
+          type: number
+        storageRadius:
+          type: integer
+        connectedPeers:
+          type: integer
+        neighborhoodSize:
+          type: integer
+        requestFailed:
+          nullable: true
+          type: boolean
+        BatchCommitment:
+          type: integer
+        isReachable:
+          type: boolean
+
+    StatusResponse:
+      type: object
+      properties:
+        stamps:
+          type: array
+          nullable: false
+          items:
+            $ref: "#/components/schemas/StatusSnapshotResponse"
 
   headers:
     SwarmTag:

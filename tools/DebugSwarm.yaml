@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.0.0
+  version: 4.0.1
   title: Bee Debug API
   description: A list of the currently provided debug interfaces to interact with
     the bee node
@@ -200,7 +200,7 @@ paths:
           content:
             application/json:
               schema:
-                &a12
+                &a10
                 type: object
                 properties:
                   peers:
@@ -308,7 +308,7 @@ paths:
           content:
             application/json:
               schema:
-                &a9
+                &a11
                 type: object
                 properties:
                   message:
@@ -317,7 +317,7 @@ paths:
                     type: integer
         "400": *a7
         "404":
-          &a10
+          &a12
           description: Not Found
           content:
             application/problem+json:
@@ -334,26 +334,6 @@ paths:
                     description: List of reasons for the error message.
                     items:
                       type: string
-        default:
-          description: Default response
-    delete:
-      summary: Delete a chunk from local storage
-      tags:
-        - Chunk
-      parameters:
-        - in: path
-          name: address
-          schema: *a5
-          required: true
-          description: Swarm address of chunk
-      responses:
-        "200":
-          description: Chunk exists
-          content:
-            application/json:
-              schema: *a9
-        "400": *a7
-        "404": *a10
         default:
           description: Default response
   "/connect/{multiAddress}":
@@ -424,12 +404,12 @@ paths:
                     type: integer
                     format: int64
                   totalAmount:
-                    &a11
+                    &a9
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
-                  currentPrice: *a11
+                  currentPrice: *a9
         default:
           description: Default response
   /node:
@@ -473,7 +453,7 @@ paths:
           description: Returns overlay addresses of connected peers
           content:
             application/json:
-              schema: *a12
+              schema: *a10
         default:
           description: Default response
   "/peers/{address}":
@@ -492,7 +472,7 @@ paths:
           description: Disconnected peer
           content:
             application/json:
-              schema: *a9
+              schema: *a11
         "400": *a7
         "500": *a3
         default:
@@ -521,7 +501,7 @@ paths:
                     type: string
                     example: 5.0018ms
         "400": *a7
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -734,6 +714,10 @@ paths:
                                   latencyEWMA:
                                     type: integer
                                     nullable: false
+                                  reachability:
+                                    type: string
+                                  healthy:
+                                    type: boolean
                         connectedPeers:
                           type: array
                           items:
@@ -829,7 +813,7 @@ paths:
                       bounced:
                         type: boolean
                   uncashedAmount: *a19
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -878,7 +862,7 @@ paths:
                     type: string
                     pattern: ^0x[A-Fa-f0-9]{64}$
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
-        "404": *a10
+        "404": *a12
         "429":
           &a35
           description: Too many requests
@@ -940,7 +924,7 @@ paths:
                         type: string
                         example: "1000000000000000000"
                   lastsent: *a21
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -984,7 +968,7 @@ paths:
                               type: string
                               example: "1000000000000000000"
                         lastsent: *a23
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -1008,7 +992,7 @@ paths:
           content:
             application/json:
               schema: *a25
-        "400": *a10
+        "400": *a12
         "500": *a3
         default:
           description: Default response
@@ -1032,55 +1016,7 @@ paths:
           content:
             application/json:
               schema: *a25
-        "400": *a10
-        "500": *a3
-        default:
-          description: Default response
-  "/tags/{uid}":
-    get:
-      summary: Get Tag information using Uid
-      tags:
-        - Tag
-      parameters:
-        - in: path
-          name: uid
-          schema:
-            type: integer
-            format: int64
-          required: true
-          description: Uid
-      responses:
-        "200":
-          description: Tag info
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  total:
-                    type: integer
-                  split:
-                    type: integer
-                  seen:
-                    type: integer
-                  stored:
-                    type: integer
-                  sent:
-                    type: integer
-                  synced:
-                    type: integer
-                  uid:
-                    type: integer
-                    format: int64
-                  address:
-                    type: string
-                    pattern: ^[A-Fa-f0-9]{64}$
-                    example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
-                  startedAt:
-                    type: string
-                    format: date-time
-                    example: 2020-06-11T11:26:42.6969797+02:00
-        "400": *a7
+        "400": *a12
         "500": *a3
         default:
           description: Default response
@@ -1097,10 +1033,22 @@ paths:
               schema:
                 type: object
                 properties:
+                  minimumGasFunds:
+                    &a26
+                    description: Numeric string that represents integer which might exceeds
+                      `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+                    type: string
+                    example: "1000000000000000000"
+                  hasSufficientFunds:
+                    type: boolean
                   isFrozen:
                     type: boolean
                   isFullySynced:
                     type: boolean
+                  isHealthy:
+                    type: boolean
+                  phase:
+                    type: string
                   round:
                     type: integer
                   lastWonRound:
@@ -1109,15 +1057,17 @@ paths:
                     type: integer
                   lastFrozenRound:
                     type: integer
+                  lastSelectedRound:
+                    type: integer
+                  lastSampleDuration:
+                    description: Go time.Duration format
+                    type: string
+                    example: 5.0018ms
                   block:
                     type: integer
-                  reward:
-                    &a26
-                    description: Numeric string that represents integer which might exceeds
-                      `Number.MAX_SAFE_INTEGER` limit (2^53-1)
-                    type: string
-                    example: "1000000000000000000"
+                  reward: *a26
                   fees: *a26
+        "400": *a7
         "500": *a3
         default:
           description: Default response
@@ -1259,7 +1209,7 @@ paths:
                   description:
                     type: string
                   value: *a30
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -1279,7 +1229,7 @@ paths:
           content:
             application/json:
               schema: *a25
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -1300,7 +1250,7 @@ paths:
           content:
             application/json:
               schema: *a25
-        "404": *a10
+        "404": *a12
         "500": *a3
         default:
           description: Default response
@@ -1310,6 +1260,7 @@ paths:
         name: all
         schema:
           type: string
+          required: false
         description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
@@ -1823,3 +1774,101 @@ paths:
         "400": *a7
         default:
           description: Default response
+  /status:
+    get:
+      summary: Get the current status snapshot of this node.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the current node status snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  peer:
+                    type: string
+                    pattern: ^[A-Fa-f0-9]{64}$
+                    example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
+                  beeMode:
+                    type: string
+                    enum:
+                      - light
+                      - full
+                      - ultra-light
+                      - unknown
+                  proximity:
+                    type: integer
+                  reserveSize:
+                    type: integer
+                  pullsyncRate:
+                    type: number
+                  storageRadius:
+                    type: integer
+                  connectedPeers:
+                    type: integer
+                  neighborhoodSize:
+                    type: integer
+                  requestFailed:
+                    nullable: true
+                    type: boolean
+                  BatchCommitment:
+                    type: integer
+                  isReachable:
+                    type: boolean
+        "400": *a7
+        default:
+          description: Default response.
+  /status/peers:
+    get:
+      summary: Get the current status snapshot of this node connected peers.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the status snapshot of this node connected peers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stamps:
+                    type: array
+                    nullable: false
+                    items:
+                      type: object
+                      properties:
+                        peer:
+                          type: string
+                          pattern: ^[A-Fa-f0-9]{64}$
+                          example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
+                        beeMode:
+                          type: string
+                          enum:
+                            - light
+                            - full
+                            - ultra-light
+                            - unknown
+                        proximity:
+                          type: integer
+                        reserveSize:
+                          type: integer
+                        pullsyncRate:
+                          type: number
+                        storageRadius:
+                          type: integer
+                        connectedPeers:
+                          type: integer
+                        neighborhoodSize:
+                          type: integer
+                        requestFailed:
+                          nullable: true
+                          type: boolean
+                        BatchCommitment:
+                          type: integer
+                        isReachable:
+                          type: boolean
+        "400": *a7
+        default:
+          description: Default response.

@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class PeersAggregateDto
     {
         // Constructors.
-        internal PeersAggregateDto(Clients.DebugApi.V4_0_0.Anonymous2 anonymous)
+        internal PeersAggregateDto(Clients.DebugApi.V5_0_0.Anonymous2 anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));
@@ -33,8 +33,7 @@ namespace Etherna.BeeNet.DtoModels
             ConnectedPeers = anonymous.ConnectedPeers
                 ?.Select(k => new ConnectedPeersDto(k)) ?? new List<ConnectedPeersDto>();
         }
-
-        internal PeersAggregateDto(Clients.GatewayApi.V4_0_0.Anonymous anonymous)
+        internal PeersAggregateDto(Clients.GatewayApi.V5_0_0.Anonymous2 anonymous)
         {
             if (anonymous is null)
                 throw new ArgumentNullException(nameof(anonymous));

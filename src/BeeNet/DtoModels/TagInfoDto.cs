@@ -19,47 +19,55 @@ namespace Etherna.BeeNet.DtoModels
     public class TagInfoDto
     {
         // Constructors.
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Response7 response)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Response7 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
             Synced = response.Synced;
         }
 
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Response8 response)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Response8 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
-            Total = response.Total;
-            Processed = response.Processed;
+            Split = response.Split;
+            Seen = response.Seen;
+            Stored = response.Stored;
+            Sent = response.Sent;
             Synced = response.Synced;
         }
 
-        internal TagInfoDto(Clients.GatewayApi.V4_0_0.Tags tags)
+        internal TagInfoDto(Clients.GatewayApi.V5_0_0.Tags tags)
         {
             if (tags is null)
                 throw new ArgumentNullException(nameof(tags));
 
             Uid = tags.Uid;
             StartedAt = tags.StartedAt;
-            Total = tags.Total;
-            Processed = tags.Processed;
+            Split = tags.Split;
+            Seen = tags.Seen;
+            Stored = tags.Stored;
+            Sent = tags.Sent;
             Synced = tags.Synced;
         }
 
         // Properties.
         public long Uid { get; }
         public DateTimeOffset StartedAt { get; }
-        public int Total { get; }
-        public int Processed { get; }
+        public int Split { get; }
+        public int Seen { get; }
+        public int Stored { get; }
+        public int Sent { get; }
         public int Synced { get; }
     }
 }

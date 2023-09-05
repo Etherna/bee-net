@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.0.0
+  version: 4.0.1
   title: Bee Debug API
   description: "A list of the currently provided debug interfaces to interact with the bee node"
 
@@ -214,30 +214,6 @@ paths:
           $ref: "SwarmCommon.yaml#/components/responses/404"
         default:
           description: Default response
-    delete:
-      summary: Delete a chunk from local storage
-      tags:
-        - Chunk
-      parameters:
-        - in: path
-          name: address
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
-          required: true
-          description: Swarm address of chunk
-      responses:
-        "200":
-          description: Chunk exists
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Response"
-        "400":
-          $ref: "SwarmCommon.yaml#/components/responses/400"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
-        default:
-          description: Default response
 
   "/connect/{multiAddress}":
     post:
@@ -395,7 +371,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         default:
           description: Default response
 
@@ -518,7 +494,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
@@ -681,32 +657,6 @@ paths:
         default:
           description: Default response
 
-  "/tags/{uid}":
-    get:
-      summary: "Get Tag information using Uid"
-      tags:
-        - Tag
-      parameters:
-        - in: path
-          name: uid
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/Uid"
-          required: true
-          description: Uid
-      responses:
-        "200":
-          description: Tag info
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/NewTagDebugResponse"
-        "400":
-          $ref: "SwarmCommon.yaml#/components/responses/400"
-        "500":
-          $ref: "SwarmCommon.yaml#/components/responses/500"
-        default:
-          description: Default response
-
   "/redistributionstate":
     get:
       summary: Get current status of node in redistribution game
@@ -718,7 +668,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/RedistributionStateResponse"
+                $ref: "SwarmCommon.yaml#/components/schemas/RedistributionStatusResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -837,7 +789,8 @@ paths:
       - in: query
         name: all
         schema:
-          $ref: "SwarmCommon.yaml#/components/schemas/isAll"
+          type: string
+          required: false
         description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
@@ -1151,3 +1104,37 @@ paths:
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
           description: Default response
+
+  "/status":
+    get:
+      summary: Get the current status snapshot of this node.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the current node status snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/StatusSnapshotResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response.
+
+  "/status/peers":
+    get:
+      summary: Get the current status snapshot of this node connected peers.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the status snapshot of this node connected peers
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/StatusResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response.
