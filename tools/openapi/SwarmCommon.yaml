@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.2.2
+  version: 3.2.6
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -222,13 +222,13 @@ components:
       type: string
 
     GasLimit:
-      description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
+      description: Gas limit refers to the maximum amount of gas youâ€™re willing to spend on a particular transaction.
       type: integer
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
-      description: Gas price refers to the amount you’re willing to pay for every unit of gas.
+      description: Gas price refers to the amount youâ€™re willing to pay for every unit of gas.
       type: integer
 
     Hash:
@@ -258,34 +258,21 @@ components:
           $ref: "#/components/schemas/Uid"
         startedAt:
           $ref: "#/components/schemas/DateTime"
-        total:
-          type: integer
-        processed:
-          type: integer
-        synced:
-          type: integer
-
-    NewTagDebugResponse:
-      type: object
-      properties:
-        total:
-          type: integer
         split:
           type: integer
+          description: Number of chunks created by the splitter.
         seen:
           type: integer
+          description: Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
         stored:
           type: integer
+          description: Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
         sent:
           type: integer
+          description: Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
         synced:
           type: integer
-        uid:
-          $ref: "#/components/schemas/Uid"
-        address:
-          $ref: "#/components/schemas/SwarmAddress"
-        startedAt:
-          $ref: "#/components/schemas/DateTime"
+          description: Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
 
     TagsList:
       type: object
@@ -483,8 +470,6 @@ components:
           type: boolean
         batchTTL:
           type: integer
-        expired:
-          type: boolean
 
     PostageBatchNoIssuer:
       type: object
@@ -598,19 +583,19 @@ components:
       type: object
       properties:
         stakedAmount:
-           $ref: "#/components/schemas/BigInt"
+          $ref: "#/components/schemas/BigInt"
 
     StakeDepositResponse:
-          type: object
-          properties:
-            txHash:
-               $ref: "#/components/schemas/TransactionHash"
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
 
     WithdrawAllStakeResponse:
-              type: object
-              properties:
-                txHash:
-                   $ref: "#/components/schemas/TransactionHash"
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
 
     SwarmOnlyReference:
       oneOf:
@@ -715,13 +700,15 @@ components:
     RedistributionStatusResponse:
       type: object
       properties:
-        minimumFunds:
+        minimumGasFunds:
           $ref: "#/components/schemas/BigInt"
         hasSufficientFunds:
           type: boolean
         isFrozen:
           type: boolean
         isFullySynced:
+          type: boolean
+        isHealthy:
           type: boolean
         phase:
           type: string
@@ -733,6 +720,10 @@ components:
           type: integer
         lastFrozenRound:
           type: integer
+        lastSelectedRound:
+          type: integer
+        lastSampleDuration:
+          $ref: "#/components/schemas/Duration"
         block:
           type: integer
         reward:
@@ -808,7 +799,7 @@ components:
     LoggerTreeNode:
       type: object
       additionalProperties:
-          $ref: "#/components/schemas/LoggerTreeData"
+        $ref: "#/components/schemas/LoggerTreeData"
 
     Logger:
       type: object
@@ -826,7 +817,7 @@ components:
       type: object
       properties:
         tree:
-            $ref: "#/components/schemas/LoggerTreeNode"
+          $ref: "#/components/schemas/LoggerTreeNode"
         loggers:
           type: array
           items:
@@ -989,10 +980,10 @@ components:
       name: swarm-deferred-upload
       schema:
         type: boolean
-        default: "true"
+        default: "false"
       required: false
       description: >
-        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.
+        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.
 
   responses:
     "204":
