@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 5.0.0
+  version: 5.1.0
   title: Bee API
   description: A list of the currently provided Interfaces to interact with the
     swarm, implementing file operations and sending messages
@@ -152,7 +152,6 @@ paths:
             in: header
             name: swarm-postage-batch-id
             description: ID of Postage Batch that is used to upload data with
-            required: true
             schema:
               type: string
               pattern: ^[A-Fa-f0-9]{64}$
@@ -168,7 +167,6 @@ paths:
               &a6
               type: integer
               format: int64
-            required: false
             description: Associate upload with an existing Tag UID
           name: swarm-tag
           required: false
@@ -179,7 +177,6 @@ paths:
             name: swarm-pin
             schema:
               type: boolean
-            required: false
             description: >
               Represents if the uploaded data should be also locally pinned on
               the node.
@@ -192,12 +189,11 @@ paths:
             name: swarm-deferred-upload
             schema:
               type: boolean
-              default: "true"
-            required: false
+              default: "false"
             description: >
               Determines if the uploaded data should be sent to the network
               immediately or in a deferred fashion. By default the upload will
-              be deferred.
+              be direct.
           name: swarm-deferred-upload
           required: false
         - in: header
@@ -207,7 +203,6 @@ paths:
             name: swarm-encrypt
             schema:
               type: boolean
-            required: false
             description: |
               Represents the encrypting state of the file
           name: swarm-encrypt
@@ -1488,6 +1483,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  chainTip:
+                    type: integer
                   block:
                     type: integer
                     format: int64
@@ -1936,7 +1933,7 @@ paths:
           in: header
           name: gas-price
           schema:
-            description: Gas price refers to the amount you�re willing to pay for every unit
+            description: Gas price refers to the amount you’re willing to pay for every unit
               of gas.
             type: integer
             format: int64
@@ -1946,7 +1943,7 @@ paths:
           in: header
           name: gas-limit
           schema:
-            description: Gas limit refers to the maximum amount of gas you�re willing to
+            description: Gas limit refers to the maximum amount of gas you’re willing to
               spend on a particular transaction.
             type: integer
             format: int64
@@ -2308,11 +2305,6 @@ paths:
         default:
           description: Default response
   /stamps:
-    parameters:
-      - in: query
-        name: all
-        schema: {}
-        description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
       description: This endpoint is available on the main API only if the node is
@@ -2369,8 +2361,6 @@ paths:
                             batchTTL:
                               type: integer
                               format: int64
-                            expired:
-                              type: boolean
                         - type: object
                           properties:
                             batchID: *a46
@@ -2379,6 +2369,7 @@ paths:
                             batchTTL:
                               type: integer
                               format: int64
+        "404": *a16
         default:
           description: Default response
   "/stamps/{batch_id}":
@@ -2442,8 +2433,6 @@ paths:
                       batchTTL:
                         type: integer
                         format: int64
-                      expired:
-                        type: boolean
                   - type: object
                     properties:
                       batchID: *a47
@@ -2453,6 +2442,7 @@ paths:
                         type: integer
                         format: int64
         "400": *a3
+        "404": *a16
         default:
           description: Default response
   "/stamps/{batch_id}/buckets":
@@ -2496,6 +2486,7 @@ paths:
                         collisions:
                           type: integer
         "400": *a3
+        "404": *a16
         default:
           description: Default response
   "/stamps/{amount}/{depth}":

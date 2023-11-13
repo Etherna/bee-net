@@ -45,7 +45,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
             int depth,
             string? label = null,
             bool? immutable = null,
-            long? gasPrice = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Cashout the last cheque for the peer</summary>

@@ -28,11 +28,11 @@ namespace Etherna.BeeNet.DtoModels
             Peer = response.Peer;
             LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
+            Result = new ResultChequeBookDto(response.Result);
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
-        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V5_0_0.Response41 response)
+        internal ChequeBookCashoutGetDto(Clients.GatewayApi.V5_0_0.Response40 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Peer = response.Peer;
             LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
-            Result = response.Result is not null ? new ResultChequeBookDto(response.Result) : null;
+            Result = new ResultChequeBookDto(response.Result);
             UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
         }
 
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.DtoModels
         public string Peer { get; }
         public LastCashedChequeDto? LastCashedCheque { get; }
         public string TransactionHash { get; }
-        public ResultChequeBookDto? Result { get; }
+        public ResultChequeBookDto Result { get; }
         public long UncashedAmount { get; }
     }
 

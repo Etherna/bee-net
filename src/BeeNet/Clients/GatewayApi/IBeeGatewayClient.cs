@@ -116,6 +116,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="owner">Owner</param>
         /// <param name="topic">Topic</param>
         /// <param name="at">Timestamp of the update (default: now)</param>
+        /// <param name="after">Start index (default: 0)</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
@@ -123,6 +124,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string owner,
             string topic,
             int? at = null,
+            int? after = null,
             string? type = null,
             CancellationToken cancellationToken = default);
 
@@ -482,7 +484,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<MessageResponseDto> ChunksHeadAsync(
+        Task<bool> ChunksHeadAsync(
             string address,
             CancellationToken cancellationToken = default);
 

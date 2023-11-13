@@ -56,11 +56,10 @@ namespace Etherna.BeeNet.Clients.DebugApi
             int depth,
             string? label = null,
             bool? immutable = null,
-            long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, gasPrice, cancellationToken).ConfigureAwait(false)).BatchID,
+                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, cancellationToken).ConfigureAwait(false)).BatchID,
                 _ => throw new InvalidOperationException()
             };
 
@@ -269,7 +268,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsGetAllAsync(null, cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
+                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
 

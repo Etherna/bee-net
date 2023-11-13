@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.2.4
+  version: 3.2.6
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -53,6 +53,8 @@ components:
     ChainState:
       type: object
       properties:
+        chainTip:
+          type: integer
         block:
           type: integer
           format: int64
@@ -223,14 +225,14 @@ components:
       type: string
 
     GasLimit:
-      description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
+      description: Gas limit refers to the maximum amount of gas youâ€™re willing to spend on a particular transaction.
       type: integer
       format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
-      description: Gas price refers to the amount you’re willing to pay for every unit of gas.
+      description: Gas price refers to the amount youâ€™re willing to pay for every unit of gas.
       type: integer
       format: int64
 
@@ -474,8 +476,6 @@ components:
         batchTTL:
           type: integer
           format: int64
-        expired:
-          type: boolean
 
     PostageBatchNoIssuer:
       type: object
@@ -591,19 +591,19 @@ components:
       type: object
       properties:
         stakedAmount:
-           $ref: "#/components/schemas/BigInt"
+          $ref: "#/components/schemas/BigInt"
 
     StakeDepositResponse:
-          type: object
-          properties:
-            txHash:
-               $ref: "#/components/schemas/TransactionHash"
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
 
     WithdrawAllStakeResponse:
-              type: object
-              properties:
-                txHash:
-                   $ref: "#/components/schemas/TransactionHash"
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
 
     SwarmOnlyReference:
       oneOf:
@@ -815,7 +815,7 @@ components:
     LoggerTreeNode:
       type: object
       additionalProperties:
-          $ref: "#/components/schemas/LoggerTreeData"
+        $ref: "#/components/schemas/LoggerTreeData"
 
     Logger:
       type: object
@@ -833,7 +833,7 @@ components:
       type: object
       properties:
         tree:
-            $ref: "#/components/schemas/LoggerTreeNode"
+          $ref: "#/components/schemas/LoggerTreeNode"
         loggers:
           type: array
           items:
@@ -996,10 +996,10 @@ components:
       name: swarm-deferred-upload
       schema:
         type: boolean
-        default: "true"
+        default: "false"
       required: false
       description: >
-        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.
+        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.
 
   responses:
     "204":

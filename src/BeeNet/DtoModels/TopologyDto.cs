@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             Timestamp = response.Timestamp;
         }
 
-        internal TopologyDto(Clients.GatewayApi.V5_0_0.Response38 response)
+        internal TopologyDto(Clients.GatewayApi.V5_0_0.Response37 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -64,18 +64,18 @@ namespace Etherna.BeeNet.DtoModels
             Depth = response.Depth;
             NetworkAvailability = response.NetworkAvailability switch
             {
-                Clients.GatewayApi.V5_0_0.Response38NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
-                Clients.GatewayApi.V5_0_0.Response38NetworkAvailability.Available => NetworkAvailabilityDto.Available,
-                Clients.GatewayApi.V5_0_0.Response38NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
+                Clients.GatewayApi.V5_0_0.Response37NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
+                Clients.GatewayApi.V5_0_0.Response37NetworkAvailability.Available => NetworkAvailabilityDto.Available,
+                Clients.GatewayApi.V5_0_0.Response37NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
                 _ => throw new InvalidOperationException(),
             };
             NnLowWatermark = response.NnLowWatermark;
             Population = response.Population;
             Reachability = response.Reachability switch
             {
-                Clients.GatewayApi.V5_0_0.Response38Reachability.Unknown => ReachabilityDto.Unknown,
-                Clients.GatewayApi.V5_0_0.Response38Reachability.Public => ReachabilityDto.Public,
-                Clients.GatewayApi.V5_0_0.Response38Reachability.Private => ReachabilityDto.Private,
+                Clients.GatewayApi.V5_0_0.Response37Reachability.Unknown => ReachabilityDto.Unknown,
+                Clients.GatewayApi.V5_0_0.Response37Reachability.Public => ReachabilityDto.Public,
+                Clients.GatewayApi.V5_0_0.Response37Reachability.Private => ReachabilityDto.Private,
                 _ => throw new InvalidOperationException(),
             };
             Timestamp = response.Timestamp;

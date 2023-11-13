@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.DtoModels
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        internal ChequeBookChequeGetDto(Clients.GatewayApi.V5_0_0.Response43 response)
+        internal ChequeBookChequeGetDto(Clients.GatewayApi.V5_0_0.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

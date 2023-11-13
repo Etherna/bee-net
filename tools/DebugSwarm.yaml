@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 4.0.1
+  version: 4.1.0
   title: Bee Debug API
   description: A list of the currently provided debug interfaces to interact with
     the bee node
@@ -400,6 +400,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  chainTip:
+                    type: integer
                   block:
                     type: integer
                     format: int64
@@ -829,7 +831,7 @@ paths:
           in: header
           name: gas-price
           schema:
-            description: Gas price refers to the amount you�re willing to pay for every unit
+            description: Gas price refers to the amount you’re willing to pay for every unit
               of gas.
             type: integer
             format: int64
@@ -839,7 +841,7 @@ paths:
           in: header
           name: gas-limit
           schema:
-            description: Gas limit refers to the maximum amount of gas you�re willing to
+            description: Gas limit refers to the maximum amount of gas you’re willing to
               spend on a particular transaction.
             type: integer
             format: int64
@@ -850,7 +852,7 @@ paths:
       tags:
         - Chequebook
       responses:
-        "200":
+        "201":
           description: OK
           content:
             application/json:
@@ -987,7 +989,7 @@ paths:
       tags:
         - Chequebook
       responses:
-        "200":
+        "201":
           description: Transaction hash of the deposit transaction
           content:
             application/json:
@@ -1011,7 +1013,7 @@ paths:
       tags:
         - Chequebook
       responses:
-        "200":
+        "201":
           description: Transaction hash of the withdraw transaction
           content:
             application/json:
@@ -1255,13 +1257,6 @@ paths:
         default:
           description: Default response
   /stamps:
-    parameters:
-      - in: query
-        name: all
-        schema:
-          type: string
-          required: false
-        description: Gets all stamps. Default is null.
     get:
       summary: Get stamps for this node
       tags:
@@ -1313,8 +1308,6 @@ paths:
                             batchTTL:
                               type: integer
                               format: int64
-                            expired:
-                              type: boolean
                         - type: object
                           properties:
                             batchID: *a32
@@ -1323,6 +1316,7 @@ paths:
                             batchTTL:
                               type: integer
                               format: int64
+        "404": *a12
         default:
           description: Default response
   "/stamps/{batch_id}":
@@ -1381,8 +1375,6 @@ paths:
                       batchTTL:
                         type: integer
                         format: int64
-                      expired:
-                        type: boolean
                   - type: object
                     properties:
                       batchID: *a33
@@ -1392,6 +1384,7 @@ paths:
                         type: integer
                         format: int64
         "400": *a7
+        "404": *a12
         default:
           description: Default response
   "/stamps/{batch_id}/buckets":
@@ -1430,6 +1423,7 @@ paths:
                         collisions:
                           type: integer
         "400": *a7
+        "404": *a12
         default:
           description: Default response
   "/stamps/{amount}/{depth}":
@@ -1469,7 +1463,6 @@ paths:
           schema:
             type: boolean
           required: false
-        - *a24
       responses:
         "201":
           description: Returns the newly created postage batch ID

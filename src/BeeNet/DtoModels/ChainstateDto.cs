@@ -26,23 +26,26 @@ namespace Etherna.BeeNet.DtoModels
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
+            ChainTip = response.ChainTip;
             CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
         }
 
-        internal ChainStateDto(Clients.GatewayApi.V5_0_0.Response30 response)
+        internal ChainStateDto(Clients.GatewayApi.V5_0_0.Response29 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             Block = response.Block;
-            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
+            ChainTip = response.ChainTip;
             CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
+            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
         }
 
         // Properties.
         public long Block { get; }
-        public long TotalAmount { get; }
+        public int ChainTip { get; }
         public long CurrentPrice { get; }
+        public long TotalAmount { get; }
     }
 }

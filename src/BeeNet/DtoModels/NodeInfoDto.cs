@@ -35,16 +35,16 @@ namespace Etherna.BeeNet.DtoModels
             SwapEnabled = response.SwapEnabled;
         }
 
-        internal NodeInfoDto(Clients.GatewayApi.V5_0_0.Response31 response)
+        internal NodeInfoDto(Clients.GatewayApi.V5_0_0.Response30 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             BeeMode = response.BeeMode switch
             {
-                Clients.GatewayApi.V5_0_0.Response31BeeMode.Dev => BeeModeDto.Dev,
-                Clients.GatewayApi.V5_0_0.Response31BeeMode.Full => BeeModeDto.Full,
-                Clients.GatewayApi.V5_0_0.Response31BeeMode.Light => BeeModeDto.Light,
+                Clients.GatewayApi.V5_0_0.Response30BeeMode.Dev => BeeModeDto.Dev,
+                Clients.GatewayApi.V5_0_0.Response30BeeMode.Full => BeeModeDto.Full,
+                Clients.GatewayApi.V5_0_0.Response30BeeMode.Light => BeeModeDto.Light,
                 _ => throw new InvalidOperationException()
             };
             ChequebookEnabled = response.ChequebookEnabled;
