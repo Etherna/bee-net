@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
             Buckets = response.Buckets.Select(i => new BucketDto(i));
         }
 
-        internal StampsBucketsDto(Clients.GatewayApi.V5_0_0.Response53 response)
+        internal StampsBucketsDto(Clients.GatewayApi.V5_0_0.Response52 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

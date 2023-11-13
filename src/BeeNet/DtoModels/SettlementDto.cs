@@ -33,18 +33,7 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
-        internal SettlementDto(Clients.GatewayApi.V5_0_0.Response37 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
-            Settlements = response.Settlements
-                .Select(i => new SettlementDataDto(i));
-        }
-
-        internal SettlementDto(Clients.GatewayApi.V5_0_0.Response36 response)
+        internal SettlementDto(Clients.GatewayApi.V5_0_0.Response35 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

@@ -55,16 +55,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        internal MessageResponseDto(Clients.GatewayApi.V5_0_0.Response27 response)
-        {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
-
-            Message = response.Message;
-            Code = response.Code;
-        }
-
-        internal MessageResponseDto(Clients.GatewayApi.V5_0_0.Response33 response)
+        internal MessageResponseDto(Clients.GatewayApi.V5_0_0.Response32 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

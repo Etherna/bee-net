@@ -26,6 +26,7 @@ namespace Etherna.BeeNet.DtoModels
 
             IsFrozen = response.IsFrozen;
             IsFullySynced = response.IsFullySynced;
+            IsHealthy = response.IsHealthy;
             Round = response.Round;
             LastWonRound = response.LastWonRound;
             LastPlayedRound = response.LastPlayedRound;
@@ -38,6 +39,7 @@ namespace Etherna.BeeNet.DtoModels
         // Properties.
         public bool IsFrozen { get; set; }
         public bool IsFullySynced { get; set; }
+        public bool IsHealthy { get; set; }
         public int Round { get; set; } 
         public int LastWonRound { get; set; } 
         public int LastPlayedRound { get; set; } 

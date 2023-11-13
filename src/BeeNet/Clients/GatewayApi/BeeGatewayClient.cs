@@ -12,8 +12,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using Etherna.BeeNet.DtoModels;
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.InputModels;
 using System;
 using System.Collections.Generic;
@@ -150,11 +150,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string owner,
             string topic,
             int? at = null,
+            int? after = null,
             string? type = null,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.FeedsGetAsync(owner, topic, at, type, cancellationToken).ConfigureAwait(false)).Reference,
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.FeedsGetAsync(owner, topic, at, after, type, cancellationToken).ConfigureAwait(false)).Reference,
                 _ => throw new InvalidOperationException()
             };
 
@@ -557,14 +558,25 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<MessageResponseDto> ChunksHeadAsync(
+        public async Task<bool> ChunksHeadAsync(
             string address,
-            CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
+            CancellationToken cancellationToken = default)
+        {
+            try
             {
-                GatewayApiVersion.v5_0_0 => new MessageResponseDto(await beeGatewayApiClient_5_0_0.ChunksHeadAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+                switch (CurrentApiVersion)
+                {
+                    case GatewayApiVersion.v5_0_0:
+                        await beeGatewayApiClient_5_0_0.ChunksHeadAsync(address, cancellationToken).ConfigureAwait(false);
+                        return true;
+                    default: throw new InvalidOperationException();
+                }
+            }
+            catch (BeeNetGatewayApiException)
+            {
+                return false;
+            }
+        }
 
         public async Task<BalanceDto> GetConsumedBalanceWithPeerAsync(
             string address,
@@ -589,10 +601,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<IEnumerable<DtoModels.PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
+        public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsGetAllAsync(null, cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new DtoModels.PostageBatchDto(i)),
+                GatewayApiVersion.v5_0_0 => (await beeGatewayApiClient_5_0_0.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
                 _ => throw new InvalidOperationException()
             };
 
@@ -603,12 +615,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 _ => throw new InvalidOperationException()
             };
 
-        public async Task<DtoModels.PostageBatchDto> GetPostageBatchAsync(
+        public async Task<PostageBatchDto> GetPostageBatchAsync(
             string id,
             CancellationToken cancellationToken = default) =>
             CurrentApiVersion switch
             {
-                GatewayApiVersion.v5_0_0 => new DtoModels.PostageBatchDto(await beeGatewayApiClient_5_0_0.StampsGetAsync(id, cancellationToken).ConfigureAwait(false)),
+                GatewayApiVersion.v5_0_0 => new PostageBatchDto(await beeGatewayApiClient_5_0_0.StampsGetAsync(id, cancellationToken).ConfigureAwait(false)),
                 _ => throw new InvalidOperationException()
             };
 

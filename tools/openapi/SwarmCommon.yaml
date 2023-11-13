@@ -163,6 +163,7 @@ components:
 
     Cheque:
       type: object
+      nullable: true
       properties:
         beneficiary:
           $ref: "#/components/schemas/EthereumAddress"

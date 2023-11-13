@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
             Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
         }
 
-        internal TransactionsDto(Clients.GatewayApi.V5_0_0.Response48 response)
+        internal TransactionsDto(Clients.GatewayApi.V5_0_0.Response47 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
