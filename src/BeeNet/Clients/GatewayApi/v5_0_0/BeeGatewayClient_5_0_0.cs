@@ -1524,6 +1524,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.V5_0_0
                             var content_file_ = new System.Net.Http.StreamContent(item_.Data);
                             if (!string.IsNullOrEmpty(item_.ContentType))
                                 content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(item_.ContentType);
+                            content_file_.Headers.ContentLength = item_.Data.Length; //required by Bee
                             content_.Add(content_file_, "file", item_.FileName ?? "file");
                         }
                     }
