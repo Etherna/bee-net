@@ -1056,7 +1056,7 @@ paths:
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
-          description: Default response
+            description: Default response
 
   "/loggers/{exp}":
     get:

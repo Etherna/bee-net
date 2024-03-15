@@ -583,19 +583,19 @@ components:
       type: object
       properties:
         stakedAmount:
-          $ref: "#/components/schemas/BigInt"
+           $ref: "#/components/schemas/BigInt"
 
     StakeDepositResponse:
-      type: object
-      properties:
-        txHash:
-          $ref: "#/components/schemas/TransactionHash"
+          type: object
+          properties:
+            txHash:
+               $ref: "#/components/schemas/TransactionHash"
 
     WithdrawAllStakeResponse:
-      type: object
-      properties:
-        txHash:
-          $ref: "#/components/schemas/TransactionHash"
+              type: object
+              properties:
+                txHash:
+                   $ref: "#/components/schemas/TransactionHash"
 
     SwarmOnlyReference:
       oneOf:
@@ -799,7 +799,7 @@ components:
     LoggerTreeNode:
       type: object
       additionalProperties:
-        $ref: "#/components/schemas/LoggerTreeData"
+          $ref: "#/components/schemas/LoggerTreeData"
 
     Logger:
       type: object
@@ -817,7 +817,7 @@ components:
       type: object
       properties:
         tree:
-          $ref: "#/components/schemas/LoggerTreeNode"
+            $ref: "#/components/schemas/LoggerTreeNode"
         loggers:
           type: array
           items:
@@ -984,6 +984,15 @@ components:
       required: false
       description: >
         Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.
+
+    SwarmCache:
+      in: header
+      name: swarm-cache
+      schema:
+        type: boolean
+        default: "true"
+      required: false
+      description: "Determines if the download data should be cached on the node. By default the download will be cached"
 
   responses:
     "204":
