@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 5.1.0
+  version: 5.1.1
   title: Bee API
   description: A list of the currently provided Interfaces to interact with the
     swarm, implementing file operations and sending messages
@@ -152,6 +152,7 @@ paths:
             in: header
             name: swarm-postage-batch-id
             description: ID of Postage Batch that is used to upload data with
+            required: true
             schema:
               type: string
               pattern: ^[A-Fa-f0-9]{64}$
@@ -167,6 +168,7 @@ paths:
               &a6
               type: integer
               format: int64
+            required: false
             description: Associate upload with an existing Tag UID
           name: swarm-tag
           required: false
@@ -177,6 +179,7 @@ paths:
             name: swarm-pin
             schema:
               type: boolean
+            required: false
             description: >
               Represents if the uploaded data should be also locally pinned on
               the node.
@@ -190,6 +193,7 @@ paths:
             schema:
               type: boolean
               default: "false"
+            required: false
             description: >
               Determines if the uploaded data should be sent to the network
               immediately or in a deferred fashion. By default the upload will
@@ -203,6 +207,7 @@ paths:
             name: swarm-encrypt
             schema:
               type: boolean
+            required: false
             description: |
               Represents the encrypting state of the file
           name: swarm-encrypt
@@ -282,6 +287,19 @@ paths:
                 example: swarm.eth
           required: true
           description: Swarm address reference to content
+        - in: header
+          schema:
+            &a16
+            in: header
+            name: swarm-cache
+            schema:
+              type: boolean
+              default: "true"
+            required: false
+            description: Determines if the download data should be cached on the node. By
+              default the download will be cached
+          name: swarm-cache
+          required: false
       responses:
         "200":
           description: Retrieved content specified by reference
@@ -314,7 +332,10 @@ paths:
           headers:
             swarm-tag:
               description: Tag UID if it was passed to the request `swarm-tag` header.
-              schema: *a6
+              schema:
+                &a18
+                type: integer
+                format: int64
           content:
             application/json:
               schema: *a9
@@ -453,6 +474,10 @@ paths:
           schema: *a15
           required: true
           description: Swarm address of content
+        - in: header
+          schema: *a16
+          name: swarm-cache
+          required: false
       responses:
         "200":
           description: Ok
@@ -463,7 +488,7 @@ paths:
                 format: binary
         "400": *a3
         "404":
-          &a16
+          &a17
           description: Not Found
           content:
             application/problem+json:
@@ -509,7 +534,7 @@ paths:
                 type: string
                 format: binary
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -611,7 +636,7 @@ paths:
           content:
             application/json:
               schema:
-                &a17
+                &a19
                 type: object
                 properties:
                   uid:
@@ -653,7 +678,7 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a6
+          schema: *a18
           required: true
           description: Uid
       responses:
@@ -661,9 +686,9 @@ paths:
           description: Tag info
           content:
             application/json:
-              schema: *a17
+              schema: *a19
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -674,14 +699,14 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a6
+          schema: *a18
           required: true
           description: Uid
       responses:
         "204":
           description: The resource was deleted successfully.
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -693,7 +718,7 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a6
+          schema: *a18
           required: true
           description: Uid
       requestBody:
@@ -702,7 +727,7 @@ paths:
         content:
           application/json:
             schema:
-              &a29
+              &a31
               type: object
               properties:
                 address:
@@ -715,7 +740,7 @@ paths:
           content:
             application/json:
               schema:
-                &a24
+                &a26
                 type: object
                 properties:
                   status:
@@ -738,7 +763,7 @@ paths:
                     default: 0.0.0
                     description: The default value is set in case the bee binary was not build
                       correctly.
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -766,7 +791,7 @@ paths:
           content:
             application/json:
               schema:
-                &a18
+                &a20
                 type: object
                 properties:
                   message:
@@ -777,9 +802,9 @@ paths:
           description: New pin with root reference was created
           content:
             application/json:
-              schema: *a18
+              schema: *a20
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -792,7 +817,7 @@ paths:
           description: Unpinning root hash with reference
           content:
             application/json:
-              schema: *a18
+              schema: *a20
         "400": *a3
         "500": *a5
         default:
@@ -818,7 +843,7 @@ paths:
                         pattern: ^[A-Fa-f0-9]{128}$
                         example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f2d2810619d29b5dbefd5d74abce25d58b81b251baddb9c3871cf0d6967deaae2
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -858,7 +883,7 @@ paths:
         - in: path
           name: topic
           schema:
-            &a19
+            &a21
             type: string
           required: true
           description: Topic name
@@ -895,7 +920,7 @@ paths:
       parameters:
         - in: path
           name: topic
-          schema: *a19
+          schema: *a21
           required: true
           description: Topic name
       responses:
@@ -914,7 +939,7 @@ paths:
         - in: path
           name: owner
           schema:
-            &a21
+            &a23
             type: string
             pattern: ^[A-Fa-f0-9]{40}$
             example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
@@ -923,7 +948,7 @@ paths:
         - in: path
           name: id
           schema:
-            &a20
+            &a22
             type: string
             pattern: ^([A-Fa-f0-9]+)$
             example: cf880b8eeac5093fa27b0825906c600685
@@ -931,7 +956,7 @@ paths:
           description: Id
         - in: query
           name: sig
-          schema: *a20
+          schema: *a22
           required: true
           description: Signature
         - *a11
@@ -939,6 +964,15 @@ paths:
           schema: *a8
           name: swarm-postage-batch-id
           required: true
+      requestBody:
+        required: true
+        description: The SOC binary data is composed of the span (8 bytes) and the at
+          most 4KB payload.
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "201":
           description: Created
@@ -959,18 +993,18 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a21
+          schema: *a23
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a20
+          schema: *a22
           required: true
           description: Topic
         - in: query
           name: type
           schema:
-            &a22
+            &a24
             type: string
             pattern: ^(sequence|epoch)$
           required: false
@@ -996,12 +1030,12 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a21
+          schema: *a23
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a20
+          schema: *a22
           required: true
           description: Topic
         - in: query
@@ -1018,7 +1052,7 @@ paths:
           description: "Start index (default: 0)"
         - in: query
           name: type
-          schema: *a22
+          schema: *a24
           required: false
           description: "Feed indexing scheme (default: sequence)"
       responses:
@@ -1066,7 +1100,7 @@ paths:
                 properties:
                   isRetrievable:
                     type: boolean
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -1092,7 +1126,7 @@ paths:
         "200":
           description: Ok
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -1125,11 +1159,11 @@ paths:
                     pattern: ^[A-Fa-f0-9]{40}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
                   publicKey:
-                    &a23
+                    &a25
                     type: string
                     pattern: ^[A-Fa-f0-9]{66}$
                     example: 02ab7473879005929d10ce7d4f626412dad9fe56b0a6622038931d26bd79abf0a4
-                  pssPublicKey: *a23
+                  pssPublicKey: *a25
         "500": *a5
         default:
           description: Default response
@@ -1147,7 +1181,7 @@ paths:
           description: Health Status of node
           content:
             application/json:
-              schema: *a24
+              schema: *a26
         default:
           description: Default response
   /readiness:
@@ -1176,7 +1210,7 @@ paths:
           content:
             application/json:
               schema:
-                &a25
+                &a27
                 type: object
                 properties:
                   balances:
@@ -1210,7 +1244,7 @@ paths:
         - in: path
           name: address
           schema:
-            &a26
+            &a28
             type: string
             pattern: ^[A-Fa-f0-9]{64}$
             example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -1222,7 +1256,7 @@ paths:
           content:
             application/json:
               schema:
-                &a27
+                &a29
                 type: object
                 properties:
                   peer:
@@ -1289,7 +1323,7 @@ paths:
           description: Own past due consumption balances with all known peers
           content:
             application/json:
-              schema: *a25
+              schema: *a27
         "500": *a5
         default:
           description: Default response
@@ -1306,7 +1340,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       responses:
@@ -1314,7 +1348,7 @@ paths:
           description: Past-due consumption balance with the specific peer
           content:
             application/json:
-              schema: *a27
+              schema: *a29
         "400": *a3
         "500": *a5
         default:
@@ -1360,12 +1394,12 @@ paths:
                 type: object
                 properties:
                   totalBalance:
-                    &a28
+                    &a30
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
-                  availableBalance: *a28
+                  availableBalance: *a30
         "500": *a5
         default:
           description: Default response
@@ -1380,6 +1414,10 @@ paths:
           schema: *a15
           required: true
           description: Swarm address of chunk
+        - in: header
+          schema: *a16
+          name: swarm-cache
+          required: false
       responses:
         "200":
           description: Retrieved chunk content
@@ -1389,7 +1427,7 @@ paths:
                 type: string
                 format: binary
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -1400,14 +1438,14 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of chunk
       responses:
         "200":
           description: Chunk exists
         "400": *a3
-        "404": *a16
+        "404": *a17
         default:
           description: Default response
   "/connect/{multiAddress}":
@@ -1433,7 +1471,7 @@ paths:
           description: Returns overlay address of connected peer
           content:
             application/json:
-              schema: *a29
+              schema: *a31
         "400": *a3
         "500": *a5
         default:
@@ -1489,12 +1527,12 @@ paths:
                     type: integer
                     format: int64
                   totalAmount:
-                    &a30
+                    &a32
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
-                  currentPrice: *a30
+                  currentPrice: *a32
         default:
           description: Default response
   /node:
@@ -1573,7 +1611,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       responses:
@@ -1581,7 +1619,7 @@ paths:
           description: Disconnected peer
           content:
             application/json:
-              schema: *a18
+              schema: *a20
         "400": *a3
         "500": *a5
         default:
@@ -1599,7 +1637,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       responses:
@@ -1615,7 +1653,7 @@ paths:
                     type: string
                     example: 5.0018ms
         "400": *a3
-        "404": *a16
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -1632,7 +1670,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       responses:
@@ -1671,7 +1709,7 @@ paths:
           content:
             application/json:
               schema:
-                &a31
+                &a33
                 type: object
                 properties:
                   totalReceived:
@@ -1712,7 +1750,7 @@ paths:
             or received
           content:
             application/json:
-              schema: *a31
+              schema: *a33
         "500": *a5
         default:
           description: Default response
@@ -1735,7 +1773,7 @@ paths:
                 type: object
                 properties:
                   baseAddr:
-                    &a32
+                    &a34
                     type: string
                     pattern: ^[A-Fa-f0-9]{64}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -1775,9 +1813,9 @@ paths:
                           items:
                             type: object
                             properties:
-                              address: *a32
+                              address: *a34
                               metrics:
-                                &a33
+                                &a35
                                 type: object
                                 properties:
                                   lastSeenTimestamp:
@@ -1807,8 +1845,8 @@ paths:
                           items:
                             type: object
                             properties:
-                              address: *a32
-                              metrics: *a33
+                              address: *a34
+                              metrics: *a35
   /welcome-message:
     get:
       summary: Get configured P2P welcome message
@@ -1825,7 +1863,7 @@ paths:
           content:
             application/json:
               schema:
-                &a34
+                &a36
                 type: object
                 properties:
                   welcomeMessage:
@@ -1845,13 +1883,13 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: *a34
+            schema: *a36
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema: *a24
+              schema: *a26
         "400": *a3
         "500": *a5
         default:
@@ -1867,7 +1905,7 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       tags:
@@ -1889,13 +1927,13 @@ paths:
                     nullable: true
                     properties:
                       beneficiary:
-                        &a35
+                        &a37
                         type: string
                         pattern: ^[A-Fa-f0-9]{40}$
                         example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
-                      chequebook: *a35
+                      chequebook: *a37
                       payout:
-                        &a36
+                        &a38
                         description: Numeric string that represents integer which might exceeds
                           `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                         type: string
@@ -1907,12 +1945,12 @@ paths:
                   result:
                     type: object
                     properties:
-                      recipient: *a35
-                      lastPayout: *a36
+                      recipient: *a37
+                      lastPayout: *a38
                       bounced:
                         type: boolean
-                  uncashedAmount: *a36
-        "404": *a16
+                  uncashedAmount: *a38
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -1926,10 +1964,10 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
-        - &a41
+        - &a43
           in: header
           name: gas-price
           schema:
@@ -1939,7 +1977,7 @@ paths:
             format: int64
           required: false
           description: Gas price for transaction
-        - &a49
+        - &a51
           in: header
           name: gas-limit
           schema:
@@ -1959,16 +1997,16 @@ paths:
           content:
             application/json:
               schema:
-                &a42
+                &a44
                 type: object
                 properties:
                   transactionHash:
                     type: string
                     pattern: ^0x[A-Fa-f0-9]{64}$
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
-        "404": *a16
+        "404": *a17
         "429":
-          &a50
+          &a52
           description: Too many requests
           content:
             application/problem+json:
@@ -1999,7 +2037,7 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a26
+          schema: *a28
           required: true
           description: Swarm address of peer
       tags:
@@ -2017,23 +2055,23 @@ paths:
                     pattern: ^[A-Fa-f0-9]{64}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
                   lastreceived:
-                    &a38
+                    &a40
                     type: object
                     nullable: true
                     properties:
                       beneficiary:
-                        &a37
+                        &a39
                         type: string
                         pattern: ^[A-Fa-f0-9]{40}$
                         example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
-                      chequebook: *a37
+                      chequebook: *a39
                       payout:
                         description: Numeric string that represents integer which might exceeds
                           `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                         type: string
                         example: "1000000000000000000"
-                  lastsent: *a38
-        "404": *a16
+                  lastsent: *a40
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -2066,23 +2104,23 @@ paths:
                           pattern: ^[A-Fa-f0-9]{64}$
                           example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
                         lastreceived:
-                          &a40
+                          &a42
                           type: object
                           nullable: true
                           properties:
                             beneficiary:
-                              &a39
+                              &a41
                               type: string
                               pattern: ^[A-Fa-f0-9]{40}$
                               example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
-                            chequebook: *a39
+                            chequebook: *a41
                             payout:
                               description: Numeric string that represents integer which might exceeds
                                 `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                               type: string
                               example: "1000000000000000000"
-                        lastsent: *a40
-        "404": *a16
+                        lastsent: *a42
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -2102,7 +2140,7 @@ paths:
             format: int64
           required: true
           description: amount of tokens to deposit
-        - *a41
+        - *a43
       tags:
         - Chequebook
       responses:
@@ -2110,8 +2148,8 @@ paths:
           description: Transaction hash of the deposit transaction
           content:
             application/json:
-              schema: *a42
-        "400": *a16
+              schema: *a44
+        "400": *a17
         "500": *a5
         default:
           description: Default response
@@ -2131,7 +2169,7 @@ paths:
             format: int64
           required: true
           description: amount of tokens to withdraw
-        - *a41
+        - *a43
       tags:
         - Chequebook
       responses:
@@ -2139,8 +2177,8 @@ paths:
           description: Transaction hash of the withdraw transaction
           content:
             application/json:
-              schema: *a42
-        "400": *a16
+              schema: *a44
+        "400": *a17
         "500": *a5
         default:
           description: Default response
@@ -2176,17 +2214,17 @@ paths:
                         nonce:
                           type: integer
                         gasPrice:
-                          &a43
+                          &a45
                           description: Numeric string that represents integer which might exceeds
                             `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                           type: string
                           example: "1000000000000000000"
                         gasLimit:
                           type: integer
-                        gasTipCap: *a43
+                        gasTipCap: *a45
                         gasTipBoost:
                           type: integer
-                        gasFeeCap: *a43
+                        gasFeeCap: *a45
                         data:
                           type: string
                         created:
@@ -2195,7 +2233,7 @@ paths:
                           example: 2020-06-11T11:26:42.6969797+02:00
                         description:
                           type: string
-                        value: *a43
+                        value: *a45
         "500": *a5
         default:
           description: Default response
@@ -2208,7 +2246,7 @@ paths:
         - in: path
           name: txHash
           schema:
-            &a45
+            &a47
             type: string
             pattern: ^0x[A-Fa-f0-9]{64}$
             example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
@@ -2235,17 +2273,17 @@ paths:
                   nonce:
                     type: integer
                   gasPrice:
-                    &a44
+                    &a46
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
                   gasLimit:
                     type: integer
-                  gasTipCap: *a44
+                  gasTipCap: *a46
                   gasTipBoost:
                     type: integer
-                  gasFeeCap: *a44
+                  gasFeeCap: *a46
                   data:
                     type: string
                   created:
@@ -2254,8 +2292,8 @@ paths:
                     example: 2020-06-11T11:26:42.6969797+02:00
                   description:
                     type: string
-                  value: *a44
-        "404": *a16
+                  value: *a46
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -2266,7 +2304,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a45
+          schema: *a47
           required: true
           description: Hash of the transaction
       tags:
@@ -2276,8 +2314,8 @@ paths:
           description: Hash of the transaction
           content:
             application/json:
-              schema: *a42
-        "404": *a16
+              schema: *a44
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -2288,10 +2326,10 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a45
+          schema: *a47
           required: true
           description: Hash of the transaction
-        - *a41
+        - *a43
       tags:
         - Transaction
       responses:
@@ -2299,8 +2337,8 @@ paths:
           description: Hash of the transaction
           content:
             application/json:
-              schema: *a42
-        "404": *a16
+              schema: *a44
+        "404": *a17
         "500": *a5
         default:
           description: Default response
@@ -2330,7 +2368,7 @@ paths:
                         - type: object
                           properties:
                             batchID:
-                              &a46
+                              &a48
                               type: string
                               pattern: ^[A-Fa-f0-9]{64}$
                               example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -2363,13 +2401,13 @@ paths:
                               format: int64
                         - type: object
                           properties:
-                            batchID: *a46
+                            batchID: *a48
                             exists:
                               type: boolean
                             batchTTL:
                               type: integer
                               format: int64
-        "404": *a16
+        "404": *a17
         default:
           description: Default response
   "/stamps/{batch_id}":
@@ -2377,7 +2415,7 @@ paths:
       - in: path
         name: batch_id
         schema:
-          &a48
+          &a50
           type: string
           pattern: ^[A-Fa-f0-9]{64}$
           example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -2402,7 +2440,7 @@ paths:
                   - type: object
                     properties:
                       batchID:
-                        &a47
+                        &a49
                         type: string
                         pattern: ^[A-Fa-f0-9]{64}$
                         example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -2435,21 +2473,21 @@ paths:
                         format: int64
                   - type: object
                     properties:
-                      batchID: *a47
+                      batchID: *a49
                       exists:
                         type: boolean
                       batchTTL:
                         type: integer
                         format: int64
         "400": *a3
-        "404": *a16
+        "404": *a17
         default:
           description: Default response
   "/stamps/{batch_id}/buckets":
     parameters:
       - in: path
         name: batch_id
-        schema: *a48
+        schema: *a50
         required: true
         description: Swarm address of the stamp
     get:
@@ -2486,7 +2524,7 @@ paths:
                         collisions:
                           type: integer
         "400": *a3
-        "404": *a16
+        "404": *a17
         default:
           description: Default response
   "/stamps/{amount}/{depth}":
@@ -2532,15 +2570,15 @@ paths:
           schema:
             type: boolean
           required: false
-        - *a41
-        - *a49
+        - *a43
+        - *a51
       responses:
         "201":
           description: Returns the newly created postage batch ID
           content:
             application/json:
               schema:
-                &a51
+                &a53
                 type: object
                 properties:
                   batchID:
@@ -2552,7 +2590,7 @@ paths:
                     pattern: ^0x[A-Fa-f0-9]{64}$
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
         "400": *a3
-        "429": *a50
+        "429": *a52
         "500": *a5
         default:
           description: Default response
@@ -2571,7 +2609,7 @@ paths:
       parameters:
         - in: path
           name: batch_id
-          schema: *a48
+          schema: *a50
           required: true
           description: Batch ID to top up
         - in: path
@@ -2581,17 +2619,17 @@ paths:
             format: int64
           required: true
           description: Amount of BZZ per chunk to top up to an existing postage batch.
-        - *a41
-        - *a49
+        - *a43
+        - *a51
       responses:
         "202":
           description: Returns the postage batch ID that was topped up
           content:
             application/json:
-              schema: *a51
+              schema: *a53
         "400": *a3
         "402": *a10
-        "429": *a50
+        "429": *a52
         "500": *a5
         default:
           description: Default response
@@ -2610,7 +2648,7 @@ paths:
       parameters:
         - in: path
           name: batch_id
-          schema: *a48
+          schema: *a50
           required: true
           description: Batch ID to dilute
         - in: path
@@ -2619,16 +2657,16 @@ paths:
             type: integer
           required: true
           description: New batch depth. Must be higher than the previous depth.
-        - *a41
-        - *a49
+        - *a43
+        - *a51
       responses:
         "202":
           description: Returns the postage batch ID that was diluted.
           content:
             application/json:
-              schema: *a51
+              schema: *a53
         "400": *a3
-        "429": *a50
+        "429": *a52
         "500": *a5
         default:
           description: Default response
