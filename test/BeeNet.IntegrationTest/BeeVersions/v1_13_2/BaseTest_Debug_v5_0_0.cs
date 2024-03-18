@@ -30,9 +30,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
             beeNodeClient = new BeeNodeClient(
                 Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
-                1635,
-                Etherna.BeeNet.Clients.GatewayApi.GatewayApiVersion.v5_0_0,
-                Etherna.BeeNet.Clients.DebugApi.DebugApiVersion.v5_0_0);
+                1635);
         }
 
         protected async Task<string> UploadChunkFileAndGetReferenceAsync()

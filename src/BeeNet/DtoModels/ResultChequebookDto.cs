@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ResultChequeBookDto
     {
         // Constructors.
-        internal ResultChequeBookDto(Clients.DebugApi.V5_0_0.Result result)
+        internal ResultChequeBookDto(Clients.DebugApi.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Bounced = result.Bounced;
         }
 
-        internal ResultChequeBookDto(Clients.GatewayApi.V5_0_0.Result result)
+        internal ResultChequeBookDto(Clients.GatewayApi.Result result)
         {
             if (result is null)
                 throw new ArgumentNullException(nameof(result));

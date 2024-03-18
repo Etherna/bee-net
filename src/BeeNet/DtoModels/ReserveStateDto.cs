@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ReserveStateDto
     {
         // Constructors.
-        internal ReserveStateDto(Clients.DebugApi.V5_0_0.Response12 response)
+        internal ReserveStateDto(Clients.DebugApi.Response12 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             StorageRadius = response.StorageRadius;
         }
 
-        internal ReserveStateDto(Clients.GatewayApi.V5_0_0.Response28 response)
+        internal ReserveStateDto(Clients.GatewayApi.Response28 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

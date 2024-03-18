@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi.V5_0_0;
 using Etherna.BeeNet.DtoModels;
 using Etherna.BeeNet.Exceptions;
 using System;
@@ -28,28 +27,21 @@ namespace Etherna.BeeNet.Clients.DebugApi
     public class BeeDebugClient : IBeeDebugClient
     {
         // Fields.
-        private readonly IBeeDebugClient_5_0_0 beeDebugClient_5_0_0;
+        private readonly IBeeDebugGeneratedClient generatedClient;
 
         // Constructors.
-        public BeeDebugClient(HttpClient httpClient, Uri baseUrl, DebugApiVersion apiVersion)
+        public BeeDebugClient(HttpClient httpClient, Uri baseUrl)
         {
             if (baseUrl is null)
                 throw new ArgumentNullException(nameof(baseUrl));
 
-            beeDebugClient_5_0_0 = new BeeDebugClient_5_0_0(httpClient) { BaseUrl = baseUrl.ToString() };
-            CurrentApiVersion = apiVersion;
+            generatedClient = new BeeDebugGeneratedClient(httpClient) { BaseUrl = baseUrl.ToString() };
         }
 
-        // Properties.
-        public DebugApiVersion CurrentApiVersion { get; set; }
-
         // Methods.
-        public async Task<Dictionary<string, AccountDto>> AccountingAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new AccountDto(i.Value)),
-                _ => throw new InvalidOperationException()
-            };
+        public async Task<Dictionary<string, AccountDto>> AccountingAsync(
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new AccountDto(i.Value));
 
         public async Task<string> BuyPostageBatchAsync(
             long amount,
@@ -57,429 +49,218 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string? label = null,
             bool? immutable = null,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, cancellationToken).ConfigureAwait(false)).BatchID,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<string> CashoutChequeForPeerAsync(
             string peerId,
             long? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).TransactionHash,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> ConnectToPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ConnectAsync(address, cancellationToken).ConfigureAwait(false)).Address,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ConnectAsync(address, cancellationToken).ConfigureAwait(false)).Address;
 
         public async Task<MessageResponseDto> DeletePeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new MessageResponseDto(await beeDebugClient_5_0_0.PeersDeleteAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.PeersDeleteAsync(address, cancellationToken).ConfigureAwait(false));
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,
             long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.TransactionsDeleteAsync(txHash, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.TransactionsDeleteAsync(txHash, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> DepositIntoChequeBookAsync(
             long amount,
             long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> DilutePostageBatchAsync(
             string id,
             int depth,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsDiluteAsync(id, depth, cancellationToken).ConfigureAwait(false)).BatchID,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.StampsDiluteAsync(id, depth, cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<AddressDetailDto> GetAddressesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new AddressDetailDto(await beeDebugClient_5_0_0.AddressesAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<IEnumerable<BalanceDto>> GetAllBalancesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.BalancesGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.BalancesGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i));
 
         public async Task<IEnumerable<ChequeBookChequeGetDto>> GetAllChequeBookChequesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false)).Lastcheques.Select(i => new ChequeBookChequeGetDto(i));
 
         public async Task<IEnumerable<BalanceDto>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ConsumedGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ConsumedGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new BalanceDto(i));
 
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
 
         public async Task<SettlementDto> GetAllSettlementsAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new SettlementDto(await beeDebugClient_5_0_0.SettlementsGetAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<TimeSettlementsDto> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new TimeSettlementsDto(await beeDebugClient_5_0_0.TimesettlementsAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.TimesettlementsAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<IEnumerable<PostageBatchShortDto>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.BatchesAsync(cancellationToken).ConfigureAwait(false)).Batches.Select(i => new PostageBatchShortDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false)).Batches.Select(i => new PostageBatchShortDto(i));
 
         public async Task<BalanceDto> GetBalanceWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new BalanceDto(await beeDebugClient_5_0_0.BalancesGetAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.BalancesGetAsync(address, cancellationToken).ConfigureAwait(false));
 
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
 
         public async Task<ChainStateDto> GetChainStateAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new ChainStateDto(await beeDebugClient_5_0_0.ChainstateAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ChainstateAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<string> GetChequeBookAddressAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress;
 
         public async Task<ChequeBookBalanceDto> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new ChequeBookBalanceDto(await beeDebugClient_5_0_0.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<ChequeBookCashoutGetDto> GetChequeBookCashoutForPeerAsync(
             string peerId,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new ChequeBookCashoutGetDto(await beeDebugClient_5_0_0.ChequebookCashoutGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ChequebookCashoutGetAsync(peerId, cancellationToken).ConfigureAwait(false));
 
         public async Task<ChequeBookChequeGetDto> GetChequeBookChequeForPeerAsync(
             string peerId,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new ChequeBookChequeGetDto(await beeDebugClient_5_0_0.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false));
 
         public async Task<MessageResponseDto> GetChunkAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new MessageResponseDto(await beeDebugClient_5_0_0.ChunksAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ChunksAsync(address, cancellationToken).ConfigureAwait(false));
 
         public async Task<BalanceDto> GetConsumedBalanceWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new BalanceDto(await beeDebugClient_5_0_0.ConsumedGetAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ConsumedGetAsync(address, cancellationToken).ConfigureAwait(false));
 
         public async Task<VersionDto> GetHealthAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new VersionDto(await beeDebugClient_5_0_0.HealthAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.HealthAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<NodeInfoDto> GetNodeInfoAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new NodeInfoDto(await beeDebugClient_5_0_0.NodeAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.NodeAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<IEnumerable<PostageBatchDto>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatchDto(i));
 
         public async Task<IEnumerable<PendingTransactionDto>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i)),
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransactionDto(i));
 
         public async Task<PostageBatchDto> GetPostageBatchAsync(
             string id,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new PostageBatchDto(await beeDebugClient_5_0_0.StampsGetAsync(id, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.StampsGetAsync(id, cancellationToken).ConfigureAwait(false));
 
         public async Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default)
         {
-            switch (CurrentApiVersion)
+            try
             {
-                case DebugApiVersion.v5_0_0:
-                    try
-                    {
-                        await beeDebugClient_5_0_0.ReadinessAsync(cancellationToken).ConfigureAwait(false);
-                        return true;
-                    }
-                    catch (BeeNetDebugApiException e) when (e.StatusCode == 400)
-                    {
-                        return false;
-                    }
-                default: throw new InvalidOperationException();
+                await generatedClient.ReadinessAsync(cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch (BeeNetDebugApiException e) when (e.StatusCode == 400)
+            {
+                return false;
             }
         }
 
         public async Task<ReserveStateDto> GetReserveStateAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new ReserveStateDto(await beeDebugClient_5_0_0.ReservestateAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.ReservestateAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<SettlementDataDto> GetSettlementsWithPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new SettlementDataDto(await beeDebugClient_5_0_0.SettlementsGetAsync(address, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.SettlementsGetAsync(address, cancellationToken).ConfigureAwait(false));
 
         public async Task<StampsBucketsDto> GetStampsBucketsForBatchAsync(
             string batchId,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new StampsBucketsDto(await beeDebugClient_5_0_0.StampsBucketsAsync(batchId, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.StampsBucketsAsync(batchId, cancellationToken).ConfigureAwait(false));
 
         public async Task<TopologyDto> GetSwarmTopologyAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new TopologyDto(await beeDebugClient_5_0_0.TopologyAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.TopologyAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<TransactionsDto> GetTransactionInfoAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new TransactionsDto(await beeDebugClient_5_0_0.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false));
 
         public async Task<WalletDto> GetWalletBalance(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new WalletDto(await beeDebugClient_5_0_0.WalletAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage;
 
         public async Task<LogDataDto> LoggersGetAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new LogDataDto(await beeDebugClient_5_0_0.LoggersGetAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<LogDataDto> LoggersGetAsync(string exp, CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new LogDataDto(await beeDebugClient_5_0_0.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false));
 
-        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                await beeDebugClient_5_0_0.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
+            await generatedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
 
         public async Task<string> RebroadcastTransactionAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<RedistributionStateDto> RedistributionStateAsync(CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new RedistributionStateDto(await beeDebugClient_5_0_0.RedistributionstateAsync(cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false));
         
         public async Task<VersionDto> SetWelcomeMessageAsync(
             string welcomeMessage,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => new VersionDto(await beeDebugClient_5_0_0.WelcomeMessagePostAsync(
-                    new V5_0_0.Body
-                    {
-                        WelcomeMessage = welcomeMessage
-                    },
-                    cancellationToken).ConfigureAwait(false)),
-                _ => throw new InvalidOperationException()
-            };
+            new(await generatedClient.WelcomeMessagePostAsync(
+                new Body
+                {
+                    WelcomeMessage = welcomeMessage
+                },
+                cancellationToken).ConfigureAwait(false));
 
-        public async Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                await beeDebugClient_5_0_0.StakeDeleteAsync(gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeDeleteAsync(gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
 
-        public async Task StakeGetAsync(CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                await beeDebugClient_5_0_0.StakeGetAsync(cancellationToken).ConfigureAwait(false);
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
 
-        public async Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                await beeDebugClient_5_0_0.StakePostAsync(amount, gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakePostAsync(amount, gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
 
-        public async Task<StatusNodeDto> StatusNodeAsync(CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                return new StatusNodeDto(await beeDebugClient_5_0_0.StatusAsync(cancellationToken).ConfigureAwait(false));
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task<StatusNodeDto> StatusNodeAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false));
 
-        public async Task<IEnumerable<StatusNodeDto>> StatusPeersAsync(CancellationToken cancellationToken = default)
-        {
-            if (CurrentApiVersion == DebugApiVersion.v5_0_0)
-                return (await beeDebugClient_5_0_0.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNodeDto(p));
-            else
-                throw new InvalidOperationException();
-        }
+        public async Task<IEnumerable<StatusNodeDto>> StatusPeersAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNodeDto(p));
 
         public async Task<string> TopUpPostageBatchAsync(
             string id,
             long amount,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.StampsTopupAsync(id, amount, cancellationToken).ConfigureAwait(false)).BatchID,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.StampsTopupAsync(id, amount, cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<string> TryConnectToPeerAsync(
             string peerId,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
 
         public async Task<string> WithdrawFromChequeBookAsync(
             long amount,
             long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            CurrentApiVersion switch
-            {
-                DebugApiVersion.v5_0_0 => (await beeDebugClient_5_0_0.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash,
-                _ => throw new InvalidOperationException()
-            };
+            (await generatedClient.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
     }
 }

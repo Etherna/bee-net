@@ -41,7 +41,7 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "BeeGatewayClient_5_0_0",
+      "className": "BeeGatewayGeneratedClient",
       "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [
         "Etherna.BeeNet.Exceptions"
@@ -58,7 +58,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "Etherna.BeeNet.Clients.GatewayApi.V5_0_0",
+      "namespace": "Etherna.BeeNet.Clients.GatewayApi",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -95,7 +95,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet/Clients/GatewayApi/v5_0_0/BeeGatewayClient_5_0_0.cs",
+      "output": "../src/BeeNet/Clients/GatewayApi/BeeGatewayGeneratedClient.cs",
       "newLineBehavior": "Auto"
     }
   }

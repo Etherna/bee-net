@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LastSentDto
     {
         // Constructors.
-        internal LastSentDto(Clients.DebugApi.V5_0_0.Lastsent lastsent)
+        internal LastSentDto(Clients.DebugApi.Lastsent lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastsent.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastSentDto(Clients.DebugApi.V5_0_0.Lastsent2 lastsent)
+        internal LastSentDto(Clients.DebugApi.Lastsent2 lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastsent.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastSentDto(Clients.GatewayApi.V5_0_0.Lastsent lastsent)
+        internal LastSentDto(Clients.GatewayApi.Lastsent lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
             Payout = long.Parse(lastsent.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastSentDto(Clients.GatewayApi.V5_0_0.Lastsent2 lastsent)
+        internal LastSentDto(Clients.GatewayApi.Lastsent2 lastsent)
         {
             if (lastsent is null)
                 throw new ArgumentNullException(nameof(lastsent));

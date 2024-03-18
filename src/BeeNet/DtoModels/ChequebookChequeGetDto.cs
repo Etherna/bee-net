@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ChequeBookChequeGetDto
     {
         // Constructors
-        internal ChequeBookChequeGetDto(Clients.DebugApi.V5_0_0.Lastcheques response)
+        internal ChequeBookChequeGetDto(Clients.DebugApi.Lastcheques response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        internal ChequeBookChequeGetDto(Clients.DebugApi.V5_0_0.Response27 response)
+        internal ChequeBookChequeGetDto(Clients.DebugApi.Response27 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.DtoModels
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        internal ChequeBookChequeGetDto(Clients.GatewayApi.V5_0_0.Lastcheques response)
+        internal ChequeBookChequeGetDto(Clients.GatewayApi.Lastcheques response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.DtoModels
             LastSent = response.Lastsent is not null ? new LastSentDto(response.Lastsent) : null;
         }
 
-        internal ChequeBookChequeGetDto(Clients.GatewayApi.V5_0_0.Response42 response)
+        internal ChequeBookChequeGetDto(Clients.GatewayApi.Response42 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));

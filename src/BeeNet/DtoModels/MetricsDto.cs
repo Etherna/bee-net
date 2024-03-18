@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class MetricsDto
     {
         // Constructors
-        internal MetricsDto(Clients.DebugApi.V5_0_0.Metrics metrics)
+        internal MetricsDto(Clients.DebugApi.Metrics metrics)
         {
             if (metrics is null)
                 throw new ArgumentNullException(nameof(metrics));
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
             LatencyEWMA = metrics.LatencyEWMA;
         }
 
-        internal MetricsDto(Clients.GatewayApi.V5_0_0.Metrics metrics)
+        internal MetricsDto(Clients.GatewayApi.Metrics metrics)
         {
             if (metrics is null)
                 throw new ArgumentNullException(nameof(metrics));

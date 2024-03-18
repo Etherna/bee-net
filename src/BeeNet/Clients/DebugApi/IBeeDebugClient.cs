@@ -21,9 +21,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
 {
     public interface IBeeDebugClient
     {
-        // Properties.
-        DebugApiVersion CurrentApiVersion { get; set; }
-
         // Methods.
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>

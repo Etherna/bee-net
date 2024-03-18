@@ -34,17 +34,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
             beeNodeClient = new BeeNodeClient(
                 Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633,
-                1635,
-                GatewayApiVersion.v5_0_0,
-                DebugApiVersion.v5_0_0);
+                1635);
         }
 
         public async Task CreateAuthenticatedClientAsync()
         {
             beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
                 Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
-                1633,
-                GatewayApiVersion.v5_0_0);
+                1633);
         }
 
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)

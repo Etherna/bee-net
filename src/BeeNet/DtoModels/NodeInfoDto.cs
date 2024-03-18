@@ -19,32 +19,32 @@ namespace Etherna.BeeNet.DtoModels
     public class NodeInfoDto
     {
         // Constructors.
-        internal NodeInfoDto(Clients.DebugApi.V5_0_0.Response14 response)
+        internal NodeInfoDto(Clients.DebugApi.Response14 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             BeeMode = response.BeeMode switch
             {
-                Clients.DebugApi.V5_0_0.Response14BeeMode.Dev => BeeModeDto.Dev,
-                Clients.DebugApi.V5_0_0.Response14BeeMode.Full => BeeModeDto.Full,
-                Clients.DebugApi.V5_0_0.Response14BeeMode.Light => BeeModeDto.Light,
+                Clients.DebugApi.Response14BeeMode.Dev => BeeModeDto.Dev,
+                Clients.DebugApi.Response14BeeMode.Full => BeeModeDto.Full,
+                Clients.DebugApi.Response14BeeMode.Light => BeeModeDto.Light,
                 _ => throw new InvalidOperationException()
             };
             ChequebookEnabled = response.ChequebookEnabled;
             SwapEnabled = response.SwapEnabled;
         }
 
-        internal NodeInfoDto(Clients.GatewayApi.V5_0_0.Response30 response)
+        internal NodeInfoDto(Clients.GatewayApi.Response30 response)
         {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
             BeeMode = response.BeeMode switch
             {
-                Clients.GatewayApi.V5_0_0.Response30BeeMode.Dev => BeeModeDto.Dev,
-                Clients.GatewayApi.V5_0_0.Response30BeeMode.Full => BeeModeDto.Full,
-                Clients.GatewayApi.V5_0_0.Response30BeeMode.Light => BeeModeDto.Light,
+                Clients.GatewayApi.Response30BeeMode.Dev => BeeModeDto.Dev,
+                Clients.GatewayApi.Response30BeeMode.Full => BeeModeDto.Full,
+                Clients.GatewayApi.Response30BeeMode.Light => BeeModeDto.Light,
                 _ => throw new InvalidOperationException()
             };
             ChequebookEnabled = response.ChequebookEnabled;
