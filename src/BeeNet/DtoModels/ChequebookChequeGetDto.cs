@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors
         internal ChequeBookChequeGetDto(Clients.DebugApi.Lastcheques response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
@@ -31,8 +30,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ChequeBookChequeGetDto(Clients.DebugApi.Response27 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
@@ -41,8 +39,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ChequeBookChequeGetDto(Clients.GatewayApi.Lastcheques response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;
@@ -51,8 +48,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ChequeBookChequeGetDto(Clients.GatewayApi.Response42 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastReceived = response.Lastreceived is not null ? new LastReceivedDto(response.Lastreceived) : null;

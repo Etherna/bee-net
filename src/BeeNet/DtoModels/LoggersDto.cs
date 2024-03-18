@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal LoggersDto(Clients.DebugApi.Loggers loggers)
         {
-            if (loggers is null)
-                throw new ArgumentNullException(nameof(loggers));
+            ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
 
             Id = loggers.Id;
             Logger = loggers.Logger;
@@ -30,15 +29,14 @@ namespace Etherna.BeeNet.DtoModels
             Verbosity = loggers.Verbosity;
         }
 
-        internal LoggersDto(Clients.DebugApi.Loggers2 loggers2)
+        internal LoggersDto(Clients.DebugApi.Loggers2 loggers)
         {
-            if (loggers2 is null)
-                throw new ArgumentNullException(nameof(loggers2));
+            ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
 
-            Id = loggers2.Id;
-            Logger = loggers2.Logger;
-            Subsystem = loggers2.Subsystem;
-            Verbosity = loggers2.Verbosity;
+            Id = loggers.Id;
+            Logger = loggers.Logger;
+            Subsystem = loggers.Subsystem;
+            Verbosity = loggers.Verbosity;
         }
 
         // Properties.

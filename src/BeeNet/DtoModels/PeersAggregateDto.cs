@@ -23,8 +23,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal PeersAggregateDto(Clients.DebugApi.Anonymous2 anonymous)
         {
-            if (anonymous is null)
-                throw new ArgumentNullException(nameof(anonymous));
+            ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));
 
             Population = anonymous.Population;
             Connected = anonymous.Connected;
@@ -35,8 +34,7 @@ namespace Etherna.BeeNet.DtoModels
         }
         internal PeersAggregateDto(Clients.GatewayApi.Anonymous2 anonymous)
         {
-            if (anonymous is null)
-                throw new ArgumentNullException(nameof(anonymous));
+            ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));
 
             Population = anonymous.Population;
             Connected = anonymous.Connected;

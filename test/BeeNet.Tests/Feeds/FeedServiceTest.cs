@@ -448,7 +448,7 @@ namespace Etherna.BeeNet.Feeds
                     var startingEpochIndex = new EpochFeedIndex(4, 1);
                     var startingChunkReference = FeedChunk.BuildReferenceHash(ChunkAccount, ChunkTopic, startingEpochIndex);
 
-                    var parentEpochIndex = startingEpochIndex.GetParent();
+                    var parentEpochIndex = startingEpochIndex.Parent;
                     var parentChunkReference = FeedChunk.BuildReferenceHash(ChunkAccount, ChunkTopic, parentEpochIndex);
                     var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
@@ -476,7 +476,7 @@ namespace Etherna.BeeNet.Feeds
                     var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
 
-                    var parentEpochIndex = startingEpochIndex.GetParent();
+                    var parentEpochIndex = startingEpochIndex.Parent;
                     var parentChunkReference = FeedChunk.BuildReferenceHash(ChunkAccount, ChunkTopic, parentEpochIndex);
                     var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload

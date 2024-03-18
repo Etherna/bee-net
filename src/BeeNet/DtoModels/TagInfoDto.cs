@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal TagInfoDto(Clients.GatewayApi.Response7 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
@@ -35,8 +34,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal TagInfoDto(Clients.GatewayApi.Response8 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Uid = response.Uid;
             StartedAt = response.StartedAt;
@@ -49,8 +47,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal TagInfoDto(Clients.GatewayApi.Tags tags)
         {
-            if (tags is null)
-                throw new ArgumentNullException(nameof(tags));
+            ArgumentNullException.ThrowIfNull(tags, nameof(tags));
 
             Uid = tags.Uid;
             StartedAt = tags.StartedAt;

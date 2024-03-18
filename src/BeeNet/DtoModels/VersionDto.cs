@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal VersionDto(Clients.DebugApi.Response18 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
@@ -37,8 +36,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal VersionDto(Clients.DebugApi.Response24 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
@@ -53,8 +51,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal VersionDto(Clients.GatewayApi.Response9 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
@@ -69,8 +66,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal VersionDto(Clients.GatewayApi.Response20 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
@@ -85,8 +81,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal VersionDto(Clients.GatewayApi.Response39 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
@@ -97,7 +92,7 @@ namespace Etherna.BeeNet.DtoModels
             Version = response.Version;
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
-            if (response.AdditionalProperties.TryGetValue("reference", out object reference))
+            if (response.AdditionalProperties.TryGetValue("reference", out object? reference))
                 Reference = reference.ToString();
         }
 

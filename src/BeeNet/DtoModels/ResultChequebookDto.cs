@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal ResultChequeBookDto(Clients.DebugApi.Result result)
         {
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
+            ArgumentNullException.ThrowIfNull(result, nameof(result));
 
             Recipient = result.Recipient;
             LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ResultChequeBookDto(Clients.GatewayApi.Result result)
         {
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
+            ArgumentNullException.ThrowIfNull(result, nameof(result));
 
             Recipient = result.Recipient;
             LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);

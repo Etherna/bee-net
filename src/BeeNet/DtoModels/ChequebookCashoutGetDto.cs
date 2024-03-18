@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal ChequeBookCashoutGetDto(Clients.DebugApi.Response25 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;
@@ -34,8 +33,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ChequeBookCashoutGetDto(Clients.GatewayApi.Response40 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
             LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedChequeDto(response.LastCashedCheque) : null;

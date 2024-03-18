@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal SettlementDataDto(Clients.DebugApi.Settlements settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal SettlementDataDto(Clients.DebugApi.Settlements2 settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
@@ -42,8 +40,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal SettlementDataDto(Clients.DebugApi.Response19 settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
@@ -52,8 +49,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal SettlementDataDto(Clients.GatewayApi.Settlements settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
@@ -62,8 +58,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal SettlementDataDto(Clients.GatewayApi.Settlements2 settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
@@ -72,8 +67,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal SettlementDataDto(Clients.GatewayApi.Response34 settlement)
         {
-            if (settlement is null)
-                throw new ArgumentNullException(nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
             Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);

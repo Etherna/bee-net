@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors
         internal MetricsDto(Clients.DebugApi.Metrics metrics)
         {
-            if (metrics is null)
-                throw new ArgumentNullException(nameof(metrics));
+            ArgumentNullException.ThrowIfNull(metrics, nameof(metrics));
 
             LastSeenTimestamp = metrics.LastSeenTimestamp;
             SessionConnectionRetry = metrics.SessionConnectionRetry;
@@ -34,8 +33,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal MetricsDto(Clients.GatewayApi.Metrics metrics)
         {
-            if (metrics is null)
-                throw new ArgumentNullException(nameof(metrics));
+            ArgumentNullException.ThrowIfNull(metrics, nameof(metrics));
 
             LastSeenTimestamp = metrics.LastSeenTimestamp;
             SessionConnectionRetry = metrics.SessionConnectionRetry;

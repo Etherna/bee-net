@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal PostageBatchShortDto(Clients.DebugApi.Batches batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             BatchID = batch.BatchID;
             BatchTTL = batch.BatchTTL;
@@ -38,8 +37,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal PostageBatchShortDto(Clients.GatewayApi.Batches batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             BatchID = batch.BatchID;
             BatchTTL = Convert.ToInt64(batch.BatchTTL, CultureInfo.InvariantCulture); //TODO CAST to Long or change return type in String

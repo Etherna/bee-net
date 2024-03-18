@@ -23,8 +23,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal StampsBucketsDto(Clients.DebugApi.Response39 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Depth = response.Depth;
             BucketDepth = response.BucketDepth;
@@ -34,8 +33,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal StampsBucketsDto(Clients.GatewayApi.Response52 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Depth = response.Depth;
             BucketDepth = response.BucketDepth;

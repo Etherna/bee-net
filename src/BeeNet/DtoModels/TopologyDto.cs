@@ -23,8 +23,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal TopologyDto(Clients.DebugApi.Response22 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             BaseAddr = response.BaseAddr;
             Bins = response.Bins.ToDictionary(
@@ -53,8 +52,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal TopologyDto(Clients.GatewayApi.Response37 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             BaseAddr = response.BaseAddr;
             Bins = response.Bins.ToDictionary(

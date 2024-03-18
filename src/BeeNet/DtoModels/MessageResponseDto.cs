@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal MessageResponseDto(Clients.DebugApi.Response16 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Message = response.Message;
             Code = response.Code;
@@ -30,8 +29,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal MessageResponseDto(Clients.DebugApi.Response10 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Message = response.Message;
             Code = response.Code;
@@ -39,8 +37,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal MessageResponseDto(Clients.GatewayApi.Response10 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Message = response.Message;
             Code = response.Code;
@@ -48,8 +45,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal MessageResponseDto(Clients.GatewayApi.Response12 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Message = response.Message;
             Code = response.Code;
@@ -57,8 +53,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal MessageResponseDto(Clients.GatewayApi.Response32 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Message = response.Message;
             Code = response.Code;

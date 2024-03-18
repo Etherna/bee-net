@@ -21,26 +21,24 @@ namespace Etherna.BeeNet.DtoModels
     public class LogDataDto
     {
         // Constructors.
-        internal LogDataDto(Clients.DebugApi.Response44 response44)
+        internal LogDataDto(Clients.DebugApi.Response44 response)
         {
-            if (response44 is null)
-                throw new ArgumentNullException(nameof(response44));
-            
-            Tree = response44.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
-            Loggers = response44.Loggers.Select(i => new LoggersDto(i)).ToList();
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
+
+            Tree = response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
+            Loggers = response.Loggers.Select(i => new LoggersDto(i)).ToList();
         }
 
-        internal LogDataDto(Clients.DebugApi.Response45 response45)
+        internal LogDataDto(Clients.DebugApi.Response45 response)
         {
-            if (response45 is null)
-                throw new ArgumentNullException(nameof(response45));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Tree = response45.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
-            Loggers = response45.Loggers.Select(i => new LoggersDto(i)).ToList();
+            Tree = response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
+            Loggers = response.Loggers.Select(i => new LoggersDto(i)).ToList();
         }
 
         // Properties.
-        public IDictionary<string, List<string>> Tree { get; set; }
-        public ICollection<LoggersDto> Loggers { get; set; }
+        public IDictionary<string, List<string>> Tree { get; }
+        public ICollection<LoggersDto> Loggers { get; }
     }
 }

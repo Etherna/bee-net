@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal PendingTransactionDto(Clients.DebugApi.PendingTransactions tx)
         {
-            if (tx is null)
-                throw new ArgumentNullException(nameof(tx));
+            ArgumentNullException.ThrowIfNull(tx, nameof(tx));
 
             TransactionHash = tx.TransactionHash;
             To = tx.To;
@@ -38,8 +37,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal PendingTransactionDto(Clients.GatewayApi.PendingTransactions tx)
         {
-            if (tx is null)
-                throw new ArgumentNullException(nameof(tx));
+            ArgumentNullException.ThrowIfNull(tx, nameof(tx));
 
             TransactionHash = tx.TransactionHash;
             To = tx.To;

@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal FileResponseDto(Clients.GatewayApi.FileResponse response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Stream = response.Stream;
             IsFeed = response.Headers.ContainsKey("Swarm-Feed-Index");

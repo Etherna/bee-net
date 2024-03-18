@@ -24,8 +24,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal TimeSettlementsDto(Clients.DebugApi.Response21 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
             TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
@@ -35,8 +34,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal TimeSettlementsDto(Clients.GatewayApi.Response36 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
             TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);

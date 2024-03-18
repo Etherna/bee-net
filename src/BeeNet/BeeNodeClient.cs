@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet
 {
+    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
     public class BeeNodeClient : IBeeNodeClient, IDisposable
     {
         // Consts.
@@ -54,7 +55,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
+        public static async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
             HttpClient? customHttpClient = null)

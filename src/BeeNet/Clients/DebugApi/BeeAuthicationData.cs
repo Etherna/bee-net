@@ -22,10 +22,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string username,
             string password)
         {
-            if (username is null)
-                throw new ArgumentNullException(nameof(username));
-            if (password is null)
-                throw new ArgumentNullException(nameof(password));
+            ArgumentNullException.ThrowIfNull(username, nameof(username));
+            ArgumentNullException.ThrowIfNull(password, nameof(password));
 
             Username = username;
             Password = password;

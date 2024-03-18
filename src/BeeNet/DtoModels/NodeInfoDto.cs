@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal NodeInfoDto(Clients.DebugApi.Response14 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             BeeMode = response.BeeMode switch
             {
@@ -37,8 +36,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal NodeInfoDto(Clients.GatewayApi.Response30 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             BeeMode = response.BeeMode switch
             {
