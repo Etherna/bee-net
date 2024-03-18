@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Feeds
             var at = DateTimeOffset.UtcNow;
 
             // Find last published chunk.
-            var lastEpochFeedChunk = await TryFindEpochFeedAsync(account, topic, at, knownNearEpochIndex);
+            var lastEpochFeedChunk = await TryFindEpochFeedAsync(account, topic, at, knownNearEpochIndex).ConfigureAwait(false);
 
             // Define next epoch index.
             EpochFeedIndex nextEpochIndex;
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Feeds
                 account,
                 topic,
                 atUnixTime,
-                startEpoch);
+                startEpoch).ConfigureAwait(false);
 
             if (startChunk is null)
                 return null;
@@ -156,7 +156,7 @@ namespace Etherna.BeeNet.Feeds
                 account,
                 topic,
                 atUnixTime,
-                startChunk);
+                startChunk).ConfigureAwait(false);
         }
 
         public Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index) =>
@@ -165,14 +165,14 @@ namespace Etherna.BeeNet.Feeds
         public Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
             TryGetFeedChunkAsync(FeedChunk.BuildReferenceHash(account, topic, index), index);
 
-        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReferenceHash, FeedIndexBase index)
+        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReferenceHash);
+                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference).ConfigureAwait(false);
                 using var chunkMemoryStream = new MemoryStream();
-                chunkStream.CopyTo(chunkMemoryStream);
-                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReferenceHash);
+                await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
+                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
             }
             catch (BeeNetGatewayApiException)
             {
@@ -194,16 +194,16 @@ namespace Etherna.BeeNet.Feeds
 
             // Try chunk on child epoch at date.
             var childIndexAtDate = currentIndex.GetChildAt(at);
-            var childChunkAtDate = await TryGetFeedChunkAsync(account, topic, childIndexAtDate);
+            var childChunkAtDate = await TryGetFeedChunkAsync(account, topic, childIndexAtDate).ConfigureAwait(false);
             if (childChunkAtDate != null && (ulong)childChunkAtDate.GetTimeStamp().ToUnixTimeSeconds() <= at)
-                return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childChunkAtDate);
+                return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childChunkAtDate).ConfigureAwait(false);
 
             // Try left brother if different.
             if (childIndexAtDate.IsRight)
             {
-                var childLeftChunk = await TryGetFeedChunkAsync(account, topic, childIndexAtDate.Left);
+                var childLeftChunk = await TryGetFeedChunkAsync(account, topic, childIndexAtDate.Left).ConfigureAwait(false);
                 if (childLeftChunk != null) //to check timestamp is superfluous in this case
-                    return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childLeftChunk);
+                    return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childLeftChunk).ConfigureAwait(false);
             }
 
             return currentChunk;
@@ -224,7 +224,7 @@ namespace Etherna.BeeNet.Feeds
                 //traverse parents until find a common ancestor
                 while (startEpoch.Level != EpochFeedIndex.MaxLevel &&
                     !startEpoch.ContainsTime(at))
-                    startEpoch = startEpoch.GetParent();
+                    startEpoch = startEpoch.Parent;
 
                 //if max level is reached and start epoch still doesn't contain the time, drop it
                 if (!startEpoch.ContainsTime(at))
@@ -249,7 +249,7 @@ namespace Etherna.BeeNet.Feeds
         internal async Task<FeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
         {
             // Try get chunk payload on network.
-            var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex);
+            var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex).ConfigureAwait(false);
 
             // If chunk exists and date is prior.
             if (chunk != null && (ulong)chunk.GetTimeStamp().ToUnixTimeSeconds() <= at)
@@ -257,9 +257,9 @@ namespace Etherna.BeeNet.Feeds
 
             // Else, if chunk is not found, or if chunk timestamp is later than target date.
             if (epochIndex.IsRight)                               //try left
-                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.Left);
+                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.Left).ConfigureAwait(false);
             else if (epochIndex.Level != EpochFeedIndex.MaxLevel) //try parent
-                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.GetParent());
+                return await TryFindStartingEpochChunkOnlineAsync(account, topic, at, epochIndex.Parent).ConfigureAwait(false);
 
             return null;
         }

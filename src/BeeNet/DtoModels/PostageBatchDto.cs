@@ -23,8 +23,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal PostageBatchDto(Clients.DebugApi.Response38 batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
@@ -41,8 +40,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal PostageBatchDto(Clients.DebugApi.Stamps batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
@@ -59,8 +57,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal PostageBatchDto(Clients.GatewayApi.Stamps batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;
@@ -77,8 +74,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal PostageBatchDto(Clients.GatewayApi.Response51 batch)
         {
-            if (batch is null)
-                throw new ArgumentNullException(nameof(batch));
+            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
             BatchTTL = batch.BatchTTL;

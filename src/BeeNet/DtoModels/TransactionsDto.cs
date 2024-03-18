@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal TransactionsDto(Clients.DebugApi.Response34 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             TransactionHash = response.TransactionHash;
             To = response.To;
@@ -38,8 +37,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal TransactionsDto(Clients.GatewayApi.Response47 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             TransactionHash = response.TransactionHash;
             To = response.To;

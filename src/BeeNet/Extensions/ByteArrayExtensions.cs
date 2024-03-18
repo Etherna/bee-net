@@ -21,6 +21,8 @@ namespace Etherna.BeeNet.Extensions
     {
         public static ulong ByteArrayToUnixDateTime(this byte[] dateTimeByteArray)
         {
+            ArgumentNullException.ThrowIfNull(dateTimeByteArray, nameof(dateTimeByteArray));
+
             if (dateTimeByteArray.Length != FeedChunk.TimeStampByteSize)
                 throw new ArgumentOutOfRangeException(nameof(dateTimeByteArray), "Invalid date time byte array length");
 

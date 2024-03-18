@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal AccountDto(Clients.DebugApi.Anonymous anonymous)
         {
-            if (anonymous is null)
-                throw new ArgumentNullException(nameof(anonymous));
+            ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));
 
             Balance = anonymous.Balance;
             ThresholdReceived = anonymous.ThresholdReceived;

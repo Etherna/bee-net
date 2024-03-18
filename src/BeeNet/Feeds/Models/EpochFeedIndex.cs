@@ -15,6 +15,7 @@
 using Epoche;
 using Etherna.BeeNet.Extensions;
 using System;
+using System.Collections.ObjectModel;
 
 namespace Etherna.BeeNet.Feeds.Models
 {
@@ -31,10 +32,15 @@ namespace Etherna.BeeNet.Feeds.Models
         /// <param name="level">Epoch level</param>
         public EpochFeedIndex(ulong start, byte level)
         {
+#if NET8_0_OR_GREATER
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(level, MaxLevel);
+#else
             if (start >= (ulong)1 << MaxLevel + 1)
                 throw new ArgumentOutOfRangeException(nameof(start));
             if (level > MaxLevel)
                 throw new ArgumentOutOfRangeException(nameof(level));
+#endif
 
             //normalize start clearing less relevent bits
             start = start >> level << level;
@@ -49,6 +55,19 @@ namespace Etherna.BeeNet.Feeds.Models
         public bool IsRight => !IsLeft;
 
         public EpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
+
+        public EpochFeedIndex Parent
+        {
+            get
+            {
+                if (Level == MaxLevel)
+                    throw new InvalidOperationException();
+
+                var parentLevel = (byte)(Level + 1);
+                var parentStart = Start >> parentLevel << parentLevel;
+                return new EpochFeedIndex(parentStart, parentLevel);
+            }
+        }
 
         public EpochFeedIndex Right => IsRight ? this : new(Start + Length, Level);
 
@@ -65,7 +84,7 @@ namespace Etherna.BeeNet.Feeds.Models
         /// <summary>
         /// Index represenentation as keccak256 hash
         /// </summary>
-        public override byte[] MarshalBinary
+        public override ReadOnlyCollection<byte> MarshalBinary
         {
             get
             {
@@ -74,7 +93,7 @@ namespace Etherna.BeeNet.Feeds.Models
                 epochBytes.CopyTo(newArray, 0);
                 newArray[epochBytes.Length] = Level;
 
-                return Keccak256.ComputeHash(newArray);
+                return new ReadOnlyCollection<byte>(Keccak256.ComputeHash(newArray));
             }
         }
 
@@ -121,22 +140,16 @@ namespace Etherna.BeeNet.Feeds.Models
 
         public override FeedIndexBase GetNext(ulong at)
         {
+#if NET8_0_OR_GREATER
+            ArgumentOutOfRangeException.ThrowIfLessThan(at, Start);
+#else
             if (at < Start)
                 throw new ArgumentOutOfRangeException(nameof(at));
+#endif
 
             return Start + Length > at ?
                 GetChildAt(at) :
                 LowestCommonAncestor(Start, at).GetChildAt(at);
-        }
-
-        public EpochFeedIndex GetParent()
-        {
-            if (Level == MaxLevel)
-                throw new InvalidOperationException();
-
-            var parentLevel = (byte)(Level + 1);
-            var parentStart = Start >> parentLevel << parentLevel;
-            return new EpochFeedIndex(parentStart, parentLevel);
         }
 
         public override string ToString() => $"{Start}/{Level}";

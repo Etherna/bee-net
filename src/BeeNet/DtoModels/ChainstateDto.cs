@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal ChainStateDto(Clients.DebugApi.Response13 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Block = response.Block;
             ChainTip = response.ChainTip;
@@ -33,8 +32,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ChainStateDto(Clients.GatewayApi.Response29 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Block = response.Block;
             ChainTip = response.ChainTip;

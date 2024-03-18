@@ -29,13 +29,12 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     public class BeeGatewayClient : IBeeGatewayClient
     {
         // Fields.
-        private readonly IBeeGatewayGeneratedClient generatedClient;
+        private readonly BeeGatewayGeneratedClient generatedClient;
 
         // Constructors.
         public BeeGatewayClient(HttpClient httpClient, Uri baseUrl)
         {
-            if (baseUrl is null)
-                throw new ArgumentNullException(nameof(baseUrl));
+            ArgumentNullException.ThrowIfNull(baseUrl, nameof(baseUrl));
 
             generatedClient = new BeeGatewayGeneratedClient(httpClient) { BaseUrl = baseUrl.ToString() };
         }
@@ -135,7 +134,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             int? offset = null,
             int? limit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags.Select(i => new TagInfoDto(i));
+            ((await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ?? Array.Empty<Tags>()).Select(i => new TagInfoDto(i));
 
         public async Task<string> RefreshAuthAsync(
             string role,
@@ -229,10 +228,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmDeferredUpload,
             CancellationToken cancellationToken = default)
         {
-            if (files == null)
-            {
-                throw new ArgumentNullException(nameof(files));
-            }
+            ArgumentNullException.ThrowIfNull(files, nameof(files));
             if (files.Count() != 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(files));

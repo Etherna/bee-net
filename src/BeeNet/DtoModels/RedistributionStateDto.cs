@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal RedistributionStateDto(Clients.DebugApi.Response31 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             IsFrozen = response.IsFrozen;
             IsFullySynced = response.IsFullySynced;

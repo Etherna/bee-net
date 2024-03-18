@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal LastCashedChequeDto(Clients.DebugApi.LastCashedCheque lastCashedCheque)
         {
-            if (lastCashedCheque is null)
-                throw new ArgumentNullException(nameof(lastCashedCheque));
+            ArgumentNullException.ThrowIfNull(lastCashedCheque, nameof(lastCashedCheque));
 
             Beneficiary = lastCashedCheque.Beneficiary;
             Chequebook = lastCashedCheque.Chequebook;
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastCashedChequeDto(Clients.GatewayApi.LastCashedCheque lastCashedCheque)
         {
-            if (lastCashedCheque is null)
-                throw new ArgumentNullException(nameof(lastCashedCheque));
+            ArgumentNullException.ThrowIfNull(lastCashedCheque, nameof(lastCashedCheque));
 
             Beneficiary = lastCashedCheque.Beneficiary;
             Chequebook = lastCashedCheque.Chequebook;

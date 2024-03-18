@@ -13,33 +13,36 @@ jobs:
       BeeNet_IT_NodeVersion: "1.12.0"
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.3.0
+
+      - name: Install BeeFactory
+        run: npm install -g @ethersphere/bee-factory
         
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
+      - name: Start Bee Nodes
+        run: bee-factory start --detach "${{env.BeeNet_IT_NodeVersion}}"
+        
+      - name: Run tests
+        run: dotnet test --configuration Release
 
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
+      - name: Generate nuget package
+        run: dotnet pack --configuration Release -o nupkg
 
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3.3.0
-
-    - name: Install BeeFactory
-      run: npm install -g @ethersphere/bee-factory
-      
-    - name: Start Bee Nodes
-      run: bee-factory start --detach "${{env.BeeNet_IT_NodeVersion}}" 
-
-    - name: Run integration tests
-      run: dotnet test --configuration Release
-      
-    - name: Generate nuget package
-      run: dotnet pack --configuration Release -o nupkg
-
-    - name: Push packages
-      run: dotnet nuget push './nupkg/*.nupkg' --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
+      - name: Push packages
+        run: dotnet nuget push './nupkg/*.nupkg' --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json

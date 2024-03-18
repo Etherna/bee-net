@@ -14,10 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Etherna.BeeNet.Exceptions
 {
+    [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
     public partial class BeeNetDebugApiException : Exception
     {
         // Constructor.
@@ -27,7 +29,13 @@ namespace Etherna.BeeNet.Exceptions
             string? response,
             IReadOnlyDictionary<string, IEnumerable<string>> headers,
             Exception? innerException)
-            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
+            : base($"""
+                    {message}
+                    
+                    Status: {statusCode}
+                    Response:
+                    {(response == null ? "(null)" : response[..(response.Length >= 512 ? 512 : response.Length)])}
+                    """, innerException)
         {
             StatusCode = statusCode;
             Response = response;
@@ -46,6 +54,7 @@ namespace Etherna.BeeNet.Exceptions
         }
     }
 
+    [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
     public partial class BeeNetDebugApiException<TResult> : BeeNetDebugApiException
     {
         // Constructor.

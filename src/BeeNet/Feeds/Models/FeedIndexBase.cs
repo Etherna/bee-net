@@ -13,13 +13,14 @@
 //   limitations under the License.
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace Etherna.BeeNet.Feeds.Models
 {
     public abstract class FeedIndexBase
     {
         // Properties.
-        public abstract byte[] MarshalBinary { get; }
+        public abstract ReadOnlyCollection<byte> MarshalBinary { get; }
 
         // Methods.
         public FeedIndexBase GetNext(DateTimeOffset at) =>

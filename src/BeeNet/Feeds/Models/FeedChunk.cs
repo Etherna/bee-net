@@ -18,6 +18,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -43,10 +44,8 @@ namespace Etherna.BeeNet.Feeds.Models
             byte[] payload,
             string referenceHash)
         {
-            if (payload is null)
-                throw new ArgumentNullException(nameof(payload));
-            if (referenceHash is null)
-                throw new ArgumentNullException(nameof(referenceHash));
+            ArgumentNullException.ThrowIfNull(payload, nameof(payload));
+            ArgumentNullException.ThrowIfNull(referenceHash, nameof(referenceHash));
 
             if (payload.Length < MinPayloadByteSize)
                 throw new ArgumentOutOfRangeException(nameof(payload),
@@ -69,6 +68,7 @@ namespace Etherna.BeeNet.Feeds.Models
         public string ReferenceHash { get; }
 
         // Methods.
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj)) return true;
@@ -76,7 +76,7 @@ namespace Etherna.BeeNet.Feeds.Models
             return GetType() == obj.GetType() &&
                 Index.Equals(objFeedChunk.Index) &&
                 Payload.SequenceEqual(objFeedChunk.Payload) &&
-                ReferenceHash.Equals(objFeedChunk.ReferenceHash);
+                ReferenceHash.Equals(objFeedChunk.ReferenceHash, StringComparison.Ordinal);
         }
 
         public byte[] GetContentPayload() =>
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Feeds.Models
         public override int GetHashCode() =>
             Index.GetHashCode() ^
             Payload.GetHashCode() ^
-            ReferenceHash.GetHashCode();
+            ReferenceHash.GetHashCode(StringComparison.InvariantCulture);
 
         public DateTimeOffset GetTimeStamp()
         {
@@ -96,6 +96,8 @@ namespace Etherna.BeeNet.Feeds.Models
         // Static helpers.
         public static byte[] BuildChunkPayload(byte[] contentPayload, ulong? timestamp = null)
         {
+            ArgumentNullException.ThrowIfNull(contentPayload, nameof(contentPayload));
+
             if (contentPayload.Length > MaxContentPayloadBytesSize)
                 throw new ArgumentOutOfRangeException(nameof(contentPayload),
                     $"Content payload can't be longer than {MaxContentPayloadBytesSize} bytes");
@@ -110,6 +112,9 @@ namespace Etherna.BeeNet.Feeds.Models
 
         public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index)
         {
+            ArgumentNullException.ThrowIfNull(topic, nameof(topic));
+            ArgumentNullException.ThrowIfNull(index, nameof(index));
+
             if (topic.Length != TopicBytesLength)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
 
@@ -136,6 +141,9 @@ namespace Etherna.BeeNet.Feeds.Models
 
         public static string BuildReferenceHash(byte[] account, byte[] identifier)
         {
+            ArgumentNullException.ThrowIfNull(account, nameof(account));
+            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
+
             if (account.Length != AccountBytesLength)
                 throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
             if (identifier.Length != IdentifierBytesLength)

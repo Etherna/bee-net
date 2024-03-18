@@ -13,15 +13,18 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Clients.DebugApi;
+using System;
 
 namespace Etherna.BeeNet.DtoModels
 {
     public class StatusNodeDto
     {
         // Constructors.
-        public StatusNodeDto(Response46 response46) 
+        public StatusNodeDto(Response46 response) 
         {
-            switch (response46.BeeMode)
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
+
+            switch (response.BeeMode)
             {
                 case Response46BeeMode.Light:
                     BeeMode = BeeMode.Light;
@@ -36,20 +39,22 @@ namespace Etherna.BeeNet.DtoModels
                     BeeMode = BeeMode.Unknown;
                     break;
             }
-            BatchCommitment = response46.BatchCommitment;
-            ConnectedPeers = response46.ConnectedPeers;
-            NeighborhoodSize = response46.NeighborhoodSize;
-            Peer = response46.Peer;
-            Proximity = response46.Proximity;
-            PullsyncRate = response46.PullsyncRate;
-            ReserveSize = response46.ReserveSize;
-            RequestFailed = response46.RequestFailed;
-            StorageRadius = response46.StorageRadius;
+            BatchCommitment = response.BatchCommitment;
+            ConnectedPeers = response.ConnectedPeers;
+            NeighborhoodSize = response.NeighborhoodSize;
+            Peer = response.Peer;
+            Proximity = response.Proximity;
+            PullsyncRate = response.PullsyncRate;
+            ReserveSize = response.ReserveSize;
+            RequestFailed = response.RequestFailed;
+            StorageRadius = response.StorageRadius;
         }
 
-        public StatusNodeDto(Stamps2 stampss)
+        public StatusNodeDto(Stamps2 stamps)
         {
-            switch (stampss.BeeMode)
+            ArgumentNullException.ThrowIfNull(stamps, nameof(stamps));
+
+            switch (stamps.BeeMode)
             {
                 case Stamps2BeeMode.Light:
                     BeeMode = BeeMode.Light;
@@ -64,15 +69,15 @@ namespace Etherna.BeeNet.DtoModels
                     BeeMode = BeeMode.Unknown;
                     break;
             }
-            BatchCommitment = stampss.BatchCommitment;
-            ConnectedPeers = stampss.ConnectedPeers;
-            NeighborhoodSize = stampss.NeighborhoodSize;
-            Peer = stampss.Peer;
-            Proximity = stampss.Proximity;
-            PullsyncRate = stampss.PullsyncRate;
-            ReserveSize = stampss.ReserveSize;
-            RequestFailed = stampss.RequestFailed;
-            StorageRadius = stampss.StorageRadius;
+            BatchCommitment = stamps.BatchCommitment;
+            ConnectedPeers = stamps.ConnectedPeers;
+            NeighborhoodSize = stamps.NeighborhoodSize;
+            Peer = stamps.Peer;
+            Proximity = stamps.Proximity;
+            PullsyncRate = stamps.PullsyncRate;
+            ReserveSize = stamps.ReserveSize;
+            RequestFailed = stamps.RequestFailed;
+            StorageRadius = stamps.StorageRadius;
         }
 
         // Properties.

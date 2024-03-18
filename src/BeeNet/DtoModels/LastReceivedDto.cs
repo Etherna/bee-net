@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal LastReceivedDto(Clients.DebugApi.Lastreceived lastReceived)
         {
-            if (lastReceived is null)
-                throw new ArgumentNullException(nameof(lastReceived));
+            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
             Beneficiary = lastReceived.Beneficiary;
             Chequebook = lastReceived.Chequebook;
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastReceivedDto(Clients.DebugApi.Lastreceived2 lastReceived)
         {
-            if (lastReceived is null)
-                throw new ArgumentNullException(nameof(lastReceived));
+            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
             Beneficiary = lastReceived.Beneficiary;
             Chequebook = lastReceived.Chequebook;
@@ -42,8 +40,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastReceivedDto(Clients.GatewayApi.Lastreceived lastReceived)
         {
-            if (lastReceived is null)
-                throw new ArgumentNullException(nameof(lastReceived));
+            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
             Beneficiary = lastReceived.Beneficiary;
             Chequebook = lastReceived.Chequebook;
@@ -52,8 +49,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastReceivedDto(Clients.GatewayApi.Lastreceived2 lastReceived)
         {
-            if (lastReceived is null)
-                throw new ArgumentNullException(nameof(lastReceived));
+            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
             Beneficiary = lastReceived.Beneficiary;
             Chequebook = lastReceived.Chequebook;

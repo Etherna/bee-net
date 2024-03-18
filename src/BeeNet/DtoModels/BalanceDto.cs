@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal BalanceDto(Clients.DebugApi.Balances balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -31,8 +30,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.DebugApi.Balances2 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -40,8 +38,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.DebugApi.Response4 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -49,8 +46,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.DebugApi.Response7 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -58,8 +54,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.GatewayApi.Balances balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -67,8 +62,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.GatewayApi.Balances2 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -76,8 +70,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.GatewayApi.Response22 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
@@ -85,8 +78,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal BalanceDto(Clients.GatewayApi.Response24 balance)
         {
-            if (balance is null)
-                throw new ArgumentNullException(nameof(balance));
+            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);

@@ -201,7 +201,7 @@ namespace Etherna.BeeNet.Feeds.Models
         {
             var index = new EpochFeedIndex(0, 32);
             Assert.Throws<InvalidOperationException>(
-                () => index.GetParent());
+                () => index.Parent);
         }
 
         [Theory]
@@ -210,7 +210,7 @@ namespace Etherna.BeeNet.Feeds.Models
         public void GetParent(ulong start, byte level, ulong expectedStart, byte expectedLevel)
         {
             var index = new EpochFeedIndex(start, level);
-            var parentIndex = index.GetParent();
+            var parentIndex = index.Parent;
             Assert.Equal(expectedStart, parentIndex.Start);
             Assert.Equal(expectedLevel, parentIndex.Level);
         }

@@ -18,13 +18,12 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class WalletDto
     {
-        internal WalletDto(Clients.DebugApi.Response32 response32)
+        internal WalletDto(Clients.DebugApi.Response32 response)
         {
-            if (response32 is null)
-                throw new ArgumentNullException(nameof(response32));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Bzz = response32.BzzBalance;
-            NativeTokenBalance = response32.NativeTokenBalance;
+            Bzz = response.BzzBalance;
+            NativeTokenBalance = response.NativeTokenBalance;
         }
 
         public string Bzz { get; }

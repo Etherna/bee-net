@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal ReserveStateDto(Clients.DebugApi.Response12 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Commitment = response.Commitment;
             Radius = response.Radius;
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ReserveStateDto(Clients.GatewayApi.Response28 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Commitment = response.Commitment;
             Radius = response.Radius;

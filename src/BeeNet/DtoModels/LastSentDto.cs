@@ -22,8 +22,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal LastSentDto(Clients.DebugApi.Lastsent lastsent)
         {
-            if (lastsent is null)
-                throw new ArgumentNullException(nameof(lastsent));
+            ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 
             Beneficiary = lastsent.Beneficiary;
             Chequebook = lastsent.Chequebook;
@@ -32,8 +31,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastSentDto(Clients.DebugApi.Lastsent2 lastsent)
         {
-            if (lastsent is null)
-                throw new ArgumentNullException(nameof(lastsent));
+            ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 
             Beneficiary = lastsent.Beneficiary;
             Chequebook = lastsent.Chequebook;
@@ -42,8 +40,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastSentDto(Clients.GatewayApi.Lastsent lastsent)
         {
-            if (lastsent is null)
-                throw new ArgumentNullException(nameof(lastsent));
+            ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 
             Beneficiary = lastsent.Beneficiary;
             Chequebook = lastsent.Chequebook;
@@ -52,8 +49,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal LastSentDto(Clients.GatewayApi.Lastsent2 lastsent)
         {
-            if (lastsent is null)
-                throw new ArgumentNullException(nameof(lastsent));
+            ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 
             Beneficiary = lastsent.Beneficiary;
             Chequebook = lastsent.Chequebook;

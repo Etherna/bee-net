@@ -23,8 +23,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal AddressDetailDto(Clients.DebugApi.Response response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
             Overlay = response.Overlay;
@@ -35,8 +34,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal AddressDetailDto(Clients.GatewayApi.Response19 response)
         {
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
             Overlay = response.Overlay;

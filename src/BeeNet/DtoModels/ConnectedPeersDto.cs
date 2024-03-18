@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.DtoModels
         // Constructors.
         internal ConnectedPeersDto(Clients.DebugApi.ConnectedPeers connectedPeers)
         {
-            if (connectedPeers is null)
-                throw new ArgumentNullException(nameof(connectedPeers));
+            ArgumentNullException.ThrowIfNull(connectedPeers, nameof(connectedPeers));
 
             Address = connectedPeers.Address;
             LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
@@ -35,8 +34,7 @@ namespace Etherna.BeeNet.DtoModels
 
         internal ConnectedPeersDto(Clients.GatewayApi.ConnectedPeers connectedPeers)
         {
-            if (connectedPeers is null)
-                throw new ArgumentNullException(nameof(connectedPeers));
+            ArgumentNullException.ThrowIfNull(connectedPeers, nameof(connectedPeers));
 
             Address = connectedPeers.Address;
             LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
