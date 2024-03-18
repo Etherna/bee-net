@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi.V5_0_0;
+using Etherna.BeeNet.Clients.DebugApi;
 
 namespace Etherna.BeeNet.DtoModels
 {

@@ -25,8 +25,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     public interface IBeeGatewayClient
     {
         // Properties.
-        GatewayApiVersion CurrentApiVersion { get; set; }
-
         void SetAuthToken(string token);
 
         // Methods.

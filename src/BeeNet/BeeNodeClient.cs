@@ -37,8 +37,6 @@ namespace Etherna.BeeNet
             string baseUrl = "http://localhost/",
             int? gatewayApiPort = 1633,
             int? debugApiPort = 1635,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v5_0_0,
-            DebugApiVersion debugApiVersion = DebugApiVersion.v5_0_0,
             HttpClient? customHttpClient = null)
         {
             httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
@@ -46,23 +44,22 @@ namespace Etherna.BeeNet
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl, debugApiVersion);
+                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl);
             }
 
             if (gatewayApiPort is not null)
             {
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl, gatewayApiVersion);
+                GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl);
             }
         }
 
         static public async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
-            GatewayApiVersion gatewayApiVersion = GatewayApiVersion.v5_0_0,
             HttpClient? customHttpClient = null)
         {
-            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, gatewayApiVersion, customHttpClient: customHttpClient);
+            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, customHttpClient: customHttpClient);
             
             var authDto = await nodeClient.GatewayClient!.AuthenticateAsync("", 0).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(authDto.Key))
