@@ -447,41 +447,34 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<string> UploadFileAsync(
-            string swarmPostageBatchId,
-            IEnumerable<FileParameterInput> files,
-            string? name,
-            int? swarmTag,
-            bool? swarmPin,
-            bool? swarmEncrypt,
-            string? contentType,
-            bool? swarmCollection,
-            string? swarmIndexDocument,
-            string? swarmErrorDocument,
-            bool? swarmDeferredUpload,
+        public async Task<string> UploadFileAsync(string swarmPostageBatchId,
+            Stream content,
+            string? name = null,
+            string? contentType = null,
+            int? swarmTag = null,
+            bool? swarmPin = null,
+            bool? swarmEncrypt = null,
+            bool? swarmCollection = null,
+            string? swarmIndexDocument = null,
+            string? swarmErrorDocument = null,
+            bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None0,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(files, nameof(files));
-            if (files.Count() != 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(files));
-            }
-
             return (await generatedClient.BzzPostAsync(
-                name,
-                swarmTag,
-                swarmPin,
-                swarmEncrypt,
-                contentType,
-                swarmCollection,
-                swarmIndexDocument,
-                swarmErrorDocument,
-                swarmPostageBatchId,
-                swarmDeferredUpload,
-                (SwarmRedundancyLevel)swarmRedundancyLevel,
-                files.Select(f => new FileParameter(f.Data, f.FileName, f.ContentType)),
-                cancellationToken).ConfigureAwait(false)).Reference;
+                body: content,
+                name: name,
+                content_Type: contentType,
+                swarm_tag: swarmTag,
+                swarm_pin: swarmPin,
+                swarm_encrypt: swarmEncrypt,
+                swarm_collection: swarmCollection,
+                swarm_index_document: swarmIndexDocument,
+                swarm_error_document: swarmErrorDocument,
+                swarm_postage_batch_id: swarmPostageBatchId,
+                swarm_deferred_upload: swarmDeferredUpload,
+                swarm_redundancy_level: (SwarmRedundancyLevel)swarmRedundancyLevel,
+                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
 
         public async Task<string> UploadSocAsync(

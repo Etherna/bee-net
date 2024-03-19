@@ -510,19 +510,7 @@ paths:
         - *a14
       requestBody:
         content:
-          multipart/form-data:
-            schema:
-              properties:
-                file:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
           application/octet-stream:
-            schema:
-              type: string
-              format: binary
-          application/x-tar:
             schema:
               type: string
               format: binary

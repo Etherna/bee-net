@@ -29,12 +29,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var fileParameterInput = new FileParameterInput(File.OpenRead("Data/TestFileForUpload_Gateway.txt"), "TestFileForUpload_Gateway.txt", "text/plain");
-
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(batch, files: new List<FileParameterInput> { fileParameterInput }, swarmCollection: false);
-
+            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(
+                batch,
+                content: File.OpenRead("Data/TestFileForUpload_Gateway.txt"),
+                name: "TestFileForUpload_Gateway.txt",
+                contentType: "text/plain", 
+                swarmCollection: false);
 
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
@@ -48,12 +50,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var fileParameterInput = new FileParameterInput(File.OpenRead("Data/BzzFIleForUpload.tar"), "BzzFIleForUpload.tar", "application/x-tar");
-
-
+            
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(batch, files: new List<FileParameterInput> { fileParameterInput }, swarmCollection: false);
-
+            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(
+                batch,
+                content: File.OpenRead("Data/BzzFIleForUpload.tar"),
+                name: "BzzFIleForUpload.tar",
+                contentType: "application/x-tar",
+                swarmCollection: false);
 
             // Assert 
             var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);

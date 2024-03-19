@@ -125,7 +125,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Collections.Generic.IEnumerable<FileParameter>? file = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1652,7 +1652,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Collections.Generic.IEnumerable<FileParameter>? file = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1690,24 +1690,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     if (swarm_redundancy_level != null)
                         request_.Headers.TryAddWithoutValidation("swarm-redundancy-level", ConvertToString(swarm_redundancy_level, System.Globalization.CultureInfo.InvariantCulture));
-                    var boundary_ = System.Guid.NewGuid().ToString();
-                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
-                    content_.Headers.Remove("Content-Type");
-                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
-
-                    if (file == null)
-                        throw new System.ArgumentNullException("file");
-                    else
-                    {
-                        foreach (var item_ in file)
-                        {
-                            var content_file_ = new System.Net.Http.StreamContent(item_.Data);
-                            if (!string.IsNullOrEmpty(item_.ContentType))
-                                content_file_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(item_.ContentType);
-                            content_file_.Headers.ContentLength = item_.Data.Length; //required by Bee
-                            content_.Add(content_file_, "file", item_.FileName ?? "file");
-                        }
-                    }
+                    var content_ = new System.Net.Http.StreamContent(body);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));

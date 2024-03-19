@@ -53,34 +53,5 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
             request.Headers.Add("Authorization", $"Basic {base64EncodedAuthenticationString}");
         }
-
-        [SuppressMessage("Performance", "CA1851:Possible multiple enumerations of \'IEnumerable\' collection")]
-        protected static async Task PrepareUploadBzzFilesAsync(HttpRequestMessage httpRequestMessage, IEnumerable<FileParameterInput> fileParameterInputs)
-        {
-            if (fileParameterInputs == null ||
-                !fileParameterInputs.Any())
-                throw new ArgumentOutOfRangeException(nameof(fileParameterInputs));
-
-            ArgumentNullException.ThrowIfNull(httpRequestMessage, nameof(httpRequestMessage));
-
-            HttpContent content_;
-            if (fileParameterInputs.First().ContentType == "text/plain")
-            {
-                using var reader = new StreamReader(fileParameterInputs.First().Data);
-                content_ = new StringContent(await reader.ReadToEndAsync().ConfigureAwait(false));
-            }
-            else
-            {
-                content_ = new StreamContent(fileParameterInputs.First().Data);
-                content_.Headers.TryAddWithoutValidation("Content-Type", fileParameterInputs.First().ContentType);
-            }
-
-            var contentType = fileParameterInputs.First().ContentType;
-            if (contentType != null)
-                content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(contentType);
-            httpRequestMessage.Content = content_;
-            httpRequestMessage.Method = new HttpMethod("POST");
-            httpRequestMessage.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("*/*"));
-        }
     }
 }
