@@ -281,22 +281,22 @@ paths:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmRedundancyLevelParameter"
       requestBody:
         content:
-          multipart/form-data:
-            schema:
-              properties:
-                file:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
+#          multipart/form-data:
+#            schema:
+#              properties:
+#                file:
+#                  type: array
+#                  items:
+#                    type: string
+#                    format: binary
           application/octet-stream:
             schema:
               type: string
               format: binary
-          application/x-tar:
-            schema:
-              type: string
-              format: binary
+#          application/x-tar:
+#            schema:
+#              type: string
+#              format: binary
       responses:
         "201":
           description: Ok
