@@ -384,6 +384,19 @@ namespace Etherna.BeeNet.Clients.DebugApi
         Task<string> TryConnectToPeerAsync(
             string peerId,
             CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="address"></param>
+        /// <param name="coin"></param>
+        /// <returns>Tx hash</returns>
+        Task<string> WalletWithdrawAsync(
+            long amount,
+            string address,
+            string coin,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
         /// <param name="amount">amount of tokens to withdraw</param>

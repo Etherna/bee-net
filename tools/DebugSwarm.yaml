@@ -553,7 +553,8 @@ paths:
       tags:
         - Status
       responses:
-        "200": {}
+        "200":
+          description: OK.
         "400": *a7
         default:
           description: Default response
@@ -1101,6 +1102,41 @@ paths:
                     pattern: ^[A-Fa-f0-9]{40}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
                   walletAddress: *a28
+        "500": *a3
+        default:
+          description: Default response
+  "/wallet/withdraw/{coin}":
+    post:
+      summary: Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
+      tags:
+        - Wallet
+      parameters:
+        - in: query
+          name: amount
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: address
+          required: true
+          schema: *a5
+        - in: path
+          name: coin
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                &a40
+                type: object
+                properties:
+                  transactionHash: *a25
+          description: OK
+        "400": *a7
         "500": *a3
         default:
           description: Default response
@@ -1795,6 +1831,8 @@ paths:
                     type: integer
                   reserveSize:
                     type: integer
+                  reserveSizeWithinRadius:
+                    type: interger
                   pullsyncRate:
                     type: number
                   storageRadius:
@@ -1847,6 +1885,8 @@ paths:
                           type: integer
                         reserveSize:
                           type: integer
+                        reserveSizeWithinRadius:
+                          type: interger
                         pullsyncRate:
                           type: number
                         storageRadius:
@@ -1865,3 +1905,6 @@ paths:
         "400": *a7
         default:
           description: Default response.
+components:
+  schemas:
+    WalletTxResponse: *a40
