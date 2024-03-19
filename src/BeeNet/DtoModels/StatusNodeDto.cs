@@ -20,22 +20,22 @@ namespace Etherna.BeeNet.DtoModels
     public class StatusNodeDto
     {
         // Constructors.
-        public StatusNodeDto(Response46 response) 
+        public StatusNodeDto(Response47 response) 
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             switch (response.BeeMode)
             {
-                case Response46BeeMode.Light:
+                case Response47BeeMode.Light:
                     BeeMode = BeeMode.Light;
                     break;
-                case Response46BeeMode.UltraLight:
+                case Response47BeeMode.UltraLight:
                     BeeMode = BeeMode.UltraLight;
                     break;
-                case Response46BeeMode.Full:
+                case Response47BeeMode.Full:
                     BeeMode = BeeMode.Full;
                     break;
-                case Response46BeeMode.Unknown:
+                case Response47BeeMode.Unknown:
                     BeeMode = BeeMode.Unknown;
                     break;
             }
@@ -46,6 +46,7 @@ namespace Etherna.BeeNet.DtoModels
             Proximity = response.Proximity;
             PullsyncRate = response.PullsyncRate;
             ReserveSize = response.ReserveSize;
+            ReserveSizeWithinRadius = (int)response.ReserveSizeWithinRadius;
             RequestFailed = response.RequestFailed;
             StorageRadius = response.StorageRadius;
         }
@@ -56,16 +57,16 @@ namespace Etherna.BeeNet.DtoModels
 
             switch (stamps.BeeMode)
             {
-                case Stamps2BeeMode.Light:
+                case StampsBeeMode.Light:
                     BeeMode = BeeMode.Light;
                     break;
-                case Stamps2BeeMode.UltraLight:
+                case StampsBeeMode.UltraLight:
                     BeeMode = BeeMode.UltraLight;
                     break;
-                case Stamps2BeeMode.Full:
+                case StampsBeeMode.Full:
                     BeeMode = BeeMode.Full;
                     break;
-                case Stamps2BeeMode.Unknown:
+                case StampsBeeMode.Unknown:
                     BeeMode = BeeMode.Unknown;
                     break;
             }
@@ -76,20 +77,22 @@ namespace Etherna.BeeNet.DtoModels
             Proximity = stamps.Proximity;
             PullsyncRate = stamps.PullsyncRate;
             ReserveSize = stamps.ReserveSize;
+            ReserveSizeWithinRadius = (int)stamps.ReserveSizeWithinRadius;
             RequestFailed = stamps.RequestFailed;
             StorageRadius = stamps.StorageRadius;
         }
 
         // Properties.
-        public BeeMode BeeMode { get; set; } = default!;
-        public int BatchCommitment { get; set; } = default!;
-        public int ConnectedPeers { get; set; } = default!;
-        public int NeighborhoodSize { get; set; } = default!;
-        public string Peer { get; set; } = default!;
-        public int Proximity { get; set; } = default!;
-        public double PullsyncRate { get; set; } = default!;
-        public int ReserveSize { get; set; } = default!;
-        public bool? RequestFailed { get; set; } = default!;
-        public int StorageRadius { get; set; } = default!;
+        public BeeMode BeeMode { get; }
+        public int BatchCommitment { get; }
+        public int ConnectedPeers { get; }
+        public int NeighborhoodSize { get; }
+        public string Peer { get; }
+        public int Proximity { get; }
+        public double PullsyncRate { get; }
+        public int ReserveSize { get; }
+        public int ReserveSizeWithinRadius { get; }
+        public bool? RequestFailed { get; }
+        public int StorageRadius { get; }
     }
 }

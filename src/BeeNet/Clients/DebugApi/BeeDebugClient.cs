@@ -256,6 +256,13 @@ namespace Etherna.BeeNet.Clients.DebugApi
             CancellationToken cancellationToken = default) =>
             (await generatedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
 
+        public async Task<string> WalletWithdrawAsync(
+            long amount,
+            string address,
+            string coin,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.WalletWithdrawAsync(amount, address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash.TransactionHash;
+
         public async Task<string> WithdrawFromChequeBookAsync(
             long amount,
             long? gasPrice = null,

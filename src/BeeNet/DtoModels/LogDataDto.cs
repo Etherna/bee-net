@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.DtoModels
     public class LogDataDto
     {
         // Constructors.
-        internal LogDataDto(Clients.DebugApi.Response44 response)
+        internal LogDataDto(Clients.DebugApi.Response45 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             Loggers = response.Loggers.Select(i => new LoggersDto(i)).ToList();
         }
 
-        internal LogDataDto(Clients.DebugApi.Response45 response)
+        internal LogDataDto(Clients.DebugApi.Response46 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

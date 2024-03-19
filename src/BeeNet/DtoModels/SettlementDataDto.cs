@@ -20,22 +20,22 @@ namespace Etherna.BeeNet.DtoModels
     public class SettlementDataDto
     {
         // Constructors.
-        internal SettlementDataDto(Clients.DebugApi.Settlements settlement)
+        internal SettlementDataDto(Clients.DebugApi.Settlements settlements)
         {
-            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
-            Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
+            Peer = settlements.Peer;
+            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementDataDto(Clients.DebugApi.Settlements2 settlement)
+        internal SettlementDataDto(Clients.DebugApi.Settlements2 settlements)
         {
-            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
-            Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
+            Peer = settlements.Peer;
+            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
         internal SettlementDataDto(Clients.DebugApi.Response19 settlement)
@@ -56,13 +56,13 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementDataDto(Clients.GatewayApi.Settlements2 settlement)
+        internal SettlementDataDto(Clients.GatewayApi.Settlements2 settlements)
         {
-            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
+            ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
-            Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
+            Peer = settlements.Peer;
+            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
+            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
         internal SettlementDataDto(Clients.GatewayApi.Response34 settlement)
