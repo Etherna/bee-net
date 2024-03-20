@@ -85,6 +85,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.StewardshipGetAsync(reference, cancellationToken).ConfigureAwait(false));
 
+        public async Task<CheckPinsResultDto> CheckPinsAsync(
+            string? reference,
+            CancellationToken cancellationToken = default) =>
+            new(await generatedClient.PinsCheckAsync(reference, cancellationToken).ConfigureAwait(false));
+
         public async Task<string> ConnectToPeerAsync(
             string address,
             CancellationToken cancellationToken = default) =>
@@ -130,7 +135,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             generatedClient.TagsDeleteAsync(uid, cancellationToken);
 
         public async Task<IEnumerable<string>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).References;
+            (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,

@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
                 .Select(i => new SettlementDataDto(i));
         }
 
-        internal TimeSettlementsDto(Clients.GatewayApi.Response36 response)
+        internal TimeSettlementsDto(Clients.GatewayApi.Response37 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

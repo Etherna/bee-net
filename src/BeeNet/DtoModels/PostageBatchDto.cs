@@ -72,7 +72,7 @@ namespace Etherna.BeeNet.DtoModels
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        internal PostageBatchDto(Clients.GatewayApi.Response51 batch)
+        internal PostageBatchDto(Clients.GatewayApi.Response52 batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 

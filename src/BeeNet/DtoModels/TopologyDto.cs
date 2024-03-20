@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
             Timestamp = response.Timestamp;
         }
 
-        internal TopologyDto(Clients.GatewayApi.Response37 response)
+        internal TopologyDto(Clients.GatewayApi.Response38 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -62,18 +62,18 @@ namespace Etherna.BeeNet.DtoModels
             Depth = response.Depth;
             NetworkAvailability = response.NetworkAvailability switch
             {
-                Clients.GatewayApi.Response37NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
-                Clients.GatewayApi.Response37NetworkAvailability.Available => NetworkAvailabilityDto.Available,
-                Clients.GatewayApi.Response37NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
+                Clients.GatewayApi.Response38NetworkAvailability.Unknown => NetworkAvailabilityDto.Unknown,
+                Clients.GatewayApi.Response38NetworkAvailability.Available => NetworkAvailabilityDto.Available,
+                Clients.GatewayApi.Response38NetworkAvailability.Unavailable => NetworkAvailabilityDto.Unavailable,
                 _ => throw new InvalidOperationException(),
             };
             NnLowWatermark = response.NnLowWatermark;
             Population = response.Population;
             Reachability = response.Reachability switch
             {
-                Clients.GatewayApi.Response37Reachability.Unknown => ReachabilityDto.Unknown,
-                Clients.GatewayApi.Response37Reachability.Public => ReachabilityDto.Public,
-                Clients.GatewayApi.Response37Reachability.Private => ReachabilityDto.Private,
+                Clients.GatewayApi.Response38Reachability.Unknown => ReachabilityDto.Unknown,
+                Clients.GatewayApi.Response38Reachability.Public => ReachabilityDto.Public,
+                Clients.GatewayApi.Response38Reachability.Private => ReachabilityDto.Private,
                 _ => throw new InvalidOperationException(),
             };
             Timestamp = response.Timestamp;

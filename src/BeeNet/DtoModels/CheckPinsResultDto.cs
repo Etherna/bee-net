@@ -17,25 +17,21 @@ using System;
 
 namespace Etherna.BeeNet.DtoModels
 {
-    public class ReserveCommitmentDto
+    public class CheckPinsResultDto
     {
-        // Constructors.
-        public ReserveCommitmentDto(Response58 response)
+        public CheckPinsResultDto(Response15 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Duration = response.Duration;
-            Hash = response.Hash;
-            Proof1 = new ReserveCommitmentProofDto(response.Proofs.Proof1);
-            Proof2 = new ReserveCommitmentProofDto(response.Proofs.Proof2);
-            ProofLast = new ReserveCommitmentProofDto(response.Proofs.ProofLast);
+            Invalid = response.Invalid;
+            Missing = response.Missing;
+            Reference = response.Reference;
+            Total = response.Total;
         }
         
-        // Properties.
-        public int Duration { get; set; }
-        public string Hash { get; set; }
-        public ReserveCommitmentProofDto Proof1 { get; set; }
-        public ReserveCommitmentProofDto Proof2 { get; set; }
-        public ReserveCommitmentProofDto ProofLast { get; set; }
+        public int Invalid { get; }
+        public int Missing { get; }
+        public string Reference { get; }
+        public int Total { get; }
     }
 }

@@ -261,7 +261,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
             string address,
             string coin,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.WalletWithdrawAsync(amount, address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash.TransactionHash;
+            (await generatedClient.WalletWithdrawAsync(amount.ToString(CultureInfo.InvariantCulture), address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequeBookAsync(
             long amount,

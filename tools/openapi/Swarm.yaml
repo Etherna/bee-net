@@ -1998,13 +1998,13 @@ paths:
         - in: path
           name: anchor1
           schema:
-            $ref: "#/components/schemas/HexString"
+            $ref: "SwarmCommon.yaml#/components/schemas/HexString"
           required: true
           description: The first anchor.
         - in: path
           name: anchor2
           schema:
-            $ref: "#/components/schemas/HexString"
+            $ref: "SwarmCommon.yaml#/components/schemas/HexString"
           required: true
           description: The second anchor.
       responses:

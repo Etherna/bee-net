@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
         }
 
-        internal ChainStateDto(Clients.GatewayApi.Response29 response)
+        internal ChainStateDto(Clients.GatewayApi.Response30 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

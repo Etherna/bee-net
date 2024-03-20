@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.DtoModels
             AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
         }
 
-        internal ChequeBookBalanceDto(Clients.GatewayApi.Response26 response)
+        internal ChequeBookBalanceDto(Clients.GatewayApi.Response27 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
