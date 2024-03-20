@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             Code = response.Code;
         }
 
-        internal MessageResponseDto(Clients.GatewayApi.Response32 response)
+        internal MessageResponseDto(Clients.GatewayApi.Response33 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

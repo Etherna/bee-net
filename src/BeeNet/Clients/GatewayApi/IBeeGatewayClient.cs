@@ -79,6 +79,15 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string reference,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Validate pinned chunks integerity
+        /// </summary>
+        /// <param name="reference"></param>
+        /// <returns></returns>
+        Task<CheckPinsResultDto> CheckPinsAsync(
+            string? reference,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Connect to address</summary>
         /// <param name="address">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>

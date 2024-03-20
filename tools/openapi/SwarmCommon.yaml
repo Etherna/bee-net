@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 3.2.6
+  version: 3.2.7
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -616,10 +616,22 @@ components:
         reference:
           $ref: "#/components/schemas/SwarmOnlyReference"
 
+    PinCheckResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
+        total:
+          type: integer
+        missing:
+          type: integer
+        invalid:
+          type: integer
+
     SwarmOnlyReferencesList:
       type: object
       properties:
-        references:
+        reference:
           type: array
           nullable: false
           items:
@@ -1008,7 +1020,6 @@ components:
       name: swarm-tag
       schema:
         $ref: "SwarmCommon.yaml#/components/schemas/Uid"
-      required: false
       description: Associate upload with an existing Tag UID
 
     SwarmPinParameter:
@@ -1016,7 +1027,6 @@ components:
       name: swarm-pin
       schema:
         type: boolean
-      required: false
       description: >
         Represents if the uploaded data should be also locally pinned on the node.
 
@@ -1025,7 +1035,6 @@ components:
       name: swarm-encrypt
       schema:
         type: boolean
-      required: false
       description: >
         Represents the encrypting state of the file
 
@@ -1035,7 +1044,6 @@ components:
       schema:
         type: integer
         enum: [0, 1, 2, 3, 4]
-      required: false
       description: >
         Add redundancy to the data being uploaded so that downloaders can download it with better UX.
         0 value is default and does not add any redundancy to the file.
@@ -1112,7 +1120,6 @@ components:
       in: header
       name: swarm-postage-batch-id
       description: "ID of Postage Batch that is used to upload data with"
-      required: true
       schema:
         $ref: "#/components/schemas/SwarmAddress"
 
@@ -1122,7 +1129,6 @@ components:
       schema:
         type: boolean
         default: "false"
-      required: false
       description: >
         Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.
 
@@ -1132,7 +1138,6 @@ components:
       schema:
         type: boolean
         default: "true"
-      required: false
       description: "Determines if the download data should be cached on the node. By default the download will be cached"
 
   responses:

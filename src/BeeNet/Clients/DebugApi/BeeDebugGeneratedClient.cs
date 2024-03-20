@@ -319,7 +319,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response33> WalletWithdrawAsync(long amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response33> WalletWithdrawAsync(string amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3519,7 +3519,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response33> WalletWithdrawAsync(long amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response33> WalletWithdrawAsync(string amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (coin == null)
                 throw new System.ArgumentNullException("coin");
@@ -5566,7 +5566,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        public TransactionHash TransactionHash { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
+        public string TransactionHash { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -6461,7 +6462,8 @@ namespace Etherna.BeeNet.Clients.DebugApi
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        public TransactionHash2 TransactionHash { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
+        public string TransactionHash { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -9016,25 +9018,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class TransactionHash
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash1 { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Anonymous
     {
         /// <summary>
@@ -9465,25 +9448,6 @@ namespace Etherna.BeeNet.Clients.DebugApi
 
         [System.Text.Json.Serialization.JsonPropertyName("lastsent")]
         public Lastsent2? Lastsent { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class TransactionHash2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 4.1.0
+  version: 4.1.1
   title: Bee Debug API
   description: A list of the currently provided debug interfaces to interact with
     the bee node
@@ -838,7 +838,7 @@ paths:
             format: int64
           required: false
           description: Gas price for transaction
-        - &a37
+        - &a38
           in: header
           name: gas-limit
           schema:
@@ -867,7 +867,7 @@ paths:
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
         "404": *a12
         "429":
-          &a35
+          &a36
           description: Too many requests
           content:
             application/problem+json:
@@ -1115,26 +1115,35 @@ paths:
           name: amount
           required: true
           schema:
-            type: integer
-            format: int64
+            &a35
+            description: Numeric string that represents integer which might exceeds
+              `Number.MAX_SAFE_INTEGER` limit (2^53-1)
+            type: string
+            example: "1000000000000000000"
         - in: query
           name: address
           required: true
-          schema: *a5
+          schema:
+            type: string
+            pattern: ^[A-Fa-f0-9]{40}$
+            example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
         - in: path
           name: coin
           required: true
-          schema:
-            type: string
+          schema: *a5
       responses:
         "200":
           content:
             application/json:
               schema:
-                &a40
+                &a41
                 type: object
                 properties:
-                  transactionHash: *a25
+                  transactionHash:
+                    &a30
+                    type: string
+                    pattern: ^0x[A-Fa-f0-9]{64}$
+                    example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
           description: OK
         "400": *a7
         "500": *a3
@@ -1199,11 +1208,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema:
-            &a31
-            type: string
-            pattern: ^0x[A-Fa-f0-9]{64}$
-            example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
+          schema: *a30
           required: true
           description: Hash of the transaction
       tags:
@@ -1227,17 +1232,17 @@ paths:
                   nonce:
                     type: integer
                   gasPrice:
-                    &a30
+                    &a31
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
                   gasLimit:
                     type: integer
-                  gasTipCap: *a30
+                  gasTipCap: *a31
                   gasTipBoost:
                     type: integer
-                  gasFeeCap: *a30
+                  gasFeeCap: *a31
                   data:
                     type: string
                   created:
@@ -1246,7 +1251,7 @@ paths:
                     example: 2020-06-11T11:26:42.6969797+02:00
                   description:
                     type: string
-                  value: *a30
+                  value: *a31
         "404": *a12
         "500": *a3
         default:
@@ -1256,7 +1261,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a31
+          schema: *a30
           required: true
           description: Hash of the transaction
       tags:
@@ -1276,7 +1281,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a31
+          schema: *a30
           required: true
           description: Hash of the transaction
         - *a24
@@ -1473,11 +1478,7 @@ paths:
       parameters:
         - in: path
           name: amount
-          schema:
-            description: Numeric string that represents integer which might exceeds
-              `Number.MAX_SAFE_INTEGER` limit (2^53-1)
-            type: string
-            example: "1000000000000000000"
+          schema: *a35
           required: true
           description: Amount of BZZ added that the postage batch will have.
         - in: path
@@ -1505,7 +1506,7 @@ paths:
           content:
             application/json:
               schema:
-                &a36
+                &a37
                 type: object
                 properties:
                   batchID:
@@ -1517,7 +1518,7 @@ paths:
                     pattern: ^0x[A-Fa-f0-9]{64}$
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
         "400": *a7
-        "429": *a35
+        "429": *a36
         "500": *a3
         default:
           description: Default response
@@ -1547,7 +1548,7 @@ paths:
           description: Returns the postage batch ID that was topped up
           content:
             application/json:
-              schema: *a36
+              schema: *a37
         "400": *a7
         "402":
           description: Payment Required
@@ -1566,7 +1567,7 @@ paths:
                     description: List of reasons for the error message.
                     items:
                       type: string
-        "429": *a35
+        "429": *a36
         "500": *a3
         default:
           description: Default response
@@ -1595,9 +1596,9 @@ paths:
           description: Returns the postage batch ID that was diluted.
           content:
             application/json:
-              schema: *a36
+              schema: *a37
         "400": *a7
-        "429": *a35
+        "429": *a36
         "500": *a3
         default:
           description: Default response
@@ -1664,7 +1665,7 @@ paths:
             type: string
           description: Amount of BZZ added that will be deposited for staking.
         - *a24
-        - *a37
+        - *a38
       responses:
         "200":
           type: object
@@ -1704,7 +1705,7 @@ paths:
         - Staking
       parameters:
         - *a24
-        - *a37
+        - *a38
       responses:
         "200":
           type: object
@@ -1729,7 +1730,7 @@ paths:
           content:
             application/json:
               schema:
-                &a38
+                &a39
                 type: object
                 properties:
                   tree:
@@ -1768,7 +1769,7 @@ paths:
         - in: path
           name: exp
           schema:
-            &a39
+            &a40
             type: string
             description: Base 64 encoded regular expression or subsystem string.
             pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
@@ -1783,7 +1784,7 @@ paths:
             expression, also represented in short form in a tree.
           content:
             application/json:
-              schema: *a38
+              schema: *a39
         "400": *a7
         default:
           description: Default response
@@ -1792,7 +1793,7 @@ paths:
       parameters:
         - in: path
           name: exp
-          schema: *a39
+          schema: *a40
           required: true
           description: Regular expression or a subsystem that matches the logger(s).
       tags:
@@ -1907,4 +1908,4 @@ paths:
           description: Default response.
 components:
   schemas:
-    WalletTxResponse: *a40
+    WalletTxResponse: *a41

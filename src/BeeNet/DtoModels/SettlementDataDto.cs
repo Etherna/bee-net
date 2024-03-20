@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.DtoModels
             Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementDataDto(Clients.GatewayApi.Response34 settlement)
+        internal SettlementDataDto(Clients.GatewayApi.Response35 settlement)
         {
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 

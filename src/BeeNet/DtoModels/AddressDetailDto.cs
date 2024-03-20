@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.DtoModels
             PssPublicKey = response.PssPublicKey;
         }
 
-        internal AddressDetailDto(Clients.GatewayApi.Response19 response)
+        internal AddressDetailDto(Clients.GatewayApi.Response20 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

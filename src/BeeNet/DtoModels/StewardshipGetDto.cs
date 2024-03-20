@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
     public class StewardShipGetDto
     {
         // Constructors.
-        internal StewardShipGetDto(Clients.GatewayApi.Response18 response)
+        internal StewardShipGetDto(Clients.GatewayApi.Response19 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
