@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 4.1.0
+  version: 4.1.1
   title: Bee Debug API
   description: "A list of the currently provided debug interfaces to interact with the bee node"
 
@@ -701,17 +701,17 @@ paths:
           name: amount
           required: true
           schema:
-            $ref: "#/components/schemas/BigInt"
+            $ref: "SwarmCommon.yaml#/components/schemas/BigInt"
         - in: query
           name: address
           required: true
           schema:
-            $ref: "#/components/schemas/EthereumAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/EthereumAddress"
         - in: path
           name: coin
           required: true
           schema:
-            $ref: "#/components/schemas/SwarmAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
       responses:
         "200":
           content:
@@ -1178,4 +1178,4 @@ components:
       type: object
       properties:
         transactionHash:
-          $ref: "#/components/schemas/TransactionHash"
+          $ref: "SwarmCommon.yaml#/components/schemas/TransactionHash"
