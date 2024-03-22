@@ -1679,9 +1679,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     if (swarm_encrypt != null)
                         request_.Headers.TryAddWithoutValidation("swarm-encrypt", ConvertToString(swarm_encrypt, System.Globalization.CultureInfo.InvariantCulture));
 
-                    if (content_Type != null)
-                        request_.Headers.TryAddWithoutValidation("Content-Type", ConvertToString(content_Type, System.Globalization.CultureInfo.InvariantCulture));
-
                     if (swarm_collection != null)
                         request_.Headers.TryAddWithoutValidation("swarm-collection", ConvertToString(swarm_collection, System.Globalization.CultureInfo.InvariantCulture));
 
@@ -1700,7 +1697,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     if (swarm_redundancy_level != null)
                         request_.Headers.TryAddWithoutValidation("swarm-redundancy-level", ConvertToString(swarm_redundancy_level, System.Globalization.CultureInfo.InvariantCulture));
                     var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(content_Type ?? "application/octet-stream");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
