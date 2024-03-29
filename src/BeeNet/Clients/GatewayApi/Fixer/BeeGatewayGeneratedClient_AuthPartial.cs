@@ -12,18 +12,14 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.InputModels;
+using Etherna.BeeNet.Clients.GatewayApi.Fixer;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
+namespace Etherna.BeeNet.Clients.GatewayApi
 {
-    public abstract class BaseGateway : IAuthentication
+    internal partial class BeeGatewayGeneratedClient : IAuthentication
     {
         // Protected properties.
         protected string? AuthenticatedToken { get; private set; }
@@ -35,12 +31,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
         }
 
         // Protected methods.
-        protected void PrepareBearAuthRequest(HttpRequestMessage request)
+        partial void PrepareRequest(HttpClient client, HttpRequestMessage request, string url)
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
-            if (AuthenticatedToken is null)
-                throw new InvalidOperationException("AuthenticatedToken is null");
-
+            if (AuthenticatedToken is null) return;
             request.Headers.Add("Authorization", $"Bearer {AuthenticatedToken}");
         }
 
@@ -50,7 +44,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi.Fixer
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             var authenticationString = $"{username}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
             request.Headers.Add("Authorization", $"Basic {base64EncodedAuthenticationString}");
         }
     }

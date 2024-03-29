@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class SocProofDto
     {
         // Constructors.
-        public SocProofDto(SocProof socProof)
+        internal SocProofDto(SocProof socProof)
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.DtoModels
             Signer = socProof.Signer;
         }
 
-        public SocProofDto(SocProof2 socProof)
+        internal SocProofDto(SocProof2 socProof)
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.DtoModels
             Signer = socProof.Signer;
         }
 
-        public SocProofDto(SocProof3 socProof)
+        internal SocProofDto(SocProof3 socProof)
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             

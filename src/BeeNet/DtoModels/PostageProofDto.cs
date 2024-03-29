@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class PostageProofDto
     {
-        public PostageProofDto(PostageProof postageProof)
+        internal PostageProofDto(PostageProof postageProof)
         {
             ArgumentNullException.ThrowIfNull(postageProof, nameof(postageProof));
             
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.DtoModels
             TimeStamp = postageProof.TimeStamp;
         }
 
-        public PostageProofDto(PostageProof2 postageProof)
+        internal PostageProofDto(PostageProof2 postageProof)
         {
             ArgumentNullException.ThrowIfNull(postageProof, nameof(postageProof));
             
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.DtoModels
             TimeStamp = postageProof.TimeStamp;
         }
 
-        public PostageProofDto(PostageProof3 postageProof)
+        internal PostageProofDto(PostageProof3 postageProof)
         {
             ArgumentNullException.ThrowIfNull(postageProof, nameof(postageProof));
             

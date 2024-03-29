@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ReserveCommitmentDto
     {
         // Constructors.
-        public ReserveCommitmentDto(Response58 response)
+        internal ReserveCommitmentDto(Response58 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

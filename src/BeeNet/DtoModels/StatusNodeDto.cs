@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.DtoModels
     public class StatusNodeDto
     {
         // Constructors.
-        public StatusNodeDto(Response47 response) 
+        internal StatusNodeDto(Response47 response) 
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.DtoModels
             StorageRadius = response.StorageRadius;
         }
 
-        public StatusNodeDto(Stamps2 stamps)
+        internal StatusNodeDto(Stamps2 stamps)
         {
             ArgumentNullException.ThrowIfNull(stamps, nameof(stamps));
 

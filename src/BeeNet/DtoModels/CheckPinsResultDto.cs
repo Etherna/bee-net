@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.DtoModels
 {
     public class CheckPinsResultDto
     {
-        public CheckPinsResultDto(Response15 response)
+        internal CheckPinsResultDto(Response15 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

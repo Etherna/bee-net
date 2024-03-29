@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IBeeGatewayGeneratedClient : IAuthentication
+    internal partial interface IBeeGatewayGeneratedClient
     {
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -845,7 +845,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BeeGatewayGeneratedClient : BaseGateway, IBeeGatewayGeneratedClient
+    internal partial class BeeGatewayGeneratedClient : IBeeGatewayGeneratedClient
     {
         #pragma warning disable 8618
         private string _baseUrl;
@@ -4527,7 +4527,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4620,7 +4619,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4718,7 +4716,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4796,7 +4793,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -4888,7 +4884,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5421,7 +5416,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5504,7 +5498,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5608,7 +5601,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5721,7 +5713,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5819,7 +5810,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5907,7 +5897,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -5995,7 +5984,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 
                     PrepareRequest(client_, request_, url_);
 
-                    PrepareBearAuthRequest(request_);
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -8254,7 +8242,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Body
+    internal partial class Body
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
@@ -8279,7 +8267,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Body2
+    internal partial class Body2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
@@ -8304,7 +8292,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SwarmRedundancyStrategy
+    internal enum SwarmRedundancyStrategy
     {
 
         _0 = 0,
@@ -8318,7 +8306,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SwarmRedundancyLevel
+    internal enum SwarmRedundancyLevel
     {
 
         _0 = 0,
@@ -8334,7 +8322,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SwarmRedundancyStrategy2
+    internal enum SwarmRedundancyStrategy2
     {
 
         _0 = 0,
@@ -8348,7 +8336,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SwarmRedundancyStrategy3
+    internal enum SwarmRedundancyStrategy3
     {
 
         _0 = 0,
@@ -8362,7 +8350,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Body3
+    internal partial class Body3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -8381,7 +8369,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Body4
+    internal partial class Body4
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -8400,7 +8388,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Body5
+    internal partial class Body5
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
@@ -8418,7 +8406,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response
+    internal partial class Response
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
@@ -8436,7 +8424,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response2
+    internal partial class Response2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
@@ -8454,7 +8442,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response3
+    internal partial class Response3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8472,7 +8460,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response4
+    internal partial class Response4
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8490,7 +8478,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response5
+    internal partial class Response5
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8508,7 +8496,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response6
+    internal partial class Response6
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("tags")]
@@ -8526,7 +8514,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response7
+    internal partial class Response7
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
@@ -8582,7 +8570,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response8
+    internal partial class Response8
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
@@ -8638,7 +8626,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response9
+    internal partial class Response9
     {
         /// <summary>
         /// Indicates health state of node * `ok` - node is healthy * `nok` - node is not healthy
@@ -8678,7 +8666,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response10
+    internal partial class Response10
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
@@ -8699,7 +8687,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response11
+    internal partial class Response11
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
@@ -8720,7 +8708,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response12
+    internal partial class Response12
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
@@ -8741,7 +8729,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response13
+    internal partial class Response13
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8759,7 +8747,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response14
+    internal partial class Response14
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8777,7 +8765,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response15
+    internal partial class Response15
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8804,7 +8792,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response16
+    internal partial class Response16
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8822,7 +8810,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response17
+    internal partial class Response17
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8840,7 +8828,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response18
+    internal partial class Response18
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -8858,7 +8846,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response19
+    internal partial class Response19
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("isRetrievable")]
@@ -8876,7 +8864,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response20
+    internal partial class Response20
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("overlay")]
@@ -8910,7 +8898,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response21
+    internal partial class Response21
     {
         /// <summary>
         /// Indicates health state of node * `ok` - node is healthy * `nok` - node is not healthy
@@ -8950,7 +8938,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response22
+    internal partial class Response22
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("balances")]
@@ -8968,7 +8956,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response23
+    internal partial class Response23
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -8994,7 +8982,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Anonymous
+    internal partial class Anonymous
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -9021,7 +9009,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response24
+    internal partial class Response24
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("balances")]
@@ -9039,7 +9027,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response25
+    internal partial class Response25
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -9065,7 +9053,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response26
+    internal partial class Response26
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chequebookAddress")]
@@ -9084,7 +9072,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response27
+    internal partial class Response27
     {
         /// <summary>
         /// Numeric string that represents integer which might exceeds `Number.MAX_SAFE_INTEGER` limit (2^53-1)
@@ -9112,7 +9100,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response28
+    internal partial class Response28
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -9131,7 +9119,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response29
+    internal partial class Response29
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("radius")]
@@ -9155,7 +9143,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response30
+    internal partial class Response30
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chainTip")]
@@ -9190,7 +9178,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response31
+    internal partial class Response31
     {
         /// <summary>
         /// Gives back in what mode the Bee client has been started. The modes are mutually exclusive * `light` - light node; does not participate in forwarding or storing chunks * `full` - full node * `dev` - development mode; Bee client for development purposes, blockchain operations are mocked
@@ -9219,7 +9207,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response32
+    internal partial class Response32
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peers")]
@@ -9237,7 +9225,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response33
+    internal partial class Response33
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
@@ -9258,7 +9246,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response34
+    internal partial class Response34
     {
         /// <summary>
         /// Go time.Duration format
@@ -9279,7 +9267,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response35
+    internal partial class Response35
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -9304,7 +9292,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response36
+    internal partial class Response36
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
@@ -9328,7 +9316,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response37
+    internal partial class Response37
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
@@ -9352,7 +9340,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response38
+    internal partial class Response38
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("baseAddr")]
@@ -9397,7 +9385,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response39
+    internal partial class Response39
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
@@ -9415,7 +9403,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response40
+    internal partial class Response40
     {
         /// <summary>
         /// Indicates health state of node * `ok` - node is healthy * `nok` - node is not healthy
@@ -9455,7 +9443,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response41
+    internal partial class Response41
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -9491,7 +9479,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response42
+    internal partial class Response42
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9510,7 +9498,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response43
+    internal partial class Response43
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -9535,7 +9523,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response44
+    internal partial class Response44
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("lastcheques")]
@@ -9553,7 +9541,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response45
+    internal partial class Response45
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9572,7 +9560,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response46
+    internal partial class Response46
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9591,7 +9579,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response47
+    internal partial class Response47
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("pendingTransactions")]
@@ -9609,7 +9597,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response48
+    internal partial class Response48
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9678,7 +9666,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response49
+    internal partial class Response49
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9697,7 +9685,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response50
+    internal partial class Response50
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -9716,7 +9704,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response51
+    internal partial class Response51
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("stamps")]
@@ -9734,7 +9722,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
+    internal partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
@@ -9749,7 +9737,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response53
+    internal partial class Response53
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
@@ -9776,7 +9764,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response54
+    internal partial class Response54
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
@@ -9799,7 +9787,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response55
+    internal partial class Response55
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
@@ -9822,7 +9810,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response56
+    internal partial class Response56
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
@@ -9845,7 +9833,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response57
+    internal partial class Response57
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batches")]
@@ -9863,7 +9851,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response58
+    internal partial class Response58
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("duration")]
@@ -9888,7 +9876,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response59
+    internal partial class Response59
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -9916,7 +9904,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response60
+    internal partial class Response60
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -9944,7 +9932,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response61
+    internal partial class Response61
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -9972,7 +9960,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response62
+    internal partial class Response62
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10000,7 +9988,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response63
+    internal partial class Response63
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10028,7 +10016,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response64
+    internal partial class Response64
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10056,7 +10044,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response65
+    internal partial class Response65
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10084,7 +10072,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response66
+    internal partial class Response66
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10112,7 +10100,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response67
+    internal partial class Response67
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10140,7 +10128,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response68
+    internal partial class Response68
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10168,7 +10156,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response69
+    internal partial class Response69
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10196,7 +10184,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response70
+    internal partial class Response70
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10224,7 +10212,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response71
+    internal partial class Response71
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10252,7 +10240,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response72
+    internal partial class Response72
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10280,7 +10268,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response73
+    internal partial class Response73
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10308,7 +10296,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response74
+    internal partial class Response74
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10336,7 +10324,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response75
+    internal partial class Response75
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10364,7 +10352,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response76
+    internal partial class Response76
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10392,7 +10380,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response77
+    internal partial class Response77
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10420,7 +10408,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response78
+    internal partial class Response78
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10448,7 +10436,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response79
+    internal partial class Response79
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10476,7 +10464,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response80
+    internal partial class Response80
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10504,7 +10492,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response81
+    internal partial class Response81
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10532,7 +10520,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response82
+    internal partial class Response82
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10560,7 +10548,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response83
+    internal partial class Response83
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10588,7 +10576,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response84
+    internal partial class Response84
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10616,7 +10604,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response85
+    internal partial class Response85
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10644,7 +10632,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response86
+    internal partial class Response86
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10672,7 +10660,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response87
+    internal partial class Response87
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10700,7 +10688,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response88
+    internal partial class Response88
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10728,7 +10716,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response89
+    internal partial class Response89
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10756,7 +10744,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response90
+    internal partial class Response90
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10784,7 +10772,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response91
+    internal partial class Response91
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10812,7 +10800,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response92
+    internal partial class Response92
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10840,7 +10828,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response93
+    internal partial class Response93
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10868,7 +10856,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response94
+    internal partial class Response94
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10896,7 +10884,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response95
+    internal partial class Response95
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10924,7 +10912,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response96
+    internal partial class Response96
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10952,7 +10940,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response97
+    internal partial class Response97
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -10980,7 +10968,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response98
+    internal partial class Response98
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11008,7 +10996,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response99
+    internal partial class Response99
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11036,7 +11024,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response100
+    internal partial class Response100
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11064,7 +11052,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response101
+    internal partial class Response101
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11092,7 +11080,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response102
+    internal partial class Response102
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11120,7 +11108,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response103
+    internal partial class Response103
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11148,7 +11136,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response104
+    internal partial class Response104
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11176,7 +11164,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response105
+    internal partial class Response105
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11204,7 +11192,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response106
+    internal partial class Response106
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11232,7 +11220,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response107
+    internal partial class Response107
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11260,7 +11248,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response108
+    internal partial class Response108
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11288,7 +11276,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response109
+    internal partial class Response109
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11316,7 +11304,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response110
+    internal partial class Response110
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11344,7 +11332,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response111
+    internal partial class Response111
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11372,7 +11360,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response112
+    internal partial class Response112
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11400,7 +11388,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response113
+    internal partial class Response113
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11428,7 +11416,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response114
+    internal partial class Response114
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11456,7 +11444,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response115
+    internal partial class Response115
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11484,7 +11472,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response116
+    internal partial class Response116
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11512,7 +11500,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response117
+    internal partial class Response117
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11540,7 +11528,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response118
+    internal partial class Response118
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11568,7 +11556,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response119
+    internal partial class Response119
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11596,7 +11584,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response120
+    internal partial class Response120
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11624,7 +11612,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response121
+    internal partial class Response121
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11652,7 +11640,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response122
+    internal partial class Response122
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11680,7 +11668,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response123
+    internal partial class Response123
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11708,7 +11696,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response124
+    internal partial class Response124
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11736,7 +11724,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response125
+    internal partial class Response125
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11764,7 +11752,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response126
+    internal partial class Response126
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11792,7 +11780,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response127
+    internal partial class Response127
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11820,7 +11808,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response128
+    internal partial class Response128
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11848,7 +11836,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response129
+    internal partial class Response129
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11876,7 +11864,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response130
+    internal partial class Response130
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11904,7 +11892,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response131
+    internal partial class Response131
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11932,7 +11920,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response132
+    internal partial class Response132
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11960,7 +11948,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response133
+    internal partial class Response133
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -11988,7 +11976,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response134
+    internal partial class Response134
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12016,7 +12004,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response135
+    internal partial class Response135
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12044,7 +12032,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response136
+    internal partial class Response136
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12072,7 +12060,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response137
+    internal partial class Response137
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12100,7 +12088,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response138
+    internal partial class Response138
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12128,7 +12116,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response139
+    internal partial class Response139
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12156,7 +12144,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response140
+    internal partial class Response140
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12184,7 +12172,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response141
+    internal partial class Response141
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12212,7 +12200,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response142
+    internal partial class Response142
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12240,7 +12228,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response143
+    internal partial class Response143
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12268,7 +12256,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response144
+    internal partial class Response144
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12296,7 +12284,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response145
+    internal partial class Response145
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12324,7 +12312,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response146
+    internal partial class Response146
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12352,7 +12340,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response147
+    internal partial class Response147
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12380,7 +12368,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response148
+    internal partial class Response148
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12408,7 +12396,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response149
+    internal partial class Response149
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12436,7 +12424,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response150
+    internal partial class Response150
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12464,7 +12452,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response151
+    internal partial class Response151
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12492,7 +12480,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response152
+    internal partial class Response152
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12520,7 +12508,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response153
+    internal partial class Response153
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12548,7 +12536,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response154
+    internal partial class Response154
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12576,7 +12564,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response155
+    internal partial class Response155
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12604,7 +12592,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response156
+    internal partial class Response156
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12632,7 +12620,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response157
+    internal partial class Response157
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12660,7 +12648,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response158
+    internal partial class Response158
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12688,7 +12676,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response159
+    internal partial class Response159
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12716,7 +12704,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response160
+    internal partial class Response160
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12744,7 +12732,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response161
+    internal partial class Response161
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12772,7 +12760,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response162
+    internal partial class Response162
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12800,7 +12788,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response163
+    internal partial class Response163
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12828,7 +12816,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response164
+    internal partial class Response164
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12856,7 +12844,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response165
+    internal partial class Response165
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12884,7 +12872,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response166
+    internal partial class Response166
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12912,7 +12900,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response167
+    internal partial class Response167
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12940,7 +12928,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response168
+    internal partial class Response168
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12968,7 +12956,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response169
+    internal partial class Response169
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -12996,7 +12984,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response170
+    internal partial class Response170
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13024,7 +13012,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response171
+    internal partial class Response171
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13052,7 +13040,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response172
+    internal partial class Response172
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13080,7 +13068,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response173
+    internal partial class Response173
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13108,7 +13096,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response174
+    internal partial class Response174
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13136,7 +13124,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response175
+    internal partial class Response175
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13164,7 +13152,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response176
+    internal partial class Response176
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13192,7 +13180,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response177
+    internal partial class Response177
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13220,7 +13208,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response178
+    internal partial class Response178
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13248,7 +13236,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response179
+    internal partial class Response179
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13276,7 +13264,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response180
+    internal partial class Response180
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13304,7 +13292,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response181
+    internal partial class Response181
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13332,7 +13320,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response182
+    internal partial class Response182
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13360,7 +13348,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response183
+    internal partial class Response183
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13388,7 +13376,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response184
+    internal partial class Response184
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13416,7 +13404,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response185
+    internal partial class Response185
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13444,7 +13432,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response186
+    internal partial class Response186
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13472,7 +13460,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response187
+    internal partial class Response187
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13500,7 +13488,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response188
+    internal partial class Response188
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13528,7 +13516,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response189
+    internal partial class Response189
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13556,7 +13544,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Response190
+    internal partial class Response190
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
@@ -13584,7 +13572,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Tags
+    internal partial class Tags
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("uid")]
@@ -13640,7 +13628,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response9Status
+    internal enum Response9Status
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"ok")]
@@ -13652,7 +13640,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response21Status
+    internal enum Response21Status
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"ok")]
@@ -13664,7 +13652,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Balances
+    internal partial class Balances
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -13690,7 +13678,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Address
+    internal partial class Address
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -13709,7 +13697,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Balances2
+    internal partial class Balances2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -13735,7 +13723,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response31BeeMode
+    internal enum Response31BeeMode
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"light")]
@@ -13750,7 +13738,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Peers
+    internal partial class Peers
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -13769,7 +13757,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Settlements
+    internal partial class Settlements
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -13794,7 +13782,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Settlements2
+    internal partial class Settlements2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -13819,7 +13807,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response38Reachability
+    internal enum Response38Reachability
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
@@ -13834,7 +13822,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response38NetworkAvailability
+    internal enum Response38NetworkAvailability
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
@@ -13849,7 +13837,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Anonymous2
+    internal partial class Anonymous2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("population")]
@@ -13876,7 +13864,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Response40Status
+    internal enum Response40Status
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"ok")]
@@ -13888,7 +13876,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LastCashedCheque
+    internal partial class LastCashedCheque
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
@@ -13918,7 +13906,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Result
+    internal partial class Result
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("recipient")]
@@ -13947,7 +13935,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Lastreceived
+    internal partial class Lastreceived
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
@@ -13977,7 +13965,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Lastsent
+    internal partial class Lastsent
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
@@ -14007,7 +13995,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Lastcheques
+    internal partial class Lastcheques
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -14032,7 +14020,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PendingTransactions
+    internal partial class PendingTransactions
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -14101,7 +14089,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
+    internal partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
@@ -14116,7 +14104,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Buckets
+    internal partial class Buckets
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("bucketID")]
@@ -14137,7 +14125,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Batches
+    internal partial class Batches
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
@@ -14185,7 +14173,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Proofs
+    internal partial class Proofs
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("proof1")]
@@ -14209,7 +14197,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DisconnectedPeers
+    internal partial class DisconnectedPeers
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -14231,7 +14219,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ConnectedPeers
+    internal partial class ConnectedPeers
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -14253,7 +14241,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Lastreceived2
+    internal partial class Lastreceived2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
@@ -14283,7 +14271,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Lastsent2
+    internal partial class Lastsent2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
@@ -14313,7 +14301,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Proof1
+    internal partial class Proof1
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
@@ -14353,7 +14341,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Proof2
+    internal partial class Proof2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
@@ -14393,7 +14381,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProofLast
+    internal partial class ProofLast
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
@@ -14433,7 +14421,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Metrics
+    internal partial class Metrics
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("lastSeenTimestamp")]
@@ -14472,7 +14460,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Metrics2
+    internal partial class Metrics2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("lastSeenTimestamp")]
@@ -14511,7 +14499,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PostageProof
+    internal partial class PostageProof
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("index")]
@@ -14538,7 +14526,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SocProof
+    internal partial class SocProof
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
@@ -14565,7 +14553,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PostageProof2
+    internal partial class PostageProof2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("index")]
@@ -14592,7 +14580,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SocProof2
+    internal partial class SocProof2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
@@ -14619,7 +14607,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PostageProof3
+    internal partial class PostageProof3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("index")]
@@ -14646,7 +14634,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SocProof3
+    internal partial class SocProof3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]

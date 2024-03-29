@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.DtoModels
     public class ReserveCommitmentProofDto
     {
         // Constructors.
-        public ReserveCommitmentProofDto(Proof1 proof)
+        internal ReserveCommitmentProofDto(Proof1 proof)
         {
             ArgumentNullException.ThrowIfNull(proof, nameof(proof));
             
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.DtoModels
             SocProof = (proof.SocProof ?? Array.Empty<SocProof>()).Select(p => new SocProofDto(p));
         }
 
-        public ReserveCommitmentProofDto(Proof2 proof)
+        internal ReserveCommitmentProofDto(Proof2 proof)
         {
             ArgumentNullException.ThrowIfNull(proof, nameof(proof));
             
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.DtoModels
             SocProof = (proof.SocProof ?? Array.Empty<SocProof2>()).Select(p => new SocProofDto(p));
         }
 
-        public ReserveCommitmentProofDto(ProofLast proof)
+        internal ReserveCommitmentProofDto(ProofLast proof)
         {
             ArgumentNullException.ThrowIfNull(proof, nameof(proof));
             
