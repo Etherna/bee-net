@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.Clients.DebugApi
         private readonly BeeDebugGeneratedClient generatedClient;
 
         // Constructors.
-        public BeeDebugClient(HttpClient httpClient, Uri baseUrl)
+        public BeeDebugClient(Uri baseUrl, HttpClient httpClient)
         {
             ArgumentNullException.ThrowIfNull(baseUrl, nameof(baseUrl));
 

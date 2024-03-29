@@ -45,13 +45,13 @@ namespace Etherna.BeeNet
             if (debugApiPort is not null)
             {
                 DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(httpClient, DebugApiUrl);
+                DebugClient = new BeeDebugClient(DebugApiUrl, httpClient);
             }
 
             if (gatewayApiPort is not null)
             {
                 GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(httpClient, GatewayApiUrl);
+                GatewayClient = new BeeGatewayClient(GatewayApiUrl, httpClient);
             }
         }
 

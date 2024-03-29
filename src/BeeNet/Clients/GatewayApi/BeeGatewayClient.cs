@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         private readonly BeeGatewayGeneratedClient generatedClient;
 
         // Constructors.
-        public BeeGatewayClient(HttpClient httpClient, Uri baseUrl)
+        public BeeGatewayClient(Uri baseUrl, HttpClient httpClient)
         {
             ArgumentNullException.ThrowIfNull(baseUrl, nameof(baseUrl));
 
