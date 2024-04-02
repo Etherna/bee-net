@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Topology
+    public sealed class Topology
     {
         // Constructors.
         internal Topology(Clients.DebugApi.Response22 response)

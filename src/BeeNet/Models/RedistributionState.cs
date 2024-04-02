@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class RedistributionState
+    public sealed class RedistributionState
     {
         // Constructors.
         internal RedistributionState(Clients.DebugApi.Response31 response)

@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ReserveState
+    public sealed class ReserveState
     {
         // Constructors.
         internal ReserveState(Clients.DebugApi.Response12 response)

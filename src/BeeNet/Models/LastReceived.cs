@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class LastReceived
+    public sealed class LastReceived
     {
         // Constructors.
         internal LastReceived(Clients.DebugApi.Lastreceived lastReceived)

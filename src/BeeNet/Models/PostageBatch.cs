@@ -18,7 +18,7 @@ using System.Text.Json;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PostageBatch
+    public sealed class PostageBatch
     {
         // Constructors.
         internal PostageBatch(Clients.DebugApi.Response39 batch)

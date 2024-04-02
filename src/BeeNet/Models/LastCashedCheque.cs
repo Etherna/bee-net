@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class LastCashedCheque
+    public sealed class LastCashedCheque
     {
         // Constructors.
         internal LastCashedCheque(Clients.DebugApi.LastCashedCheque lastCashedCheque)

@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PeerMetrics
+    public sealed class PeerMetrics
     {
         // Constructors
         internal PeerMetrics(Clients.DebugApi.Metrics metrics)

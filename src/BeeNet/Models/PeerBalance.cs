@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PeerBalance
+    public sealed class PeerBalance
     {
         // Constructors.
         internal PeerBalance(Clients.DebugApi.Balances balance)

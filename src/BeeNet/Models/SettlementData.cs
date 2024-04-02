@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SettlementData
+    public sealed class SettlementData
     {
         // Constructors.
         internal SettlementData(Clients.DebugApi.Settlements settlements)

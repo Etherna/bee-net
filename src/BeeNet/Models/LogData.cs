@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class LogData
+    public sealed class LogData
     {
         // Constructors.
         internal LogData(Clients.DebugApi.Response45 response)

@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Bucket
+    public sealed class Bucket
     {
         // Constructors.
         internal Bucket(Clients.DebugApi.Buckets bucket)

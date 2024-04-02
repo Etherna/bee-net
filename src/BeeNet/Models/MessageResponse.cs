@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class MessageResponse
+    public sealed class MessageResponse
     {
         // Constructors.
         internal MessageResponse(Clients.DebugApi.Response16 response)

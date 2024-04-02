@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PeersAggregate
+    public sealed class PeersAggregate
     {
         // Constructors.
         internal PeersAggregate(Clients.DebugApi.Anonymous2 anonymous)

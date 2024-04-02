@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Settlement
+    public sealed class Settlement
     {
         // Constructors.
         internal Settlement(Clients.DebugApi.Response20 response)

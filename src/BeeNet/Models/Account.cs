@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Account
+    public sealed class Account
     {
         // Constructors.
         internal Account(Clients.DebugApi.Anonymous anonymous)

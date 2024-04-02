@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ChequebookBalance
+    public sealed class ChequebookBalance
     {
         // Constructors.
         internal ChequebookBalance(Clients.DebugApi.Response9 response)

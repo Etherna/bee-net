@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ChainState
+    public sealed class ChainState
     {
         // Constructors.
         internal ChainState(Clients.DebugApi.Response13 response)

@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class TagInfo
+    public sealed class TagInfo
     {
         // Constructors.
         internal TagInfo(Clients.GatewayApi.Response7 response)
