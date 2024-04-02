@@ -13,11 +13,7 @@
 //   limitations under the License.
 
 using Etherna.BeeNet;
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
-using Etherna.BeeNet.InputModels;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
