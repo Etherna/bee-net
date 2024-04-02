@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ConnectedPeers
+    public sealed class ConnectedPeers
     {
         // Constructors.
         internal ConnectedPeers(Clients.DebugApi.ConnectedPeers connectedPeers)

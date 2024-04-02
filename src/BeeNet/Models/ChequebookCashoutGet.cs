@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ChequebookCashoutGet
+    public sealed class ChequebookCashoutGet
     {
         // Constructors.
         internal ChequebookCashoutGet(Clients.DebugApi.Response25 response)

@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class StatusNode
+    public sealed class StatusNode
     {
         // Constructors.
         internal StatusNode(Response47 response) 

@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class StampsBuckets
+    public sealed class StampsBuckets
     {
         // Constructors.
         internal StampsBuckets(Clients.DebugApi.Response40 response)

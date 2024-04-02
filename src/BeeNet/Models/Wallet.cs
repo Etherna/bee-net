@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Wallet
+    public sealed class Wallet
     {
         internal Wallet(Clients.DebugApi.Response32 response)
         {

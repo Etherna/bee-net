@@ -14,10 +14,11 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class FileResponse
+    public sealed class FileResponse : IDisposable, IAsyncDisposable
     {
         // Constructors.
         internal FileResponse(Clients.GatewayApi.FileResponse response)
@@ -27,9 +28,14 @@ namespace Etherna.BeeNet.Models
             Stream = response.Stream;
             IsFeed = response.Headers.ContainsKey("Swarm-Feed-Index");
         }
+        
+        // Dispose.
+        public void Dispose() => Stream.Dispose();
+        public ValueTask DisposeAsync() => Stream.DisposeAsync();
 
         // Properties.
         public bool IsFeed { get; }
         public Stream Stream { get; }
+
     }
 }

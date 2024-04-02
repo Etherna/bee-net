@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PostageProof
+    public sealed class PostageProof
     {
         internal PostageProof(Clients.GatewayApi.PostageProof postageProof)
         {

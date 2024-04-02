@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PostageBatchShort
+    public sealed class PostageBatchShort
     {
         // Constructors.
         internal PostageBatchShort(Clients.DebugApi.Batches batch)

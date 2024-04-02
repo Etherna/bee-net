@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class NodeInfo
+    public sealed class NodeInfo
     {
         // Constructors.
         internal NodeInfo(Clients.DebugApi.Response14 response)

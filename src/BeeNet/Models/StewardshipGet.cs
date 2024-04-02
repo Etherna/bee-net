@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class StewardshipGet
+    public sealed class StewardshipGet
     {
         // Constructors.
         internal StewardshipGet(Clients.GatewayApi.Response19 response)

@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Auth
+    public sealed class Auth
     {
         // Constructors.
         internal Auth(Clients.GatewayApi.Response response)

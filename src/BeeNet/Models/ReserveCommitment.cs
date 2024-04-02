@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ReserveCommitment
+    public sealed class ReserveCommitment
     {
         // Constructors.
         internal ReserveCommitment(Response58 response)

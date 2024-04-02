@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ChequebookChequeGet
+    public sealed class ChequebookChequeGet
     {
         // Constructors
         internal ChequebookChequeGet(Clients.DebugApi.Lastcheques response)

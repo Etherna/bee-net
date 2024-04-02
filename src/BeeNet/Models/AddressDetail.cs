@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class AddressDetail
+    public sealed class AddressDetail
     {
         // Constructors.
         internal AddressDetail(Clients.DebugApi.Response response)

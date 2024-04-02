@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class CheckPinsResult
+    public sealed class CheckPinsResult
     {
         internal CheckPinsResult(Response15 response)
         {

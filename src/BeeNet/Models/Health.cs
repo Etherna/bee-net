@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Health
+    public sealed class Health
     {
         // Constructors.
         internal Health(Clients.DebugApi.Response18 response)

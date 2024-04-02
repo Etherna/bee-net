@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class DisconnectedPeers
+    public sealed class DisconnectedPeers
     {
         // Constructors.
         internal DisconnectedPeers(Clients.DebugApi.DisconnectedPeers disconnectedPeers)

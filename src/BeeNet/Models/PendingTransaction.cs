@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PendingTransaction
+    public sealed class PendingTransaction
     {
         // Constructors.
         internal PendingTransaction(Clients.DebugApi.PendingTransactions tx)

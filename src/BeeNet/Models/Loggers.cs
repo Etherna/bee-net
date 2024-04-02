@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class Loggers
+    public sealed class Loggers
     {
         // Constructors.
         internal Loggers(Clients.DebugApi.Loggers loggers)

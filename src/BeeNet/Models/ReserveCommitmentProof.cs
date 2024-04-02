@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public class ReserveCommitmentProof
+    public sealed class ReserveCommitmentProof
     {
         // Constructors.
         internal ReserveCommitmentProof(Proof1 proof)

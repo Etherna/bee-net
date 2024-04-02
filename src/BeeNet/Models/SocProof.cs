@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SocProof
+    public sealed class SocProof
     {
         // Constructors.
         internal SocProof(Clients.GatewayApi.SocProof socProof)

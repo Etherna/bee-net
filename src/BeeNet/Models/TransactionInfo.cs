@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public class TransactionInfo
+    public sealed class TransactionInfo
     {
         // Constructors.
         internal TransactionInfo(Clients.DebugApi.Response35 response)
