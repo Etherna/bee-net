@@ -439,7 +439,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             bool? swarmDeferredUpload = null,
-            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None0,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.BytesPostAsync(
                 swarm_postage_batch_id: swarmPostageBatchId,
@@ -462,7 +462,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string? swarmIndexDocument = null,
             string? swarmErrorDocument = null,
             bool? swarmDeferredUpload = null,
-            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None0,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default)
         {
             return (await generatedClient.BzzPostAsync(

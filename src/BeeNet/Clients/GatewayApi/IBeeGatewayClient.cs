@@ -609,7 +609,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmPin = null, 
             bool? swarmEncrypt = null, 
             bool? swarmDeferredUpload = null,
-            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None0,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload file or a collection of files</summary>
@@ -640,7 +640,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string? swarmIndexDocument = null,
             string? swarmErrorDocument = null,
             bool? swarmDeferredUpload = null,
-            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None0,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload single owner chunk</summary>
