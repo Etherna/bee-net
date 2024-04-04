@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading;
 using Xunit;
 
-namespace Etherna.BeeNet.Feeds.Models
+namespace Etherna.BeeNet.Services.Feeds.Models
 {
     public class FeedChunkTest
     {

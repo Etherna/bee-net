@@ -14,14 +14,14 @@
 
 using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Feeds.Models;
+using Etherna.BeeNet.Services.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Services.Feeds
 {
     public class FeedService : IFeedService
     {

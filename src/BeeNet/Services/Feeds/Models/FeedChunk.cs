@@ -22,7 +22,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Etherna.BeeNet.Feeds.Models
+namespace Etherna.BeeNet.Services.Feeds.Models
 {
     public class FeedChunk
     {

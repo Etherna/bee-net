@@ -12,11 +12,11 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Feeds.Models;
+using Etherna.BeeNet.Services.Feeds.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Services.Feeds
 {
     public interface IFeedService
     {

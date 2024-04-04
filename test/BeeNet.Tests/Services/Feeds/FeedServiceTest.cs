@@ -14,7 +14,7 @@
 
 using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Feeds.Models;
+using Etherna.BeeNet.Services.Feeds.Models;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Services.Feeds
 {
     public class FeedServiceTest
     {
