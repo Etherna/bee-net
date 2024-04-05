@@ -48,7 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Bmt\" />
     <Folder Include="Services\Mantaray\" />
   </ItemGroup>
 

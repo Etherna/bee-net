@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             : base(putter, redundancyLevel)
         {
             //build stages
-            var shortPipelineStage = new ShortPipelineStage(putter);
+            var shortPipelineStage = ShortPipelineStage.BuildNewStage(putter);
             var hashTrieWriterStage = hashtrie.NewHashTrieWriter(
                 SwarmAddress.HashSize,
                 redundancy.New(redundancyLevel, false, shortPipelineStage),

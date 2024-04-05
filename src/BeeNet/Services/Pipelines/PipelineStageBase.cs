@@ -12,12 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Etherna.BeeNet.Services.Pipelines
 {
     public abstract class PipelineStageBase
     {
-        public abstract PipelineStageBase? NextStage { get; protected set; }
-        public abstract void ChainWrite(PipelineWriteContext context);
-        public abstract byte[] Sum();
+        // Fields.
+        protected readonly PipelineStageBase? Next;
+        
+        // Constructor.
+        protected PipelineStageBase(PipelineStageBase? next)
+        {
+            Next = next;
+        }
+
+        // Methods.
+        public virtual void ChainWrite(PipelineWriteContext context) => Next?.ChainWrite(context);
+        public virtual byte[] Sum() => Next?.Sum() ?? throw new InvalidOperationException();
     }
 }

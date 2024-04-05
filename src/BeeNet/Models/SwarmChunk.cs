@@ -12,11 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Etherna.BeeNet.Models
 {
-    public static class SwarmChunk
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
+    public class SwarmChunk
     {
         // Consts.
         public const int Size = 4096;
+        public const int SpanSize = 8;
+        
+        // Constructor.
+        public SwarmChunk(SwarmAddress address, byte[] data)
+        {
+            Address = address;
+            Data = data;
+        }
+        
+        // Properties.
+        public SwarmAddress Address { get; }
+        public byte[] Data { get; }
     }
 }

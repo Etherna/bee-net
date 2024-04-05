@@ -19,25 +19,14 @@ namespace Etherna.BeeNet.Services.Pipelines
     public class ShortPipelineStage : PipelineStageBase
     {
         // Constructor.
-        public ShortPipelineStage(StamperPutter putter)
-        {
-            //build internal sub-stages.
-            var lsw = store.NewStoreWriter(putter, null);
-            NextStage = bmt.NewBmtWriter(lsw);
-        }
-
-        // Properties.
-        public override PipelineStageBase? NextStage { get; protected set; }
+        private ShortPipelineStage(PipelineStageBase? next) : base(next) { }
         
-        // Methods.
-        public override void ChainWrite(PipelineWriteContext context)
+        // Builder.
+        public static ShortPipelineStage BuildNewStage(StamperPutter putter)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public override byte[] Sum()
-        {
-            throw new System.NotImplementedException();
+            var storeWriter = new StoreWriterPipelineStage(putter, null);
+            var next = new BmtWriterPipelineStage(storeWriter);
+            return new ShortPipelineStage(next);
         }
     }
 }

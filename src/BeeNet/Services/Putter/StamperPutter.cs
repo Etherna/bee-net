@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
+
 namespace Etherna.BeeNet.Services.Putter
 {
     public class StamperPutter
@@ -22,5 +24,10 @@ namespace Etherna.BeeNet.Services.Putter
         }
         
         public string BatchId { get; }
+
+        public void Put(SwarmChunk swarmChunk)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
