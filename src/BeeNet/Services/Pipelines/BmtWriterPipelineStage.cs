@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Services.Pipelines.Models;
 using System;
 
 namespace Etherna.BeeNet.Services.Pipelines
@@ -31,7 +32,8 @@ namespace Etherna.BeeNet.Services.Pipelines
             if (context.Data.Length < SwarmChunk.SpanSize)
                 throw new InvalidOperationException();
 
-            var hasher = bmtpool.Get();
+            if (!BmtPool.Instance.TryGet(out var hasher))
+                throw new NotImplementedException(); //try to not use a pool
             hasher.SetHeader(context.Data[..SwarmChunk.SpanSize]);
             hasher.Write(context.Data[SwarmChunk.SpanSize..]);
             context.Reference = hasher.Hash(null);
