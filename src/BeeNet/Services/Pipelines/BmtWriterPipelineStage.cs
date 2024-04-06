@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Services.Pipelines
 
             if (!BmtPool.Instance.TryGet(out var hasher))
                 throw new NotImplementedException(); //try to not use a pool
-            hasher.SetHeader(context.Data[..SwarmChunk.SpanSize]);
+            hasher!.SetHeader(context.Data[..SwarmChunk.SpanSize]);
             hasher.Write(context.Data[SwarmChunk.SpanSize..]);
             context.Reference = hasher.Hash(null);
             bmtpool.Put(hasher);

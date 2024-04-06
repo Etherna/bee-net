@@ -57,13 +57,7 @@ namespace Etherna.BeeNet.Services.Pipelines.Models
                 hasher = null;
                 return false;
             }
-
-            hasher = new BmtHasher(
-                config,
-                result: make(chan[]byte),
-                errc: make(chan error, 1),
-                span: make([]byte, SpanSize),
-                bmt: tree);
+            hasher = new BmtHasher(config, tree);
             return true;
         }
     }

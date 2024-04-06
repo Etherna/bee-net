@@ -13,19 +13,28 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Services.Pipelines.Models
 {
+    /// <summary>
+    /// TODO: Try to replace with MerkleTree from Nethereum.Merkle
+    /// </summary>
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class BmtTree
     {
+        // Constructor.
         public BmtTree(int segmentSize, int maxSize, int depth, Func<byte[], byte[]> hasher)
         {
             throw new System.NotImplementedException();
         }
-
-        public void SetHeader(byte[] bytes)
-        {
-            throw new NotImplementedException();
-        }
+        
+        // Properties.
+        /// <summary>
+        /// Leaf nodes of the tree, other nodes accessible via parent links
+        /// </summary>
+        public BmtTreeNode[] Leaves { get; }
+        
+        public byte[] Buffer { get; }
     }
 }
