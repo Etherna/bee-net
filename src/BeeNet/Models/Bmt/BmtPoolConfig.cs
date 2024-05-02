@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Etherna.BeeNet.Services.Pipelines.Models
+namespace Etherna.BeeNet.Models.Bmt
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class BmtPoolConfig

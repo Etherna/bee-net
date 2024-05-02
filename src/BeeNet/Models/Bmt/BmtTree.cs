@@ -15,7 +15,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Pipelines.Models
+namespace Etherna.BeeNet.Models.Bmt
 {
     /// <summary>
     /// TODO: Try to replace with MerkleTree from Nethereum.Merkle

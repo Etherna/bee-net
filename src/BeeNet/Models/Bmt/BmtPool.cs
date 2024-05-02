@@ -16,7 +16,7 @@ using Epoche;
 using System;
 using System.Collections.Concurrent;
 
-namespace Etherna.BeeNet.Services.Pipelines.Models
+namespace Etherna.BeeNet.Models.Bmt
 {
     public class BmtPool //evaluate to remove
     {

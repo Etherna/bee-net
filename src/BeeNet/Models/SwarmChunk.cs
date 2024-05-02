@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models.Bmt;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
@@ -20,7 +21,9 @@ namespace Etherna.BeeNet.Models
     public class SwarmChunk
     {
         // Consts.
-        public const int Size = 4096;
+        public const int ChunkWithSpanSize = Size + SpanSize;
+        public const int SectionSize = 32;
+        public const int Size = SectionSize * SwarmBmt.Branches;
         public const int SpanSize = 8;
         
         // Constructor.

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,11 +19,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Pipelines.Models
+namespace Etherna.BeeNet.Models.Bmt
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class BmtHasher
     {
+        private readonly byte[] zerospan;
+        private readonly byte[] zerosection;
+        
         // Constructor.
         public BmtHasher(BmtPoolConfig config, BmtTree bmt)
         {
@@ -32,6 +34,8 @@ namespace Etherna.BeeNet.Services.Pipelines.Models
             Config = config;
             Result = new ConcurrentQueue<byte[]>();
             Span = new byte[SwarmChunk.SpanSize];
+            zerospan = new byte[8];
+            zerosection = new byte[64];
         }
 
         // Properties.
@@ -70,15 +74,13 @@ namespace Etherna.BeeNet.Services.Pipelines.Models
             if (Size == 0)
                 return Config.Hasher(Span.Concat(Config.Zerohashes[Config.Depth]).ToArray());
             
-            copy(h.bmt.buffer[h.size:], zerosection)
+            Array.Copy(zerosection, Bmt.Buffer, Size);
+            
             // write the last section with final flag set to true
-            go h.processSection(h.pos, true)
-            select {
-                case result := <-h.result:
-                return doHash(h.hasher(), h.span, result)
-                case err := <-h.errc:
-                return nil, err
-            }
+            ProcessSection(Pos, true);
+            if (Result.TryDequeue(out var result))
+                throw new InvalidOperationException();
+            return Config.Hasher(Span.Concat(result!).ToArray());
         }
         
         public void SetHeader(byte[] span)
@@ -156,12 +158,9 @@ namespace Etherna.BeeNet.Services.Pipelines.Models
 
                 // otherwise assign child hash to left or right segment
                 if (isLeft)
-                {
                     n.Left = s;
-                } else
-                {
+                else
                     n.Right = s;
-                }
                 
                 // the child-thread first arriving will terminate
                 if (n.Toggle())

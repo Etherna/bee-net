@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Pipelines.Models;
+using Etherna.BeeNet.Models.Bmt;
 using System;
 
 namespace Etherna.BeeNet.Services.Pipelines
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             hasher!.SetHeader(context.Data[..SwarmChunk.SpanSize]);
             hasher.Write(context.Data[SwarmChunk.SpanSize..]);
             context.Reference = hasher.Hash(null);
-            bmtpool.Put(hasher);
+            BmtPool.Instance.Put(hasher);
 
             Next?.ChainWrite(context);
         }

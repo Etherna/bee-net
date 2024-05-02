@@ -14,7 +14,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Pipelines.Models
+namespace Etherna.BeeNet.Models.Bmt
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class BmtTreeNode
