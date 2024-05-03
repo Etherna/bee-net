@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models.Bmt;
 using Etherna.BeeNet.Services.Pipelines;
 using STH1123.ReedSolomon;
@@ -19,7 +20,6 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    
     public delegate void ParityChunkCallback(int level, byte[] span, byte[] address);
     
     public class RedundancyParams
@@ -34,32 +34,26 @@ namespace Etherna.BeeNet.Models
         /// index of the current buffered chunk in Buffer. this is basically the latest used branchIndex.
         /// </summary>
         private int[] cursor;
-        /// <summary>
-        /// number of parity chunks if maxShards has been reached for erasure coding
-        /// </summary>
-        private int maxParity;
-
-        private bool encryption;
         
         // Constructor.
         public RedundancyParams(RedundancyLevel level, bool encryption, PipelineStageBase pipeLine)
         {
             cursor = new int[9];
-            this.encryption = encryption;
+            Encryption = encryption;
             Level = level;
             this.pipeLine = pipeLine;
             MaxShards = 0;
-            maxParity = 0;
+            MaxParity = 0;
             
             if (encryption)
             {
                 MaxShards = level.GetMaxEncShards();
-                maxParity = level.GetParities(SwarmBmt.EncryptedBranches);
+                MaxParity = level.GetParities(SwarmBmt.EncryptedBranches);
             }
             else
             {
                 MaxShards = level.GetMaxShards();
-                maxParity = level.GetParities(SwarmBmt.BmtBranches);
+                MaxParity = level.GetParities(SwarmBmt.BmtBranches);
             }
             
             // init dataBuffer for erasure coding
@@ -75,6 +69,13 @@ namespace Etherna.BeeNet.Models
         }
         
         // Properties.
+        public bool Encryption { get; }
+        
+        /// <summary>
+        /// number of parity chunks if maxShards has been reached for erasure coding
+        /// </summary>
+        public int MaxParity { get; }
+        
         /// <summary>
         /// Number of chunks after which the parity encode function should be called
         /// </summary>
@@ -83,7 +84,7 @@ namespace Etherna.BeeNet.Models
         public RedundancyLevel Level { get; }
 
         // Methods.
-        public int Parities(int shards) => encryption ?
+        public int Parities(int shards) => Encryption ?
             Level.GetEncParities(shards):
             Level.GetParities(shards);
 
