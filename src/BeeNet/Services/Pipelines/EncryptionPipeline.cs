@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             : base(putter, redundancyLevel)
         { }
 
-        public override PipelineStageBase StartStage { get; }
+        public override ChunkFeeder StartStage { get; }
 
         public override int Write(byte[] bytes)
         {

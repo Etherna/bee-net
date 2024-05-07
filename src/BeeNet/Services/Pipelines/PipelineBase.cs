@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Services.Pipelines
         // Properties.
         public StamperPutter Putter { get; }
         public RedundancyLevel RedundancyLevel { get; }
-        public abstract PipelineStageBase StartStage { get; }
+        public abstract ChunkFeeder StartStage { get; }
         
         // Methods.
         public async Task<SwarmAddress> FeedAsync(Stream fileStream)

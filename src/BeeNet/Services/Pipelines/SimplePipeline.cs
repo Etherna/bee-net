@@ -33,13 +33,13 @@ namespace Etherna.BeeNet.Services.Pipelines
                 shortPipelineStage,
                 putter
             );
-            var storeWriterStage = store.NewStoreWriter(putter, hashTrieWriterStage);
-            var bmtWriterStage = bmt.NewBmtWriter(storeWriterStage);
-            StartStage = feeder.NewChunkFeederWriter(SwarmChunk.Size, bmtWriterStage);
+            var storeWriterStage = new StoreWriterPipelineStage(putter, hashTrieWriterStage);
+            var bmtWriterStage = new BmtWriterPipelineStage(storeWriterStage);
+            StartStage = new ChunkFeeder(bmtWriterStage);
         }
 
         // Properties.
-        public override PipelineStageBase StartStage { get; }
+        public override ChunkFeeder StartStage { get; }
 
         // Methods.
         public override int Write(byte[] bytes)
