@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Static properties.
-        public static SwarmAddress Zero { get; } = new(new byte[16]);
+        public static SwarmAddress Zero { get; } = new byte[HashByteSize];
 
         // Methods.
         public bool Equals(SwarmAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);
