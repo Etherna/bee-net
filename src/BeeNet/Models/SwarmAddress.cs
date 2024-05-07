@@ -13,14 +13,15 @@
 // limitations under the License.
 
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util;
 using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmAddress
+    public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Consts.
-        public const int HashSize = 32;
+        public const int HashByteSize = 32;
         
         // Fields.
         private readonly byte[] byteAddress;
@@ -29,7 +30,7 @@ namespace Etherna.BeeNet.Models
         public SwarmAddress(byte[] byteAddress)
         {
             ArgumentNullException.ThrowIfNull(byteAddress, nameof(byteAddress));
-            if (byteAddress.Length != HashSize / 2)
+            if (byteAddress.Length != HashByteSize)
                 throw new ArgumentOutOfRangeException(nameof(byteAddress));
             
             this.byteAddress = byteAddress;
@@ -38,16 +39,36 @@ namespace Etherna.BeeNet.Models
         public SwarmAddress(string strAddress)
         {
             ArgumentNullException.ThrowIfNull(strAddress, nameof(strAddress));
-            if (strAddress.Length != HashSize)
-                throw new ArgumentOutOfRangeException(nameof(strAddress));
             
             byteAddress = strAddress.HexToByteArray();
+            
+            if (byteAddress.Length != HashByteSize)
+                throw new ArgumentOutOfRangeException(nameof(strAddress));
         }
         
         // Static properties.
         public static SwarmAddress Zero { get; } = new(new byte[16]);
 
         // Methods.
+        public bool Equals(SwarmAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);
+        public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress);
+        public byte[] ToByteArray() => (byte[])byteAddress.Clone();
         public override string ToString() => byteAddress.ToHex();
+        
+        // Static methods.
+        public static SwarmAddress FromByteArray(byte[] value) => new(value);
+        public static SwarmAddress FromString(string value) => new(value);
+        
+        // Operator methods.
+        public static bool operator ==(SwarmAddress left, SwarmAddress right) => left.Equals(right);
+        public static bool operator !=(SwarmAddress left, SwarmAddress right) => !(left == right);
+        
+        // Implicit conversion operator methods.
+        public static implicit operator SwarmAddress(string value) => new(value);
+        public static implicit operator SwarmAddress(byte[] value) => new(value);
+        
+        public static explicit operator string(SwarmAddress value) => value.ToString();
+        public static explicit operator byte[](SwarmAddress value) => value.ToByteArray();
     }
 }

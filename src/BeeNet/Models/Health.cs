@@ -23,10 +23,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.DebugApi.Response18Status.Ok => StatusValues.Ok,
-                Clients.DebugApi.Response18Status.Nok => StatusValues.Nok,
+                Clients.DebugApi.Response18Status.Ok => true,
+                Clients.DebugApi.Response18Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -38,10 +38,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.DebugApi.Response24Status.Ok => StatusValues.Ok,
-                Clients.DebugApi.Response24Status.Nok => StatusValues.Nok,
+                Clients.DebugApi.Response24Status.Ok => true,
+                Clients.DebugApi.Response24Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -53,10 +53,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.GatewayApi.Response9Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response9Status.Nok => StatusValues.Nok,
+                Clients.GatewayApi.Response9Status.Ok => true,
+                Clients.GatewayApi.Response9Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -68,10 +68,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.GatewayApi.Response21Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response21Status.Nok => StatusValues.Nok,
+                Clients.GatewayApi.Response21Status.Ok => true,
+                Clients.GatewayApi.Response21Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -83,10 +83,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.GatewayApi.Response40Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response40Status.Nok => StatusValues.Nok,
+                Clients.GatewayApi.Response40Status.Ok => true,
+                Clients.GatewayApi.Response40Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public StatusValues Status { get; }
+        public bool StatusIsOk { get; }
         public string Version { get; }
         public string ApiVersion { get; }
         public string DebugApiVersion { get; }

@@ -125,7 +125,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Assert
-            Assert.Contains(results, i => i.BatchID == batch);
+            Assert.Contains(results, i => i.BatchId == batch);
         }
 
     }

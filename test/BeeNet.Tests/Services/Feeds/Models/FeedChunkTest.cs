@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             public VerifyConstructorArgumentsTestElement(
                 FeedIndexBase index,
                 byte[] payload,
-                string referenceHash,
+                SwarmAddress referenceHash,
                 Type expectedExceptionType)
             {
                 ExpectedExceptionType = expectedExceptionType;
@@ -41,7 +42,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             public Type ExpectedExceptionType { get; }
             public FeedIndexBase Index { get; }
             public byte[] Payload { get; }
-            public string ReferenceHash { get; }
+            public SwarmAddress ReferenceHash { get; }
         }
 
         // Data.
@@ -63,14 +64,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
                         new EpochFeedIndex(0, 0),
                         new byte[FeedChunk.MaxPayloadBytesSize + 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
-                        typeof(ArgumentOutOfRangeException)),
-
-                    // Invalid hash.
-                    new VerifyConstructorArgumentsTestElement(
-                        new EpochFeedIndex(0, 0),
-                        new byte[FeedChunk.TimeStampByteSize],
-                        "aeef03dde6685d5a1c9ae5af374cce",
-                        typeof(ArgumentException))
+                        typeof(ArgumentOutOfRangeException))
                 };
 
                 return tests.Select(t => new object[] { t });

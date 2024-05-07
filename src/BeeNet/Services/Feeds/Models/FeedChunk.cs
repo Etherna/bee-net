@@ -14,13 +14,13 @@
 
 using Epoche;
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Etherna.BeeNet.Services.Feeds.Models
 {
@@ -34,7 +34,6 @@ namespace Etherna.BeeNet.Services.Feeds.Models
         public const int MaxContentPayloadBytesSize = MaxPayloadBytesSize
                                                     - TimeStampByteSize; //creation timestamp
         public const int MinPayloadByteSize = TimeStampByteSize;
-        public const string ReferenceHashRegex = "^[A-Fa-f0-9]{64}$";
         public const int TimeStampByteSize = sizeof(ulong);
         public const int TopicBytesLength = 32;
 
@@ -42,7 +41,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
         public FeedChunk(
             FeedIndexBase index,
             byte[] payload,
-            string referenceHash)
+            SwarmAddress referenceHash)
         {
             ArgumentNullException.ThrowIfNull(payload, nameof(payload));
             ArgumentNullException.ThrowIfNull(referenceHash, nameof(referenceHash));
@@ -54,9 +53,6 @@ namespace Etherna.BeeNet.Services.Feeds.Models
                 throw new ArgumentOutOfRangeException(nameof(payload),
                     $"Payload can't be longer than {MaxPayloadBytesSize} bytes");
 
-            if (!Regex.IsMatch(referenceHash, ReferenceHashRegex))
-                throw new ArgumentException("Not a valid swarm hash", nameof(referenceHash));
-
             Index = index ?? throw new ArgumentNullException(nameof(index));
             Payload = Array.AsReadOnly(payload);
             ReferenceHash = referenceHash;
@@ -65,7 +61,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
         // Properties.
         public FeedIndexBase Index { get; }
         public ReadOnlyCollection<byte> Payload { get; }
-        public string ReferenceHash { get; }
+        public SwarmAddress ReferenceHash { get; }
 
         // Methods.
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
@@ -76,7 +72,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             return GetType() == obj.GetType() &&
                 Index.Equals(objFeedChunk.Index) &&
                 Payload.SequenceEqual(objFeedChunk.Payload) &&
-                ReferenceHash.Equals(objFeedChunk.ReferenceHash, StringComparison.Ordinal);
+                ReferenceHash.Equals(objFeedChunk.ReferenceHash);
         }
 
         public byte[] GetContentPayload() =>
@@ -85,7 +81,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
         public override int GetHashCode() =>
             Index.GetHashCode() ^
             Payload.GetHashCode() ^
-            ReferenceHash.GetHashCode(StringComparison.InvariantCulture);
+            ReferenceHash.GetHashCode();
 
         public DateTimeOffset GetTimeStamp()
         {
@@ -125,13 +121,13 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             return Keccak256.ComputeHash(newArray);
         }
 
-        public static string BuildReferenceHash(string account, byte[] topic, FeedIndexBase index) =>
+        public static SwarmAddress BuildReferenceHash(string account, byte[] topic, FeedIndexBase index) =>
             BuildReferenceHash(account, BuildIdentifier(topic, index));
 
-        public static string BuildReferenceHash(byte[] account, byte[] topic, FeedIndexBase index) =>
+        public static SwarmAddress BuildReferenceHash(byte[] account, byte[] topic, FeedIndexBase index) =>
             BuildReferenceHash(account, BuildIdentifier(topic, index));
 
-        public static string BuildReferenceHash(string account, byte[] identifier)
+        public static SwarmAddress BuildReferenceHash(string account, byte[] identifier)
         {
             if (!account.IsValidEthereumAddressHexFormat())
                 throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
@@ -139,7 +135,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             return BuildReferenceHash(account.HexToByteArray(), identifier);
         }
 
-        public static string BuildReferenceHash(byte[] account, byte[] identifier)
+        public static SwarmAddress BuildReferenceHash(byte[] account, byte[] identifier)
         {
             ArgumentNullException.ThrowIfNull(account, nameof(account));
             ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
@@ -153,7 +149,7 @@ namespace Etherna.BeeNet.Services.Feeds.Models
             identifier.CopyTo(newArray, 0);
             account.CopyTo(newArray, IdentifierBytesLength);
 
-            return Keccak256.ComputeHash(newArray).ToHex();
+            return Keccak256.ComputeHash(newArray);
         }
     }
 }

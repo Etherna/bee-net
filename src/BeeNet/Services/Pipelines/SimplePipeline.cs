@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             //build stages
             var shortPipelineStage = ShortPipelineStage.BuildNewStage(putter);
             var hashTrieWriterStage = new HashTrieWriterPipelineStage(
-                SwarmAddress.HashSize,
+                SwarmAddress.HashByteSize,
                 new RedundancyParams(redundancyLevel, false, shortPipelineStage),
                 shortPipelineStage,
                 putter
@@ -42,14 +42,8 @@ namespace Etherna.BeeNet.Services.Pipelines
         public override ChunkFeeder StartStage { get; }
 
         // Methods.
-        public override int Write(byte[] bytes)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override int Write(byte[] bytes) => StartStage.Write(bytes);
 
-        public override byte[] Sum()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override byte[] Sum() => StartStage.Sum();
     }
 }

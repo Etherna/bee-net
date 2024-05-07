@@ -126,8 +126,8 @@ namespace Etherna.BeeNet.Services.Pipelines
             {
                 // we do not add span of parity chunks to the common because that is gibberish
                 offset += SwarmChunk.SpanSize;
-                var hash = data[offset..(offset + SwarmAddress.HashSize)]; // parity reference has always hash length
-                offset += SwarmAddress.HashSize;
+                var hash = data[offset..(offset + SwarmAddress.HashByteSize)]; // parity reference has always hash length
+                offset += SwarmAddress.HashByteSize;
                 hashes = hashes.Concat(hash);
                 parities++;
             }

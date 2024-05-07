@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
@@ -165,7 +166,7 @@ namespace Etherna.BeeNet.Services.Feeds
         public Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
             TryGetFeedChunkAsync(FeedChunk.BuildReferenceHash(account, topic, index), index);
 
-        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index)
+        public async Task<FeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index)
         {
             try
             {

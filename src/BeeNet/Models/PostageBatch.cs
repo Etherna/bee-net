@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            BatchTtl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            BatchTtl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -60,7 +60,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            BatchTtl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -77,7 +77,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            BatchTtl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -93,7 +93,7 @@ namespace Etherna.BeeNet.Models
         public string Id { get; }
         public long? AmountPaid { get; }
         /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
-        public long BatchTTL { get; }
+        public long BatchTtl { get; }
         public int BlockNumber { get; }
         public int BucketDepth { get; }
         public int Depth { get; }

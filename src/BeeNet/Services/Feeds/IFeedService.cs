@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Feeds.Models;
 using System;
 using System.Threading.Tasks;
@@ -48,6 +49,6 @@ namespace Etherna.BeeNet.Services.Feeds
 
         Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
 
-        Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index);
+        Task<FeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index);
     }
 }

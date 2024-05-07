@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using Etherna.BeeNet;
+using Etherna.BeeNet.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -33,14 +34,13 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
                 1635);
         }
 
-        protected async Task<string> UploadChunkFileAndGetReferenceAsync()
+        protected async Task<SwarmAddress> UploadChunkFileAndGetReferenceAsync()
         {
             var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
             var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
             var fs = File.OpenRead("Data/TestFileForUpload_Debug.txt");
             await Task.Delay(180000);
-
-
+            
             // Act 
             var reference = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, tag.Uid, body: fs);
 
