@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Services.Pipelines
     {
         // Constructor.
         protected PipelineBase(
-            StamperPutter putter,
+            IPutter putter,
             RedundancyLevel redundancyLevel)
         {
             Putter = putter;
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Services.Pipelines
         }
 
         // Properties.
-        public StamperPutter Putter { get; }
+        public IPutter Putter { get; }
         public RedundancyLevel RedundancyLevel { get; }
         public abstract ChunkFeeder StartStage { get; }
         

@@ -20,10 +20,10 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class RedundancyLevelExtensions
     {
-        public static ErasureTable GetEncErasureTable(this RedundancyLevel level) =>
+        public static ErasureTable? TryGetEncryptedErasureTable(this RedundancyLevel level) =>
             level switch
             {
-                RedundancyLevel.None => throw new InvalidOperationException("redundancy: level NONE does not have erasure table"),
+                RedundancyLevel.None => null,
                 RedundancyLevel.Medium => ErasureTable.EncMedium,
                 RedundancyLevel.Strong => ErasureTable.EncStrong,
                 RedundancyLevel.Insane => ErasureTable.EncInsane,
@@ -31,10 +31,10 @@ namespace Etherna.BeeNet.Extensions
                 _ => throw new InvalidOperationException($"redundancy: level value {level} is not a legit redundancy level")
             };
         
-        public static ErasureTable GetErasureTable(this RedundancyLevel level) =>
+        public static ErasureTable? TryGetErasureTable(this RedundancyLevel level) =>
             level switch
             {
-                RedundancyLevel.None => throw new InvalidOperationException("redundancy: level NONE does not have erasure table"),
+                RedundancyLevel.None => null,
                 RedundancyLevel.Medium => ErasureTable.Medium,
                 RedundancyLevel.Strong => ErasureTable.Strong,
                 RedundancyLevel.Insane => ErasureTable.Insane,
@@ -42,28 +42,33 @@ namespace Etherna.BeeNet.Extensions
                 _ => throw new InvalidOperationException($"redundancy: level value {level} is not a legit redundancy level")
             };
 
-        public static int GetEncParities(this RedundancyLevel level, int shards)
+        public static int GetEncryptedParities(this RedundancyLevel level, int shards)
         {
-            var erasureTable = level.GetEncErasureTable();
-            return erasureTable.GetOptimalParities(shards);
+            var erasureTable = level.TryGetEncryptedErasureTable();
+            return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
         
-        public static int GetMaxEncShards(this RedundancyLevel level)
+        public static int GetMaxEncryptedShards(this RedundancyLevel level)
         {
-            var p = level.GetEncParities(SwarmBmt.EncryptedBranches);
-            return (SwarmBmt.Branches - p) / 2;
+            var parities = level.GetEncryptedParities(SwarmBmt.EncryptedBranches);
+            return (SwarmBmt.Branches - parities) / 2;
         }
         
+        /// <summary>
+        /// Returns the maximum number of effective data chunks
+        /// </summary>
+        /// <param name="level">Redundancy level</param>
+        /// <returns>Maximum number of effective data chunks</returns>
         public static int GetMaxShards(this RedundancyLevel level)
         {
-            var p = level.GetParities(SwarmBmt.Branches);
-            return SwarmBmt.Branches - p;
+            var parities = level.GetParities(SwarmBmt.Branches);
+            return SwarmBmt.Branches - parities;
         }
 
         public static int GetParities(this RedundancyLevel level, int shards)
         {
-            var erasureTable = level.GetErasureTable();
-            return erasureTable.GetOptimalParities(shards);
+            var erasureTable = level.TryGetErasureTable();
+            return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
     }
 }

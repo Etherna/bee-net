@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Services.Pipelines
     public class EncryptionPipeline : PipelineBase
     {
         public EncryptionPipeline(
-            StamperPutter putter,
+            IPutter putter,
             RedundancyLevel redundancyLevel)
             : base(putter, redundancyLevel)
         { }

@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
+using Etherna.BeeNet.Models;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    [SuppressMessage("Design", "CA1040:Avoid empty interfaces")]
     public interface IFileService
     {
+        Task<SwarmAddress> GetFileHashAsync(
+            Stream stream,
+            bool encrypt,
+            RedundancyLevel redundancyLevel);
     }
 }

@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
+
 namespace Etherna.BeeNet.Services.Putter
 {
-    public class ReplicaPutter
+    public class ReplicaPutter : IPutter
     {
-        public ReplicaPutter(StamperPutter putter)
+        public ReplicaPutter(IPutter putter)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Put(SwarmChunk swarmChunk)
         {
             throw new System.NotImplementedException();
         }

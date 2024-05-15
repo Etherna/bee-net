@@ -17,11 +17,11 @@ using Etherna.BeeNet.Services.Putter;
 
 namespace Etherna.BeeNet.Services.Pipelines
 {
-    public class SimplePipeline : PipelineBase
+    public class DefaultPipeline : PipelineBase
     {
         // Constructor.
-        public SimplePipeline(
-            StamperPutter putter,
+        public DefaultPipeline(
+            IPutter putter,
             RedundancyLevel redundancyLevel)
             : base(putter, redundancyLevel)
         {

@@ -25,46 +25,34 @@ namespace Etherna.BeeNet.Models
     public class RedundancyParams
     {
         // Fields.
-        private PipelineStageBase pipeLine;
+        private readonly PipelineStageBase pipeLine;
+        
         /// <summary>
-        /// keeps bytes of chunks on each level for producing erasure coded data; [levelIndex][branchIndex][byteIndex]
+        /// Keeps bytes of chunks on each level for producing erasure coded data: [levelIndex][branchIndex][byteIndex]
         /// </summary>
-        private byte[][][] buffer;
+        private readonly byte[][][] buffer;
+        
         /// <summary>
-        /// index of the current buffered chunk in Buffer. this is basically the latest used branchIndex.
+        /// Index of the current buffered chunk in Buffer. this is basically the latest used branchIndex.
         /// </summary>
-        private int[] cursor;
+        private readonly int[] bufferCursor;
         
         // Constructor.
-        public RedundancyParams(RedundancyLevel level, bool encryption, PipelineStageBase pipeLine)
+        public RedundancyParams(
+            RedundancyLevel level,
+            bool encryption,
+            PipelineStageBase pipeLine)
         {
-            cursor = new int[9];
+            bufferCursor = new int[9];
             Encryption = encryption;
+            MaxParity = level.GetParities(encryption ? SwarmBmt.EncryptedBranches : SwarmBmt.BmtBranches);
+            MaxShards = encryption ? level.GetMaxEncryptedShards() : level.GetMaxShards();
             Level = level;
             this.pipeLine = pipeLine;
-            MaxShards = 0;
-            MaxParity = 0;
-            
-            if (encryption)
-            {
-                MaxShards = level.GetMaxEncShards();
-                MaxParity = level.GetParities(SwarmBmt.EncryptedBranches);
-            }
-            else
-            {
-                MaxShards = level.GetMaxShards();
-                MaxParity = level.GetParities(SwarmBmt.BmtBranches);
-            }
-            
-            // init dataBuffer for erasure coding
-            var rsChunkLevels = 0;
-            
-            if (level != RedundancyLevel.None)
-                rsChunkLevels = 8;
-            
-            buffer = new byte[rsChunkLevels][][];
-                
-            for (var i = 0; i < rsChunkLevels; i++)
+
+            // Init data buffer for erasure coding.
+            buffer = new byte[level == RedundancyLevel.None ? 0 : 8][][];
+            for (var i = 0; i < buffer.Length; i++)
                 buffer[i] = new byte[SwarmBmt.BmtBranches][]; // 128 long always because buffer varies at encrypted chunks
         }
         
@@ -85,7 +73,7 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         public int Parities(int shards) => Encryption ?
-            Level.GetEncParities(shards):
+            Level.GetEncryptedParities(shards):
             Level.GetParities(shards);
 
         /// <summary>
@@ -105,11 +93,11 @@ namespace Etherna.BeeNet.Models
                 Array.Resize(ref data, SwarmChunk.ChunkWithSpanSize);
 
             // append chunk to the buffer
-            buffer[chunkLevel][cursor[chunkLevel]] = data;
-            cursor[chunkLevel]++;
+            buffer[chunkLevel][bufferCursor[chunkLevel]] = data;
+            bufferCursor[chunkLevel]++;
 
             // add parity chunk if it is necessary
-            if (cursor[chunkLevel] == MaxShards)
+            if (bufferCursor[chunkLevel] == MaxShards)
             {
                 // append erasure coded data
                 Encode(chunkLevel, callback);
@@ -126,12 +114,12 @@ namespace Etherna.BeeNet.Models
             if (Level == RedundancyLevel.None)
                 return;
 
-            if (cursor[chunkLevel] != 1)
+            if (bufferCursor[chunkLevel] != 1)
                 throw new InvalidOperationException(
-                    $"redundancy: cannot elevate carrier chunk because it is not the only chunk on the level. It has {cursor[chunkLevel]} chunks");
+                    $"redundancy: cannot elevate carrier chunk because it is not the only chunk on the level. It has {bufferCursor[chunkLevel]} chunks");
 
             // not necessary to update current level since we will not work with it anymore
-            ChunkWrite(chunkLevel + 1, buffer[chunkLevel][cursor[chunkLevel] - 1], callback);
+            ChunkWrite(chunkLevel + 1, buffer[chunkLevel][bufferCursor[chunkLevel] - 1], callback);
         }
 
         /// <summary>
@@ -143,7 +131,7 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(callback, nameof(callback));
             
-            var shards = cursor[chunkLevel];
+            var shards = bufferCursor[chunkLevel];
             var parities = Parities(shards);
 
             var n = shards + parities;
@@ -172,7 +160,7 @@ namespace Etherna.BeeNet.Models
 
                 callback(chunkLevel + 1, span, args.Reference!);
             }
-            cursor[chunkLevel] = 0;
+            bufferCursor[chunkLevel] = 0;
         }
 
         /// <summary>

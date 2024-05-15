@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             int refLen,
             RedundancyParams redundancyParams,
             PipelineStageBase next,
-            StamperPutter putter)
+            IPutter putter)
             : base(next)
         {
             RefSize = refLen;

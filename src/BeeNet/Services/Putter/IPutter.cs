@@ -16,18 +16,8 @@ using Etherna.BeeNet.Models;
 
 namespace Etherna.BeeNet.Services.Putter
 {
-    public class StamperPutter : IPutter
+    public interface IPutter
     {
-        public StamperPutter(string batchId)
-        {
-            BatchId = batchId;
-        }
-        
-        public string BatchId { get; }
-
-        public void Put(SwarmChunk swarmChunk)
-        {
-            throw new System.NotImplementedException();
-        }
+        void Put(SwarmChunk swarmChunk);
     }
 }

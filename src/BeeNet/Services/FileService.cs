@@ -37,10 +37,12 @@ namespace Etherna.BeeNet.Services
             bool encrypt,
             RedundancyLevel redundancyLevel)
         {
-            var batchId = "tmp";
-            var putter = new StamperPutter(batchId); //probably putter is not required here
+            if (encrypt) throw new NotImplementedException("Encrypted feature is not implemented");
+            if (redundancyLevel != RedundancyLevel.None)
+                throw new NotImplementedException("Redundancy is not implemented");
             
             // Build pipeline.
+            var putter = new CalculatorPutter();
             return GetFileHashHelperAsync(stream, encrypt, redundancyLevel, putter);
         }
 
@@ -78,11 +80,11 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             bool encrypt,
             RedundancyLevel redundancyLevel,
-            StamperPutter putter)
+            IPutter putter)
         {
             PipelineBase pipeline = encrypt ?
                 new EncryptionPipeline(putter, redundancyLevel) :
-                new SimplePipeline(putter, redundancyLevel);
+                new DefaultPipeline(putter, redundancyLevel);
             return pipeline.FeedAsync(stream);
         }
     }

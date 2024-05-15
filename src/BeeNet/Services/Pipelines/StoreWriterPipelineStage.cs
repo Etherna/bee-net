@@ -20,11 +20,11 @@ namespace Etherna.BeeNet.Services.Pipelines
 {
     public class StoreWriterPipelineStage : PipelineStageBase
     {
-        private readonly StamperPutter putter;
+        private readonly IPutter putter;
 
         // Constructor.
         public StoreWriterPipelineStage(
-            StamperPutter putter,
+            IPutter putter,
             PipelineStageBase? next)
             : base(next)
         {
