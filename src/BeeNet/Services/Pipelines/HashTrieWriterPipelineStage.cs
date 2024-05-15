@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             EffectiveChunkCounters = new byte[9];
             MaxChildrenChunks =
                 (byte)(redundancyParams.MaxShards + redundancyParams.Parities(redundancyParams.MaxShards));
-            ReplicaPutter = new ReplicaPutter(putter);
+            ReplicaPutter = new ReplicaPutter(putter, redundancyParams.Level);
             ParityChunkFn = (level, span, address) => WriteToIntermediateLevel(level, true, span, address, Array.Empty<byte>());
         }
 
@@ -181,7 +181,83 @@ namespace Etherna.BeeNet.Services.Pipelines
                 WrapFullLevel(level);
             }
         }
-        
+
+        public override byte[] Sum()
+        {
+	        for i := 1; i < maxLevel; i++ {
+		        l := h.chunkCounters[i]
+		        switch {
+		        case l == 0:
+			        // level empty, continue to the next.
+			        continue
+		        case l == h.maxChildrenChunks:
+			        // this case is possible and necessary due to the carry over
+			        // in the next switch case statement. normal writes done
+			        // through writeToLevel will automatically wrap a full level.
+			        // erasure encoding call is not necessary since ElevateCarrierChunk solves that
+			        err := h.wrapFullLevel(i)
+			        if err != nil {
+				        return nil, err
+			        }
+		        case l == 1:
+			        // this cursor assignment basically means:
+			        // take the hash|span|key from this level, and append it to
+			        // the data of the next level. you may wonder how this works:
+			        // every time we sum a level, the sum gets written into the next level
+			        // and the level cursor gets set to the next level's cursor (see the
+			        // truncating at the end of wrapFullLevel). there might (or not) be
+			        // a hash at the next level, and the cursor of the next level is
+			        // necessarily _smaller_ than the cursor of this level, so in fact what
+			        // happens is that due to the shifting of the cursors, the data of this
+			        // level will appear to be concatenated with the data of the next level.
+			        // we therefore get a "carry-over" behavior between intermediate levels
+			        // that might or might not have data. the eventual result is that the last
+			        // hash generated will always be carried over to the last level (8), then returned.
+			        h.cursors[i+1] = h.cursors[i]
+			        // replace cached chunk to the level as well
+			        err := h.rParams.ElevateCarrierChunk(i-1, h.parityChunkFn)
+			        if err != nil {
+				        return nil, err
+			        }
+			        // update counters, subtracting from current level is not necessary
+			        h.effectiveChunkCounters[i+1]++
+			        h.chunkCounters[i+1]++
+		        default:
+			        // call erasure encoding before writing the last chunk on the level
+			        err := h.rParams.Encode(i-1, h.parityChunkFn)
+			        if err != nil {
+				        return nil, err
+			        }
+			        // more than 0 but smaller than chunk size - wrap the level to the one above it
+			        err = h.wrapFullLevel(i)
+			        if err != nil {
+				        return nil, err
+			        }
+		        }
+	        }
+	        levelLen := h.chunkCounters[maxLevel]
+	        if levelLen != 1 {
+		        return nil, errInconsistentRefs
+	        }
+
+	        // return the hash in the highest level, that's all we need
+	        data := h.buffer[0:h.cursors[maxLevel]]
+	        rootHash := data[swarm.SpanSize:]
+
+	        // save disperse replicas of the root chunk
+	        if h.rParams.Level() != redundancy.NONE {
+		        rootData, err := h.rParams.GetRootData()
+		        if err != nil {
+			        return nil, err
+		        }
+		        err = h.replicaPutter.Put(h.ctx, swarm.NewChunk(swarm.NewAddress(rootHash[:swarm.HashSize]), rootData))
+		        if err != nil {
+			        return nil, fmt.Errorf("hashtrie: cannot put dispersed replica %s", err.Error())
+		        }
+	        }
+	        return rootHash, nil
+        }
+
         // Helpers.
         /// <summary>
         /// EncodeLevel encodes used redundancy level for uploading into span keeping the real byte count for the chunk.

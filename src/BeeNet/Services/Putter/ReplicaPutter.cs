@@ -13,19 +13,53 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Services.Putter.Models;
 
 namespace Etherna.BeeNet.Services.Putter
 {
+    /// <summary>
+    /// Implements the integration of dispersed replicas in chunk upload
+    /// </summary>
     public class ReplicaPutter : IPutter
     {
-        public ReplicaPutter(IPutter putter)
+        private readonly IPutter nextPutter;
+        private readonly RedundancyLevel redundancyLevel;
+
+        public ReplicaPutter(
+            IPutter nextPutter,
+            RedundancyLevel redundancyLevel)
         {
-            throw new System.NotImplementedException();
+            this.nextPutter = nextPutter;
+            this.redundancyLevel = redundancyLevel;
         }
 
         public void Put(SwarmChunk swarmChunk)
         {
-            throw new System.NotImplementedException();
+            nextPutter.Put(swarmChunk);
+            var rr = new Replicator(swarmChunk.Address, redundancyLevel);
+            
+
+            errc := make(chan error, redundancyLevel.GetReplicaCount())
+            wg := sync.WaitGroup{}
+            for r := range rr.c {
+                r := r
+                wg.Add(1)
+                go func() {
+                    defer wg.Done()
+                    sch, err := soc.New(r.id, ch).Sign(signer)
+                    if err == nil {
+                        err = p.putter.Put(ctx, sch)
+                    }
+                    errc <- err
+                }()
+            }
+
+            wg.Wait()
+            close(errc)
+            for err := range errc {
+                errs = append(errs, err)
+            }
+            return errors.Join(errs...)
         }
     }
 }
