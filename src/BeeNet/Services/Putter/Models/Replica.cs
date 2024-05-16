@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Etherna.BeeNet.Services.Putter.Models
 {
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class Replica
     {
         public Replica(byte[] sum, byte[] id)
         {
+            Addr = Array.Empty<byte>();
             throw new System.NotImplementedException();
         }
+
+        public byte[] Addr { get; }
     }
 }

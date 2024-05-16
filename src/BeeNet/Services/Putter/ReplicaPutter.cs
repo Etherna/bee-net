@@ -14,6 +14,11 @@
 
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter.Models;
+using System;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services.Putter
 {
@@ -33,33 +38,44 @@ namespace Etherna.BeeNet.Services.Putter
             this.redundancyLevel = redundancyLevel;
         }
 
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public void Put(SwarmChunk swarmChunk)
         {
-            nextPutter.Put(swarmChunk);
-            var rr = new Replicator(swarmChunk.Address, redundancyLevel);
+            ArgumentNullException.ThrowIfNull(swarmChunk, nameof(swarmChunk));
             
-
-            errc := make(chan error, redundancyLevel.GetReplicaCount())
-            wg := sync.WaitGroup{}
-            for r := range rr.c {
-                r := r
-                wg.Add(1)
-                go func() {
-                    defer wg.Done()
-                    sch, err := soc.New(r.id, ch).Sign(signer)
-                    if err == nil {
-                        err = p.putter.Put(ctx, sch)
-                    }
-                    errc <- err
-                }()
+            var errs = new ConcurrentBag<Exception>();
+            try
+            {
+                nextPutter.Put(swarmChunk);
+            }
+            catch (Exception e)
+            {
+                errs.Add(e);
             }
 
-            wg.Wait()
-            close(errc)
-            for err := range errc {
-                errs = append(errs, err)
-            }
-            return errors.Join(errs...)
+            var rr = new Replicator(swarmChunk.Address, redundancyLevel);
+
+            var tasks = rr.C.Select(r =>
+            {
+                return Task.Run(new Func<Task>(() =>
+                {
+                    throw new NotImplementedException();
+                    //do things with SOC...
+                    // try
+                    // {
+                    //     
+                    // }
+                    // catch (Exception err)
+                    // {
+                    //     errs.Add(err);
+                    // }
+                }));
+            });
+
+            Task.WhenAll(tasks).Wait();
+            
+            if(!errs.IsEmpty)
+                throw new AggregateException(errs);
         }
     }
 }

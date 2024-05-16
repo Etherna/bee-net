@@ -13,10 +13,12 @@
 // limitations under the License.
 
 using Epoche;
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Etherna.BeeNet.Services.Putter.Models
@@ -25,7 +27,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
     {
         // Consts.
         private readonly byte[] ReplicasOwner = "dc5b20847f43d67928f49cd4f85d696b5a7617b5".HexToByteArray();
-        
+
         /// <summary>
         /// Number of distinct neighnourhoods redcorded for each depth.
         /// The actual number of replicas needed to keep the error rate below 1/10^6
@@ -40,13 +42,12 @@ namespace Etherna.BeeNet.Services.Putter.Models
             [RedundancyLevel.Insane] = 8,
             [RedundancyLevel.Paranoid] = 16
         };
-        
+
         // Fields.
         private byte[] addr; // chunk address
         private Replica?[] queue = new Replica[16]; // to sort addresses according to di
         private bool[] exist = new bool[30]; //  maps the 16 distinct nibbles on all levels
-        
-        private List<Replica> c = new();
+
         private RedundancyLevel rLevel;
 
         // Constructor.
@@ -56,33 +57,41 @@ namespace Etherna.BeeNet.Services.Putter.Models
             rLevel = redundancyLevel;
             Replicas();
         }
-        
+
+        // Properties.
+        public Collection<Replica> C { get; } = new();
+
         // Methods.
-        
-        
+        /// <summary>
+        /// Inserts the soc replica into a replicator so that addresses are balanced
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="rLevel"></param>
+        /// <returns></returns>
+        public (int depth, int rank) Add(Replica r, RedundancyLevel rLevel)
+        {
+            ArgumentNullException.ThrowIfNull(r, nameof(r));
+            
+            if (rLevel == RedundancyLevel.None)
+                return (0, 0);
+            var nh = Nh(rLevel, r.Addr);
 
+            if (exist[nh])
+                return (0, 0);
+            exist[nh] = true;
 
-// // add inserts the soc replica into a replicator so that addresses are balanced
-//         func (rr *replicator) add(r *replica, rLevel redundancy.Level) (depth int, rank int) {
-//             if rLevel == redundancy.NONE {
-//                 return 0, 0
-//             }
-//             nh := nh(rLevel, r.addr)
-//             if rr.exist[nh] {
-//                 return 0, 0
-//             }
-//             rr.exist[nh] = true
-//             l, o := rr.add(r, rLevel.Decrement())
-//             d := uint8(rLevel) - 1
-//             if l == 0 {
-//                 o = rr.sizes[d]
-//                 rr.sizes[d]++
-//                 rr.queue[o] = r
-//                 l = rLevel.GetReplicaCount()
-//             }
-//             return l, o
-//         }
-//     }
+            var d = (int)rLevel - 1;
+            var (l, o) = Add(r, (RedundancyLevel)d);
+            if (l == 0)
+            {
+                o = Sizes[(RedundancyLevel)d];
+                Sizes[(RedundancyLevel)d]++;
+                queue[o] = r;
+                l = rLevel.GetReplicaCount();
+            }
+
+            return (l, o);
+        }
 
         /// <summary>
         /// Returns a replica params strucure seeded with a byte of entropy as argument
@@ -95,12 +104,12 @@ namespace Etherna.BeeNet.Services.Putter.Models
             var id = new byte[32];
             Array.Copy(addr, id, addr.Length);
             id[0] = i;
-            
+
             // calculate SOC address for potential replica
             var address = Keccak256.ComputeHash(id.Concat(ReplicasOwner).ToArray());
             return new Replica(address, id);
         }
-        
+
         /// <summary>
         /// Replicas enumerates replica parameters (SOC ID) pushing it in a channel given as argument
         /// the order of replicas is so that addresses are always maximally dispersed
@@ -123,10 +132,26 @@ namespace Etherna.BeeNet.Services.Putter.Models
                 {
                     if (r2 == null)
                         break;
-                    c.Add(r2);
+                    C.Add(r2);
                 }
-                
+
                 n += m;
             }
         }
+        
+        // Helpers.
+        /// <summary>
+        /// Returns the lookup key based on the redundancy level
+        /// to be used as index to the replicators exist array
+        /// </summary>
+        /// <param name="rLevel"></param>
+        /// <param name="addr"></param>
+        /// <returns></returns>
+        private static int Nh(RedundancyLevel rLevel, byte[] addr)
+        {
+            var replicaIndexBases = new[] { 0, 2, 6, 14 };
+            var d = (byte)rLevel;
+            return replicaIndexBases[d - 1] + (addr[0] >> (8 - d));
+        }
+    }
 }

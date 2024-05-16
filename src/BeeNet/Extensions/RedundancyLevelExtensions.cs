@@ -70,5 +70,16 @@ namespace Etherna.BeeNet.Extensions
             var erasureTable = level.TryGetErasureTable();
             return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
+
+        public static int GetReplicaCount(this RedundancyLevel level) =>
+            level switch
+            {
+                RedundancyLevel.None => 0,
+                RedundancyLevel.Medium => 2,
+                RedundancyLevel.Strong => 4,
+                RedundancyLevel.Insane => 8,
+                RedundancyLevel.Paranoid => 16,
+                _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
+            };
     }
 }
