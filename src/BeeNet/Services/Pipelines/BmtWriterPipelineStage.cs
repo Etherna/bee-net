@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Models.Bmt;
 using System;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services.Pipelines
 {
@@ -24,7 +25,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             : base(next)
         { }
 
-        public override void ChainWrite(PipelineWriteContext context)
+        public override async Task<int> WriteAsync(PipelineWriteContext context)
         {
             ArgumentNullException.ThrowIfNull(context, nameof(context));
             if (context.Data is null)
@@ -39,7 +40,9 @@ namespace Etherna.BeeNet.Services.Pipelines
             context.Reference = hasher.Hash(null);
             BmtPool.Instance.Put(hasher);
 
-            Next?.ChainWrite(context);
+            if (Next is null)
+                return 0;
+            return await Next.WriteAsync(context).ConfigureAwait(false);
         }
     }
 }

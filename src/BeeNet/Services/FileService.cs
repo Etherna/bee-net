@@ -83,8 +83,8 @@ namespace Etherna.BeeNet.Services
             IPutter putter)
         {
             PipelineBase pipeline = encrypt ?
-                new EncryptionPipeline(putter, redundancyLevel) :
-                new DefaultPipeline(putter, redundancyLevel);
+                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
+                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
             return pipeline.FeedAsync(stream);
         }
     }

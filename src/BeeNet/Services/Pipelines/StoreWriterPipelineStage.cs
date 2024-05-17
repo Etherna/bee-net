@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter;
 using System;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services.Pipelines
 {
@@ -32,14 +33,17 @@ namespace Etherna.BeeNet.Services.Pipelines
         }
 
         // Methods.
-        public override void ChainWrite(PipelineWriteContext context)
+        public override async Task<int> WriteAsync(PipelineWriteContext context)
         {
             ArgumentNullException.ThrowIfNull(context, nameof(context));
             if (context.Reference is null || context.Data is null)
                 throw new InvalidOperationException();
 
             putter.Put(new SwarmChunk(new SwarmAddress(context.Reference), context.Data));
-            Next?.ChainWrite(context);
+
+            if (Next is null)
+                throw new InvalidOperationException();
+            return await Next.WriteAsync(context).ConfigureAwait(false);
         }
     }
 }

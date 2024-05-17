@@ -20,10 +20,17 @@ namespace Etherna.BeeNet.Services.Pipelines
     public class DefaultPipeline : PipelineBase
     {
         // Constructor.
-        public DefaultPipeline(
+        protected DefaultPipeline(
+            IPutter putter,
+            RedundancyLevel redundancyLevel,
+            PipelineStageBase startStage)
+            : base(putter, redundancyLevel, startStage)
+        { }
+
+        // Factory methods.
+        public static DefaultPipeline BuildPipeline(
             IPutter putter,
             RedundancyLevel redundancyLevel)
-            : base(putter, redundancyLevel)
         {
             //build stages
             var shortPipelineStage = ShortPipelineStage.BuildNewStage(putter);
@@ -35,15 +42,8 @@ namespace Etherna.BeeNet.Services.Pipelines
             );
             var storeWriterStage = new StoreWriterPipelineStage(putter, hashTrieWriterStage);
             var bmtWriterStage = new BmtWriterPipelineStage(storeWriterStage);
-            StartStage = new ChunkFeeder(bmtWriterStage);
+
+            return new DefaultPipeline(putter, redundancyLevel, bmtWriterStage);
         }
-
-        // Properties.
-        public override ChunkFeeder StartStage { get; }
-
-        // Methods.
-        public override int Write(byte[] bytes) => StartStage.Write(bytes);
-
-        public override byte[] Sum() => StartStage.Sum();
     }
 }

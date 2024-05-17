@@ -19,6 +19,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services.Pipelines
 {
@@ -45,7 +46,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             MaxChildrenChunks =
                 (byte)(redundancyParams.MaxShards + redundancyParams.Parities(redundancyParams.MaxShards));
             ReplicaPutter = new ReplicaPutter(putter, redundancyParams.Level);
-            ParityChunkFn = (level, span, address) => WriteToIntermediateLevel(level, true, span, address, Array.Empty<byte>());
+            ParityChunkFn = (level, span, address) => WriteToIntermediateLevelAsync(level, true, span, address, Array.Empty<byte>());
         }
 
         // Properties.
@@ -106,7 +107,7 @@ namespace Etherna.BeeNet.Services.Pipelines
         /// or redundancy.Encode was called in case of rightmost chunks
         /// </summary>
         /// <param name="level"></param>
-        public void WrapFullLevel(int level)
+        public async Task WrapFullLevelAsync(int level)
         {
             var data = Buffer[Cursors[level + 1]..Cursors[level]];
             ulong sp = 0;
@@ -146,10 +147,13 @@ namespace Etherna.BeeNet.Services.Pipelines
                 Data = hashes.ToArray(),
                 Span = spb
             };
-            Next!.ChainWrite(args);
+
+            if (Next is null)
+                throw new InvalidOperationException();
+            await Next.WriteAsync(args).ConfigureAwait(false);
             
-            WriteToIntermediateLevel(level + 1, false, args.Span, args.Reference!, args.EncryptionKey!);
-            RedundancyParams.ChunkWrite(level, args.Data, ParityChunkFn);
+            await WriteToIntermediateLevelAsync(level + 1, false, args.Span, args.Reference!, args.EncryptionKey!).ConfigureAwait(false);
+            await RedundancyParams.ChunkWriteAsync(level, args.Data, ParityChunkFn).ConfigureAwait(false);
             
             // this "truncates" the current level that was wrapped
             // by setting the cursors to the cursors of one level above
@@ -161,7 +165,7 @@ namespace Etherna.BeeNet.Services.Pipelines
                 Full = true;
         }
         
-        public void WriteToIntermediateLevel(int level, bool parityChunk, byte[] span, byte[] reference, byte[] key)
+        public async Task WriteToIntermediateLevelAsync(int level, bool parityChunk, byte[] span, byte[] reference, byte[] key)
         {
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(reference, nameof(reference));
@@ -181,7 +185,7 @@ namespace Etherna.BeeNet.Services.Pipelines
             if (ChunkCounters[level] == MaxChildrenChunks)
             {
                 // at this point the erasure coded chunks have been written
-                WrapFullLevel(level);
+                await WrapFullLevelAsync(level).ConfigureAwait(false);
             }
         }
 
@@ -203,7 +207,7 @@ namespace Etherna.BeeNet.Services.Pipelines
         ///     the next level
         /// </summary>
         /// <returns></returns>
-        public override byte[] Sum()
+        public override async Task<byte[]> SumAsync()
         {
 	        for (var i = 1; i < MaxLevel; i++)
             {
@@ -219,7 +223,7 @@ namespace Etherna.BeeNet.Services.Pipelines
                     // in the next switch case statement. normal writes done
                     // through writeToLevel will automatically wrap a full level.
                     // erasure encoding call is not necessary since ElevateCarrierChunk solves that
-                    WrapFullLevel(i);
+                    await WrapFullLevelAsync(i).ConfigureAwait(false);
                     continue;
                 }
                 if (l == 1)
@@ -239,7 +243,7 @@ namespace Etherna.BeeNet.Services.Pipelines
                     // hash generated will always be carried over to the last level (8), then returned.
                     Cursors[i + 1] = Cursors[i];
                     // replace cached chunk to the level as well
-                    RedundancyParams.ElevateCarrierChunk(i - 1, ParityChunkFn);
+                    await RedundancyParams.ElevateCarrierChunkAsync(i - 1, ParityChunkFn).ConfigureAwait(false);
                     // update counters, subtracting from current level is not necessary
                     EffectiveChunkCounters[i + 1]++;
                     ChunkCounters[i + 1]++;
@@ -247,9 +251,9 @@ namespace Etherna.BeeNet.Services.Pipelines
                 else
                 {
                     // call erasure encoding before writing the last chunk on the level
-                    RedundancyParams.Encode(i - 1, ParityChunkFn);
+                    await RedundancyParams.EncodeAsync(i - 1, ParityChunkFn).ConfigureAwait(false);
                     // more than 0 but smaller than chunk size - wrap the level to the one above it
-                    WrapFullLevel(i);
+                    await WrapFullLevelAsync(i).ConfigureAwait(false);
                 }
             }
 

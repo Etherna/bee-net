@@ -22,11 +22,16 @@ namespace Etherna.BeeNet.Services.Pipelines
 {
     public abstract class PipelineBase
     {
+        // Fields.
+        protected readonly ChunkFeederPipelineStage chunkFeeder;
+        
         // Constructor.
         protected PipelineBase(
             IPutter putter,
-            RedundancyLevel redundancyLevel)
+            RedundancyLevel redundancyLevel,
+            PipelineStageBase startStage)
         {
+            chunkFeeder = new ChunkFeederPipelineStage(startStage);
             Putter = putter;
             RedundancyLevel = redundancyLevel;
         }
@@ -34,27 +39,46 @@ namespace Etherna.BeeNet.Services.Pipelines
         // Properties.
         public IPutter Putter { get; }
         public RedundancyLevel RedundancyLevel { get; }
-        public abstract ChunkFeeder StartStage { get; }
         
         // Methods.
-        public async Task<SwarmAddress> FeedAsync(Stream fileStream)
+        public async Task<SwarmAddress> FeedAsync(byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+
+            for (var i = 0; i < data.Length;)
+            {
+                var chunkReadBytes = Math.Min(SwarmChunk.Size, data.Length - i);
+                await WriteAsync(data[i..(i + chunkReadBytes)]).ConfigureAwait(false);
+                i += chunkReadBytes;
+            }
+
+            var sum = await SumAsync().ConfigureAwait(false);
+            return new SwarmAddress(sum);
+        }
+        
+        public async Task<SwarmAddress> FeedAsync(Stream dataStream)
+        {
+            ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
             
             var chunkData = new byte[SwarmChunk.Size];
             int chunkReadBytes;
             do
             {
-                chunkReadBytes = await fileStream.ReadAsync(chunkData).ConfigureAwait(false);
+                chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
                 if (chunkReadBytes > 0)
-                    Write(chunkData[..chunkReadBytes]);
+                    await WriteAsync(chunkData[..chunkReadBytes]).ConfigureAwait(false);
             } while (chunkReadBytes == SwarmChunk.Size);
 
-            var sum = Sum();
+            var sum = await SumAsync().ConfigureAwait(false);
             return new SwarmAddress(sum);
         }
         
-        public abstract int Write(byte[] bytes);
-        public abstract byte[] Sum();
+        // Protected methods.
+        protected virtual Task<byte[]> SumAsync() => chunkFeeder.SumAsync();
+        
+        protected virtual Task<int> WriteAsync(byte[] bytes) => chunkFeeder.WriteAsync(new PipelineWriteContext
+        {
+            Data = bytes
+        });
     }
 }

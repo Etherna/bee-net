@@ -17,10 +17,11 @@ using Etherna.BeeNet.Models.Bmt;
 using Etherna.BeeNet.Services.Pipelines;
 using STH1123.ReedSolomon;
 using System;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public delegate void ParityChunkCallback(int level, byte[] span, byte[] address);
+    public delegate Task ParityChunkCallback(int level, byte[] span, byte[] address);
     
     public class RedundancyParams
     {
@@ -82,7 +83,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="chunkLevel"></param>
         /// <param name="data"></param>
         /// <param name="callback"></param>
-        public void ChunkWrite(int chunkLevel, byte[] data, ParityChunkCallback callback)
+        public async Task ChunkWriteAsync(int chunkLevel, byte[] data, ParityChunkCallback callback)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
@@ -100,7 +101,7 @@ namespace Etherna.BeeNet.Models
             if (bufferCursor[chunkLevel] == MaxShards)
             {
                 // append erasure coded data
-                Encode(chunkLevel, callback);
+                await EncodeAsync(chunkLevel, callback).ConfigureAwait(false);
             }
         }
 
@@ -109,7 +110,7 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="chunkLevel"></param>
         /// <param name="callback"></param>
-        public void ElevateCarrierChunk(int chunkLevel, ParityChunkCallback callback)
+        public async Task ElevateCarrierChunkAsync(int chunkLevel, ParityChunkCallback callback)
         {
             if (Level == RedundancyLevel.None)
                 return;
@@ -119,7 +120,7 @@ namespace Etherna.BeeNet.Models
                     $"redundancy: cannot elevate carrier chunk because it is not the only chunk on the level. It has {bufferCursor[chunkLevel]} chunks");
 
             // not necessary to update current level since we will not work with it anymore
-            ChunkWrite(chunkLevel + 1, buffer[chunkLevel][bufferCursor[chunkLevel] - 1], callback);
+            await ChunkWriteAsync(chunkLevel + 1, buffer[chunkLevel][bufferCursor[chunkLevel] - 1], callback).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="chunkLevel"></param>
         /// <param name="callback"></param>
-        public void Encode(int chunkLevel, ParityChunkCallback callback)
+        public async Task EncodeAsync(int chunkLevel, ParityChunkCallback callback)
         {
             ArgumentNullException.ThrowIfNull(callback, nameof(callback));
             
@@ -156,9 +157,9 @@ namespace Etherna.BeeNet.Models
                     Data = chunkData,
                     Span = span
                 };
-                pipeLine.ChainWrite(args);
+                await pipeLine.WriteAsync(args).ConfigureAwait(false);
 
-                callback(chunkLevel + 1, span, args.Reference!);
+                await callback(chunkLevel + 1, span, args.Reference!).ConfigureAwait(false);
             }
             bufferCursor[chunkLevel] = 0;
         }

@@ -15,21 +15,21 @@
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services.Pipelines
 {
-    public class ChunkFeeder
+    public class ChunkFeederPipelineStage : PipelineStageBase
     {
         // Fields.
         private byte[] buffer;
         private int bufferIdx;
-        private PipelineStageBase next;
         private long wrote;
         
         // Constructor.
-        public ChunkFeeder(PipelineStageBase next)
+        public ChunkFeederPipelineStage(PipelineStageBase next)
+            : base(next)
         {
-            this.next = next;
             buffer = new byte[SwarmChunk.Size];
         }
         
@@ -40,8 +40,11 @@ namespace Etherna.BeeNet.Services.Pipelines
         /// the feeder.
         /// </summary>
         /// <returns></returns>
-        public byte[] Sum()
+        public override async Task<byte[]> SumAsync()
         {
+            if (Next is null)
+                throw new InvalidOperationException("Next stage can't be null here");
+            
             // flush existing data in the buffer
             if (bufferIdx > 0)
             {
@@ -59,7 +62,7 @@ namespace Etherna.BeeNet.Services.Pipelines
                     Data = d,
                     Span = d[..SwarmChunk.SpanSize]
                 };
-                next.ChainWrite(args);
+                await Next.WriteAsync(args).ConfigureAwait(false);
                 wrote += d.Length;
             }
 
@@ -73,11 +76,11 @@ namespace Etherna.BeeNet.Services.Pipelines
                     Data = d,
                     Span = d
                 };
-                next.ChainWrite(args);
+                await Next.WriteAsync(args).ConfigureAwait(false);
                 wrote += d.Length;
             }
 
-            return next.Sum();
+            return await Next.SumAsync().ConfigureAwait(false);
         }
         
         /// <summary>
@@ -86,21 +89,24 @@ namespace Etherna.BeeNet.Services.Pipelines
         /// bytes were actually flushed to subsequent writers, since the feeder is buffered
         /// and works in chunk-size quantiles.
         /// </summary>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public int Write(byte[] b)
+        /// <param name="context"></param>
+        public override async Task<int> WriteAsync(PipelineWriteContext context)
         {
-            ArgumentNullException.ThrowIfNull(b, nameof(b));
-            
-            var l = b.Length; // data length
-            var w = 0; // written
+            ArgumentNullException.ThrowIfNull(context, nameof(context));
+            if (context.Data is null)
+                throw new InvalidOperationException("Data can't be null");
+            if (Next is null)
+                throw new InvalidOperationException("Next stage can't be null here");
 
-            if (l + bufferIdx < SwarmChunk.Size)
+            var data = context.Data;
+            
+            var w = 0;
+            if (data.Length + bufferIdx < SwarmChunk.Size)
             {
                 // write the data into the buffer and return
-                Array.Copy(b, 0, buffer, bufferIdx, b.Length);
-                bufferIdx += b.Length;
-                return b.Length;
+                Array.Copy(data, 0, buffer, bufferIdx, data.Length);
+                bufferIdx += data.Length;
+                return data.Length;
             }
 
             // if we are here it means we have to do at least one write
@@ -116,19 +122,19 @@ namespace Etherna.BeeNet.Services.Pipelines
                 w -= sp;
 
             int n;
-            for (var i = 0; i < b.Length;)
+            for (var i = 0; i < data.Length;)
             {
                 // if we can't fill a whole write, buffer the rest and return
-                if (sp + (b.Length - i) < SwarmChunk.Size)
+                if (sp + (data.Length - i) < SwarmChunk.Size)
                 {
-                    Array.Copy(b, i, buffer, 0, b.Length - i);
-                    bufferIdx = b.Length - i;
-                    return w + b.Length - i;
+                    Array.Copy(data, i, buffer, 0, data.Length - i);
+                    bufferIdx = data.Length - i;
+                    return w + data.Length - i;
                 }
 
                 // fill stuff up from the incoming write
-                n = Math.Min(b.Length - i, d.Length - (SwarmChunk.SpanSize + bufferIdx));
-                Array.Copy(b, i, d, SwarmChunk.SpanSize + bufferIdx, n);
+                n = Math.Min(data.Length - i, d.Length - (SwarmChunk.SpanSize + bufferIdx));
+                Array.Copy(data, i, d, SwarmChunk.SpanSize + bufferIdx, n);
                 i += n;
                 sp += n;
                 
@@ -141,7 +147,7 @@ namespace Etherna.BeeNet.Services.Pipelines
                     Data = d[..(SwarmChunk.SpanSize + sp)],
                     Span = d[..SwarmChunk.SpanSize]
                 };
-                next.ChainWrite(args);
+                await Next.WriteAsync(args).ConfigureAwait(false);
                 bufferIdx = 0;
                 w += sp;
                 sp = 0;

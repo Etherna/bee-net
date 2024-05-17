@@ -15,25 +15,22 @@
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace Etherna.BeeNet.Services.Pipelines
 {
-    public class EncryptionPipeline : PipelineBase
+    public class EncryptedPipeline : PipelineBase
     {
-        public EncryptionPipeline(
+        // Constructor.
+        protected EncryptedPipeline(
             IPutter putter,
-            RedundancyLevel redundancyLevel)
-            : base(putter, redundancyLevel)
+            RedundancyLevel redundancyLevel,
+            PipelineStageBase startStage)
+            : base(putter, redundancyLevel, startStage)
         { }
 
-        public override ChunkFeeder StartStage { get; }
-
-        public override int Write(byte[] bytes)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override byte[] Sum()
+        // Factory methods.
+        public static EncryptedPipeline BuildPipeline(
+            IPutter putter,
+            RedundancyLevel redundancyLevel)
         {
             throw new System.NotImplementedException();
         }
