@@ -33,9 +33,9 @@ namespace Etherna.BeeNet.Pipelines
         public HashTrieWriterPipelineStage(
             int refLen,
             RedundancyParams redundancyParams,
-            PipelineStageBase next,
+            PipelineStageBase nextStage,
             IPutter putter)
-            : base(next)
+            : base(nextStage)
         {
             RefSize = refLen;
             Cursors = new int[9];
@@ -142,16 +142,13 @@ namespace Etherna.BeeNet.Pipelines
                 EncodeLevel(spb, RedundancyParams.Level);
             hashes = spb.Concat(hashes);
 
-            var args = new PipelineFeedContext(hashes.ToArray())
-            {
-                Span = spb
-            };
+            var args = new PipelineFeedArgs(
+                data: hashes.ToArray(),
+                span: spb);
 
-            if (Next is null)
-                throw new InvalidOperationException();
-            await Next.FeedAsync(args).ConfigureAwait(false);
+            await FeedNextAsync(args).ConfigureAwait(false);
             
-            await WriteToIntermediateLevelAsync(level + 1, false, args.Span, args.Reference!, args.EncryptionKey!).ConfigureAwait(false);
+            await WriteToIntermediateLevelAsync(level + 1, false, args.Span.ToArray(), args.Reference!, args.EncryptionKey!).ConfigureAwait(false);
             await RedundancyParams.ChunkWriteAsync(level, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
             
             // this "truncates" the current level that was wrapped

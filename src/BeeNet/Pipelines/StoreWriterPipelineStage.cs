@@ -26,24 +26,22 @@ namespace Etherna.BeeNet.Pipelines
         // Constructor.
         public StoreWriterPipelineStage(
             IPutter putter,
-            PipelineStageBase? next)
-            : base(next)
+            PipelineStageBase? nextStage)
+            : base(nextStage)
         {
             this.putter = putter;
         }
 
         // Methods.
-        public override async Task<int> FeedAsync(PipelineFeedContext context)
+        public override async Task FeedAsync(PipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(context, nameof(context));
-            if (context.Reference is null)
+            ArgumentNullException.ThrowIfNull(args, nameof(args));
+            if (args.Reference is null)
                 throw new InvalidOperationException();
 
-            putter.Put(new SwarmChunk(new SwarmAddress(context.Reference), context.Data.ToArray()));
+            putter.Put(new SwarmChunk(new SwarmAddress(args.Reference), args.Data.ToArray()));
 
-            if (Next is null)
-                throw new InvalidOperationException();
-            return await Next.FeedAsync(context).ConfigureAwait(false);
+            await FeedNextAsync(args).ConfigureAwait(false);
         }
     }
 }

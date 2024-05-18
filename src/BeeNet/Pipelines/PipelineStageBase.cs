@@ -20,36 +20,32 @@ namespace Etherna.BeeNet.Pipelines
     internal abstract class PipelineStageBase
     {
         // Fields.
-        protected readonly PipelineStageBase? Next;
+        private readonly PipelineStageBase? nextStage;
         
         // Constructor.
-        protected PipelineStageBase(PipelineStageBase? next)
+        protected PipelineStageBase(PipelineStageBase? nextStage)
         {
-            Next = next;
+            this.nextStage = nextStage;
         }
 
         // Methods.
         /// <summary>
-        /// Process data into the pipeline
+        /// Process data into the pipeline stage
         /// </summary>
-        /// <param name="context">The data context to process</param>
-        /// <returns>Amount of processed bytes</returns>
-        public virtual async Task<int> FeedAsync(PipelineFeedContext context)
-        {
-            if (Next is null)
-                return 0;
-            return await Next.FeedAsync(context).ConfigureAwait(false);
-        }
+        /// <param name="args">The pipeline stage feed arguments</param>
+        public virtual Task FeedAsync(PipelineFeedArgs args) => FeedNextAsync(args);
 
         /// <summary>
         /// Flush the pipeline and perform the final sum 
         /// </summary>
         /// <returns>The binary digest of sum</returns>
-        public virtual async Task<byte[]> SumAsync()
-        {
-            if (Next is null)
-                return Array.Empty<byte>();
-            return await Next.SumAsync().ConfigureAwait(false);
-        }
+        public virtual Task<byte[]> SumAsync() => SumNextAsync();
+        
+        // Protected methods.
+        protected Task FeedNextAsync(PipelineFeedArgs args) =>
+            nextStage is not null ? nextStage.FeedAsync(args) : Task.CompletedTask;
+
+        protected Task<byte[]> SumNextAsync() =>
+            nextStage is not null ? nextStage.SumAsync() : Task.FromResult(Array.Empty<byte>());
     }
 }

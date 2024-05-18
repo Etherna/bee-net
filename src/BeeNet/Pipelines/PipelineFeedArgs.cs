@@ -18,20 +18,24 @@ using System.Diagnostics.CodeAnalysis;
 namespace Etherna.BeeNet.Pipelines
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    internal class PipelineFeedContext
+    internal class PipelineFeedArgs
     {
         // Fields.
         private readonly byte[] _data;
+        private readonly byte[]? _span;
         
         // Constructor.
-        public PipelineFeedContext(byte[] data)
+        public PipelineFeedArgs(
+            byte[] data,
+            byte[]? span = null)
         {
             _data = data;
+            _span = span;
         }
         
         // Properties.
         /// <summary>
-        /// Data includes the span too, but it may be encrypted when the pipeline is encrypted
+        /// Data can include the span too, but it may be encrypted if the pipeline is encrypted
         /// </summary>
         public ReadOnlySpan<byte> Data => _data;
         
@@ -48,6 +52,6 @@ namespace Etherna.BeeNet.Pipelines
         /// <summary>
         /// Always unecrypted span uint64
         /// </summary>
-        public byte[]? Span { get; set; }
+        public ReadOnlySpan<byte> Span => _span;
     }
 }

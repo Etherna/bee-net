@@ -41,41 +41,41 @@ namespace Etherna.BeeNet.Pipelines
         public RedundancyLevel RedundancyLevel { get; }
         
         // Methods.
+        /// <summary>
+        /// Consume a byte array and returns a Swarm address as result
+        /// </summary>
+        /// <param name="data">Input data</param>
+        /// <returns>Resulting swarm address</returns>
         public async Task<SwarmAddress> FeedAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
-            for (var i = 0; i < data.Length;)
-            {
-                var chunkReadBytes = Math.Min(SwarmChunk.Size, data.Length - i);
-                await WriteAsync(data[i..(i + chunkReadBytes)]).ConfigureAwait(false);
-                i += chunkReadBytes;
-            }
-
-            var sum = await SumAsync().ConfigureAwait(false);
+            await chunkFeeder.FeedAsync(new PipelineFeedArgs(data)).ConfigureAwait(false);
+            var sum = await chunkFeeder.SumAsync().ConfigureAwait(false);
             return new SwarmAddress(sum);
         }
         
+        /// <summary>
+        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
+        /// </summary>
+        /// <param name="dataStream">Input data stream</param>
+        /// <returns>Resulting swarm address</returns>
         public async Task<SwarmAddress> FeedAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
             
+            // Slicing the stream permits to avoid to load all the stream in memory at the same time.
             var chunkData = new byte[SwarmChunk.Size];
             int chunkReadBytes;
             do
             {
                 chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
                 if (chunkReadBytes > 0)
-                    await WriteAsync(chunkData[..chunkReadBytes]).ConfigureAwait(false);
+                    await chunkFeeder.FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
             } while (chunkReadBytes == SwarmChunk.Size);
 
-            var sum = await SumAsync().ConfigureAwait(false);
+            var sum = await chunkFeeder.SumAsync().ConfigureAwait(false);
             return new SwarmAddress(sum);
         }
-        
-        // Protected methods.
-        protected virtual Task<byte[]> SumAsync() => chunkFeeder.SumAsync();
-        
-        protected virtual Task<int> WriteAsync(byte[] bytes) => chunkFeeder.FeedAsync(new(bytes));
     }
 }

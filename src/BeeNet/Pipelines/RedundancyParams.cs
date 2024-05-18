@@ -152,10 +152,9 @@ namespace Etherna.BeeNet.Pipelines
                 var chunkData = buffer[chunkLevel][i];
                 var span = chunkData[..SwarmChunk.SpanSize];
 
-                var args = new PipelineFeedContext(chunkData)
-                {
-                    Span = span
-                };
+                var args = new PipelineFeedArgs(
+                    data: chunkData,
+                    span: span);
                 await pipeLine.FeedAsync(args).ConfigureAwait(false);
 
                 await callback(chunkLevel + 1, span, args.Reference!).ConfigureAwait(false);

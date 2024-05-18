@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Pipelines
     internal class ShortPipelineStage : PipelineStageBase
     {
         // Constructor.
-        private ShortPipelineStage(PipelineStageBase? next) : base(next) { }
+        private ShortPipelineStage(PipelineStageBase? nextStage) : base(nextStage) { }
         
         // Builder.
         public static ShortPipelineStage BuildNewStage(IPutter putter)

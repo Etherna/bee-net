@@ -19,90 +19,77 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
+    /// <summary>
+    /// Produce chunked data with span prefix for successive stages
+    /// </summary>
     internal class ChunkFeederPipelineStage : PipelineStageBase
     {
         // Fields.
-        private byte[] buffer;
-        private int bufferIdx;
-        private long wrote;
+        private readonly byte[] buffer;
+        private int bufferIndex;
+        private long wroteBytes;
         
         // Constructor.
-        public ChunkFeederPipelineStage(PipelineStageBase next)
-            : base(next)
+        public ChunkFeederPipelineStage(PipelineStageBase nextStage)
+            : base(nextStage)
         {
             buffer = new byte[SwarmChunk.Size];
         }
         
         // Methods.
         /// <summary>
-        /// Writes data to the chunk feeder. It returns the number of bytes written
-        /// to the feeder. The number of bytes written does not necessarily reflect how many
-        /// bytes were actually flushed to subsequent writers, since the feeder is buffered
-        /// and works in chunk-size quantiles.
+        /// Produces data chunks for next stages, and returns the number of bytes written to the feeder.
+        /// The number of bytes written does not necessarily reflect how many bytes were actually flushed to
+        /// subsequent writers, since the feeder is buffered and works in chunk-size quantiles.
         /// </summary>
-        /// <param name="context"></param>
-        public override async Task<int> FeedAsync(PipelineFeedContext context)
+        /// <param name="args">Pipeline args</param>
+        public override async Task FeedAsync(PipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(context, nameof(context));
-            if (Next is null)
-                throw new InvalidOperationException("Next stage can't be null here");
-
-            var data = context.Data.ToArray();
+            ArgumentNullException.ThrowIfNull(args, nameof(args));
             
-            var w = 0;
-            if (data.Length + bufferIdx < SwarmChunk.Size)
+            // If new data can be fully buffered without complete a chunk, simply add to buffer and return.
+            if (args.Data.Length < SwarmChunk.Size - bufferIndex)
             {
-                // write the data into the buffer and return
-                Array.Copy(data, 0, buffer, bufferIdx, data.Length);
-                bufferIdx += data.Length;
-                return data.Length;
+                args.Data.CopyTo(buffer.AsSpan(bufferIndex));
+                bufferIndex += args.Data.Length;
+                return;
             }
-
-            // if we are here it means we have to do at least one write
-            var d = new byte[SwarmChunk.ChunkWithSpanSize];
-
-            //copy from existing buffer to this one
-            Array.Copy(buffer, 0, d, SwarmChunk.SpanSize, bufferIdx);
-            int sp = bufferIdx; // span of current write
-
-            // don't account what was already in the buffer when returning
-            // number of written bytes
-            if (sp > 0)
-                w -= sp;
-
-            int n;
-            for (var i = 0; i < data.Length;)
+            
+            // Else, if a new chunk is required, create it starting with buffer content.
+            var chunkData = new byte[SwarmChunk.ChunkWithSpanSize];
+            Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
+            
+            // Consume input data.
+            for (var i = 0; i < args.Data.Length;)
             {
-                // if we can't fill a whole write, buffer the rest and return
-                if (sp + (data.Length - i) < SwarmChunk.Size)
-                {
-                    Array.Copy(data, i, buffer, 0, data.Length - i);
-                    bufferIdx = data.Length - i;
-                    return w + data.Length - i;
-                }
-
-                // fill stuff up from the incoming write
-                n = Math.Min(data.Length - i, d.Length - (SwarmChunk.SpanSize + bufferIdx));
-                Array.Copy(data, i, d, SwarmChunk.SpanSize + bufferIdx, n);
-                i += n;
-                sp += n;
+                // At this point the chunk can always be fulfilled because of conditions.
+                // Fill the new chunk with data from source.
+                var fillingDataLength = SwarmChunk.Size - bufferIndex;
+                args.Data[i..(i + fillingDataLength)]
+                    .CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize + bufferIndex));
+                i += fillingDataLength;
                 
-                byte[] subArrayD = new byte[SwarmChunk.SpanSize];
-                BinaryPrimitives.WriteUInt64LittleEndian(subArrayD, (ulong)sp);
-                Array.Copy(subArrayD, 0, d, 0, SwarmChunk.SpanSize);
+                // Write chunk span.
+                BinaryPrimitives.WriteUInt64LittleEndian(
+                    chunkData.AsSpan(0, SwarmChunk.SpanSize),
+                    SwarmChunk.Size);
+                
+                // Invoke next stage.
+                await FeedNextAsync(new PipelineFeedArgs(
+                    data: chunkData,
+                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
 
-                var args = new PipelineFeedContext(d[..(SwarmChunk.SpanSize + sp)])
+                bufferIndex = 0;
+                wroteBytes += SwarmChunk.Size;
+                
+                // If we can't fill a whole new chunk, buffer the remaining data and exit.
+                if (args.Data.Length - i < SwarmChunk.Size)
                 {
-                    Span = d[..SwarmChunk.SpanSize]
-                };
-                await Next.FeedAsync(args).ConfigureAwait(false);
-                bufferIdx = 0;
-                w += sp;
-                sp = 0;
+                    args.Data[i..].CopyTo(buffer);
+                    bufferIndex = args.Data.Length - i;
+                    break; //"i += bufferIndex" is same as "i = args.Data.Length"
+                }
             }
-
-            wrote += w;
-            return w;
         }
         
         /// <summary>
@@ -113,43 +100,38 @@ namespace Etherna.BeeNet.Pipelines
         /// <returns>Cryptographic root-hash respresenting the data written</returns>
         public override async Task<byte[]> SumAsync()
         {
-            if (Next is null)
-                throw new InvalidOperationException("Next stage can't be null here");
-            
             // flush existing data in the buffer
-            if (bufferIdx > 0)
+            if (bufferIndex > 0)
             {
-                var d = new byte[bufferIdx + SwarmChunk.SpanSize];
+                var d = new byte[bufferIndex + SwarmChunk.SpanSize];
                 
-                int minLength = Math.Min(buffer.Length - bufferIdx, bufferIdx);
-                Array.Copy(buffer, bufferIdx, d, SwarmChunk.SpanSize, minLength);
+                int minLength = Math.Min(buffer.Length - bufferIndex, bufferIndex);
+                Array.Copy(buffer, bufferIndex, d, SwarmChunk.SpanSize, minLength);
                 
                 byte[] subArrayD = new byte[SwarmChunk.SpanSize];
-                BinaryPrimitives.WriteUInt64LittleEndian(subArrayD, (ulong)bufferIdx);
+                BinaryPrimitives.WriteUInt64LittleEndian(subArrayD, (ulong)bufferIndex);
                 Array.Copy(subArrayD, 0, d, 0, SwarmChunk.SpanSize);
 
-                var args = new PipelineFeedContext(d)
-                {
-                    Span = d[..SwarmChunk.SpanSize]
-                };
-                await Next.FeedAsync(args).ConfigureAwait(false);
-                wrote += d.Length;
+                var args = new PipelineFeedArgs(
+                    data: d,
+                    span: d[..SwarmChunk.SpanSize]);
+                await FeedNextAsync(args).ConfigureAwait(false);
+                wroteBytes += d.Length;
             }
 
-            if (wrote == 0)
+            if (wroteBytes == 0)
             {
                 // this is an empty file, we should write the span of
                 // an empty file (0).
                 var d = new byte[SwarmChunk.SpanSize];
-                var args = new PipelineFeedContext(d)
-                {
-                    Span = d
-                };
-                await Next.FeedAsync(args).ConfigureAwait(false);
-                wrote += d.Length;
+                var args = new PipelineFeedArgs(
+                    data: d,
+                    span: d);
+                await FeedNextAsync(args).ConfigureAwait(false);
+                wroteBytes += d.Length;
             }
 
-            return await Next.SumAsync().ConfigureAwait(false);
+            return await SumNextAsync().ConfigureAwait(false);
         }
     }
 }

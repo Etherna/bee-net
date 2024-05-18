@@ -21,27 +21,25 @@ namespace Etherna.BeeNet.Pipelines
 {
     internal class BmtWriterPipelineStage : PipelineStageBase
     {
-        public BmtWriterPipelineStage(PipelineStageBase? next)
-            : base(next)
+        public BmtWriterPipelineStage(PipelineStageBase? nextStage)
+            : base(nextStage)
         { }
 
-        public override async Task<int> FeedAsync(PipelineFeedContext context)
+        public override async Task FeedAsync(PipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(context, nameof(context));
-            if (context.Data.Length < SwarmChunk.SpanSize)
+            ArgumentNullException.ThrowIfNull(args, nameof(args));
+            if (args.Data.Length < SwarmChunk.SpanSize)
                 throw new InvalidOperationException();
 
-            var data = context.Data.ToArray();
+            var data = args.Data.ToArray();
             if (!BmtPool.Instance.TryGet(out var hasher))
                 throw new NotImplementedException(); //try to not use a pool
             hasher!.SetHeader(data[..SwarmChunk.SpanSize]);
             hasher.Write(data[SwarmChunk.SpanSize..]);
-            context.Reference = hasher.Hash(null);
+            args.Reference = hasher.Hash(null);
             BmtPool.Instance.Put(hasher);
 
-            if (Next is null)
-                return 0;
-            return await Next.FeedAsync(context).ConfigureAwait(false);
+            await FeedNextAsync(args).ConfigureAwait(false);
         }
     }
 }
