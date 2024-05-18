@@ -17,9 +17,9 @@ using Etherna.BeeNet.Services.Putter;
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
-    public class StoreWriterPipelineStage : PipelineStageBase
+    internal class StoreWriterPipelineStage : PipelineStageBase
     {
         private readonly IPutter putter;
 
@@ -33,17 +33,17 @@ namespace Etherna.BeeNet.Services.Pipelines
         }
 
         // Methods.
-        public override async Task<int> WriteAsync(PipelineWriteContext context)
+        public override async Task<int> FeedAsync(PipelineFeedContext context)
         {
             ArgumentNullException.ThrowIfNull(context, nameof(context));
-            if (context.Reference is null || context.Data is null)
+            if (context.Reference is null)
                 throw new InvalidOperationException();
 
-            putter.Put(new SwarmChunk(new SwarmAddress(context.Reference), context.Data));
+            putter.Put(new SwarmChunk(new SwarmAddress(context.Reference), context.Data.ToArray()));
 
             if (Next is null)
                 throw new InvalidOperationException();
-            return await Next.WriteAsync(context).ConfigureAwait(false);
+            return await Next.FeedAsync(context).ConfigureAwait(false);
         }
     }
 }

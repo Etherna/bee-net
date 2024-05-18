@@ -21,10 +21,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class HashTrieWriterPipelineStage : PipelineStageBase
+    internal class HashTrieWriterPipelineStage : PipelineStageBase
     {
         // Consts.
         const int MaxLevel = 8;
@@ -142,18 +142,17 @@ namespace Etherna.BeeNet.Services.Pipelines
                 EncodeLevel(spb, RedundancyParams.Level);
             hashes = spb.Concat(hashes);
 
-            var args = new PipelineWriteContext
+            var args = new PipelineFeedContext(hashes.ToArray())
             {
-                Data = hashes.ToArray(),
                 Span = spb
             };
 
             if (Next is null)
                 throw new InvalidOperationException();
-            await Next.WriteAsync(args).ConfigureAwait(false);
+            await Next.FeedAsync(args).ConfigureAwait(false);
             
             await WriteToIntermediateLevelAsync(level + 1, false, args.Span, args.Reference!, args.EncryptionKey!).ConfigureAwait(false);
-            await RedundancyParams.ChunkWriteAsync(level, args.Data, ParityChunkFn).ConfigureAwait(false);
+            await RedundancyParams.ChunkWriteAsync(level, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
             
             // this "truncates" the current level that was wrapped
             // by setting the cursors to the cursors of one level above

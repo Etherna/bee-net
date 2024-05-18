@@ -14,9 +14,9 @@
 
 using Etherna.BeeNet.Services.Putter;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
-    public class ShortPipelineStage : PipelineStageBase
+    internal class ShortPipelineStage : PipelineStageBase
     {
         // Constructor.
         private ShortPipelineStage(PipelineStageBase? next) : base(next) { }

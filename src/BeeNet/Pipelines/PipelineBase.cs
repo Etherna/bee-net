@@ -18,9 +18,9 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
-    public abstract class PipelineBase
+    internal abstract class PipelineBase
     {
         // Fields.
         protected readonly ChunkFeederPipelineStage chunkFeeder;
@@ -76,9 +76,6 @@ namespace Etherna.BeeNet.Services.Pipelines
         // Protected methods.
         protected virtual Task<byte[]> SumAsync() => chunkFeeder.SumAsync();
         
-        protected virtual Task<int> WriteAsync(byte[] bytes) => chunkFeeder.WriteAsync(new PipelineWriteContext
-        {
-            Data = bytes
-        });
+        protected virtual Task<int> WriteAsync(byte[] bytes) => chunkFeeder.FeedAsync(new(bytes));
     }
 }

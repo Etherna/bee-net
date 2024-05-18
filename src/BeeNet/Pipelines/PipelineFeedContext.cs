@@ -12,17 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class PipelineWriteContext
+    internal class PipelineFeedContext
     {
+        // Fields.
+        private readonly byte[] _data;
+        
+        // Constructor.
+        public PipelineFeedContext(byte[] data)
+        {
+            _data = data;
+        }
+        
+        // Properties.
         /// <summary>
         /// Data includes the span too, but it may be encrypted when the pipeline is encrypted
         /// </summary>
-        public byte[]? Data { get; set; }
+        public ReadOnlySpan<byte> Data => _data;
         
         /// <summary>
         /// Encryption key

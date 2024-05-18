@@ -15,9 +15,9 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
-    public abstract class PipelineStageBase
+    internal abstract class PipelineStageBase
     {
         // Fields.
         protected readonly PipelineStageBase? Next;
@@ -30,6 +30,18 @@ namespace Etherna.BeeNet.Services.Pipelines
 
         // Methods.
         /// <summary>
+        /// Process data into the pipeline
+        /// </summary>
+        /// <param name="context">The data context to process</param>
+        /// <returns>Amount of processed bytes</returns>
+        public virtual async Task<int> FeedAsync(PipelineFeedContext context)
+        {
+            if (Next is null)
+                return 0;
+            return await Next.FeedAsync(context).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Flush the pipeline and perform the final sum 
         /// </summary>
         /// <returns>The binary digest of sum</returns>
@@ -38,18 +50,6 @@ namespace Etherna.BeeNet.Services.Pipelines
             if (Next is null)
                 return Array.Empty<byte>();
             return await Next.SumAsync().ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Process data into the pipeline
-        /// </summary>
-        /// <param name="context">The data context to process</param>
-        /// <returns>Amount of processed bytes</returns>
-        public virtual async Task<int> WriteAsync(PipelineWriteContext context)
-        {
-            if (Next is null)
-                return 0;
-            return await Next.WriteAsync(context).ConfigureAwait(false);
         }
     }
 }

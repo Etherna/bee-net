@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Pipelines;
+using Etherna.BeeNet.Pipelines;
 using Etherna.BeeNet.Services.Putter;
 using System;
 using System.Diagnostics.CodeAnalysis;

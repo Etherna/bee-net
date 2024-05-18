@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Models.Bmt;
-using Etherna.BeeNet.Services.Pipelines;
 using STH1123.ReedSolomon;
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Models
+namespace Etherna.BeeNet.Pipelines
 {
     public delegate Task ParityChunkCallback(int level, byte[] span, byte[] address);
     
-    public class RedundancyParams
+    internal class RedundancyParams
     {
         // Fields.
         private readonly PipelineStageBase pipeLine;
@@ -152,12 +152,11 @@ namespace Etherna.BeeNet.Models
                 var chunkData = buffer[chunkLevel][i];
                 var span = chunkData[..SwarmChunk.SpanSize];
 
-                var args = new PipelineWriteContext
+                var args = new PipelineFeedContext(chunkData)
                 {
-                    Data = chunkData,
                     Span = span
                 };
-                await pipeLine.WriteAsync(args).ConfigureAwait(false);
+                await pipeLine.FeedAsync(args).ConfigureAwait(false);
 
                 await callback(chunkLevel + 1, span, args.Reference!).ConfigureAwait(false);
             }

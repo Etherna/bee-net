@@ -15,9 +15,9 @@
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter;
 
-namespace Etherna.BeeNet.Services.Pipelines
+namespace Etherna.BeeNet.Pipelines
 {
-    public class DefaultPipeline : PipelineBase
+    internal class DefaultPipeline : PipelineBase
     {
         // Constructor.
         protected DefaultPipeline(
