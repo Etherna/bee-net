@@ -27,21 +27,47 @@ namespace Etherna.BeeNet.Pipelines
         {
             this.nextStage = nextStage;
         }
+        
+        // Properties.
+        public bool IsClosed { get; private set; }
 
         // Methods.
         /// <summary>
         /// Process data into the pipeline stage
         /// </summary>
         /// <param name="args">The pipeline stage feed arguments</param>
-        public virtual Task FeedAsync(PipelineFeedArgs args) => FeedNextAsync(args);
+        public Task FeedAsync(PipelineFeedArgs args)
+        {
+            if (IsClosed)
+                throw new InvalidOperationException("Can't feed other data if stage is closed");
+            return FeedImplAsync(args);
+        }
 
         /// <summary>
         /// Flush the pipeline and perform the final sum 
         /// </summary>
         /// <returns>The binary digest of sum</returns>
-        public virtual Task<byte[]> SumAsync() => SumNextAsync();
+        public async Task<byte[]> SumAsync()
+        {
+            var sum = await SumImplAsync().ConfigureAwait(false);
+            IsClosed = true;
+            return sum;
+        }
         
-        // Protected methods.
+        // Protected virtual methods.
+        /// <summary>
+        /// Virtual implementation of the feed method
+        /// </summary>
+        /// <param name="args">The pipeline stage feed arguments</param>
+        protected virtual Task FeedImplAsync(PipelineFeedArgs args) => FeedNextAsync(args);
+
+        /// <summary>
+        /// Virtual implementation of the sum method
+        /// </summary>
+        /// <returns>The binary digest of sum</returns>
+        protected virtual Task<byte[]> SumImplAsync() => SumNextAsync();
+        
+        // Protected helper methods.
         protected Task FeedNextAsync(PipelineFeedArgs args) =>
             nextStage is not null ? nextStage.FeedAsync(args) : Task.CompletedTask;
 

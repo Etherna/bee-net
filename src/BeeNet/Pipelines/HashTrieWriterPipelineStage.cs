@@ -185,6 +185,7 @@ namespace Etherna.BeeNet.Pipelines
             }
         }
 
+        // Protected methods.
         /// <summary>
         /// returns the Swarm merkle-root content-addressed hash
         /// of an arbitrary-length binary data.
@@ -203,7 +204,7 @@ namespace Etherna.BeeNet.Pipelines
         ///     the next level
         /// </summary>
         /// <returns></returns>
-        public override async Task<byte[]> SumAsync()
+        protected override async Task<byte[]> SumImplAsync()
         {
 	        for (var i = 1; i < MaxLevel; i++)
             {

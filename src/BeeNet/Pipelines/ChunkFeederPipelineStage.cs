@@ -36,14 +36,12 @@ namespace Etherna.BeeNet.Pipelines
             buffer = new byte[SwarmChunk.Size];
         }
         
-        // Methods.
+        // Protected methods.
         /// <summary>
-        /// Produces data chunks for next stages, and returns the number of bytes written to the feeder.
-        /// The number of bytes written does not necessarily reflect how many bytes were actually flushed to
-        /// subsequent writers, since the feeder is buffered and works in chunk-size quantiles.
+        /// Produces data chunks for next stages.
         /// </summary>
         /// <param name="args">Pipeline args</param>
-        public override async Task FeedAsync(PipelineFeedArgs args)
+        protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             
@@ -93,42 +91,27 @@ namespace Etherna.BeeNet.Pipelines
         }
         
         /// <summary>
-        /// Sum flushes any pending data to subsequent writers and returns
-        /// the cryptographic root-hash respresenting the data written to
-        /// the feeder.
+        /// Flushes any pending data to subsequent writers and returns the cryptographic root-hash
+        /// respresenting the data written to the feeder.
         /// </summary>
-        /// <returns>Cryptographic root-hash respresenting the data written</returns>
-        public override async Task<byte[]> SumAsync()
+        /// <returns>Cryptographic root-hash representing the data written</returns>
+        protected override async Task<byte[]> SumImplAsync()
         {
-            // flush existing data in the buffer
-            if (bufferIndex > 0)
+            if (bufferIndex > 0 || //if we need to flush existing data from the buffer,
+                wroteBytes == 0)   //or if no chunks have been written at all
             {
-                var d = new byte[bufferIndex + SwarmChunk.SpanSize];
+                var chunkData = new byte[SwarmChunk.SpanSize + bufferIndex];
+                Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
                 
-                int minLength = Math.Min(buffer.Length - bufferIndex, bufferIndex);
-                Array.Copy(buffer, bufferIndex, d, SwarmChunk.SpanSize, minLength);
-                
-                byte[] subArrayD = new byte[SwarmChunk.SpanSize];
-                BinaryPrimitives.WriteUInt64LittleEndian(subArrayD, (ulong)bufferIndex);
-                Array.Copy(subArrayD, 0, d, 0, SwarmChunk.SpanSize);
+                // Write chunk span.
+                BinaryPrimitives.WriteUInt64LittleEndian(
+                    chunkData.AsSpan(0, SwarmChunk.SpanSize),
+                    (ulong)bufferIndex);
 
-                var args = new PipelineFeedArgs(
-                    data: d,
-                    span: d[..SwarmChunk.SpanSize]);
-                await FeedNextAsync(args).ConfigureAwait(false);
-                wroteBytes += d.Length;
-            }
-
-            if (wroteBytes == 0)
-            {
-                // this is an empty file, we should write the span of
-                // an empty file (0).
-                var d = new byte[SwarmChunk.SpanSize];
-                var args = new PipelineFeedArgs(
-                    data: d,
-                    span: d);
-                await FeedNextAsync(args).ConfigureAwait(false);
-                wroteBytes += d.Length;
+                // Invoke next stage.
+                await FeedNextAsync(new PipelineFeedArgs(
+                    data: chunkData,
+                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
             }
 
             return await SumNextAsync().ConfigureAwait(false);

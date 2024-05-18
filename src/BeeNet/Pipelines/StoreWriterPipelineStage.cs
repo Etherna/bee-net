@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Pipelines
         }
 
         // Methods.
-        public override async Task FeedAsync(PipelineFeedArgs args)
+        protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Reference is null)

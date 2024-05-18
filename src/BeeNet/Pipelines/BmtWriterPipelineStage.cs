@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Pipelines
             : base(nextStage)
         { }
 
-        public override async Task FeedAsync(PipelineFeedArgs args)
+        protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Data.Length < SwarmChunk.SpanSize)
