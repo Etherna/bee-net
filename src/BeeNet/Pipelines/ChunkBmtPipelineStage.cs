@@ -13,31 +13,34 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Models.Bmt;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal class BmtWriterPipelineStage : PipelineStageBase
+    /// <summary>
+    /// Calculate hash of each chunk
+    /// </summary>
+    internal class ChunkBmtPipelineStage : PipelineStageBase
     {
-        public BmtWriterPipelineStage(PipelineStageBase? nextStage)
+        // Constructor.
+        public ChunkBmtPipelineStage(PipelineStageBase nextStage)
             : base(nextStage)
         { }
 
+        // Protected methods.
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Data.Length < SwarmChunk.SpanSize)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Data can't be shorter than span size here");
+            if (args.Data.Length > SwarmChunk.ChunkWithSpanSize)
+                throw new InvalidOperationException("Data can't be longer than chunk + span size here");
 
-            var data = args.Data.ToArray();
-            if (!BmtPool.Instance.TryGet(out var hasher))
-                throw new NotImplementedException(); //try to not use a pool
-            hasher!.SetHeader(data[..SwarmChunk.SpanSize]);
-            hasher.Write(data[SwarmChunk.SpanSize..]);
+            var hasher = ChunkBmtHasherPool.Instance.Get();
+            hasher.SetHeader(args.Data[..SwarmChunk.SpanSize]);
+            hasher.Write(args.Data[SwarmChunk.SpanSize..]);
             args.Reference = hasher.Hash(null);
-            BmtPool.Instance.Put(hasher);
+            ChunkBmtHasherPool.Instance.Put(hasher);
 
             await FeedNextAsync(args).ConfigureAwait(false);
         }

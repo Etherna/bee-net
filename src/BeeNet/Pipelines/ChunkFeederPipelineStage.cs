@@ -43,8 +43,6 @@ namespace Etherna.BeeNet.Pipelines
         /// <param name="args">Pipeline args</param>
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(args, nameof(args));
-            
             // If new data can be fully buffered without complete a chunk, simply add to buffer and return.
             if (args.Data.Length < SwarmChunk.Size - bufferIndex)
             {

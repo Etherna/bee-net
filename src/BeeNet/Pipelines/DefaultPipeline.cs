@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Pipelines
                 putter
             );
             var storeWriterStage = new StoreWriterPipelineStage(putter, hashTrieWriterStage);
-            var bmtWriterStage = new BmtWriterPipelineStage(storeWriterStage);
+            var bmtWriterStage = new ChunkBmtPipelineStage(storeWriterStage);
 
             return new DefaultPipeline(putter, redundancyLevel, bmtWriterStage);
         }

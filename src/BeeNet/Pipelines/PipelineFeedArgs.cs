@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -29,6 +30,14 @@ namespace Etherna.BeeNet.Pipelines
             byte[] data,
             byte[]? span = null)
         {
+            if (span is not null)
+            {
+                if (data.Length < SwarmChunk.SpanSize)
+                    throw new InvalidOperationException("Data must contain also span, if present");
+                if (span.Length != SwarmChunk.SpanSize)
+                    throw new ArgumentOutOfRangeException(nameof(span), $"Span must have length of {SwarmChunk.SpanSize}");
+            }
+            
             _data = data;
             _span = span;
         }

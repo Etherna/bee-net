@@ -12,12 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Models.Bmt
+using Epoche;
+using Etherna.BeeNet.Merkle;
+using Etherna.BeeNet.Models;
+using System;
+
+namespace Etherna.BeeNet.Pipelines
 {
-    public static class SwarmBmt
+    internal class ChunkBmtHasherPool : BmtHasherPool
     {
-        public const int Branches = 128;
-        public const int EncryptedBranches = Branches / 2;
-        public const int BmtBranches = 128;
+        // Constructor.
+        public ChunkBmtHasherPool(int capacity)
+            : base(capacity, Keccak256.ComputeHash, SwarmChunk.BmtSegments)
+        { }
+
+        // Static properties.
+        public static ChunkBmtHasherPool Instance { get; } = new(
+            Environment.ProcessorCount * 4);
     }
 }

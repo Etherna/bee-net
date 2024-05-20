@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,19 +20,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Models.Bmt
+namespace Etherna.BeeNet.Merkle
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class BmtHasher
+    internal class BmtHasher
     {
         private readonly byte[] zerospan;
         private readonly byte[] zerosection;
         
         // Constructor.
-        public BmtHasher(BmtPoolConfig config, BmtTree bmt)
+        public BmtHasher(BmtHasherPool bmtHasherPool, Bmt bmt)
         {
             Bmt = bmt;
-            Config = config;
+            BmtHasherPool = bmtHasherPool;
             Result = new ConcurrentQueue<byte[]>();
             Span = new byte[SwarmChunk.SpanSize];
             zerospan = new byte[8];
@@ -42,9 +43,9 @@ namespace Etherna.BeeNet.Models.Bmt
         /// <summary>
         /// Prebuilt BMT resource for flow control and proofs
         /// </summary>
-        public BmtTree Bmt { get; }
+        public Bmt Bmt { get; }
         
-        public BmtPoolConfig Config { get; }
+        public BmtHasherPool BmtHasherPool { get; }
         
         /// <summary>
         /// Offset (cursor position) within currently open segment
@@ -72,7 +73,7 @@ namespace Etherna.BeeNet.Models.Bmt
         public byte[] Hash(byte[]? b)
         {
             if (Size == 0)
-                return Config.Hasher(Span.Concat(Config.Zerohashes[Config.Depth]).ToArray());
+                return BmtHasherPool.HasherFunc(Span.Concat(BmtHasherPool.ZeroHashes[BmtHasherPool.Depth]).ToArray());
             
             Array.Copy(zerosection, Bmt.Buffer, Size);
             
@@ -80,24 +81,19 @@ namespace Etherna.BeeNet.Models.Bmt
             ProcessSection(Pos, true);
             if (Result.TryDequeue(out var result))
                 throw new InvalidOperationException();
-            return Config.Hasher(Span.Concat(result!).ToArray());
+            return BmtHasherPool.HasherFunc(Span.Concat(result!).ToArray());
         }
         
-        public void SetHeader(byte[] span)
-        {
-            ArgumentNullException.ThrowIfNull(span, nameof(span));
-            span.CopyTo(Span, 0);
-        }
+        public void SetHeader(ReadOnlySpan<byte> span) =>
+            span.CopyTo(Span);
 
-        public int Write(byte[] bytes)
+        public int Write(ReadOnlySpan<byte> bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
-            
             var length = bytes.Length;
-            var max = Config.MaxSize - Size;
+            var max = BmtHasherPool.MaxSize - Size;
             length = Math.Min(length, max);
-            bytes.CopyTo(Bmt.Buffer, Size);
-            var secsize = 2 * Config.SegmentSize;
+            bytes.CopyTo(Bmt.Buffer.AsSpan(Size));
+            var secsize = 2 * BmtHasherPool.SegmentSize;
             var from = Size / secsize;
             Offset = Size % secsize;
             Size += length;
@@ -118,14 +114,14 @@ namespace Etherna.BeeNet.Models.Bmt
         /// </summary>
         private void ProcessSection(int i, bool final)
         {
-            var secsize = 2 * Config.SegmentSize;
+            var secsize = 2 * BmtHasherPool.SegmentSize;
             var offset = i * secsize;
             var level = 1;
 
             // select the leaf node for the section
             var n = Bmt.Leaves[i];
             var isLeft = n.IsLeft;
-            var hasher = Config.Hasher;
+            var hasher = BmtHasherPool.HasherFunc;
             n = n.Parent!;
 
             // hash the section
@@ -144,7 +140,7 @@ namespace Etherna.BeeNet.Models.Bmt
         /// If it is the second, it calculates the hash and writes it to the parent node recursively.
         /// Since hashing the parent is synchronous the same hasher can be used.
         /// </summary>
-        private void WriteNode(BmtTreeNode? n, bool isLeft, byte[] s)
+        private void WriteNode(BmtNode? n, bool isLeft, byte[] s)
         {
             var level = 1;
             while (true)
@@ -168,7 +164,7 @@ namespace Etherna.BeeNet.Models.Bmt
                 
                 // the thread coming second now can be sure both left and right children are written
                 // so it calculates the hash of left|right and pushes it to the parent
-                s = Config.Hasher(n.Left!.Concat(n.Right!).ToArray());
+                s = BmtHasherPool.HasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 isLeft = n.IsLeft;
                 n = n.Parent;
                 level++;
@@ -180,7 +176,7 @@ namespace Etherna.BeeNet.Models.Bmt
         /// For unbalanced trees it fills in the missing right sister nodes using the pool's lookup table for BMT subtree root hashes for all-zero sections.
         /// Otherwise behaves like `writeNode`.
         /// </summary>
-        private void WriteFinalNode(int level, BmtTreeNode? n, bool isLeft, byte[]? s)
+        private void WriteFinalNode(int level, BmtNode? n, bool isLeft, byte[]? s)
         {
             while (true)
             {
@@ -197,7 +193,7 @@ namespace Etherna.BeeNet.Models.Bmt
                     // coming from left sister branch
                     // when the final section's path is going via left child node
                     // we include an all-zero subtree hash for the right level and toggle the node.
-                    n.Right = Config.Zerohashes[level];
+                    n.Right = BmtHasherPool.ZeroHashes[level];
                     if(s is not null)
                     {
                         n.Left = s;
@@ -238,7 +234,7 @@ namespace Etherna.BeeNet.Models.Bmt
                 }
                 else
                 {
-                    s = Config.Hasher(n.Left!.Concat(n.Right!).ToArray());
+                    s = BmtHasherPool.HasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 }
                 
                 // iterate to parent

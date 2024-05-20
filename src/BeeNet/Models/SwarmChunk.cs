@@ -12,29 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models.Bmt;
-using System.Diagnostics.CodeAnalysis;
+using System;
 
 namespace Etherna.BeeNet.Models
 {
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class SwarmChunk
     {
+        // Fields.
+        private readonly byte[] _data;
+        
         // Consts.
         public const int ChunkWithSpanSize = Size + SpanSize;
-        public const int SectionSize = 32;
-        public const int Size = SectionSize * SwarmBmt.Branches;
+        public const int BmtSegments = 128;
+        public const int BmtSegmentSize = 32; //Keccak hash size
+        public const int Size = BmtSegmentSize * BmtSegments;
         public const int SpanSize = 8;
         
         // Constructor.
         public SwarmChunk(SwarmAddress address, byte[] data)
         {
             Address = address;
-            Data = data;
+            _data = data;
         }
         
         // Properties.
         public SwarmAddress Address { get; }
-        public byte[] Data { get; }
+        public ReadOnlySpan<byte> Data => _data;
     }
 }

@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Pipelines
         public static ShortPipelineStage BuildNewStage(IPutter putter)
         {
             var storeWriter = new StoreWriterPipelineStage(putter, null);
-            var next = new BmtWriterPipelineStage(storeWriter);
+            var next = new ChunkBmtPipelineStage(storeWriter);
             return new ShortPipelineStage(next);
         }
     }

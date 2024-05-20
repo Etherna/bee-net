@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Models.Bmt
+namespace Etherna.BeeNet.Merkle
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class BmtTreeNode
+    public class BmtNode
     {
         // Constructor.
-        public BmtTreeNode(int index, BmtTreeNode? parent, BmtHasher hasher)
+        public BmtNode(int index, BmtNode? parent, Func<byte[], byte[]> hasher)
         {
             IsLeft = index % 2 == 0;
             Parent = parent;
@@ -36,7 +37,7 @@ namespace Etherna.BeeNet.Models.Bmt
         /// <summary>
         /// The parent node in the BMT
         /// </summary>
-        public BmtTreeNode? Parent { get; }
+        public BmtNode? Parent { get; }
 
         /// <summary>
         /// Atomic increment impl concurrent boolean toggle
@@ -50,7 +51,7 @@ namespace Etherna.BeeNet.Models.Bmt
         /// <summary>
         /// Preconstructed hasher on nodes
         /// </summary>
-        public BmtHasher Hasher { get; }
+        public Func<byte[], byte[]> Hasher { get; }
         
         // Methods.
         /// <summary>
