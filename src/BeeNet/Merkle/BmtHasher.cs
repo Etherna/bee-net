@@ -14,10 +14,8 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Merkle
 {
@@ -26,7 +24,8 @@ namespace Etherna.BeeNet.Merkle
     {
         private readonly byte[] zerospan;
         private readonly byte[] zerosection;
-        
+        private byte[] _span;
+
         // Constructor.
         public BmtHasher(Func<byte[], byte[]> hasherFunc, int segmentCount)
         {
@@ -44,7 +43,7 @@ namespace Etherna.BeeNet.Merkle
             // Initialize properties.
             HasherFunc = hasherFunc;
             SegmentSize = hasherFunc(Array.Empty<byte>()).Length;
-            Span = new byte[SwarmChunk.SpanSize];
+            _span = new byte[SwarmChunk.SpanSize];
             zerospan = new byte[8];
             zerosection = new byte[64];
             
@@ -113,7 +112,11 @@ namespace Etherna.BeeNet.Merkle
         /// <summary>
         /// The span of the data subsumed under the chunk
         /// </summary>
-        public byte[] Span { get; }
+        public ReadOnlySpan<byte> Span
+        {
+            get => _span;
+            set => _span = value.ToArray();
+        }
         
         /// <summary>
         /// Lookup table for predictable padding subtrees for all levels
@@ -121,22 +124,19 @@ namespace Etherna.BeeNet.Merkle
         public byte[][] ZeroHashes { get; }
  
         // Methods.
-        public byte[] Hash(byte[]? b)
+        public byte[] Hash()
         {
             if (Size == 0)
-                return HasherFunc(Span.Concat(ZeroHashes[Depth]).ToArray());
+                return HasherFunc(_span.Concat(ZeroHashes[Depth]).ToArray());
             
             Array.Copy(zerosection, Bmt.Buffer, Size);
             
             // write the last section with final flag set to true
             ProcessSection(Pos, true);
-            return HasherFunc(Span.Concat(Result!).ToArray());
+            return HasherFunc(_span.Concat(Result!).ToArray());
         }
-        
-        public void SetHeader(ReadOnlySpan<byte> span) =>
-            span.CopyTo(Span);
 
-        public int Write(ReadOnlySpan<byte> bytes)
+        public void Write(ReadOnlySpan<byte> bytes)
         {
             var length = bytes.Length;
             var max = MaxSize - Size;
@@ -150,11 +150,8 @@ namespace Etherna.BeeNet.Merkle
             if (length == max)
                 to--;
             Pos = to;
-            var tasks = new List<Task>();
             for (var i = from; i < to; i++)
-                tasks.Add(Task.Run(() => ProcessSection(i, false)));
-            Task.WhenAll(tasks).Wait();
-            return length;
+                ProcessSection(i, false);
         }
         
         // Helpers.
