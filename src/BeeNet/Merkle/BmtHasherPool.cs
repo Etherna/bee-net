@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Epoche;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace Etherna.BeeNet.Merkle
 {
@@ -25,48 +23,21 @@ namespace Etherna.BeeNet.Merkle
     internal class BmtHasherPool : IDisposable
     {
         // Fields.
-        private readonly BlockingCollection<Bmt> treeCollection;
+        private readonly BlockingCollection<BmtHasher> hasherCollection;
 
         // Constructor.
-        public BmtHasherPool(int capacity, Func<byte[], byte[]> hasher, int segmentCount)
+        public BmtHasherPool(int capacity, Func<byte[], byte[]> hasherFunc, int segmentCount)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            
-            // Define tree depth.
-            var actualSegmentCount = 2;
-            Depth = 1;
-            while (actualSegmentCount < segmentCount)
-            {
-                Depth++;
-                actualSegmentCount *= 2;
-            }
-            
-            // Initialize properties.
             Capacity = capacity;
-            HasherFunc = hasher;
-            SegmentCount = actualSegmentCount;
-            SegmentSize = hasher(Array.Empty<byte>()).Length;
-            
-            // Initialize the ZeroHashes lookup table.
-            ZeroHashes = new byte[Depth + 1][];
-            var zerosLayer = new byte[SegmentSize];
-            ZeroHashes[0] = zerosLayer;
-            for (int i = 1; i < Depth+1; i++)
-            {
-                zerosLayer = hasher(zerosLayer.Concat(zerosLayer).ToArray());
-                ZeroHashes[i] = zerosLayer;
-            }
-            
-            // Initialize trees.
-            treeCollection = new BlockingCollection<Bmt>(Capacity);
+            hasherCollection = new BlockingCollection<BmtHasher>(Capacity);
             for (var i = 0; i < Capacity; i++)
-                treeCollection.Add(new Bmt(MaxSize, Depth, hasher));
+                hasherCollection.Add(new BmtHasher(hasherFunc, segmentCount));
         }
 
         // Dispose.
         public void Dispose()
         {
-            treeCollection.Dispose();
+            hasherCollection.Dispose();
         }
         
         // Properties.
@@ -74,49 +45,14 @@ namespace Etherna.BeeNet.Merkle
         /// Pool capacity, controls concurrency
         /// </summary>
         public int Capacity { get; }
-        
-        /// <summary>
-        /// Depth of the bmt trees = (int)(log2(segmentCount))+1
-        /// </summary>
-        public int Depth { get; }
-
-        /// <summary>
-        /// Hashing function
-        /// </summary>
-        public Func<byte[],byte[]> HasherFunc { get; }
-
-        /// <summary>
-        /// The total length of the data (SegmentCount * SegmentSize)
-        /// </summary>
-        public int MaxSize => SegmentCount * SegmentSize;
-        
-        /// <summary>
-        /// The number of segments on the base level of the BMT
-        /// </summary>
-        public int SegmentCount { get; }
-        
-        /// <summary>
-        /// Size of leaf segments, stipulated to be = hash size
-        /// </summary>
-        public int SegmentSize { get; }
-        
-        /// <summary>
-        /// Lookup table for predictable padding subtrees for all levels
-        /// TODO: probably it should be moved inside BmtHasher
-        /// </summary>
-        public byte[][] ZeroHashes { get; }
 
         // Methods.
         public void Put(BmtHasher bmtHasher)
         {
             ArgumentNullException.ThrowIfNull(bmtHasher, nameof(bmtHasher));
-            treeCollection.Add(bmtHasher.Bmt);
+            hasherCollection.Add(bmtHasher);
         }
 
-        public BmtHasher Get()
-        {
-            var tree = treeCollection.Take();
-            return new BmtHasher(this, tree);
-        }
+        public BmtHasher Get() => hasherCollection.Take();
     }
 }

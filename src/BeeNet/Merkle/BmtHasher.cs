@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -29,14 +28,38 @@ namespace Etherna.BeeNet.Merkle
         private readonly byte[] zerosection;
         
         // Constructor.
-        public BmtHasher(BmtHasherPool bmtHasherPool, Bmt bmt)
+        public BmtHasher(Func<byte[], byte[]> hasherFunc, int segmentCount)
         {
-            Bmt = bmt;
-            BmtHasherPool = bmtHasherPool;
-            Result = new ConcurrentQueue<byte[]>();
+            ArgumentNullException.ThrowIfNull(hasherFunc, nameof(hasherFunc));
+            
+            // Define BMT depth and segment count.
+            Depth = 1;
+            SegmentCount = 2;
+            while (SegmentCount < segmentCount)
+            {
+                Depth++;
+                SegmentCount *= 2;
+            }
+            
+            // Initialize properties.
+            HasherFunc = hasherFunc;
+            SegmentSize = hasherFunc(Array.Empty<byte>()).Length;
             Span = new byte[SwarmChunk.SpanSize];
             zerospan = new byte[8];
             zerosection = new byte[64];
+            
+            // Initialize the ZeroHashes lookup table.
+            ZeroHashes = new byte[Depth + 1][];
+            var zerosLayer = new byte[SegmentSize];
+            ZeroHashes[0] = zerosLayer;
+            for (int i = 1; i < Depth + 1; i++)
+            {
+                zerosLayer = hasherFunc(zerosLayer.Concat(zerosLayer).ToArray());
+                ZeroHashes[i] = zerosLayer;
+            }
+
+            // Initialize BMT.
+            Bmt = new Bmt(MaxSize, Depth, hasherFunc);
         }
 
         // Properties.
@@ -45,7 +68,20 @@ namespace Etherna.BeeNet.Merkle
         /// </summary>
         public Bmt Bmt { get; }
         
-        public BmtHasherPool BmtHasherPool { get; }
+        /// <summary>
+        /// Depth of the bmt trees = (int)(log2(segmentCount))+1
+        /// </summary>
+        public int Depth { get; }
+        
+        /// <summary>
+        /// Hashing function
+        /// </summary>
+        public Func<byte[],byte[]> HasherFunc { get; }
+
+        /// <summary>
+        /// The total length of the data (SegmentCount * SegmentSize)
+        /// </summary>
+        public int MaxSize => SegmentCount * SegmentSize;
         
         /// <summary>
         /// Offset (cursor position) within currently open segment
@@ -57,7 +93,17 @@ namespace Etherna.BeeNet.Merkle
         /// </summary>
         public int Pos { get; private set; }
         
-        public ConcurrentQueue<byte[]> Result { get; }
+        public byte[]? Result { get; private set; }
+        
+        /// <summary>
+        /// The number of segments on the base level of the BMT
+        /// </summary>
+        public int SegmentCount { get; }
+        
+        /// <summary>
+        /// Size of leaf segments, stipulated to be = hash size
+        /// </summary>
+        public int SegmentSize { get; }
         
         /// <summary>
         /// Bytes written to Hasher since last Reset()
@@ -68,20 +114,23 @@ namespace Etherna.BeeNet.Merkle
         /// The span of the data subsumed under the chunk
         /// </summary>
         public byte[] Span { get; }
+        
+        /// <summary>
+        /// Lookup table for predictable padding subtrees for all levels
+        /// </summary>
+        public byte[][] ZeroHashes { get; }
  
         // Methods.
         public byte[] Hash(byte[]? b)
         {
             if (Size == 0)
-                return BmtHasherPool.HasherFunc(Span.Concat(BmtHasherPool.ZeroHashes[BmtHasherPool.Depth]).ToArray());
+                return HasherFunc(Span.Concat(ZeroHashes[Depth]).ToArray());
             
             Array.Copy(zerosection, Bmt.Buffer, Size);
             
             // write the last section with final flag set to true
             ProcessSection(Pos, true);
-            if (Result.TryDequeue(out var result))
-                throw new InvalidOperationException();
-            return BmtHasherPool.HasherFunc(Span.Concat(result!).ToArray());
+            return HasherFunc(Span.Concat(Result!).ToArray());
         }
         
         public void SetHeader(ReadOnlySpan<byte> span) =>
@@ -90,10 +139,10 @@ namespace Etherna.BeeNet.Merkle
         public int Write(ReadOnlySpan<byte> bytes)
         {
             var length = bytes.Length;
-            var max = BmtHasherPool.MaxSize - Size;
+            var max = MaxSize - Size;
             length = Math.Min(length, max);
             bytes.CopyTo(Bmt.Buffer.AsSpan(Size));
-            var secsize = 2 * BmtHasherPool.SegmentSize;
+            var secsize = 2 * SegmentSize;
             var from = Size / secsize;
             Offset = Size % secsize;
             Size += length;
@@ -114,14 +163,14 @@ namespace Etherna.BeeNet.Merkle
         /// </summary>
         private void ProcessSection(int i, bool final)
         {
-            var secsize = 2 * BmtHasherPool.SegmentSize;
+            var secsize = 2 * SegmentSize;
             var offset = i * secsize;
             var level = 1;
 
             // select the leaf node for the section
             var n = Bmt.Leaves[i];
             var isLeft = n.IsLeft;
-            var hasher = BmtHasherPool.HasherFunc;
+            var hasher = HasherFunc;
             n = n.Parent!;
 
             // hash the section
@@ -148,7 +197,7 @@ namespace Etherna.BeeNet.Merkle
                 // at the root of the bmt just write the result to the result channel
                 if (n is null)
                 {
-                    Result.Enqueue(s);
+                    Result = s;
                     return;
                 }
 
@@ -164,7 +213,7 @@ namespace Etherna.BeeNet.Merkle
                 
                 // the thread coming second now can be sure both left and right children are written
                 // so it calculates the hash of left|right and pushes it to the parent
-                s = BmtHasherPool.HasherFunc(n.Left!.Concat(n.Right!).ToArray());
+                s = HasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 isLeft = n.IsLeft;
                 n = n.Parent;
                 level++;
@@ -183,7 +232,7 @@ namespace Etherna.BeeNet.Merkle
                 // at the root of the bmt just write the result to the result channel
                 if (n is null)
                 {
-                    Result.Enqueue(s!);
+                    Result = s;
                     return;
                 }
 
@@ -193,7 +242,7 @@ namespace Etherna.BeeNet.Merkle
                     // coming from left sister branch
                     // when the final section's path is going via left child node
                     // we include an all-zero subtree hash for the right level and toggle the node.
-                    n.Right = BmtHasherPool.ZeroHashes[level];
+                    n.Right = ZeroHashes[level];
                     if(s is not null)
                     {
                         n.Left = s;
@@ -234,7 +283,7 @@ namespace Etherna.BeeNet.Merkle
                 }
                 else
                 {
-                    s = BmtHasherPool.HasherFunc(n.Left!.Concat(n.Right!).ToArray());
+                    s = HasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 }
                 
                 // iterate to parent
