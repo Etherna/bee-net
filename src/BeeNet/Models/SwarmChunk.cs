@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Models
 {
@@ -20,23 +21,44 @@ namespace Etherna.BeeNet.Models
     {
         // Fields.
         private readonly byte[] _data;
+        private readonly byte[] _span;
         
         // Consts.
-        public const int ChunkWithSpanSize = Size + SpanSize;
         public const int BmtSegments = 128;
         public const int BmtSegmentSize = 32; //Keccak hash size
-        public const int Size = BmtSegmentSize * BmtSegments;
+        public const int DataSize = BmtSegmentSize * BmtSegments;
+        public const int SpanAndDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
         // Constructor.
         public SwarmChunk(SwarmAddress address, byte[] data)
         {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (data.Length > DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes"); 
+            
             Address = address;
             _data = data;
+            _span = LengthToSpan((ulong)data.Length);
         }
         
         // Properties.
         public SwarmAddress Address { get; }
         public ReadOnlySpan<byte> Data => _data;
+        public ReadOnlySpan<byte> Span => _span;
+        
+        // Static methods.
+        public static byte[] LengthToSpan(ulong length)
+        {
+            var span = new byte[SpanSize];
+            WriteSpan(span, length);
+            return span;
+        }
+
+        public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
+            BinaryPrimitives.ReadUInt64LittleEndian(span);
+
+        public static void WriteSpan(Span<byte> span, ulong length) =>
+            BinaryPrimitives.WriteUInt64LittleEndian(span, length);
     }
 }

@@ -22,14 +22,26 @@ namespace Etherna.BeeNet.Merkle
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     internal class BmtHasher
     {
-        private readonly byte[] zerospan;
+        /// <summary>
+        /// Hashing function
+        /// </summary>
+        private readonly Func<byte[], byte[]> hasherFunc;
+        /// <summary>
+        /// Lookup table for predictable padding subtrees for all levels
+        /// </summary>
+        private readonly byte[][] zerohashes;
         private readonly byte[] zerosection;
+        
         private byte[] _span;
 
         // Constructor.
         public BmtHasher(Func<byte[], byte[]> hasherFunc, int segmentCount)
         {
             ArgumentNullException.ThrowIfNull(hasherFunc, nameof(hasherFunc));
+            
+            this.hasherFunc = hasherFunc;
+            SegmentSize = hasherFunc(Array.Empty<byte>()).Length;
+            _span = new byte[SwarmChunk.SpanSize];
             
             // Define BMT depth and segment count.
             Depth = 1;
@@ -40,22 +52,16 @@ namespace Etherna.BeeNet.Merkle
                 SegmentCount *= 2;
             }
             
-            // Initialize properties.
-            HasherFunc = hasherFunc;
-            SegmentSize = hasherFunc(Array.Empty<byte>()).Length;
-            _span = new byte[SwarmChunk.SpanSize];
-            zerospan = new byte[8];
-            zerosection = new byte[64];
-            
-            // Initialize the ZeroHashes lookup table.
-            ZeroHashes = new byte[Depth + 1][];
+            // Initialize lookup tables.
+            zerohashes = new byte[Depth + 1][];
             var zerosLayer = new byte[SegmentSize];
-            ZeroHashes[0] = zerosLayer;
+            zerohashes[0] = zerosLayer;
             for (int i = 1; i < Depth + 1; i++)
             {
                 zerosLayer = hasherFunc(zerosLayer.Concat(zerosLayer).ToArray());
-                ZeroHashes[i] = zerosLayer;
+                zerohashes[i] = zerosLayer;
             }
+            zerosection = new byte[64];
 
             // Initialize BMT.
             Bmt = new Bmt(MaxSize, Depth, hasherFunc);
@@ -71,11 +77,6 @@ namespace Etherna.BeeNet.Merkle
         /// Depth of the bmt trees = (int)(log2(segmentCount))+1
         /// </summary>
         public int Depth { get; }
-        
-        /// <summary>
-        /// Hashing function
-        /// </summary>
-        public Func<byte[],byte[]> HasherFunc { get; }
 
         /// <summary>
         /// The total length of the data (SegmentCount * SegmentSize)
@@ -108,7 +109,7 @@ namespace Etherna.BeeNet.Merkle
         /// Bytes written to Hasher since last Reset()
         /// </summary>
         public int Size { get; private set; }
-        
+
         /// <summary>
         /// The span of the data subsumed under the chunk
         /// </summary>
@@ -117,23 +118,18 @@ namespace Etherna.BeeNet.Merkle
             get => _span;
             set => _span = value.ToArray();
         }
-        
-        /// <summary>
-        /// Lookup table for predictable padding subtrees for all levels
-        /// </summary>
-        public byte[][] ZeroHashes { get; }
- 
+
         // Methods.
         public byte[] Hash()
         {
             if (Size == 0)
-                return HasherFunc(_span.Concat(ZeroHashes[Depth]).ToArray());
+                return hasherFunc(_span.Concat(zerohashes[Depth]).ToArray());
             
-            Array.Copy(zerosection, Bmt.Buffer, Size);
+            zerosection.AsSpan()[..(Bmt.Buffer.Length - Size)].CopyTo(Bmt.Buffer[Size..]);
             
             // write the last section with final flag set to true
-            ProcessSection(Pos, true);
-            return HasherFunc(_span.Concat(Result!).ToArray());
+            var result = ProcessSection(Pos, true);
+            return hasherFunc(_span.Concat(result).ToArray());
         }
 
         public void Write(ReadOnlySpan<byte> bytes)
@@ -141,7 +137,7 @@ namespace Etherna.BeeNet.Merkle
             var length = bytes.Length;
             var max = MaxSize - Size;
             length = Math.Min(length, max);
-            bytes.CopyTo(Bmt.Buffer.AsSpan(Size));
+            bytes.CopyTo(Bmt.Buffer[Size..]);
             var secsize = 2 * SegmentSize;
             var from = Size / secsize;
             Offset = Size % secsize;
@@ -158,7 +154,7 @@ namespace Etherna.BeeNet.Merkle
         /// <summary>
         /// Writes the hash of i-th section into level 1 node of the BMT tree.
         /// </summary>
-        private void ProcessSection(int i, bool final)
+        private byte[] ProcessSection(int i, bool final)
         {
             var secsize = 2 * SegmentSize;
             var offset = i * secsize;
@@ -167,17 +163,17 @@ namespace Etherna.BeeNet.Merkle
             // select the leaf node for the section
             var n = Bmt.Leaves[i];
             var isLeft = n.IsLeft;
-            var hasher = HasherFunc;
+            var hasher = hasherFunc;
             n = n.Parent!;
 
             // hash the section
-            var section = hasher(Bmt.Buffer[Offset..(Offset + secsize)]);
+            var section = hasher(Bmt.Buffer[Offset..(Offset + secsize)].ToArray());
 
             // write hash into parent node
             if (final)
-                WriteFinalNode(level, n, isLeft, section); //for the last segment use writeFinalNode
+                return WriteFinalNode(level, n, isLeft, section); //for the last segment use writeFinalNode
             else
-                WriteNode(n, isLeft, section);
+                return WriteNode(n, isLeft, section);
         }
 
         /// <summary>
@@ -186,7 +182,7 @@ namespace Etherna.BeeNet.Merkle
         /// If it is the second, it calculates the hash and writes it to the parent node recursively.
         /// Since hashing the parent is synchronous the same hasher can be used.
         /// </summary>
-        private void WriteNode(BmtNode? n, bool isLeft, byte[] s)
+        private byte[] WriteNode(BmtNode? n, bool isLeft, byte[] s)
         {
             var level = 1;
             while (true)
@@ -194,8 +190,7 @@ namespace Etherna.BeeNet.Merkle
                 // at the root of the bmt just write the result to the result channel
                 if (n is null)
                 {
-                    Result = s;
-                    return;
+                    return s;
                 }
 
                 // otherwise assign child hash to left or right segment
@@ -206,11 +201,11 @@ namespace Etherna.BeeNet.Merkle
                 
                 // the child-thread first arriving will terminate
                 if (n.Toggle())
-                    return;
+                    return null!;
                 
                 // the thread coming second now can be sure both left and right children are written
                 // so it calculates the hash of left|right and pushes it to the parent
-                s = HasherFunc(n.Left!.Concat(n.Right!).ToArray());
+                s = hasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 isLeft = n.IsLeft;
                 n = n.Parent;
                 level++;
@@ -222,15 +217,14 @@ namespace Etherna.BeeNet.Merkle
         /// For unbalanced trees it fills in the missing right sister nodes using the pool's lookup table for BMT subtree root hashes for all-zero sections.
         /// Otherwise behaves like `writeNode`.
         /// </summary>
-        private void WriteFinalNode(int level, BmtNode? n, bool isLeft, byte[]? s)
+        private byte[] WriteFinalNode(int level, BmtNode? n, bool isLeft, byte[]? s)
         {
             while (true)
             {
                 // at the root of the bmt just write the result to the result channel
                 if (n is null)
                 {
-                    Result = s;
-                    return;
+                    return s!;
                 }
 
                 bool noHash;
@@ -239,7 +233,7 @@ namespace Etherna.BeeNet.Merkle
                     // coming from left sister branch
                     // when the final section's path is going via left child node
                     // we include an all-zero subtree hash for the right level and toggle the node.
-                    n.Right = ZeroHashes[level];
+                    n.Right = zerohashes[level];
                     if(s is not null)
                     {
                         n.Left = s;
@@ -280,7 +274,7 @@ namespace Etherna.BeeNet.Merkle
                 }
                 else
                 {
-                    s = HasherFunc(n.Left!.Concat(n.Right!).ToArray());
+                    s = hasherFunc(n.Left!.Concat(n.Right!).ToArray());
                 }
                 
                 // iterate to parent

@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Pipelines
         {
             if (args.Data.Length < SwarmChunk.SpanSize)
                 throw new InvalidOperationException("Data can't be shorter than span size here");
-            if (args.Data.Length > SwarmChunk.ChunkWithSpanSize)
+            if (args.Data.Length > SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
 
             var hasher = ChunkBmtHasherPool.Instance.Get();

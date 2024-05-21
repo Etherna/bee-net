@@ -92,8 +92,8 @@ namespace Etherna.BeeNet.Pipelines
             if (Level == RedundancyLevel.None)
                 return;
 
-            if (data.Length != SwarmChunk.ChunkWithSpanSize)
-                Array.Resize(ref data, SwarmChunk.ChunkWithSpanSize);
+            if (data.Length != SwarmChunk.SpanAndDataSize)
+                Array.Resize(ref data, SwarmChunk.SpanAndDataSize);
 
             // append chunk to the buffer
             buffer[chunkLevel][bufferCursor[chunkLevel]] = data;
@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.Pipelines
                 throw new InvalidOperationException("redundancy: no redundancy level is used for the file in order to cache root data");
             
             var lastBuffer = buffer[^1];
-            if (lastBuffer[0].Length != SwarmChunk.ChunkWithSpanSize)
+            if (lastBuffer[0].Length != SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException(
                     "redundancy: hashtrie sum has not finished in order to cache root data");
 

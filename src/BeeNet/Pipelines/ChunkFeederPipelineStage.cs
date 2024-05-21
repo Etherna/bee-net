@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Buffers.Binary;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
@@ -33,7 +32,7 @@ namespace Etherna.BeeNet.Pipelines
         public ChunkFeederPipelineStage(PipelineStageBase nextStage)
             : base(nextStage)
         {
-            buffer = new byte[SwarmChunk.Size];
+            buffer = new byte[SwarmChunk.DataSize];
         }
         
         // Protected methods.
@@ -44,7 +43,7 @@ namespace Etherna.BeeNet.Pipelines
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
             // If new data can be fully buffered without complete a chunk, simply add to buffer and return.
-            if (args.Data.Length < SwarmChunk.Size - bufferIndex)
+            if (args.Data.Length < SwarmChunk.DataSize - bufferIndex)
             {
                 args.Data.CopyTo(buffer.AsSpan(bufferIndex));
                 bufferIndex += args.Data.Length;
@@ -52,7 +51,7 @@ namespace Etherna.BeeNet.Pipelines
             }
             
             // Else, if a new chunk is required, create it starting with buffer content.
-            var chunkData = new byte[SwarmChunk.ChunkWithSpanSize];
+            var chunkData = new byte[SwarmChunk.SpanAndDataSize];
             Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
             
             // Consume input data.
@@ -60,15 +59,15 @@ namespace Etherna.BeeNet.Pipelines
             {
                 // At this point the chunk can always be fulfilled because of conditions.
                 // Fill the new chunk with data from source.
-                var fillingDataLength = SwarmChunk.Size - bufferIndex;
+                var fillingDataLength = SwarmChunk.DataSize - bufferIndex;
                 args.Data[i..(i + fillingDataLength)]
                     .CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize + bufferIndex));
                 i += fillingDataLength;
                 
                 // Write chunk span.
-                BinaryPrimitives.WriteUInt64LittleEndian(
+                SwarmChunk.WriteSpan(
                     chunkData.AsSpan(0, SwarmChunk.SpanSize),
-                    SwarmChunk.Size);
+                    SwarmChunk.DataSize);
                 
                 // Invoke next stage.
                 await FeedNextAsync(new PipelineFeedArgs(
@@ -76,10 +75,10 @@ namespace Etherna.BeeNet.Pipelines
                     span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
 
                 bufferIndex = 0;
-                wroteBytes += SwarmChunk.Size;
+                wroteBytes += SwarmChunk.DataSize;
                 
                 // If we can't fill a whole new chunk, buffer the remaining data and exit.
-                if (args.Data.Length - i < SwarmChunk.Size)
+                if (args.Data.Length - i < SwarmChunk.DataSize)
                 {
                     args.Data[i..].CopyTo(buffer);
                     bufferIndex = args.Data.Length - i;
@@ -102,7 +101,7 @@ namespace Etherna.BeeNet.Pipelines
                 Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
                 
                 // Write chunk span.
-                BinaryPrimitives.WriteUInt64LittleEndian(
+                SwarmChunk.WriteSpan(
                     chunkData.AsSpan(0, SwarmChunk.SpanSize),
                     (ulong)bufferIndex);
 

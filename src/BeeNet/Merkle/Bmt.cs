@@ -23,6 +23,9 @@ namespace Etherna.BeeNet.Merkle
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class Bmt
     {
+        // Fields.
+        private readonly byte[] _buffer;
+        
         // Constructor.
         public Bmt(int maxSize, int depth, Func<byte[], byte[]> hashFunc)
         {
@@ -46,16 +49,16 @@ namespace Etherna.BeeNet.Merkle
             }
             
             // the datanode level is the nodes on the last level
+            _buffer = new byte[maxSize];
             Leaves = prevLevel;
-            Buffer = new byte[maxSize];
         }
         
         // Properties.
+        public Span<byte> Buffer => _buffer;
+        
         /// <summary>
         /// Leaf nodes of the tree, other nodes accessible via parent links
         /// </summary>
         public BmtNode[] Leaves { get; }
-        
-        public byte[] Buffer { get; }
     }
 }

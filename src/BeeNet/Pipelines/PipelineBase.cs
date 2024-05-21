@@ -65,14 +65,14 @@ namespace Etherna.BeeNet.Pipelines
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
             
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
-            var chunkData = new byte[SwarmChunk.Size];
+            var chunkData = new byte[SwarmChunk.DataSize];
             int chunkReadBytes;
             do
             {
                 chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
                 if (chunkReadBytes > 0)
                     await chunkFeeder.FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
-            } while (chunkReadBytes == SwarmChunk.Size);
+            } while (chunkReadBytes == SwarmChunk.DataSize);
 
             var sum = await chunkFeeder.SumAsync().ConfigureAwait(false);
             return new SwarmAddress(sum);

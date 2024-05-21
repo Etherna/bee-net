@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Pipelines
         {
             RefSize = refLen;
             Cursors = new int[9];
-            Buffer = new byte[SwarmChunk.ChunkWithSpanSize * 9 * 2]; // double size as temp workaround for weak calculation of needed buffer space
+            Buffer = new byte[SwarmChunk.SpanAndDataSize * 9 * 2]; // double size as temp workaround for weak calculation of needed buffer space
             RedundancyParams = redundancyParams ?? throw new ArgumentNullException(nameof(redundancyParams));
             ChunkCounters = new byte[9];
             EffectiveChunkCounters = new byte[9];
