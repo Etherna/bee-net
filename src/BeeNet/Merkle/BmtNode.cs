@@ -21,11 +21,10 @@ namespace Etherna.BeeNet.Merkle
     public class BmtNode
     {
         // Constructor.
-        public BmtNode(int index, BmtNode? parent, Func<byte[], byte[]> hasher)
+        public BmtNode(int index, BmtNode? parent)
         {
             IsLeft = index % 2 == 0;
             Parent = parent;
-            Hasher = hasher;
         }
 
         // Properties.
@@ -48,11 +47,6 @@ namespace Etherna.BeeNet.Merkle
         
         public byte[]? Right { get; set; }
         
-        /// <summary>
-        /// Preconstructed hasher on nodes
-        /// </summary>
-        public Func<byte[], byte[]> Hasher { get; }
-        
         // Methods.
         /// <summary>
         /// Atomic bool toggle implementing a concurrent reusable 2-state object.
@@ -61,13 +55,8 @@ namespace Etherna.BeeNet.Merkle
         /// <returns>Returns true if the toggler just put it in the active/waiting state</returns>
         public bool Toggle()
         {
-#pragma warning disable CA2002
-            lock (this)
-            {
-                State++;
-                return State % 2 == 1;
-            }
-#pragma warning restore CA2002
+            State++;
+            return State % 2 == 1;
         }
     }
 }

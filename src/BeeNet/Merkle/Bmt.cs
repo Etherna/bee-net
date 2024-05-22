@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Merkle
         // Constructor.
         public Bmt(int maxSize, int depth, Func<byte[], byte[]> hashFunc)
         {
-            var n = new BmtNode(0, null, hashFunc);
+            var n = new BmtNode(0, null);
             var prevLevel = new[] { n };
             
             // iterate over levels and creates 2^(depth-level) nodes
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Merkle
                 for (var i = 0; i < count; i++)
                 {
                     var parent = prevLevel[i / 2];
-                    nodes[i] = new BmtNode(i, parent, hashFunc);
+                    nodes[i] = new BmtNode(i, parent);
                 }
 
                 prevLevel = nodes;
