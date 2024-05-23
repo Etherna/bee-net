@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Pipelines
     internal class RedundancyParams
     {
         // Consts.
-        public const int EncryptedBmtSegments = SwarmChunk.BmtSegments / 2;
+        public const int EncryptedBmtSegments = SwarmChunkBmt.SegmentsCount / 2;
         
         // Fields.
         private readonly PipelineStageBase pipeLine;
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Pipelines
         {
             bufferCursor = new int[9];
             Encryption = encryption;
-            MaxParity = level.GetParities(encryption ? EncryptedBmtSegments : SwarmChunk.BmtSegments);
+            MaxParity = level.GetParities(encryption ? EncryptedBmtSegments : SwarmChunkBmt.SegmentsCount);
             MaxShards = encryption ? level.GetMaxEncryptedShards() : level.GetMaxShards();
             Level = level;
             this.pipeLine = pipeLine;
@@ -56,7 +56,7 @@ namespace Etherna.BeeNet.Pipelines
             // Init data buffer for erasure coding.
             buffer = new byte[level == RedundancyLevel.None ? 0 : 8][][];
             for (var i = 0; i < buffer.Length; i++)
-                buffer[i] = new byte[SwarmChunk.BmtSegments][]; // 128 long always because buffer varies at encrypted chunks
+                buffer[i] = new byte[SwarmChunkBmt.SegmentsCount][]; // 128 long always because buffer varies at encrypted chunks
         }
         
         // Properties.

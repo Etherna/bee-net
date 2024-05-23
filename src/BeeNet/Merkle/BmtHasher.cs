@@ -14,12 +14,10 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Etherna.BeeNet.Merkle
 {
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     internal class BmtHasher
     {
         /// <summary>
@@ -215,13 +213,13 @@ namespace Etherna.BeeNet.Merkle
             var level = 1;
             var isLeft = node.IsLeft;
             var parentNode = node.Parent;
-            byte[]? currentSectionHash = sectionHash;
+            byte[]? currentHash = sectionHash;
             
             while (true)
             {
                 // At the root of the bmt just return the result.
                 if (parentNode is null)
-                    return currentSectionHash!;
+                    return currentHash!;
 
                 bool noHash;
                 if (isLeft)
@@ -230,9 +228,9 @@ namespace Etherna.BeeNet.Merkle
                     // when the final section's path is going via left child node
                     // we include an all-zero subtree hash for the right level and toggle the node.
                     parentNode.Right = zeroHashes[level];
-                    if(currentSectionHash is not null)
+                    if(currentHash is not null)
                     {
-                        parentNode.Left = currentSectionHash;
+                        parentNode.Left = currentHash;
                         
                         // If a left final node carries a hash, it must be the first (and only thread)
                         // so the toggle is already in passive state no need no call
@@ -248,10 +246,10 @@ namespace Etherna.BeeNet.Merkle
                 else
                 {
                     // right sister branch
-                    if (currentSectionHash is not null)
+                    if (currentHash is not null)
                     {
                         // if hash was pushed from right child node, write right segment change state
-                        parentNode.Right = currentSectionHash;
+                        parentNode.Right = currentHash;
                         // if toggle is true, we arrived first so no hashing just push nil to parent
                         noHash = parentNode.Toggle();
                     }
@@ -267,11 +265,11 @@ namespace Etherna.BeeNet.Merkle
                 // it calculates the hash of left|right and pushes it to the parent
                 if (noHash)
                 {
-                    currentSectionHash = null;
+                    currentHash = null;
                 }
                 else
                 {
-                    currentSectionHash = hasherFunc(parentNode.Left!.Concat(parentNode.Right!).ToArray());
+                    currentHash = hasherFunc(parentNode.Left!.Concat(parentNode.Right!).ToArray());
                 }
                 
                 // iterate to parent

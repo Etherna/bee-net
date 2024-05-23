@@ -13,17 +13,16 @@
 // limitations under the License.
 
 using Epoche;
-using Etherna.BeeNet.Merkle;
 using Etherna.BeeNet.Models;
 using System;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.Merkle
 {
     internal class ChunkBmtHasherPool : BmtHasherPool
     {
         // Constructor.
         public ChunkBmtHasherPool(int capacity)
-            : base(capacity, Keccak256.ComputeHash, SwarmChunk.BmtSegments)
+            : base(capacity, Keccak256.ComputeHash, SwarmChunkBmt.SegmentsCount)
         { }
 
         // Static properties.

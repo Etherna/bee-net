@@ -24,9 +24,7 @@ namespace Etherna.BeeNet.Models
         private readonly byte[] _span;
         
         // Consts.
-        public const int BmtSegments = 128;
-        public const int BmtSegmentSize = 32; //Keccak hash size
-        public const int DataSize = BmtSegmentSize * BmtSegments;
+        public const int DataSize = SwarmChunkBmt.SegmentSize * SwarmChunkBmt.SegmentsCount;
         public const int SpanAndDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         

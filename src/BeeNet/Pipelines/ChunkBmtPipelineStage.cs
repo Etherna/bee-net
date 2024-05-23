@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Merkle;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
@@ -40,6 +41,9 @@ namespace Etherna.BeeNet.Pipelines
             hasher.Span = args.Data[..SwarmChunk.SpanSize];
             hasher.Write(args.Data[SwarmChunk.SpanSize..]);
             args.Reference = hasher.Hash();
+            var newHasherResult = SwarmChunkBmtHasher.Hash(
+                args.Data[..SwarmChunk.SpanSize],
+                args.Data[SwarmChunk.SpanSize..]);
             ChunkBmtHasherPool.Instance.Put(hasher);
 
             await FeedNextAsync(args).ConfigureAwait(false);
