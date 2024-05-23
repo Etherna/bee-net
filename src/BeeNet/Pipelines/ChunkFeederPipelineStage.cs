@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
@@ -55,6 +56,7 @@ namespace Etherna.BeeNet.Pipelines
             Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
             
             // Consume input data.
+            List<Task> nextTasks = new();
             for (var i = 0; i < args.Data.Length;)
             {
                 // At this point the chunk can always be fulfilled because of conditions.
@@ -69,10 +71,10 @@ namespace Etherna.BeeNet.Pipelines
                     chunkData.AsSpan(0, SwarmChunk.SpanSize),
                     SwarmChunk.DataSize);
                 
-                // Invoke next stage.
-                await FeedNextAsync(new PipelineFeedArgs(
+                // Invoke next stage with parallelism on chunks.
+                nextTasks.Add(FeedNextAsync(new PipelineFeedArgs(
                     data: chunkData,
-                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
+                    span: chunkData[..SwarmChunk.SpanSize])));
 
                 bufferIndex = 0;
                 wroteBytes += SwarmChunk.DataSize;
@@ -85,6 +87,9 @@ namespace Etherna.BeeNet.Pipelines
                     break; //"i += bufferIndex" is same as "i = args.Data.Length"
                 }
             }
+
+            // Wait the end of all chunk computation.
+            await Task.WhenAll(nextTasks).ConfigureAwait(false);
         }
         
         /// <summary>

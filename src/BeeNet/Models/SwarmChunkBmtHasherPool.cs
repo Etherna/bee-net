@@ -13,46 +13,47 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Concurrent;
+using System.Threading;
 
-namespace Etherna.BeeNet.Merkle
+namespace Etherna.BeeNet.Models
 {
     /// <summary>
     /// Implement a pool of Merkle Trees, defining a degree of parallelism to calculate hashes
     /// </summary>
-    internal class BmtHasherPool : IDisposable
+    internal class SwarmChunkBmtHasherPool : IDisposable
     {
         // Fields.
-        private readonly BlockingCollection<BmtHasher> hasherCollection;
+        private readonly SemaphoreSlim semaphore;
 
         // Constructor.
-        public BmtHasherPool(int capacity, Func<byte[], byte[]> hasherFunc, int segmentCount)
+        private SwarmChunkBmtHasherPool(int capacity)
         {
-            Capacity = capacity;
-            hasherCollection = new BlockingCollection<BmtHasher>(Capacity);
-            for (var i = 0; i < Capacity; i++)
-                hasherCollection.Add(new BmtHasher(hasherFunc, segmentCount));
+            semaphore = new SemaphoreSlim(capacity, capacity);
         }
 
         // Dispose.
         public void Dispose()
         {
-            hasherCollection.Dispose();
+            semaphore.Dispose();
         }
         
-        // Properties.
-        /// <summary>
-        /// Pool capacity, controls concurrency
-        /// </summary>
-        public int Capacity { get; }
+        // Static properties.
+        public static SwarmChunkBmtHasherPool Instance { get; } = new(
+            Environment.ProcessorCount * 4);
 
         // Methods.
-        public void Put(BmtHasher bmtHasher)
+        public byte[] Hash(ReadOnlySpan<byte> span, ReadOnlySpan<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(bmtHasher, nameof(bmtHasher));
-            hasherCollection.Add(bmtHasher);
+            semaphore.Wait();
+            
+            try
+            {
+                return SwarmChunkBmtHasher.Hash(span, data);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
-
-        public BmtHasher Get() => hasherCollection.Take();
     }
 }
