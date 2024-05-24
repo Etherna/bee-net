@@ -15,25 +15,42 @@
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
     /// <summary>
-    /// Produce chunked data with span prefix for successive stages
+    /// Produce chunked data with span prefix for successive stages.
+    /// Also controls the parallelism on chunk elaboration
     /// </summary>
-    internal class ChunkFeederPipelineStage : PipelineStageBase
+    internal sealed class ChunkFeederPipelineStage : PipelineStageBase, IDisposable
     {
         // Fields.
         private readonly byte[] buffer;
+        private readonly SemaphoreSlim semaphore;
+        
         private int bufferIndex;
         private long wroteBytes;
         
         // Constructor.
         public ChunkFeederPipelineStage(PipelineStageBase nextStage)
+            : this(nextStage, Environment.ProcessorCount * 2)
+        { }
+        
+        public ChunkFeederPipelineStage(
+            PipelineStageBase nextStage,
+            int chunkConcurrency)
             : base(nextStage)
         {
             buffer = new byte[SwarmChunk.DataSize];
+            semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
+        }
+        
+        // Dispose.
+        public void Dispose()
+        {
+            semaphore.Dispose();
         }
         
         // Protected methods.
@@ -72,9 +89,21 @@ namespace Etherna.BeeNet.Pipelines
                     SwarmChunk.DataSize);
                 
                 // Invoke next stage with parallelism on chunks.
-                nextTasks.Add(FeedNextAsync(new PipelineFeedArgs(
-                    data: chunkData,
-                    span: chunkData[..SwarmChunk.SpanSize])));
+                await semaphore.WaitAsync().ConfigureAwait(false);
+                nextTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await FeedNextAsync(new PipelineFeedArgs(
+                                data: chunkData,
+                                span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }));
 
                 bufferIndex = 0;
                 wroteBytes += SwarmChunk.DataSize;
