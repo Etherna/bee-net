@@ -31,9 +31,10 @@ namespace Etherna.BeeNet.Models
         // Constructor.
         public SwarmChunk(SwarmAddress address, byte[] data)
         {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes"); 
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Address = address;
             _data = data;

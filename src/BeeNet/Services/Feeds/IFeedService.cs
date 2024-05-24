@@ -21,13 +21,13 @@ namespace Etherna.BeeNet.Services.Feeds
 {
     public interface IFeedService
     {
-        Task<FeedChunk> CreateNextEpochFeedChunkAsync(
+        Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
             string account,
             byte[] topic,
             byte[] contentPayload,
             EpochFeedIndex? knownNearEpochIndex);
 
-        Task<FeedChunk> CreateNextEpochFeedChunkAsync(
+        Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
             byte[] account,
             byte[] topic,
             byte[] contentPayload,
@@ -41,14 +41,14 @@ namespace Etherna.BeeNet.Services.Feeds
         /// <param name="at">The time to search</param>
         /// <param name="knownNearEpochIndex">Another known existing epoch index, near to looked time. Helps to perform lookup quicker</param>
         /// <returns>The found epoch feed chunk, or null</returns>
-        Task<FeedChunk?> TryFindEpochFeedAsync(byte[] account, byte[] topic, DateTimeOffset at, EpochFeedIndex? knownNearEpochIndex);
+        Task<SwarmFeedChunk?> TryFindEpochFeedAsync(byte[] account, byte[] topic, DateTimeOffset at, EpochFeedIndex? knownNearEpochIndex);
 
-        Task<FeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at, EpochFeedIndex? knownNearEpochIndex);
+        Task<SwarmFeedChunk?> TryFindEpochFeedAsync(string account, byte[] topic, DateTimeOffset at, EpochFeedIndex? knownNearEpochIndex);
 
-        Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index);
+        Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index);
 
-        Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
+        Task<SwarmFeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
 
-        Task<FeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index);
+        Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index);
     }
 }

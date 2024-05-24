@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Services.Feeds.Models;
+using Etherna.BeeNet.Models;
 using System;
 
 namespace Etherna.BeeNet.Extensions
@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.Extensions
         {
             ArgumentNullException.ThrowIfNull(dateTimeByteArray, nameof(dateTimeByteArray));
 
-            if (dateTimeByteArray.Length != FeedChunk.TimeStampByteSize)
+            if (dateTimeByteArray.Length != SwarmFeedChunk.TimeStampSize)
                 throw new ArgumentOutOfRangeException(nameof(dateTimeByteArray), "Invalid date time byte array length");
 
             var fixedDateTimeByteArray = new byte[dateTimeByteArray.Length]; //don't reverse original
