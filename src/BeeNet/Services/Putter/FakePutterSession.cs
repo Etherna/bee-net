@@ -16,8 +16,12 @@ using Etherna.BeeNet.Models;
 
 namespace Etherna.BeeNet.Services.Putter
 {
-    public interface IPutter
+    public class FakePutterSession : IPutterSession
     {
-        void Put(SwarmChunk swarmChunk);
+        public IStoragePutter Putter { get; } = new FakeStoragePutter();
+
+        public void Done(SwarmAddress address) { }
+
+        public void Cleanup() { }
     }
 }

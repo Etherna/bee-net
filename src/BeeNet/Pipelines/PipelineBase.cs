@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Pipelines
         
         // Constructor.
         protected PipelineBase(
-            IPutter putter,
+            IStoragePutter putter,
             RedundancyLevel redundancyLevel,
             PipelineStageBase startStage)
         {
@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Pipelines
         }
 
         // Properties.
-        public IPutter Putter { get; }
+        public IStoragePutter Putter { get; }
         public RedundancyLevel RedundancyLevel { get; }
         
         // Methods.

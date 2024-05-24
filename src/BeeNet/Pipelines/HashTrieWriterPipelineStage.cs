@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Pipelines
             int refLen,
             RedundancyParams redundancyParams,
             PipelineStageBase nextStage,
-            IPutter putter)
+            IStoragePutter putter)
             : base(nextStage)
         {
             RefSize = refLen;
@@ -148,7 +148,7 @@ namespace Etherna.BeeNet.Pipelines
 
             await FeedNextAsync(args).ConfigureAwait(false);
             
-            await WriteToIntermediateLevelAsync(level + 1, false, args.Span.ToArray(), args.Reference!, args.EncryptionKey!).ConfigureAwait(false);
+            await WriteToIntermediateLevelAsync(level + 1, false, args.Span.ToArray(), args.Address!.Value.ToByteArray(), args.EncryptionKey!).ConfigureAwait(false);
             await RedundancyParams.ChunkWriteAsync(level, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
             
             // this "truncates" the current level that was wrapped

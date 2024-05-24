@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True if content needs to be encrypted</param>
         /// <param name="redundancyLevel">Level of redundancy on chunks</param>
         /// <returns>The file hash</returns>
-        public Task<SwarmAddress> GetFileHashAsync(
+        public async Task<SwarmAddress> GetFileHashAsync(
             Stream stream,
             bool encrypt,
             RedundancyLevel redundancyLevel)
@@ -42,8 +42,12 @@ namespace Etherna.BeeNet.Services
                 throw new NotImplementedException("Redundancy is not implemented");
             
             // Build pipeline.
-            var putter = new CalculatorPutter();
-            return GetFileHashHelperAsync(stream, encrypt, redundancyLevel, putter);
+            var putter = new SessionWrapperPutter(new FakePutterSession(), new PostageStamper());
+            
+            using PipelineBase pipeline = encrypt ?
+                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
+                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
+            return await pipeline.FeedAsync(stream).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,26 +70,16 @@ namespace Etherna.BeeNet.Services
             var putter = new StamperPutter(batchId);
 
             // Get file hash.
-            var fileHash = await GetFileHashHelperAsync(stream, encrypt, redundancyLevel, putter).ConfigureAwait(false);
+            using PipelineBase pipeline = encrypt ?
+                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
+                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
+            var fileHash =  await pipeline.FeedAsync(stream).ConfigureAwait(false);
             name ??= fileHash.ToString();
             
             // Create manifest.
             
             // Return manifest hash.
             throw new NotImplementedException();
-        }
-        
-        // Helpers.
-        private static async Task<SwarmAddress> GetFileHashHelperAsync(
-            Stream stream,
-            bool encrypt,
-            RedundancyLevel redundancyLevel,
-            IPutter putter)
-        {
-            using PipelineBase pipeline = encrypt ?
-                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
-                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
-            return await pipeline.FeedAsync(stream).ConfigureAwait(false);
         }
     }
 }

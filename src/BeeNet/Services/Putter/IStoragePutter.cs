@@ -12,21 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Services.Putter;
+using Etherna.BeeNet.Models;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.Services.Putter
 {
-    internal class ShortPipelineStage : PipelineStageBase
+    public interface IStoragePutter
     {
-        // Constructor.
-        private ShortPipelineStage(PipelineStageBase? nextStage) : base(nextStage) { }
-        
-        // Builder.
-        public static ShortPipelineStage BuildNewStage(IStoragePutter putter)
-        {
-            var storeWriter = new StoreWriterPipelineStage(putter, null);
-            var next = new ChunkBmtPipelineStage(storeWriter);
-            return new ShortPipelineStage(next);
-        }
+        void Put(SwarmChunk chunk);
     }
 }

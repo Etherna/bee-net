@@ -25,13 +25,13 @@ namespace Etherna.BeeNet.Services.Putter
     /// <summary>
     /// Implements the integration of dispersed replicas in chunk upload
     /// </summary>
-    public class ReplicaPutter : IPutter
+    public class ReplicaPutter : IStoragePutter
     {
-        private readonly IPutter nextPutter;
+        private readonly IStoragePutter nextPutter;
         private readonly RedundancyLevel redundancyLevel;
 
         public ReplicaPutter(
-            IPutter nextPutter,
+            IStoragePutter nextPutter,
             RedundancyLevel redundancyLevel)
         {
             this.nextPutter = nextPutter;
@@ -39,21 +39,21 @@ namespace Etherna.BeeNet.Services.Putter
         }
 
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        public void Put(SwarmChunk swarmChunk)
+        public void Put(SwarmChunk chunk)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunk, nameof(swarmChunk));
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             
             var errs = new ConcurrentBag<Exception>();
             try
             {
-                nextPutter.Put(swarmChunk);
+                nextPutter.Put(chunk);
             }
             catch (Exception e)
             {
                 errs.Add(e);
             }
 
-            var rr = new Replicator(swarmChunk.Address, redundancyLevel);
+            var rr = new Replicator(chunk.Address, redundancyLevel);
 
             var tasks = rr.C.Select(r =>
             {

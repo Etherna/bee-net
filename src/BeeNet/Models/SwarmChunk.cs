@@ -46,6 +46,9 @@ namespace Etherna.BeeNet.Models
         public ReadOnlySpan<byte> Data => _data;
         public ReadOnlySpan<byte> Span => _span;
         
+        // Internal properties.
+        internal PostageStamp? PostageStamp { get; set; }
+        
         // Static methods.
         public static byte[] LengthToSpan(ulong length)
         {

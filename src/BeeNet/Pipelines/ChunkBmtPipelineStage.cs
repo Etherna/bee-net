@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Pipelines
             if (args.Data.Length > SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
 
-            args.Reference = SwarmChunkBmtHasher.Hash(
+            args.Address = SwarmChunkBmtHasher.Hash(
                 args.Data[..SwarmChunk.SpanSize],
                 args.Data[SwarmChunk.SpanSize..]);
 

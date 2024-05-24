@@ -21,11 +21,11 @@ namespace Etherna.BeeNet.Pipelines
 {
     internal class StoreWriterPipelineStage : PipelineStageBase
     {
-        private readonly IPutter putter;
+        private readonly IStoragePutter putter;
 
         // Constructor.
         public StoreWriterPipelineStage(
-            IPutter putter,
+            IStoragePutter putter,
             PipelineStageBase? nextStage)
             : base(nextStage)
         {
@@ -36,10 +36,9 @@ namespace Etherna.BeeNet.Pipelines
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
-            if (args.Reference is null)
-                throw new InvalidOperationException();
+            if (args.Address is null) throw new InvalidOperationException();
 
-            putter.Put(new SwarmChunk(new SwarmAddress(args.Reference), args.Data.ToArray()));
+            putter.Put(new SwarmChunk(args.Address.Value, args.Data.ToArray()));
 
             await FeedNextAsync(args).ConfigureAwait(false);
         }

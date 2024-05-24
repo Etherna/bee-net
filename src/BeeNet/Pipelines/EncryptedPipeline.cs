@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Pipelines
     {
         // Constructor.
         protected EncryptedPipeline(
-            IPutter putter,
+            IStoragePutter putter,
             RedundancyLevel redundancyLevel,
             PipelineStageBase startStage)
             : base(putter, redundancyLevel, startStage)
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Pipelines
 
         // Factory methods.
         public static EncryptedPipeline BuildPipeline(
-            IPutter putter,
+            IStoragePutter putter,
             RedundancyLevel redundancyLevel)
         {
             throw new System.NotImplementedException();

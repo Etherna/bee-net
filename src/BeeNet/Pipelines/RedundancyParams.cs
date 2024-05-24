@@ -159,7 +159,7 @@ namespace Etherna.BeeNet.Pipelines
                     span: span);
                 await pipeLine.FeedAsync(args).ConfigureAwait(false);
 
-                await callback(chunkLevel + 1, span, args.Reference!).ConfigureAwait(false);
+                await callback(chunkLevel + 1, span, args.Address!.Value.ToByteArray()).ConfigureAwait(false);
             }
             bufferCursor[chunkLevel] = 0;
         }

@@ -13,14 +13,30 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using System;
 
 namespace Etherna.BeeNet.Services.Putter
 {
-    public class CalculatorPutter : IPutter
+    public class SessionWrapperPutter : IStoragePutter
     {
-        public void Put(SwarmChunk swarmChunk)
+        // Constructor.
+        public SessionWrapperPutter(IPutterSession session, IPostageStamper stamper)
         {
-            throw new System.NotImplementedException();
+            Session = session;
+            Stamper = stamper;
+        }
+        
+        // Properties.
+        public IPutterSession Session { get; }
+        public IPostageStamper Stamper { get; }
+
+        // Methods.
+        public void Put(SwarmChunk chunk)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            
+            chunk.PostageStamp = Stamper.Stamp(chunk.Address);
+            Session.Putter.Put(chunk);
         }
     }
 }

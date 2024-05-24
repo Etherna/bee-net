@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Services.Putter;
+using Etherna.BeeNet.Models;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.Services.Putter
 {
-    internal class ShortPipelineStage : PipelineStageBase
+    public interface IPutterSession
     {
-        // Constructor.
-        private ShortPipelineStage(PipelineStageBase? nextStage) : base(nextStage) { }
-        
-        // Builder.
-        public static ShortPipelineStage BuildNewStage(IStoragePutter putter)
-        {
-            var storeWriter = new StoreWriterPipelineStage(putter, null);
-            var next = new ChunkBmtPipelineStage(storeWriter);
-            return new ShortPipelineStage(next);
-        }
+        IStoragePutter Putter { get; }
+
+        /// <summary>
+        /// Close the session and optionally assign a SwarmAddress to this session
+        /// </summary>
+        /// <param name="address"></param>
+        void Done(SwarmAddress address);
+
+        /// <summary>
+        /// Cleanup any state related to this session in case of any error
+        /// </summary>
+        void Cleanup();
     }
 }
