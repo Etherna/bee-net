@@ -67,32 +67,32 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<bool> CheckChunkExistsAsync(
-            string address,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Check if content is available</summary>
-        /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
+        /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<StewardshipGet> CheckIsContentAvailableAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Validate pinned chunks integerity
         /// </summary>
-        /// <param name="reference"></param>
+        /// <param name="address"></param>
         /// <returns></returns>
         Task<CheckPinsResult> CheckPinsAsync(
-            string? reference,
+            SwarmAddress? address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Connect to address</summary>
-        /// <param name="address">Underlay address of peer</param>
+        /// <param name="peerAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> ConnectToPeerAsync(
-            string address,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Create an initial feed root manifest</summary>
@@ -113,34 +113,34 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default);
 
         /// <summary>Pin the root hash with the given reference</summary>
-        /// <param name="reference">Swarm reference of the root hash</param>
+        /// <param name="address">Swarm reference of the root hash</param>
         /// <returns>Pin already exists, so no operation</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<MessageResponse> CreatePinAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Create Tag</summary>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> CreateTagAsync(
-            string address,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
-        /// <param name="address">Swarm address of peer</param>
+        /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Disconnected peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<MessageResponse> DeletePeerAsync(
-            string address,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Unpin the root hash with the given reference</summary>
-        /// <param name="reference">Swarm reference of the root hash</param>
+        /// <param name="address">Swarm reference of the root hash</param>
         /// <returns>Unpinning root hash with reference</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<MessageResponse> DeletePinAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Delete Tag information using Uid</summary>
@@ -232,15 +232,15 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<IEnumerable<PostageBatchShort>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
-        /// <param name="address">Swarm address of peer</param>
+        /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<PeerBalance> GetBalanceWithPeerAsync(
-            string address,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get referenced data</summary>
-        /// <param name="reference">Swarm address reference to content</param>
+        /// <param name="address">Swarm address reference to content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -248,7 +248,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Stream> GetBytesAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -261,7 +261,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task GetBytesHeadAsync(string address, CancellationToken cancellationToken = default);
+        Task GetBytesHeadAsync(SwarmAddress address, CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
@@ -284,11 +284,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<ChequebookBalance> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get last cashout action for the peer</summary>
-        /// <param name="peerId">Swarm address of peer</param>
+        /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<ChequebookCashoutGet> GetChequeBookCashoutForPeerAsync(
-            string peerId,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get last cheques for the peer</summary>
@@ -300,20 +300,29 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="reference">Swarm address of chunk</param>
+        /// <param name="address">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Stream> GetChunkAsync(
-            SwarmAddress reference,
+        Task<SwarmChunk> GetChunkAsync(
+            SwarmAddress address,
+            bool? swarmCache = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Get Chunk</summary>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <returns>Retrieved chunk content</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<Stream> GetChunkStreamAsync(
+            SwarmAddress address,
             bool? swarmCache = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get the past due consumption balance with a specific peer</summary>
-        /// <param name="address">Swarm address of peer</param>
+        /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<PeerBalance> GetConsumedBalanceWithPeerAsync(
-            string address,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Find feed update</summary>
@@ -333,7 +342,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default);
 
         /// <summary>Get file or index document from a collection of files</summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -341,7 +350,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Models.FileResponse> GetFileAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -359,7 +368,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default);
 
         /// <summary>Get referenced file from a collection of files</summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -367,7 +376,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Models.FileResponse> GetFileWithPathAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             string path,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -397,11 +406,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<IEnumerable<PendingTransaction>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
-        /// <param name="reference">Swarm reference of the root hash</param>
+        /// <param name="address">Swarm reference of the root hash</param>
         /// <returns>Reference of the pinned root hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> GetPinStatusAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get an individual postage batch status</summary>
@@ -432,11 +441,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<ReserveState> GetReserveStateAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get amount of sent and received from settlements with a peer</summary>
-        /// <param name="address">Swarm address of peer</param>
+        /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SettlementData> GetSettlementsWithPeerAsync(
-            string address,
+            string peerAddress,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get extended bucket data of a batch</summary>
@@ -499,11 +508,11 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default);
 
         /// <summary>Reupload a root hash to the network</summary>
-        /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
+        /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task ReuploadContentAsync(
-            SwarmAddress reference,
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Send to recipient or target with Postal Service for Swarm</summary>

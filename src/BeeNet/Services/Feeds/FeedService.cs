@@ -166,14 +166,14 @@ namespace Etherna.BeeNet.Services.Feeds
         public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
             TryGetFeedChunkAsync(SwarmFeedChunk.BuildReferenceHash(account, topic, index), index);
 
-        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index)
+        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkAddress, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference).ConfigureAwait(false);
+                using var chunkStream = await gatewayClient.GetChunkStreamAsync(chunkAddress).ConfigureAwait(false);
                 using var chunkMemoryStream = new MemoryStream();
                 await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
-                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
+                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkAddress);
             }
             catch (BeeNetGatewayApiException)
             {

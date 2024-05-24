@@ -49,6 +49,6 @@ namespace Etherna.BeeNet.Services.Feeds
 
         Task<SwarmFeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
 
-        Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkReference, FeedIndexBase index);
+        Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkAddress, FeedIndexBase index);
     }
 }

@@ -76,16 +76,16 @@ namespace Etherna.BeeNet.Services
         }
         
         // Helpers.
-        private static Task<SwarmAddress> GetFileHashHelperAsync(
+        private static async Task<SwarmAddress> GetFileHashHelperAsync(
             Stream stream,
             bool encrypt,
             RedundancyLevel redundancyLevel,
             IPutter putter)
         {
-            PipelineBase pipeline = encrypt ?
+            using PipelineBase pipeline = encrypt ?
                 EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
                 DefaultPipeline.BuildPipeline(putter, redundancyLevel);
-            return pipeline.FeedAsync(stream);
+            return await pipeline.FeedAsync(stream).ConfigureAwait(false);
         }
     }
 }
