@@ -16,8 +16,11 @@ using System;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class UlongExtensions
+    public static class LongExtensions
     {
+        public static byte[] UnixDateTimeToByteArray(this long unixDateTime) =>
+            ((ulong)unixDateTime).UnixDateTimeToByteArray();
+        
         public static byte[] UnixDateTimeToByteArray(this ulong unixDateTime)
         {
             var byteArrayDateTime = BitConverter.GetBytes(unixDateTime);
