@@ -20,18 +20,12 @@ namespace Etherna.BeeNet.Models
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class PostageStamp
     {
-        // Fields.
-        private byte[] _batchId;
-        
         // Constructor.
-        public PostageStamp(byte[] batchId, byte[] index, byte[] timeStamp, byte[] sig)
+        public PostageStamp(PostageBatchId batchId, byte[] index, DateTimeOffset timeStamp, byte[] sig)
         {
             ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
             
-            if (batchId.Length != PostageBatch.BatchIdSize)
-                throw new ArgumentOutOfRangeException(nameof(batchId));
-            
-            _batchId = batchId;
+            BatchId = batchId;
             Index = index;
             TimeStamp = timeStamp;
             Sig = sig;
@@ -40,7 +34,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Postage batch ID
         /// </summary>
-        public ReadOnlySpan<byte> BatchId => _batchId;
+        public PostageBatchId BatchId { get; }
 
         /// <summary>
         /// index of the batch
@@ -50,7 +44,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// to signal order when assigning the indexes to multiple chunks
         /// </summary>
-        public byte[] TimeStamp { get; }
+        public DateTimeOffset TimeStamp { get; }
 
         /// <summary>
         /// common r[32]s[32]v[1]-style 65 byte ECDSA signature of batchID|index|address by owner or grantee

@@ -22,40 +22,46 @@ namespace Etherna.BeeNet.Services.Putter.Models
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public abstract class StampIssuerBase
     {
+        // Fields.
+        private readonly uint[] _buckets;
+        
         // Consts.
         public const int BucketDepth = 16;
         public const int IndexSize = 8;
         public const int StampSize = 113;
         
         // Constructor.
-        protected StampIssuerBase(byte[] batchId)
+        protected StampIssuerBase(
+            string? label,
+            string keyId,
+            PostageBatchId batchId,
+            long batchAmount,
+            byte batchDepth,
+            byte bucketDepth,
+            ulong blockNumber,
+            bool immutableFlag)
         {
-            BatchID = batchId;
-            Buckets = Array.Empty<uint>();
+            BatchAmount = batchAmount;
+            BatchId = batchId;
+            BatchDepth = batchDepth;
+            BlockNumber = blockNumber;
+            _buckets = new uint[1 << bucketDepth];
+            ImmutableFlag = immutableFlag;
+            KeyId = keyId;
+            Label = label;
         }
         
         // Properties.
-        /// <summary>
-        /// Label to identify the batch period/importance
-        /// </summary>
-        public string? Label { get; set; }
-        
-        /// <summary>
-        /// Owner identity
-        /// </summary>
-        /// <returns></returns>
-        public string? KeyID { get; set; }
-        
-        /// <summary>
-        /// The batch stamps are issued from
-        /// </summary>
-        public byte[] BatchID { get; set; }
-        
         /// <summary>
         /// Amount paid for the batch
         /// </summary>
         /// <returns></returns>
         public long BatchAmount { get; set; }
+        
+        /// <summary>
+        /// The batch stamps are issued from
+        /// </summary>
+        public PostageBatchId BatchId { get; }
         
         /// <summary>
         /// Batch depth: batch size = 2^{depth}
@@ -64,55 +70,66 @@ namespace Etherna.BeeNet.Services.Putter.Models
         public byte BatchDepth { get; set; }
         
         /// <summary>
-        /// Collision Buckets: counts per neighbourhoods (limited to 2^{batchdepth-bucketdepth})
-        /// </summary>
-        public uint[] Buckets { get; set; }
-
-        public uint BucketUpperBound => (uint)1 << (BatchDepth - BucketDepth);
-        
-        /// <summary>
-        /// the count of the fullest bucket
-        /// </summary>
-        /// <returns></returns>
-        public uint MaxBucketCount { get; set; }
-        
-        /// <summary>
         /// BlockNumber when this batch was created
         /// </summary>
         /// <returns></returns>
         public ulong BlockNumber { get; set; }
+
+        /// <summary>
+        /// Collision Buckets: counts per neighbourhoods
+        /// </summary>
+        public ReadOnlySpan<uint> Buckets => _buckets;
+
+        public uint BucketUpperBound => (uint)1 << (BatchDepth - BucketDepth);
         
         /// <summary>
         /// Specifies immutability of the created batch
         /// </summary>
         /// <returns></returns>
         public bool ImmutableFlag { get; set; }
+        
+        /// <summary>
+        /// Owner identity
+        /// </summary>
+        /// <returns></returns>
+        public string KeyId { get; set; }
+        
+        /// <summary>
+        /// Label to identify the batch period/importance
+        /// </summary>
+        public string? Label { get; set; }
+        
+        /// <summary>
+        /// the count of the fullest bucket
+        /// </summary>
+        /// <returns></returns>
+        public uint MaxBucketCount { get; set; }
 
         // Methods.
         /// <summary>
-        /// 
+        /// Increment bucket collisions
         /// </summary>
         /// <param name="address"></param>
         /// <returns>BatchIndex</returns>
         public byte[] Increment(SwarmAddress address)
         {
-            var bIdx = ToBucket(address);
-            var bCnt = Buckets[bIdx];
+            var bucketIndex = ToBucketIndex(address);
+            var bucketCount = _buckets[bucketIndex];
 
-            if (bCnt == BucketUpperBound)
+            if (bucketCount == BucketUpperBound)
             {
                 if (ImmutableFlag)
                     throw new InvalidOperationException("Immutable postage overflowed");
 
-                bCnt = 0;
-                Buckets[bIdx] = 0;
+                bucketCount = 0;
+                _buckets[bucketIndex] = 0;
             }
 
-            Buckets[bIdx]++;
-            if (Buckets[bIdx] > MaxBucketCount)
-                MaxBucketCount = Buckets[bIdx];
+            _buckets[bucketIndex]++;
+            if (_buckets[bucketIndex] > MaxBucketCount)
+                MaxBucketCount = _buckets[bucketIndex];
 
-            return IndexToBytes(bIdx, bCnt);
+            return IndexToBytes(bucketIndex, bucketCount);
         }
 
         // Helpers.
@@ -125,19 +142,18 @@ namespace Etherna.BeeNet.Services.Putter.Models
         /// <param name="index"></param>
         private static byte[] IndexToBytes(uint bucket, uint index)
         {
-            var buf = new byte[IndexSize];
-            BinaryPrimitives.WriteUInt32BigEndian(buf, bucket);
-            BinaryPrimitives.WriteUInt32BigEndian(buf.AsSpan()[4..], index);
-            return buf;
+            var buffer = new byte[IndexSize];
+            BinaryPrimitives.WriteUInt32BigEndian(buffer, bucket);
+            BinaryPrimitives.WriteUInt32BigEndian(buffer.AsSpan()[4..], index);
+            return buffer;
         }
         
-        private static uint ToBucket(SwarmAddress address)
+        private static uint ToBucketIndex(SwarmAddress address)
         {
-            byte[] firstFourBytes = address.ToByteArray()[..4];
+            var uintBytes = address.ToByteArray()[..sizeof(uint)];
             if (BitConverter.IsLittleEndian)
-                Array.Reverse(firstFourBytes);
-            var result = BitConverter.ToUInt32(firstFourBytes, 0);
-            return result >> (32 - BucketDepth);
+                Array.Reverse(uintBytes);
+            return BitConverter.ToUInt32(uintBytes, 0) >> (sizeof(uint) * 8 - BucketDepth);
         }
     }
 }

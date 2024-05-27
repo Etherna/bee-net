@@ -19,8 +19,15 @@ namespace Etherna.BeeNet.Services.Putter.Models
     public class FakeStampIssuer : StampIssuerBase
     {
         public FakeStampIssuer()
-            : base(new byte[PostageBatch.BatchIdSize])
-        {
-        }
+            : base(
+                null,
+                Nethereum.Util.AddressUtil.ZERO_ADDRESS,
+                PostageBatchId.Zero,
+                10000000,
+                17,
+                16,
+                0,
+                true)
+        { }
     }
 }

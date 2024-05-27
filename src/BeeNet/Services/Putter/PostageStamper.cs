@@ -44,23 +44,23 @@ namespace Etherna.BeeNet.Services.Putter
         public PostageStamp Stamp(SwarmAddress address)
         {
             var item = new StampStoreItem(
-                Issuer.BatchID!,
+                Issuer.BatchId,
                 address);
 
             if (!Store.TryGet(item))
                 item.BatchIndex = Issuer.Increment(address);
-            item.BatchTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().UnixDateTimeToByteArray();
+            item.BatchTimestamp = DateTimeOffset.UtcNow;
             Store.Put(item);
 
             var toSign = ToSignDigest(
                 address,
-                Issuer.BatchID,
+                Issuer.BatchId,
                 item.BatchIndex!,
-                item.BatchTimestamp);
+                item.BatchTimestamp.Value);
 
             var sig = Signer.Sign(toSign);
 
-            return new PostageStamp(Issuer.BatchID, item.BatchIndex!, item.BatchTimestamp, sig);
+            return new PostageStamp(Issuer.BatchId, item.BatchIndex!, item.BatchTimestamp.Value, sig);
         }
 
         // Helpers.
@@ -72,11 +72,11 @@ namespace Etherna.BeeNet.Services.Putter
         /// <param name="index"></param>
         /// <param name="timeStamp"></param>
         /// <returns></returns>
-        private static byte[] ToSignDigest(SwarmAddress address, byte[] batchId, byte[] index, byte[] timeStamp) =>
+        private static byte[] ToSignDigest(SwarmAddress address, PostageBatchId batchId, byte[] index, DateTimeOffset timeStamp) =>
             Keccak256.ComputeHash(
                 address.ToByteArray()
-                    .Concat(batchId)
+                    .Concat(batchId.ToByteArray())
                     .Concat(index)
-                    .Concat(timeStamp).ToArray());
+                    .Concat(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray()).ToArray());
     }
 }

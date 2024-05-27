@@ -21,33 +21,33 @@ namespace Etherna.BeeNet.Models
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Consts.
-        public const int HashByteSize = 32;
+        public const int HashSize = 32;
         
         // Fields.
         private readonly byte[] byteAddress;
 
         // Constructors.
-        public SwarmAddress(byte[] byteAddress)
+        public SwarmAddress(byte[] address)
         {
-            ArgumentNullException.ThrowIfNull(byteAddress, nameof(byteAddress));
-            if (byteAddress.Length != HashByteSize)
-                throw new ArgumentOutOfRangeException(nameof(byteAddress));
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            if (address.Length != HashSize)
+                throw new ArgumentOutOfRangeException(nameof(address));
             
-            this.byteAddress = byteAddress;
+            byteAddress = address;
         }
 
-        public SwarmAddress(string strAddress)
+        public SwarmAddress(string address)
         {
-            ArgumentNullException.ThrowIfNull(strAddress, nameof(strAddress));
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
             
-            byteAddress = strAddress.HexToByteArray();
+            byteAddress = address.HexToByteArray();
             
-            if (byteAddress.Length != HashByteSize)
-                throw new ArgumentOutOfRangeException(nameof(strAddress));
+            if (byteAddress.Length != HashSize)
+                throw new ArgumentOutOfRangeException(nameof(address));
         }
         
         // Static properties.
-        public static SwarmAddress Zero { get; } = new byte[HashByteSize];
+        public static SwarmAddress Zero { get; } = new byte[HashSize];
 
         // Methods.
         public bool Equals(SwarmAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);

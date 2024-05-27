@@ -19,9 +19,6 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class PostageBatch
     {
-        // Consts.
-        public const int BatchIdSize = 32;
-        
         // Constructors.
         internal PostageBatch(Clients.DebugApi.Response39 batch)
         {
@@ -92,7 +89,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public string Id { get; }
+        public PostageBatchId Id { get; }
         public long? AmountPaid { get; }
         public int BlockNumber { get; }
         public int BucketDepth { get; }

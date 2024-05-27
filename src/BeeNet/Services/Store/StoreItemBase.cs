@@ -26,10 +26,10 @@ namespace Etherna.BeeNet.Services.Store
         public const int StampTimestampSize = 8;
         
         protected StoreItemBase(
-            byte[] batchId,
+            PostageBatchId batchId,
             SwarmAddress chunkAddress)
         {
-            BatchID = batchId;
+            BatchId = batchId;
             ChunkAddress = chunkAddress;
         }
 
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services.Store
         /// The namespace of other related item
         /// </summary>
         public byte[] NamespaceByteArray { get; private set; } = default!;
-        public byte[] BatchID { get; private set; }
+        public PostageBatchId BatchId { get; private set; }
         public byte[] StampIndex { get; private set; } = default!;
         public byte[] StampTimestamp { get; private set; } = default!;
         public SwarmAddress ChunkAddress { get; private set; }
@@ -59,21 +59,19 @@ namespace Etherna.BeeNet.Services.Store
         {
             if (NamespaceByteArray.Length == 0)
                 throw new InvalidOperationException();
-            if (BatchID.Length != SwarmChunkBmt.SegmentSize)
-                throw new InvalidOperationException();
             if (StampIndex.Length != StampIndexSize)
                 throw new InvalidOperationException();
 
             var buf = new byte[
-                8 + NamespaceByteArray.Length + SwarmChunkBmt.SegmentSize + StampIndexSize + StampTimestampSize + SwarmChunkBmt.SegmentSize + 1];
+                8 + NamespaceByteArray.Length + PostageBatchId.BatchIdSize + StampIndexSize + StampTimestampSize + SwarmChunkBmt.SegmentSize + 1];
 
             var l = 0;
             BinaryPrimitives.WriteUInt64LittleEndian(buf.AsSpan()[..8], (ulong)NamespaceByteArray.Length);
             l += 8;
             Array.Copy(NamespaceByteArray, buf, NamespaceByteArray.Length);
             l += NamespaceByteArray.Length;
-            Array.Copy(BatchID, 0, buf, l, SwarmChunkBmt.SegmentSize);
-            l += SwarmChunkBmt.SegmentSize;
+            BatchId.ToReadOnlySpan().CopyTo(buf.AsSpan()[l..]);
+            l += PostageBatchId.BatchIdSize;
             Array.Copy(StampIndex, 0, buf, l, StampIndexSize);
             l += StampIndexSize;
             Array.Copy(StampTimestamp, 0, buf, l, StampTimestampSize);
@@ -99,7 +97,7 @@ namespace Etherna.BeeNet.Services.Store
             var l = 8;
             NamespaceByteArray = bytes[l..(l + nsLen)];
             l += nsLen;
-            BatchID = bytes[l..(l + SwarmChunkBmt.SegmentSize)];
+            BatchId = bytes[l..(l + SwarmChunkBmt.SegmentSize)];
             l += SwarmChunkBmt.SegmentSize;
             StampIndex = bytes[l..(l + StampIndexSize)];
             l += StampIndexSize;

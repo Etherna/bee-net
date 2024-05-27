@@ -130,8 +130,8 @@ namespace Etherna.BeeNet.Pipelines
             {
                 // we do not add span of parity chunks to the common because that is gibberish
                 offset += SwarmChunk.SpanSize;
-                var hash = data[offset..(offset + SwarmAddress.HashByteSize)]; // parity reference has always hash length
-                offset += SwarmAddress.HashByteSize;
+                var hash = data[offset..(offset + SwarmAddress.HashSize)]; // parity reference has always hash length
+                offset += SwarmAddress.HashSize;
                 hashes = hashes.Concat(hash);
                 parities++;
             }
@@ -266,7 +266,7 @@ namespace Etherna.BeeNet.Pipelines
 	        if (RedundancyParams.Level != RedundancyLevel.None)
             {
                 var rootData = RedundancyParams.GetRootData();
-                ReplicaPutter.Put(new SwarmChunk(new SwarmAddress(rootHash[..SwarmAddress.HashByteSize]), rootData, true));
+                ReplicaPutter.Put(new SwarmChunk(new SwarmAddress(rootHash[..SwarmAddress.HashSize]), rootData, true));
 	        }
 
             return rootHash;

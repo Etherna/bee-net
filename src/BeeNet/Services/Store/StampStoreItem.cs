@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Nethereum.Hex.HexConvertors.Extensions;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Services.Store
@@ -22,18 +22,18 @@ namespace Etherna.BeeNet.Services.Store
     public class StampStoreItem : StoreItemBase
     {
         public StampStoreItem(
-            byte[] batchId,
+            PostageBatchId batchId,
             SwarmAddress chunkAddress) :
             base(batchId, chunkAddress)
         { }
 
             // Values.
         public byte[]? BatchIndex { get; set; }
-        public byte[]? BatchTimestamp { get; set; }
+        public DateTimeOffset? BatchTimestamp { get; set; }
 
         public override string Id =>
             string.Join("/",
-                BatchID.ToHex(),
+                BatchId.ToString(),
                 ChunkAddress.ToString());
 
         public override string NamespaceStr => "stampItem";
