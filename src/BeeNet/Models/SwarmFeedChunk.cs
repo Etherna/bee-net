@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Models
             FeedIndexBase index,
             byte[] data,
             SwarmAddress address) :
-            base(address, data)
+            base(address, data, false)
         {
             if (data.Length < MinDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be shorter than {TimeStampSize} bytes");
@@ -68,14 +68,15 @@ namespace Etherna.BeeNet.Models
             return GetType() == obj.GetType() &&
                 Address.Equals(objFeedChunk.Address) &&
                 Data.SequenceEqual(objFeedChunk.Data) &&
-                Index.Equals(objFeedChunk.Index);
+                Index.Equals(objFeedChunk.Index) &&
+                Span.SequenceEqual(objFeedChunk.Span);
         }
-
-
+        
         public override int GetHashCode() =>
             Address.GetHashCode() ^
-            Data.GetHashCode() ^
-            Index.GetHashCode();
+            _data.GetHashCode() ^
+            Index.GetHashCode() ^
+            _span.GetHashCode();
 
         // Static helpers.
         public static byte[] BuildChunkPayload(byte[] payload, ulong? timestamp = null)

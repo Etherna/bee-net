@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
@@ -19,9 +20,18 @@ namespace Etherna.BeeNet.Models
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class PostageStamp
     {
+        // Fields.
+        private byte[] _batchId;
+        
+        // Constructor.
         public PostageStamp(byte[] batchId, byte[] index, byte[] timeStamp, byte[] sig)
         {
-            BatchId = batchId;
+            ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
+            
+            if (batchId.Length != PostageBatch.BatchIdSize)
+                throw new ArgumentOutOfRangeException(nameof(batchId));
+            
+            _batchId = batchId;
             Index = index;
             TimeStamp = timeStamp;
             Sig = sig;
@@ -30,7 +40,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Postage batch ID
         /// </summary>
-        public byte[] BatchId { get; }
+        public ReadOnlySpan<byte> BatchId => _batchId;
 
         /// <summary>
         /// index of the batch

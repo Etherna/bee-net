@@ -15,13 +15,13 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Services.Store
 {
     public class MemoryStore : IStore
     {
         private ConcurrentDictionary<string, byte[]> storeDictionary = new();
         
-        public bool TryGet(ItemBase item)
+        public bool TryGet(StoreItemBase item)
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
 
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
             return true;
         }
 
-        public void Put(ItemBase item)
+        public void Put(StoreItemBase item)
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
             var val = item.Marshal();
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
         }
         
         // Helpers.
-        private static string Key(ItemBase item) =>
+        private static string Key(StoreItemBase item) =>
             string.Join("/", item.NamespaceStr, item.Id);
     }
 }

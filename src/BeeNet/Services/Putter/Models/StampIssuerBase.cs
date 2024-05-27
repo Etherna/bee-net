@@ -20,7 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Etherna.BeeNet.Services.Putter.Models
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class StampIssuer
+    public abstract class StampIssuerBase
     {
         // Consts.
         public const int BucketDepth = 16;
@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
         public const int StampSize = 113;
         
         // Constructor.
-        public StampIssuer(byte[] batchId)
+        protected StampIssuerBase(byte[] batchId)
         {
             BatchID = batchId;
             Buckets = Array.Empty<uint>();

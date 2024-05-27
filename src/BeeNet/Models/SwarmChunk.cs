@@ -14,14 +14,15 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
     public class SwarmChunk
     {
         // Fields.
-        private readonly byte[] _data;
-        private readonly byte[] _span;
+        protected readonly byte[] _data;
+        protected readonly byte[] _span;
         
         // Consts.
         public const int DataSize = SwarmChunkBmt.SegmentSize * SwarmChunkBmt.SegmentsCount;
@@ -29,22 +30,35 @@ namespace Etherna.BeeNet.Models
         public const int SpanSize = 8;
         
         // Constructor.
-        public SwarmChunk(SwarmAddress address, byte[] data)
+        public SwarmChunk(SwarmAddress address, byte[] data, bool dataHasSpan)
         {
             ArgumentNullException.ThrowIfNull(address, nameof(address));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
-            if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Address = address;
-            _data = data;
-            _span = LengthToSpan((ulong)data.Length);
+            if (dataHasSpan)
+            {
+                if (data.Length > SpanAndDataSize)
+                    throw new ArgumentOutOfRangeException(nameof(data), $"Data with span can't be longer than {SpanAndDataSize} bytes");
+                
+                _span = data[..SpanSize];
+                _data = data[SpanSize..];
+            }
+            else
+            {
+                if (data.Length > DataSize)
+                    throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
+                
+                _span = LengthToSpan((ulong)data.Length);
+                _data = data;
+            }
         }
         
         // Properties.
         public SwarmAddress Address { get; }
         public ReadOnlySpan<byte> Data => _data;
         public ReadOnlySpan<byte> Span => _span;
+        public ReadOnlySpan<byte> SpanData => _span.Concat(_data).ToArray();
         
         // Internal properties.
         internal PostageStamp? PostageStamp { get; set; }

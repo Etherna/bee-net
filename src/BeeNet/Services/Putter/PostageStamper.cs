@@ -16,6 +16,7 @@ using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter.Models;
+using Etherna.BeeNet.Services.Store;
 using System;
 using System.Linq;
 
@@ -23,15 +24,26 @@ namespace Etherna.BeeNet.Services.Putter
 {
     public class PostageStamper : IPostageStamper
     {
+        // Constructor.
+        public PostageStamper(
+            StampIssuerBase issuer,
+            CryptoSigner signer,
+            IStore store)
+        {
+            Issuer = issuer;
+            Signer = signer;
+            Store = store;
+        }
+        
         // Properties.
-        public StampIssuer Issuer { get; set; } = default!;
-        public CryptoSigner Signer { get; set; } = default!;
-        public IStore Store { get; set; } = default!;
+        public StampIssuerBase Issuer { get; set; }
+        public CryptoSigner Signer { get; set; }
+        public IStore Store { get; set; }
         
         // Methods.
         public PostageStamp Stamp(SwarmAddress address)
         {
-            var item = new StampItem(
+            var item = new StampStoreItem(
                 Issuer.BatchID!,
                 address);
 

@@ -234,7 +234,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             using var memoryStream = new MemoryStream();
             await chunkDto.Stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
             var data = memoryStream.ToArray();
-            return new SwarmChunk(address, data);
+            return new SwarmChunk(address, data, false);
         }
 
         public async Task<Stream> GetChunkStreamAsync(

@@ -266,7 +266,7 @@ namespace Etherna.BeeNet.Pipelines
 	        if (RedundancyParams.Level != RedundancyLevel.None)
             {
                 var rootData = RedundancyParams.GetRootData();
-                ReplicaPutter.Put(new SwarmChunk(new SwarmAddress(rootHash[..SwarmAddress.HashByteSize]), rootData));
+                ReplicaPutter.Put(new SwarmChunk(new SwarmAddress(rootHash[..SwarmAddress.HashByteSize]), rootData, true));
 	        }
 
             return rootHash;

@@ -17,15 +17,15 @@ using System;
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Services.Store
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public abstract class ItemBase
+    public abstract class StoreItemBase
     {
         public const int StampIndexSize = 8;
         public const int StampTimestampSize = 8;
         
-        protected ItemBase(
+        protected StoreItemBase(
             byte[] batchId,
             SwarmAddress chunkAddress)
         {
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
         /// The namespace of other related item
         /// </summary>
         public byte[] NamespaceByteArray { get; private set; } = default!;
-        public byte[] BatchID { get; private set; } = default!;
+        public byte[] BatchID { get; private set; }
         public byte[] StampIndex { get; private set; } = default!;
         public byte[] StampTimestamp { get; private set; } = default!;
         public SwarmAddress ChunkAddress { get; private set; }

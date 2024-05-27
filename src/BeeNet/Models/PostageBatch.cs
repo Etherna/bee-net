@@ -14,19 +14,21 @@
 
 using System;
 using System.Globalization;
-using System.Text.Json;
 
 namespace Etherna.BeeNet.Models
 {
     public sealed class PostageBatch
     {
+        // Consts.
+        public const int BatchIdSize = 32;
+        
         // Constructors.
         internal PostageBatch(Clients.DebugApi.Response39 batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTtl = batch.BatchTTL;
+            Ttl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -43,7 +45,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTtl = batch.BatchTTL;
+            Ttl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -60,7 +62,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTtl = batch.BatchTTL;
+            Ttl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -77,7 +79,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTtl = batch.BatchTTL;
+            Ttl = batch.BatchTTL;
             Exists = batch.Exists;
             Id = batch.BatchID;
             Utilization = batch.Utilization;
@@ -92,14 +94,16 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public string Id { get; }
         public long? AmountPaid { get; }
-        /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
-        public long BatchTtl { get; }
         public int BlockNumber { get; }
         public int BucketDepth { get; }
         public int Depth { get; }
         public bool Exists { get; }
         public bool ImmutableFlag { get; }
         public string? Label { get; }
+        
+        /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
+        public long Ttl { get; }
+        
         /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
         public bool Usable { get; }
         public int? Utilization { get; }

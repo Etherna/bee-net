@@ -15,6 +15,8 @@
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Pipelines;
 using Etherna.BeeNet.Services.Putter;
+using Etherna.BeeNet.Services.Putter.Models;
+using Etherna.BeeNet.Services.Store;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -42,7 +44,12 @@ namespace Etherna.BeeNet.Services
                 throw new NotImplementedException("Redundancy is not implemented");
             
             // Build pipeline.
-            var putter = new SessionWrapperPutter(new FakePutterSession(), new PostageStamper());
+            var putter = new SessionWrapperPutter(
+                new FakePutterSession(),
+                new PostageStamper(
+                    new FakeStampIssuer(),
+                    new CryptoSigner(),
+                    new MemoryStore()));
             
             using PipelineBase pipeline = encrypt ?
                 EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :

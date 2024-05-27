@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Services.Store
 {
     public interface IStore
     {
@@ -21,12 +21,12 @@ namespace Etherna.BeeNet.Services.Putter.Models
         /// </summary>
         /// <param name="item">Item to get</param>
         /// <returns>True if item found</returns>
-        public bool TryGet(ItemBase item);
+        public bool TryGet(StoreItemBase item);
 
         /// <summary>
         /// Inserts or updates the given Item identified by its Key.ID.
         /// </summary>
         /// <param name="item">Item to put</param>
-        public void Put(ItemBase item);
+        public void Put(StoreItemBase item);
     }
 }

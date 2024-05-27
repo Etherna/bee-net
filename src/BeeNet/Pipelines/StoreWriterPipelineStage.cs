@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Pipelines
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Address is null) throw new InvalidOperationException();
 
-            putter.Put(new SwarmChunk(args.Address.Value, args.Data.ToArray()));
+            putter.Put(new SwarmChunk(args.Address.Value, args.Data.ToArray(), true));
 
             await FeedNextAsync(args).ConfigureAwait(false);
         }

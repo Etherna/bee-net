@@ -542,12 +542,12 @@ namespace Etherna.BeeNet.Services.Feeds
             var referenceHash = "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592";
             var index = new EpochFeedIndex(2, 1);
 
-            var payload = new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 };
-            var payloadStream = new MemoryStream(payload);
+            var data = new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 };
+            var dataStream = new MemoryStream(data);
 
             if (chunkExists)
                 gatewayClientMock.Setup(c => c.GetChunkStreamAsync(referenceHash, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult<Stream>(payloadStream));
+                    .Returns(Task.FromResult<Stream>(dataStream));
             else
                 gatewayClientMock.Setup(c => c.GetChunkStreamAsync(referenceHash, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
                     .Throws(new BeeNetGatewayApiException("", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
@@ -560,7 +560,7 @@ namespace Etherna.BeeNet.Services.Feeds
             {
                 Assert.NotNull(result);
                 Assert.Equal(index, result.Index);
-                Assert.Equal(payload, result.Data);
+                Assert.Equal(data, result.Data);
                 Assert.Equal(referenceHash, result.Address);
             }
             else

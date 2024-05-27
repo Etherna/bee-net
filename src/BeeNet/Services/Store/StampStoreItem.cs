@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Nethereum.Hex.HexConvertors.Extensions;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Services.Store
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    public class StampItem : ItemBase
+    public class StampStoreItem : StoreItemBase
     {
-        public StampItem(
+        public StampStoreItem(
             byte[] batchId,
             SwarmAddress chunkAddress) :
             base(batchId, chunkAddress)
@@ -33,10 +33,9 @@ namespace Etherna.BeeNet.Services.Putter.Models
 
         public override string Id =>
             string.Join("/",
-                Encoding.UTF8.GetString(NamespaceByteArray!),
-                Encoding.UTF8.GetString(BatchID!),
-                Encoding.UTF8.GetString(StampIndex!));
+                BatchID.ToHex(),
+                ChunkAddress.ToString());
 
-        public override string NamespaceStr => "stampIndex";
+        public override string NamespaceStr => "stampItem";
     }
 }
