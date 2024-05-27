@@ -16,6 +16,7 @@ using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter.Models;
+using Etherna.BeeNet.Services.Signer;
 using Etherna.BeeNet.Services.Store;
 using System;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Etherna.BeeNet.Services.Putter
         // Constructor.
         public PostageStamper(
             StampIssuerBase issuer,
-            CryptoSigner signer,
+            ISigner signer,
             IStore store)
         {
             Issuer = issuer;
@@ -37,7 +38,7 @@ namespace Etherna.BeeNet.Services.Putter
         
         // Properties.
         public StampIssuerBase Issuer { get; set; }
-        public CryptoSigner Signer { get; set; }
+        public ISigner Signer { get; set; }
         public IStore Store { get; set; }
         
         // Methods.

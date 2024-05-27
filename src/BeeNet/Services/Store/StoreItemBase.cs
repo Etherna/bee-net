@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using System;
-using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Services.Store
@@ -37,10 +35,10 @@ namespace Etherna.BeeNet.Services.Store
         /// The namespace of other related item
         /// </summary>
         public byte[] NamespaceByteArray { get; private set; } = default!;
-        public PostageBatchId BatchId { get; private set; }
+        public PostageBatchId BatchId { get; protected set; }
         public byte[] StampIndex { get; private set; } = default!;
         public byte[] StampTimestamp { get; private set; } = default!;
-        public SwarmAddress ChunkAddress { get; private set; }
+        public SwarmAddress ChunkAddress { get; protected set; }
         public bool ChunkIsImmutable  { get; private set; }
         
         /// <summary>
@@ -55,57 +53,59 @@ namespace Etherna.BeeNet.Services.Store
         public abstract string NamespaceStr { get; }
 
         // Methods.
-        public byte[] Marshal()
-        {
-            if (NamespaceByteArray.Length == 0)
-                throw new InvalidOperationException();
-            if (StampIndex.Length != StampIndexSize)
-                throw new InvalidOperationException();
+        public abstract byte[] Marshal();
+        // public byte[] Marshal()
+        // {
+        //     if (NamespaceByteArray.Length == 0)
+        //         throw new InvalidOperationException();
+        //     if (StampIndex.Length != StampIndexSize)
+        //         throw new InvalidOperationException();
+        //
+        //     var buf = new byte[
+        //         8 + NamespaceByteArray.Length + PostageBatchId.BatchIdSize + StampIndexSize + StampTimestampSize + SwarmChunkBmt.SegmentSize + 1];
+        //
+        //     var l = 0;
+        //     BinaryPrimitives.WriteUInt64LittleEndian(buf.AsSpan()[..8], (ulong)NamespaceByteArray.Length);
+        //     l += 8;
+        //     Array.Copy(NamespaceByteArray, buf, NamespaceByteArray.Length);
+        //     l += NamespaceByteArray.Length;
+        //     BatchId.ToReadOnlySpan().CopyTo(buf.AsSpan()[l..]);
+        //     l += PostageBatchId.BatchIdSize;
+        //     Array.Copy(StampIndex, 0, buf, l, StampIndexSize);
+        //     l += StampIndexSize;
+        //     Array.Copy(StampTimestamp, 0, buf, l, StampTimestampSize);
+        //     l += StampTimestampSize;
+        //     
+        //     Array.Copy(ChunkAddress.ToByteArray(), 0, buf, l, SwarmChunkBmt.SegmentSize);
+        //     l += SwarmChunkBmt.SegmentSize;
+        //     buf[l] = (byte)(ChunkIsImmutable ? 1 : 0);
+        //     return buf;
+        // }
 
-            var buf = new byte[
-                8 + NamespaceByteArray.Length + PostageBatchId.BatchIdSize + StampIndexSize + StampTimestampSize + SwarmChunkBmt.SegmentSize + 1];
-
-            var l = 0;
-            BinaryPrimitives.WriteUInt64LittleEndian(buf.AsSpan()[..8], (ulong)NamespaceByteArray.Length);
-            l += 8;
-            Array.Copy(NamespaceByteArray, buf, NamespaceByteArray.Length);
-            l += NamespaceByteArray.Length;
-            BatchId.ToReadOnlySpan().CopyTo(buf.AsSpan()[l..]);
-            l += PostageBatchId.BatchIdSize;
-            Array.Copy(StampIndex, 0, buf, l, StampIndexSize);
-            l += StampIndexSize;
-            Array.Copy(StampTimestamp, 0, buf, l, StampTimestampSize);
-            l += StampTimestampSize;
-            
-            Array.Copy(ChunkAddress.ToByteArray(), 0, buf, l, SwarmChunkBmt.SegmentSize);
-            l += SwarmChunkBmt.SegmentSize;
-            buf[l] = (byte)(ChunkIsImmutable ? 1 : 0);
-            return buf;
-        }
-        
-        public void Unmarshal(byte[] bytes)
-        {
-            ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
-            
-            if (bytes.Length < 8)
-                throw new ArgumentOutOfRangeException(nameof(bytes));
-            var nsLen = (int)BinaryPrimitives.ReadUInt64LittleEndian(bytes);
-            if (bytes.Length != 8 + nsLen + SwarmChunkBmt.SegmentSize + StampIndexSize + StampTimestampSize +
-                SwarmChunkBmt.SegmentSize + 1)
-                throw new ArgumentOutOfRangeException(nameof(bytes));
-
-            var l = 8;
-            NamespaceByteArray = bytes[l..(l + nsLen)];
-            l += nsLen;
-            BatchId = bytes[l..(l + SwarmChunkBmt.SegmentSize)];
-            l += SwarmChunkBmt.SegmentSize;
-            StampIndex = bytes[l..(l + StampIndexSize)];
-            l += StampIndexSize;
-            StampTimestamp = bytes[l..(l + StampTimestampSize)];
-            l += StampTimestampSize;
-            ChunkAddress = new SwarmAddress(bytes[l..(l + SwarmChunkBmt.SegmentSize)]);
-            l += SwarmChunkBmt.SegmentSize;
-            ChunkIsImmutable = bytes[l] == 1;
-        }
+        public abstract void Unmarshal(byte[] bytes);
+        // public void Unmarshal(byte[] bytes)
+        // {
+        //     ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
+        //     
+        //     if (bytes.Length < 8)
+        //         throw new ArgumentOutOfRangeException(nameof(bytes));
+        //     var nsLen = (int)BinaryPrimitives.ReadUInt64LittleEndian(bytes);
+        //     if (bytes.Length != 8 + nsLen + SwarmChunkBmt.SegmentSize + StampIndexSize + StampTimestampSize +
+        //         SwarmChunkBmt.SegmentSize + 1)
+        //         throw new ArgumentOutOfRangeException(nameof(bytes));
+        //
+        //     var l = 8;
+        //     NamespaceByteArray = bytes[l..(l + nsLen)];
+        //     l += nsLen;
+        //     BatchId = bytes[l..(l + SwarmChunkBmt.SegmentSize)];
+        //     l += SwarmChunkBmt.SegmentSize;
+        //     StampIndex = bytes[l..(l + StampIndexSize)];
+        //     l += StampIndexSize;
+        //     StampTimestamp = bytes[l..(l + StampTimestampSize)];
+        //     l += StampTimestampSize;
+        //     ChunkAddress = new SwarmAddress(bytes[l..(l + SwarmChunkBmt.SegmentSize)]);
+        //     l += SwarmChunkBmt.SegmentSize;
+        //     ChunkIsImmutable = bytes[l] == 1;
+        // }
     }
 }

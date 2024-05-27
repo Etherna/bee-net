@@ -186,6 +186,11 @@ namespace Etherna.BeeNet.Pipelines
         }
 
         // Protected methods.
+        protected override Task FeedImplAsync(PipelineFeedArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// returns the Swarm merkle-root content-addressed hash
         /// of an arbitrary-length binary data.

@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Services.Signer
 {
-    public class CryptoSigner
+    public interface ISigner
     {
-        public byte[] Sign(byte[] toSign)
-        {
-            throw new System.NotImplementedException();
-        }
+        byte[] Sign(byte[] toSign);
     }
 }

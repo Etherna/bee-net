@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Consts.
-        public const int HashSize = 32;
+        public const int HashSize = 32; //Keccak hash size
         
         // Fields.
         private readonly byte[] byteAddress;
@@ -54,6 +54,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress);
         public byte[] ToByteArray() => (byte[])byteAddress.Clone();
+        public ReadOnlySpan<byte> ToReadOnlySpan() => byteAddress;
         public override string ToString() => byteAddress.ToHex();
         
         // Static methods.
@@ -69,6 +70,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator SwarmAddress(byte[] value) => new(value);
         
         public static explicit operator string(SwarmAddress value) => value.ToString();
+        public static explicit operator ReadOnlySpan<byte>(SwarmAddress value) => value.ToReadOnlySpan();
         public static explicit operator byte[](SwarmAddress value) => value.ToByteArray();
     }
 }

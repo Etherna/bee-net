@@ -16,6 +16,7 @@ using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Pipelines;
 using Etherna.BeeNet.Services.Putter;
 using Etherna.BeeNet.Services.Putter.Models;
+using Etherna.BeeNet.Services.Signer;
 using Etherna.BeeNet.Services.Store;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -48,7 +49,7 @@ namespace Etherna.BeeNet.Services
                 new FakePutterSession(),
                 new PostageStamper(
                     new FakeStampIssuer(),
-                    new CryptoSigner(),
+                    new FakeSigner(),
                     new MemoryStore()));
             
             using PipelineBase pipeline = encrypt ?
