@@ -22,10 +22,15 @@ namespace Etherna.BeeNet.Clients.GatewayApi
 {
     public interface IBeeGatewayClient
     {
-        // Properties.
-        void SetAuthToken(string token);
-
         // Methods.
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all accounting associated values with all known peers
+        /// </summary>
+        /// <returns>Own accounting associated values with all known peers</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<Dictionary<string, Account>> AccountingAsync(CancellationToken cancellationToken = default);
+
         /// <summary>Authenticate - This endpoint is experimental</summary>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
@@ -475,10 +480,42 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string txHash,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Get wallet balance for BZZ and xDai
+        /// </summary>
+        /// <returns>Wallet balance info</returns>
+        Task<Wallet> GetWalletBalance(CancellationToken cancellationToken = default);
+
         /// <summary>Get configured P2P welcome message</summary>
         /// <returns>Welcome message</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all available loggers.
+        /// </summary>
+        /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get all available loggers that match the specified expression.
+        /// </summary>
+        /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
+        /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Set logger(s) verbosity level.
+        /// </summary>
+        /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
+        /// <returns>The verbosity was changed successfully.</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default);
 
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>
@@ -487,6 +524,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<string> RebroadcastTransactionAsync(
             string txHash,
             CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current status of node in redistribution game
+        /// </summary>
+        /// <returns>Redistribution status info</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Refresh the auth token - This endpoint is experimental</summary>
         /// <returns>Key</returns>
@@ -517,6 +562,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string swarmPostageBatchId,
             string? recipient = null,
             CancellationToken cancellationToken = default);
+        
+        void SetAuthToken(string token);
 
         /// <summary>Set P2P welcome message</summary>
         /// <returns>OK</returns>
@@ -524,6 +571,53 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task SetWelcomeMessageAsync(
             string welcomeMessage,
             CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Withdraw all staked amount.
+        /// </summary>
+        /// <remarks>
+        /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+        /// </remarks>
+        /// <param name="gas_price">Gas price for transaction</param>
+        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the staked amount.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint fetches the staked amount from the blockchain.
+        /// </remarks>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakeGetAsync(CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Deposit some amount for staking.
+        /// </summary>
+        /// <remarks>
+        /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+        /// </remarks>
+        /// <param name="amount">Amount of BZZ added that will be deposited for staking.</param>
+        /// <param name="gas_price">Gas price for transaction</param>
+        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Get the current status snapshot of this node.
+        /// </summary>
+        /// <returns>Returns the current node status snapshot.</returns>
+        Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Get the current status snapshot of this node connected peers.
+        /// </summary>
+        /// <returns>Returns the status snapshot of this node connected peers</returns>
+        Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Subscribe for messages on the given topic.</summary>
         /// <param name="topic">Topic name</param>
@@ -659,6 +753,19 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string swarmPostageBatchId,
             Stream body,
             bool? swarmPin = null,
+            CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="address"></param>
+        /// <param name="coin"></param>
+        /// <returns>Tx hash</returns>
+        Task<string> WalletWithdrawAsync(
+            long amount,
+            string address,
+            string coin,
             CancellationToken cancellationToken = default);
 
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>

@@ -19,17 +19,30 @@ namespace Etherna.BeeNet.Models
     public sealed class Account
     {
         // Constructors.
-        internal Account(Clients.DebugApi.Anonymous anonymous)
+        internal Account(Clients.DebugApi.Anonymous value)
         {
-            ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
 
-            Balance = anonymous.Balance;
-            ThresholdReceived = anonymous.ThresholdReceived;
-            ThresholdGiven = anonymous.ThresholdGiven;
-            SurplusBalance = anonymous.SurplusBalance;
-            ReservedBalance = anonymous.ReservedBalance;
-            ShadowReservedBalance = anonymous.ShadowReservedBalance;
-            GhostBalance = anonymous.GhostBalance;
+            Balance = value.Balance;
+            ThresholdReceived = value.ThresholdReceived;
+            ThresholdGiven = value.ThresholdGiven;
+            SurplusBalance = value.SurplusBalance;
+            ReservedBalance = value.ReservedBalance;
+            ShadowReservedBalance = value.ShadowReservedBalance;
+            GhostBalance = value.GhostBalance;
+        }
+
+        internal Account(Clients.GatewayApi.Anonymous3 value)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+
+            Balance = value.Balance;
+            ThresholdReceived = value.ThresholdReceived;
+            ThresholdGiven = value.ThresholdGiven;
+            SurplusBalance = value.SurplusBalance;
+            ReservedBalance = value.ReservedBalance;
+            ShadowReservedBalance = value.ShadowReservedBalance;
+            GhostBalance = value.GhostBalance;
         }
 
         // Properties.
