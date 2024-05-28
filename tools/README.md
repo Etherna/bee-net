@@ -19,5 +19,5 @@ Use Nswag to generate client code. Use NSwagStudio for Windows, or NSwag Cli wit
 NSwag Cli:
 
 ```shell
-nswag run swarm-gateway-api.nswag
+nswag run bee-api.nswag
 ```

@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class TagInfo
     {
         // Constructors.
-        internal TagInfo(Clients.GatewayApi.Response7 response)
+        internal TagInfo(Clients.Response7 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
             Synced = response.Synced;
         }
 
-        internal TagInfo(Clients.GatewayApi.Response8 response)
+        internal TagInfo(Clients.Response8 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Models
             Synced = response.Synced;
         }
 
-        internal TagInfo(Clients.GatewayApi.Tags tags)
+        internal TagInfo(Clients.Tags tags)
         {
             ArgumentNullException.ThrowIfNull(tags, nameof(tags));
 

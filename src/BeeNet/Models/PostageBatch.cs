@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PostageBatch
     {
         // Constructors.
-        internal PostageBatch(Clients.GatewayApi.Stamps batch)
+        internal PostageBatch(Clients.Stamps batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Models
             ImmutableFlag = batch.ImmutableFlag;
         }
 
-        internal PostageBatch(Clients.GatewayApi.Response52 batch)
+        internal PostageBatch(Clients.Response52 batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 

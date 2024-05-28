@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class FileResponse : IDisposable, IAsyncDisposable
     {
         // Constructors.
-        internal FileResponse(Clients.GatewayApi.FileResponse response)
+        internal FileResponse(Clients.FileResponse response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

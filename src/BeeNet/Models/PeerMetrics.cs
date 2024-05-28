@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PeerMetrics
     {
         // Constructors
-        internal PeerMetrics(Clients.GatewayApi.Metrics metrics)
+        internal PeerMetrics(Clients.Metrics metrics)
         {
             ArgumentNullException.ThrowIfNull(metrics, nameof(metrics));
 

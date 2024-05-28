@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequebookCashoutGet
     {
         // Constructors.
-        internal ChequebookCashoutGet(Clients.GatewayApi.Response41 response)
+        internal ChequebookCashoutGet(Clients.Response41 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

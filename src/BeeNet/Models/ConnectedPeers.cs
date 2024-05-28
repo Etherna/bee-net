@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ConnectedPeers
     {
         // Constructors.
-        internal ConnectedPeers(Clients.GatewayApi.ConnectedPeers connectedPeers)
+        internal ConnectedPeers(Clients.ConnectedPeers connectedPeers)
         {
             ArgumentNullException.ThrowIfNull(connectedPeers, nameof(connectedPeers));
 

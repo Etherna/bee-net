@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequebookChequeGet
     {
         // Constructors
-        internal ChequebookChequeGet(Clients.GatewayApi.Lastcheques response)
+        internal ChequebookChequeGet(Clients.Lastcheques response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Models
             LastSent = response.Lastsent is not null ? new LastSent(response.Lastsent) : null;
         }
 
-        internal ChequebookChequeGet(Clients.GatewayApi.Response43 response)
+        internal ChequebookChequeGet(Clients.Response43 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class SettlementData
     {
         // Constructors.
-        internal SettlementData(Clients.GatewayApi.Settlements settlement)
+        internal SettlementData(Clients.Settlements settlement)
         {
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Models
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementData(Clients.GatewayApi.Settlements2 settlements)
+        internal SettlementData(Clients.Settlements2 settlements)
         {
             ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Models
             Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementData(Clients.GatewayApi.Response35 settlement)
+        internal SettlementData(Clients.Response35 settlement)
         {
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 

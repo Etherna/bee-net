@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PostageBatchShort
     {
         // Constructors.
-        internal PostageBatchShort(Clients.GatewayApi.Batches batch)
+        internal PostageBatchShort(Clients.Batches batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 

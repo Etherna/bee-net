@@ -19,14 +19,14 @@ namespace Etherna.BeeNet.Models
     public sealed class Health
     {
         // Constructors.
-        internal Health(Clients.GatewayApi.Response9 response)
+        internal Health(Clients.Response9 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.Response9Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response9Status.Nok => StatusValues.Nok,
+                Clients.Response9Status.Ok => StatusValues.Ok,
+                Clients.Response9Status.Nok => StatusValues.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -34,14 +34,14 @@ namespace Etherna.BeeNet.Models
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal Health(Clients.GatewayApi.Response21 response)
+        internal Health(Clients.Response21 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.Response21Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response21Status.Nok => StatusValues.Nok,
+                Clients.Response21Status.Ok => StatusValues.Ok,
+                Clients.Response21Status.Nok => StatusValues.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -49,14 +49,14 @@ namespace Etherna.BeeNet.Models
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal Health(Clients.GatewayApi.Response40 response)
+        internal Health(Clients.Response40 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Status = response.Status switch
             {
-                Clients.GatewayApi.Response40Status.Ok => StatusValues.Ok,
-                Clients.GatewayApi.Response40Status.Nok => StatusValues.Nok,
+                Clients.Response40Status.Ok => StatusValues.Ok,
+                Clients.Response40Status.Nok => StatusValues.Nok,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;

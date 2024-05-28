@@ -19,22 +19,22 @@ namespace Etherna.BeeNet.Models
     public sealed class StatusNode
     {
         // Constructors.
-        internal StatusNode(Clients.GatewayApi.Response65 status)
+        internal StatusNode(Clients.Response65 status)
         {
             ArgumentNullException.ThrowIfNull(status, nameof(status));
 
             switch (status.BeeMode)
             {
-                case Clients.GatewayApi.Response65BeeMode.Light:
+                case Clients.Response65BeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case Clients.GatewayApi.Response65BeeMode.Full:
+                case Clients.Response65BeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case Clients.GatewayApi.Response65BeeMode.UltraLight:
+                case Clients.Response65BeeMode.UltraLight:
                     BeeMode = StatusBeeMode.UltraLight;
                     break;
-                case Clients.GatewayApi.Response65BeeMode.Unknown:
+                case Clients.Response65BeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }
@@ -50,22 +50,22 @@ namespace Etherna.BeeNet.Models
             StorageRadius = status.StorageRadius;
         }
 
-        internal StatusNode(Clients.GatewayApi.Stamps2 status)
+        internal StatusNode(Clients.Stamps2 status)
         {
             ArgumentNullException.ThrowIfNull(status, nameof(status));
 
             switch (status.BeeMode)
             {
-                case Clients.GatewayApi.StampsBeeMode.Light:
+                case Clients.StampsBeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case Clients.GatewayApi.StampsBeeMode.Full:
+                case Clients.StampsBeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case Clients.GatewayApi.StampsBeeMode.UltraLight:
+                case Clients.StampsBeeMode.UltraLight:
                     BeeMode = StatusBeeMode.UltraLight;
                     break;
-                case Clients.GatewayApi.StampsBeeMode.Unknown:
+                case Clients.StampsBeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }

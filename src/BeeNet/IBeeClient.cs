@@ -13,15 +13,19 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Clients.GatewayApi
+namespace Etherna.BeeNet
 {
-    public interface IBeeGatewayClient
+    public interface IBeeClient
     {
+        // Properties.
+        Uri GatewayApiUrl { get; }
+        
         // Methods.
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -577,10 +581,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <remarks>
         /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
         /// </remarks>
-        /// <param name="gas_price">Gas price for transaction</param>
-        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <param name="gasPrice">Gas price for transaction</param>
+        /// <param name="gasLimit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
+        Task StakeDeleteAsync(long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -600,10 +604,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
         /// </remarks>
         /// <param name="amount">Amount of BZZ added that will be deposited for staking.</param>
-        /// <param name="gas_price">Gas price for transaction</param>
-        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <param name="gasPrice">Gas price for transaction</param>
+        /// <param name="gasLimit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default);
+        Task StakePostAsync(string? amount = null, long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get the current status snapshot of this node.

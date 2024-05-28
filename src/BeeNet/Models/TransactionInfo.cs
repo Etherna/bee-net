@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class TransactionInfo
     {
         // Constructors.
-        internal TransactionInfo(Clients.GatewayApi.Response48 response)
+        internal TransactionInfo(Clients.Response48 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

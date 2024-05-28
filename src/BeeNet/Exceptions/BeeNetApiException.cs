@@ -20,10 +20,10 @@ using System.Globalization;
 namespace Etherna.BeeNet.Exceptions
 {
     [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-    public partial class BeeNetDebugApiException : Exception
+    public partial class BeeNetApiException : Exception
     {
         // Constructor.
-        internal BeeNetDebugApiException(
+        internal BeeNetApiException(
             string message,
             int statusCode,
             string? response,
@@ -55,10 +55,10 @@ namespace Etherna.BeeNet.Exceptions
     }
 
     [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-    public partial class BeeNetDebugApiException<TResult> : BeeNetDebugApiException
+    public partial class BeeNetApiException<TResult> : BeeNetApiException
     {
         // Constructor.
-        internal BeeNetDebugApiException(
+        internal BeeNetApiException(
             string message,
             int statusCode,
             string? response,

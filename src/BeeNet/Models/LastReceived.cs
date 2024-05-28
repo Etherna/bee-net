@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class LastReceived
     {
         // Constructors.
-        internal LastReceived(Clients.GatewayApi.Lastreceived lastReceived)
+        internal LastReceived(Clients.Lastreceived lastReceived)
         {
             ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Models
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastReceived(Clients.GatewayApi.Lastreceived2 lastReceived)
+        internal LastReceived(Clients.Lastreceived2 lastReceived)
         {
             ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 

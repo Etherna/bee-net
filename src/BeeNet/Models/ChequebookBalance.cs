@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequebookBalance
     {
         // Constructors.
-        internal ChequebookBalance(Clients.GatewayApi.Response27 response)
+        internal ChequebookBalance(Clients.Response27 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

@@ -28,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.SendPssAsync("topic", "targets", "batchId");
+            await beeNodeClient.SendPssAsync("topic", "targets", "batchId");
 
 
             // Assert 
@@ -41,7 +41,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.SubscribeToPssAsync("topic");
+            await beeNodeClient.SubscribeToPssAsync("topic");
 
 
             // Assert 

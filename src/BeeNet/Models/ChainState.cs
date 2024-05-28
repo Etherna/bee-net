@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChainState
     {
         // Constructors.
-        internal ChainState(Clients.GatewayApi.Response30 response)
+        internal ChainState(Clients.Response30 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

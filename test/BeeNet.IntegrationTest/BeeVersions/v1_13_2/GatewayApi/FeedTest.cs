@@ -24,14 +24,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task CreateFeedAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var addresses = await beeNodeClient.GatewayClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GetAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
+            var result = await beeNodeClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
 
 
             // Assert 
@@ -43,17 +43,17 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetFeedAsync()
         {
             // Arrange 
-            //var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            //var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             //await Task.Delay(180000);
             var batch = "855f9389cf57a01369cff81901e4f5191ec03191f9a2d4d806486e9d856f9cdc";
-            var addresses = await beeNodeClient.GatewayClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GetAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";
-            var feed = await beeNodeClient.GatewayClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
+            var feed = await beeNodeClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
             await Task.Delay(180000);
             
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFeedAsync(addresses.Ethereum.Replace("0x", ""), topic);
+            var result = await beeNodeClient.GetFeedAsync(addresses.Ethereum.Replace("0x", ""), topic);
 
 
             // Assert 

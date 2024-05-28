@@ -25,11 +25,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTextAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(
+            var reference = await beeNodeClient.UploadFileAsync(
                 batch,
                 content: File.OpenRead("Data/TestFileForUpload_Gateway.txt"),
                 name: "TestFileForUpload_Gateway.txt",
@@ -37,7 +37,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
                 swarmCollection: false);
 
             // Assert 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
+            var result = await beeNodeClient.GetFileAsync(reference);
             StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
@@ -46,11 +46,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTarAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(
+            var reference = await beeNodeClient.UploadFileAsync(
                 batch,
                 content: File.OpenRead("Data/BzzFIleForUpload.tar"),
                 name: "BzzFIleForUpload.tar",
@@ -58,7 +58,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
                 swarmCollection: false);
 
             // Assert 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
+            var result = await beeNodeClient.GetFileAsync(reference);
             StreamReader reader = new(result.Stream);
             Assert.Equal(File.ReadAllText("Data/BzzFIleForUpload.tar"), reader.ReadToEnd());
         }
@@ -67,7 +67,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileMultiFileTextAsync()
         {
             // Arrange 
-            //var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            //var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             //await Task.Delay(180000);
             var batch = "e380bc90bd1a0de1ed674bdf010fac31195fbe1179646d4ded8dd818858c2b32";
             var fileParameterInput = new FileParameterInput("D:\\Etherna\\bee-net\\test\\BeeNet.IntegrationTest\\Data\\TestFileForUpload_Gateway.txt", "TestFileForUpload_Gateway.txt", "text/plain");
@@ -75,11 +75,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadFileAsync(batch, file: new List<FileParameterInput> { fileParameterInput, fileParameterInputSecond }, swarmCollection: true);
+            var reference = await beeNodeClient.UploadFileAsync(batch, file: new List<FileParameterInput> { fileParameterInput, fileParameterInputSecond }, swarmCollection: true);
 
 
             // Assert 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
+            var result = await beeNodeClient.GetFileAsync(reference);
         }
         */
         [Fact]
@@ -90,7 +90,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFileAsync(reference);
+            var result = await beeNodeClient.GetFileAsync(reference);
 
 
             // Assert 
@@ -106,7 +106,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetFileWithPathAsync(reference, "");
+            var result = await beeNodeClient.GetFileWithPathAsync(reference, "");
 
 
             // Assert 

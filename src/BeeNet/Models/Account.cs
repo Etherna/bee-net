@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class Account
     {
         // Constructors.
-        internal Account(Clients.GatewayApi.Anonymous3 value)
+        internal Account(Clients.Anonymous3 value)
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
 

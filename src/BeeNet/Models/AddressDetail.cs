@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class AddressDetail
     {
         // Constructors.
-        internal AddressDetail(Clients.GatewayApi.Response20 response)
+        internal AddressDetail(Clients.Response20 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

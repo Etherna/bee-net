@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PeerBalance
     {
         // Constructors.
-        internal PeerBalance(Clients.GatewayApi.Balances balance)
+        internal PeerBalance(Clients.Balances balance)
         {
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Models
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        internal PeerBalance(Clients.GatewayApi.Balances2 balance)
+        internal PeerBalance(Clients.Balances2 balance)
         {
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Models
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        internal PeerBalance(Clients.GatewayApi.Response23 balance)
+        internal PeerBalance(Clients.Response23 balance)
         {
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Models
             Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
         }
 
-        internal PeerBalance(Clients.GatewayApi.Response25 balance)
+        internal PeerBalance(Clients.Response25 balance)
         {
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 

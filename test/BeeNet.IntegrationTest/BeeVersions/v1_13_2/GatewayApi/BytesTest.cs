@@ -24,16 +24,16 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadBytesAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Assert
-            var result = await beeNodeClient.GatewayClient.GetBytesAsync(reference);
+            var result = await beeNodeClient.GetBytesAsync(reference);
             StreamReader reader = new(result);
             Assert.Equal(File.ReadAllText(pathTestFileForUpload), reader.ReadToEnd());
         }
@@ -42,13 +42,13 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetBytesAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var reference = await beeNodeClient.GatewayClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.GetBytesAsync(reference);
+            var result = await beeNodeClient.GetBytesAsync(reference);
 
 
             // Assert

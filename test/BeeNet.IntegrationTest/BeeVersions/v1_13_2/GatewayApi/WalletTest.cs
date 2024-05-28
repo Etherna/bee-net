@@ -24,7 +24,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetWalletBalance()
         {
             // Act.
-            var wallet = await beeNodeClient.GatewayClient.GetWalletBalance();
+            var wallet = await beeNodeClient.GetWalletBalance();
 
             // Assert.
             Assert.NotEqual("0", wallet.Bzz);

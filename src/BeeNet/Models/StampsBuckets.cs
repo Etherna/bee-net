@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class StampsBuckets
     {
         // Constructors.
-        internal StampsBuckets(Clients.GatewayApi.Response53 response)
+        internal StampsBuckets(Clients.Response53 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

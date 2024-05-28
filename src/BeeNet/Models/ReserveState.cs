@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ReserveState
     {
         // Constructors.
-        internal ReserveState(Clients.GatewayApi.Response29 response)
+        internal ReserveState(Clients.Response29 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

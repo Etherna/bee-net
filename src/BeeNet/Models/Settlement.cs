@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Models
     public sealed class Settlement
     {
         // Constructors.
-        internal Settlement(Clients.GatewayApi.Response36 response)
+        internal Settlement(Clients.Response36 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
                 .Select(i => new SettlementData(i));
         }
 
-        internal Settlement(Clients.GatewayApi.Response37 response)
+        internal Settlement(Clients.Response37 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

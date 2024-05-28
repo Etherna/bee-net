@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class LastSent
     {
         // Constructors.
-        internal LastSent(Clients.GatewayApi.Lastsent lastsent)
+        internal LastSent(Clients.Lastsent lastsent)
         {
             ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Models
             Payout = long.Parse(lastsent.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastSent(Clients.GatewayApi.Lastsent2 lastsent)
+        internal LastSent(Clients.Lastsent2 lastsent)
         {
             ArgumentNullException.ThrowIfNull(lastsent, nameof(lastsent));
 

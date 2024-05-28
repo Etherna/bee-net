@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ResultChequebook
     {
         // Constructors.
-        internal ResultChequebook(Clients.GatewayApi.Result result)
+        internal ResultChequebook(Clients.Result result)
         {
             ArgumentNullException.ThrowIfNull(result, nameof(result));
 

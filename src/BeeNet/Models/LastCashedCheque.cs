@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class LastCashedCheque
     {
         // Constructors.
-        internal LastCashedCheque(Clients.GatewayApi.LastCashedCheque lastCashedCheque)
+        internal LastCashedCheque(Clients.LastCashedCheque lastCashedCheque)
         {
             ArgumentNullException.ThrowIfNull(lastCashedCheque, nameof(lastCashedCheque));
 

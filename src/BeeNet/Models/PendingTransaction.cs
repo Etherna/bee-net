@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PendingTransaction
     {
         // Constructors.
-        internal PendingTransaction(Clients.GatewayApi.PendingTransactions tx)
+        internal PendingTransaction(Clients.PendingTransactions tx)
         {
             ArgumentNullException.ThrowIfNull(tx, nameof(tx));
 
