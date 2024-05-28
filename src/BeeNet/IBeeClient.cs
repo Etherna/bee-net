@@ -418,6 +418,11 @@ namespace Etherna.BeeNet
         Task<PostageBatch> GetPostageBatchAsync(
             string id,
             CancellationToken cancellationToken = default);
+        
+        /// <summary>Get readiness state of node</summary>
+        /// <returns>Health State of node</returns>
+        /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
+        Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get reserve commitment hash with sample proofs
