@@ -26,6 +26,14 @@ namespace Etherna.BeeNet.Models
             NativeTokenBalance = response.NativeTokenBalance;
         }
 
+        internal Wallet(Clients.GatewayApi.Response61 response)
+        {
+            ArgumentNullException.ThrowIfNull(response, nameof(response));
+
+            Bzz = response.BzzBalance;
+            NativeTokenBalance = response.NativeTokenBalance;
+        }
+
         public string Bzz { get; }
         public string NativeTokenBalance { get; }
     }

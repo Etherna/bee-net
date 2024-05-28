@@ -39,6 +39,10 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         }
 
         // Methods.
+        public async Task<Dictionary<string, Account>> AccountingAsync(
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new Account(i.Value));
+
         public async Task<Auth> AuthenticateAsync(string role, int expiry) =>
             new(await generatedClient.AuthAsync(
                 new Body
@@ -336,13 +340,28 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false));
 
+        public async Task<Wallet> GetWalletBalance(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false));
+
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage;
+
+        public async Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false));
+
+        public async Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default) =>
+            new(await generatedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false));
+
+        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
+            await generatedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
 
         public async Task<string> RebroadcastTransactionAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash;
+
+        public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<string> RefreshAuthAsync(
             string role,
@@ -382,6 +401,21 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                     WelcomeMessage = welcomeMessage
                 },
                 cancellationToken);
+
+        public async Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeDeleteAsync(gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
+
+        public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
+
+        public async Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakePostAsync(amount, gas_price, gas_limit, cancellationToken).ConfigureAwait(false);
+
+        public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false));
+
+        public async Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNode(p));
 
         public Task SubscribeToPssAsync(
             string topic,
@@ -490,6 +524,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             bool? swarmPin = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.SocAsync(owner, id, sig, swarmPostageBatchId, body, swarmPin, cancellationToken).ConfigureAwait(false)).Reference;
+
+        public async Task<string> WalletWithdrawAsync(
+            long amount,
+            string address,
+            string coin,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.WalletWithdrawAsync(amount.ToString(CultureInfo.InvariantCulture), address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequeBookAsync(
             long amount,

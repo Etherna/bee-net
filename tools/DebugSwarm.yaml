@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 4.1.1
+  version: 4.1.2
   title: Bee Debug API
   description: A list of the currently provided debug interfaces to interact with
     the bee node
@@ -1136,11 +1136,9 @@ paths:
           content:
             application/json:
               schema:
-                &a41
                 type: object
                 properties:
                   transactionHash:
-                    &a30
                     type: string
                     pattern: ^0x[A-Fa-f0-9]{64}$
                     example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
@@ -1208,7 +1206,11 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a30
+          schema:
+            &a31
+            type: string
+            pattern: ^0x[A-Fa-f0-9]{64}$
+            example: "0x780cb6a37d1946978087896e1e489c37e30fe3e329510fff8d97360f73529f5a"
           required: true
           description: Hash of the transaction
       tags:
@@ -1232,17 +1234,17 @@ paths:
                   nonce:
                     type: integer
                   gasPrice:
-                    &a31
+                    &a30
                     description: Numeric string that represents integer which might exceeds
                       `Number.MAX_SAFE_INTEGER` limit (2^53-1)
                     type: string
                     example: "1000000000000000000"
                   gasLimit:
                     type: integer
-                  gasTipCap: *a31
+                  gasTipCap: *a30
                   gasTipBoost:
                     type: integer
-                  gasFeeCap: *a31
+                  gasFeeCap: *a30
                   data:
                     type: string
                   created:
@@ -1251,7 +1253,7 @@ paths:
                     example: 2020-06-11T11:26:42.6969797+02:00
                   description:
                     type: string
-                  value: *a31
+                  value: *a30
         "404": *a12
         "500": *a3
         default:
@@ -1261,7 +1263,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a30
+          schema: *a31
           required: true
           description: Hash of the transaction
       tags:
@@ -1281,7 +1283,7 @@ paths:
       parameters:
         - in: path
           name: txHash
-          schema: *a30
+          schema: *a31
           required: true
           description: Hash of the transaction
         - *a24
@@ -1906,6 +1908,3 @@ paths:
         "400": *a7
         default:
           description: Default response.
-components:
-  schemas:
-    WalletTxResponse: *a41
