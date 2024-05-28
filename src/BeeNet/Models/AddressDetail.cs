@@ -21,17 +21,6 @@ namespace Etherna.BeeNet.Models
     public sealed class AddressDetail
     {
         // Constructors.
-        internal AddressDetail(Clients.DebugApi.Response response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Underlay = response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i));
-            Overlay = response.Overlay;
-            Ethereum = response.Ethereum;
-            PublicKey = response.PublicKey;
-            PssPublicKey = response.PssPublicKey;
-        }
-
         internal AddressDetail(Clients.GatewayApi.Response20 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

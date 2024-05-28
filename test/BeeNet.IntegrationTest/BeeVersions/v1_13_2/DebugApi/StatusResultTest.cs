@@ -28,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetReserveStateAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetReserveStateAsync();
 
 
             // Assert
@@ -43,7 +43,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var chainState = await beeNodeClient.DebugClient.GetChainStateAsync();
+            var chainState = await beeNodeClient.GatewayClient.GetChainStateAsync();
 
 
             // Assert
@@ -57,7 +57,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var nodeInfo = await beeNodeClient.DebugClient.GetNodeInfoAsync();
+            var nodeInfo = await beeNodeClient.GatewayClient.GetNodeInfoAsync();
 
 
             // Assert
@@ -69,7 +69,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetHealthAsync()
         {
             // Act 
-            var healthAsync = await beeNodeClient.DebugClient.GetHealthAsync();
+            var healthAsync = await beeNodeClient.GatewayClient.GetHealthAsync();
 
             // Assert
             Assert.Equal("5.0.0", healthAsync.ApiVersion);

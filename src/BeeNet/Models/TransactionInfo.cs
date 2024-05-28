@@ -20,21 +20,6 @@ namespace Etherna.BeeNet.Models
     public sealed class TransactionInfo
     {
         // Constructors.
-        internal TransactionInfo(Clients.DebugApi.Response35 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            TransactionHash = response.TransactionHash;
-            To = response.To;
-            Nonce = response.Nonce;
-            GasPrice = long.Parse(response.GasPrice, CultureInfo.InvariantCulture);
-            GasLimit = response.GasLimit;
-            Data = response.Data;
-            Created = response.Created;
-            Description = response.Description;
-            Value = long.Parse(response.Value, CultureInfo.InvariantCulture);
-        }
-
         internal TransactionInfo(Clients.GatewayApi.Response48 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

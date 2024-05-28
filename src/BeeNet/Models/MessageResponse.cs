@@ -19,22 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class MessageResponse
     {
         // Constructors.
-        internal MessageResponse(Clients.DebugApi.Response16 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Message = response.Message;
-            Code = response.Code;
-        }
-
-        internal MessageResponse(Clients.DebugApi.Response10 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Message = response.Message;
-            Code = response.Code;
-        }
-
         internal MessageResponse(Clients.GatewayApi.Response10 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

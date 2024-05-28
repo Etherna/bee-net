@@ -19,21 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class NodeInfo
     {
         // Constructors.
-        internal NodeInfo(Clients.DebugApi.Response14 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            BeeMode = response.BeeMode switch
-            {
-                Clients.DebugApi.Response14BeeMode.Dev => InfoBeeMode.Dev,
-                Clients.DebugApi.Response14BeeMode.Full => InfoBeeMode.Full,
-                Clients.DebugApi.Response14BeeMode.Light => InfoBeeMode.Light,
-                _ => throw new InvalidOperationException()
-            };
-            ChequebookEnabled = response.ChequebookEnabled;
-            SwapEnabled = response.SwapEnabled;
-        }
-
         internal NodeInfo(Clients.GatewayApi.Response31 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

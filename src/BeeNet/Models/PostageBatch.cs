@@ -21,40 +21,6 @@ namespace Etherna.BeeNet.Models
     public sealed class PostageBatch
     {
         // Constructors.
-        internal PostageBatch(Clients.DebugApi.Response39 batch)
-        {
-            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
-            Exists = batch.Exists;
-            Id = batch.BatchID;
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
-        internal PostageBatch(Clients.DebugApi.Stamps batch)
-        {
-            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
-
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
-            Exists = batch.Exists;
-            Id = batch.BatchID;
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
-            Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
-        }
-
         internal PostageBatch(Clients.GatewayApi.Stamps batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));

@@ -21,17 +21,6 @@ namespace Etherna.BeeNet.Models
     public sealed class PeersAggregate
     {
         // Constructors.
-        internal PeersAggregate(Clients.DebugApi.Anonymous2 anonymous)
-        {
-            ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));
-
-            Population = anonymous.Population;
-            Connected = anonymous.Connected;
-            DisconnectedPeers = anonymous.DisconnectedPeers
-                ?.Select(k => new DisconnectedPeers(k)) ?? new List<DisconnectedPeers>();
-            ConnectedPeers = anonymous.ConnectedPeers
-                ?.Select(k => new ConnectedPeers(k)) ?? new List<ConnectedPeers>();
-        }
         internal PeersAggregate(Clients.GatewayApi.Anonymous2 anonymous)
         {
             ArgumentNullException.ThrowIfNull(anonymous, nameof(anonymous));

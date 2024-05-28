@@ -20,15 +20,6 @@ namespace Etherna.BeeNet.Models
     public sealed class ResultChequebook
     {
         // Constructors.
-        internal ResultChequebook(Clients.DebugApi.Result result)
-        {
-            ArgumentNullException.ThrowIfNull(result, nameof(result));
-
-            Recipient = result.Recipient;
-            LastPayout = long.Parse(result.LastPayout, CultureInfo.InvariantCulture);
-            Bounced = result.Bounced;
-        }
-
         internal ResultChequebook(Clients.GatewayApi.Result result)
         {
             ArgumentNullException.ThrowIfNull(result, nameof(result));

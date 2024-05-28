@@ -19,14 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class Bucket
     {
         // Constructors.
-        internal Bucket(Clients.DebugApi.Buckets bucket)
-        {
-            ArgumentNullException.ThrowIfNull(bucket, nameof(bucket));
-
-            BucketId = bucket.BucketID;
-            Collisions = bucket.Collisions;
-        }
-
         internal Bucket(Clients.GatewayApi.Buckets bucket)
         {
             ArgumentNullException.ThrowIfNull(bucket, nameof(bucket));

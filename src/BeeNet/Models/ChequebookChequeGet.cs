@@ -19,24 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequebookChequeGet
     {
         // Constructors
-        internal ChequebookChequeGet(Clients.DebugApi.Lastcheques response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Peer = response.Peer;
-            LastReceived = response.Lastreceived is not null ? new LastReceived(response.Lastreceived) : null;
-            LastSent = response.Lastsent is not null ? new LastSent(response.Lastsent) : null;
-        }
-
-        internal ChequebookChequeGet(Clients.DebugApi.Response27 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Peer = response.Peer;
-            LastReceived = response.Lastreceived is not null ? new LastReceived(response.Lastreceived) : null;
-            LastSent = response.Lastsent is not null ? new LastSent(response.Lastsent) : null;
-        }
-
         internal ChequebookChequeGet(Clients.GatewayApi.Lastcheques response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

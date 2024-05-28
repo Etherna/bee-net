@@ -19,19 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class ConnectedPeers
     {
         // Constructors.
-        internal ConnectedPeers(Clients.DebugApi.ConnectedPeers connectedPeers)
-        {
-            ArgumentNullException.ThrowIfNull(connectedPeers, nameof(connectedPeers));
-
-            Address = connectedPeers.Address;
-            LastSeenTimestamp = connectedPeers.Metrics.LastSeenTimestamp;
-            SessionConnectionRetry = connectedPeers.Metrics.SessionConnectionRetry;
-            ConnectionTotalDuration = connectedPeers.Metrics.ConnectionTotalDuration;
-            SessionConnectionDuration = connectedPeers.Metrics.SessionConnectionDuration;
-            SessionConnectionDirection = connectedPeers.Metrics.SessionConnectionDirection;
-            LatencyEWMA = connectedPeers.Metrics.LatencyEWMA;
-        }
-
         internal ConnectedPeers(Clients.GatewayApi.ConnectedPeers connectedPeers)
         {
             ArgumentNullException.ThrowIfNull(connectedPeers, nameof(connectedPeers));

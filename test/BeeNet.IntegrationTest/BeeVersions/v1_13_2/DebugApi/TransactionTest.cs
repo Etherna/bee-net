@@ -26,7 +26,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
             // Arrange 
 
             // Act 
-            await beeNodeClient.DebugClient.GetPendingTransactionsAsync(); //TODO How to get transaction
+            await beeNodeClient.GatewayClient.GetPendingTransactionsAsync(); //TODO How to get transaction
 
             // Assert
         }
@@ -39,7 +39,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var pendingTransactions = await beeNodeClient.DebugClient.GetTransactionInfoAsync(""); //TODO How to get transaction
+            var pendingTransactions = await beeNodeClient.GatewayClient.GetTransactionInfoAsync(""); //TODO How to get transaction
 
 
             // Assert
@@ -52,7 +52,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var pendingTransactions = await beeNodeClient.DebugClient.RebroadcastTransactionAsync(""); //TODO How to get transaction
+            var pendingTransactions = await beeNodeClient.GatewayClient.RebroadcastTransactionAsync(""); //TODO How to get transaction
 
 
             // Assert
@@ -65,7 +65,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var pendingTransactions = await beeNodeClient.DebugClient.DeleteTransactionAsync(""); //TODO How to get transaction
+            var pendingTransactions = await beeNodeClient.GatewayClient.DeleteTransactionAsync(""); //TODO How to get transaction
 
 
             // Assert

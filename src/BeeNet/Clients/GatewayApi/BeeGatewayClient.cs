@@ -387,10 +387,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string? recipient = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.PssSendAsync(topic, targets, swarmPostageBatchId, recipient, cancellationToken);
-
-        public void SetAuthToken(
-            string token) =>
-            generatedClient.SetAuthToken(token);
         
         public Task SetWelcomeMessageAsync(
             string welcomeMessage,

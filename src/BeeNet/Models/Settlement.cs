@@ -22,26 +22,6 @@ namespace Etherna.BeeNet.Models
     public sealed class Settlement
     {
         // Constructors.
-        internal Settlement(Clients.DebugApi.Response20 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
-            Settlements = response.Settlements
-                .Select(i => new SettlementData(i));
-        }
-
-        internal Settlement(Clients.DebugApi.Response21 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
-            Settlements = response.Settlements
-                .Select(i => new SettlementData(i));
-        }
-
         internal Settlement(Clients.GatewayApi.Response36 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

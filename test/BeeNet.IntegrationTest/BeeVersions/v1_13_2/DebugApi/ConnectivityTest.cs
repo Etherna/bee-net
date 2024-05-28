@@ -26,7 +26,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.GetAddressesAsync();
+            var result = await beeNodeClient.GatewayClient.GetAddressesAsync();
 
 
             // Assert 
@@ -37,7 +37,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetBlocklistedPeerAddressesAsync()
         {
             // Act.
-            await beeNodeClient.DebugClient.GetBlocklistedPeerAddressesAsync();
+            await beeNodeClient.GatewayClient.GetBlocklistedPeerAddressesAsync();
         }
 
         /*
@@ -45,11 +45,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task ConnectToPeerAsync()
         {
             // Arrange 
-            var addresses = await beeNodeClient.DebugClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GatewayClient.GetAddressesAsync();
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.ConnectToPeerAsync(""); //TODO where i can take multiAddr correct???
+            var result = await beeNodeClient.GatewayClient.ConnectToPeerAsync(""); //TODO where i can take multiAddr correct???
 
 
             // Assert 
@@ -64,7 +64,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            var result = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var result = await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
 
 
             // Assert 
@@ -79,7 +79,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            await beeNodeClient.DebugClient.DeletePeerAsync("address"); //TODO where i can take multiAddr correct???
+            await beeNodeClient.GatewayClient.DeletePeerAsync("address"); //TODO where i can take multiAddr correct???
 
 
             // Assert 
@@ -94,7 +94,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            await beeNodeClient.DebugClient.TryConnectToPeerAsync("address"); //TODO where i can take multiAddr correct???
+            await beeNodeClient.GatewayClient.TryConnectToPeerAsync("address"); //TODO where i can take multiAddr correct???
 
 
             // Assert 
@@ -106,7 +106,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetSwarmTopologyAsync()
         {
             // Act.
-            await beeNodeClient.DebugClient.GetSwarmTopologyAsync();
+            await beeNodeClient.GatewayClient.GetSwarmTopologyAsync();
         }
 
         [Fact]
@@ -117,11 +117,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
 
 
             // Act 
-            await beeNodeClient.DebugClient.SetWelcomeMessageAsync(message);
+            await beeNodeClient.GatewayClient.SetWelcomeMessageAsync(message);
 
 
             // Assert 
-            var result = await beeNodeClient.DebugClient.GetWelcomeMessageAsync();
+            var result = await beeNodeClient.GatewayClient.GetWelcomeMessageAsync();
             Assert.Equal(message, result);
         }
     }

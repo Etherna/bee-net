@@ -25,7 +25,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTextAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
@@ -46,7 +46,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTarAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             
             // Act 
@@ -67,7 +67,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileMultiFileTextAsync()
         {
             // Arrange 
-            //var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            //var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             //await Task.Delay(180000);
             var batch = "e380bc90bd1a0de1ed674bdf010fac31195fbe1179646d4ded8dd818858c2b32";
             var fileParameterInput = new FileParameterInput("D:\\Etherna\\bee-net\\test\\BeeNet.IntegrationTest\\Data\\TestFileForUpload_Gateway.txt", "TestFileForUpload_Gateway.txt", "text/plain");

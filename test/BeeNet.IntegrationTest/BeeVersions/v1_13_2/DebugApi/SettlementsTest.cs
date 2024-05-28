@@ -25,11 +25,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetAllSettlementsAsync()
         {
             // Arrange 
-            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
             var peerId = allCheque.ToList().First().Peer;
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetAllSettlementsAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetAllSettlementsAsync();
 
 
             // Assert
@@ -40,12 +40,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetAllTimeSettlementsAsync()
         {
             // Arrange 
-            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
             var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetAllTimeSettlementsAsync();
+            var reserveState = await beeNodeClient.GatewayClient.GetAllTimeSettlementsAsync();
 
 
             // Assert
@@ -56,12 +56,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetSettlementsWithPeerAsync()
         {
             // Arrange 
-            var allCheque = await beeNodeClient.DebugClient.GetAllChequeBookChequesAsync();
+            var allCheque = await beeNodeClient.GatewayClient.GetAllChequeBookChequesAsync();
             var peerId = allCheque.ToList().First().Peer;
 
 
             // Act 
-            var reserveState = await beeNodeClient.DebugClient.GetSettlementsWithPeerAsync(peerId);
+            var reserveState = await beeNodeClient.GatewayClient.GetSettlementsWithPeerAsync(peerId);
 
 
             // Assert

@@ -21,22 +21,6 @@ namespace Etherna.BeeNet.Models
     public sealed class LogData
     {
         // Constructors.
-        internal LogData(Clients.DebugApi.Response45 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Tree = response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
-            Loggers = response.Loggers.Select(i => new Loggers(i)).ToList();
-        }
-
-        internal LogData(Clients.DebugApi.Response46 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Tree = response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus?.ToList() ?? new List<string>());
-            Loggers = response.Loggers.Select(i => new Loggers(i)).ToList();
-        }
-
         internal LogData(Clients.GatewayApi.Response63 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

@@ -27,25 +27,25 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetAllBalancesAsync()
         {
             // Act.
-            await beeNodeClient.DebugClient.GetAllBalancesAsync();
+            await beeNodeClient.GatewayClient.GetAllBalancesAsync();
         }
 
         [Fact]
         public async Task GetAllConsumedBalancesAsync()
         {
             // Act.
-            await beeNodeClient.DebugClient.GetAllConsumedBalancesAsync();
+            await beeNodeClient.GatewayClient.GetAllConsumedBalancesAsync();
         }
 
         [Fact]
         public async Task GetBalanceWithPeerAsync()
         {
             // Arrange .
-            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peers = await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
             var peerId = peers.ToList().First();
 
             // Act.
-            var balance = await beeNodeClient.DebugClient.GetBalanceWithPeerAsync(peerId);
+            var balance = await beeNodeClient.GatewayClient.GetBalanceWithPeerAsync(peerId);
 
             // Assert.
             Assert.Equal(peerId, balance.Peer);
@@ -56,12 +56,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
         public async Task GetConsumedBalanceWithPeerAsync()
         {
             // Arrange 
-            var peers = await beeNodeClient.DebugClient.GetAllPeerAddressesAsync();
+            var peers = await beeNodeClient.GatewayClient.GetAllPeerAddressesAsync();
             var peerId = peers.ToList().First();
 
 
             // Act 
-            var balance = await beeNodeClient.DebugClient.GetConsumedBalanceWithPeerAsync(peerId);
+            var balance = await beeNodeClient.GatewayClient.GetConsumedBalanceWithPeerAsync(peerId);
 
 
             // Assert

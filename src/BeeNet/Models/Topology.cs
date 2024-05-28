@@ -21,35 +21,6 @@ namespace Etherna.BeeNet.Models
     public sealed class Topology
     {
         // Constructors.
-        internal Topology(Clients.DebugApi.Response22 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            BaseAddr = response.BaseAddr;
-            Bins = response.Bins.ToDictionary(
-                i => i.Key,
-                i => new PeersAggregate(i.Value));
-            Connected = response.Connected;
-            Depth = response.Depth;
-            NetworkAvailability = response.NetworkAvailability switch
-            {
-                Clients.DebugApi.Response22NetworkAvailability.Unknown => Models.NetworkAvailability.Unknown,
-                Clients.DebugApi.Response22NetworkAvailability.Available => Models.NetworkAvailability.Available,
-                Clients.DebugApi.Response22NetworkAvailability.Unavailable => Models.NetworkAvailability.Unavailable,
-                _ => throw new InvalidOperationException(),
-            };
-            NnLowWatermark = response.NnLowWatermark;
-            Population = response.Population;
-            Reachability = response.Reachability switch
-            {
-                Clients.DebugApi.Response22Reachability.Unknown => Models.Reachability.Unknown,
-                Clients.DebugApi.Response22Reachability.Public => Models.Reachability.Public,
-                Clients.DebugApi.Response22Reachability.Private => Models.Reachability.Private,
-                _ => throw new InvalidOperationException(),
-            };
-            Timestamp = response.Timestamp;
-        }
-
         internal Topology(Clients.GatewayApi.Response38 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

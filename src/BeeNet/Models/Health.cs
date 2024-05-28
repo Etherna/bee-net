@@ -19,36 +19,6 @@ namespace Etherna.BeeNet.Models
     public sealed class Health
     {
         // Constructors.
-        internal Health(Clients.DebugApi.Response18 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Status = response.Status switch
-            {
-                Clients.DebugApi.Response18Status.Ok => StatusValues.Ok,
-                Clients.DebugApi.Response18Status.Nok => StatusValues.Nok,
-                _ => throw new InvalidOperationException()
-            };
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        internal Health(Clients.DebugApi.Response24 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Status = response.Status switch
-            {
-                Clients.DebugApi.Response24Status.Ok => StatusValues.Ok,
-                Clients.DebugApi.Response24Status.Nok => StatusValues.Nok,
-                _ => throw new InvalidOperationException()
-            };
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
         internal Health(Clients.GatewayApi.Response9 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));

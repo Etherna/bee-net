@@ -562,8 +562,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string swarmPostageBatchId,
             string? recipient = null,
             CancellationToken cancellationToken = default);
-        
-        void SetAuthToken(string token);
 
         /// <summary>Set P2P welcome message</summary>
         /// <returns>OK</returns>
@@ -635,8 +633,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         Task<string> TopUpPostageBatchAsync(
             string id, 
             long amount,
-            long? gasPrice,
-            long? gasLimit,
+            long? gasPrice = null,
+            long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Try connection to node</summary>

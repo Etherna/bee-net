@@ -12,14 +12,12 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi;
 using Etherna.BeeNet.Clients.GatewayApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Etherna.BeeNet
 {
@@ -36,39 +34,13 @@ namespace Etherna.BeeNet
         // Constructors.
         public BeeNodeClient(
             string baseUrl = "http://localhost/",
-            int? gatewayApiPort = 1633,
-            int? debugApiPort = 1635,
+            int gatewayApiPort = 1633,
             HttpClient? customHttpClient = null)
         {
             httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
-            if (debugApiPort is not null)
-            {
-                DebugApiUrl = new Uri(BuildBaseUrl(baseUrl, debugApiPort.Value));
-                DebugClient = new BeeDebugClient(DebugApiUrl, httpClient);
-            }
-
-            if (gatewayApiPort is not null)
-            {
-                GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort.Value));
-                GatewayClient = new BeeGatewayClient(GatewayApiUrl, httpClient);
-            }
-        }
-
-        public static async Task<BeeNodeClient> AuthenticatedBeeNodeClientAsync(
-            string baseUrl = "http://localhost/",
-            int gatewayApiPort = 1633,
-            HttpClient? customHttpClient = null)
-        {
-            var nodeClient = new BeeNodeClient(baseUrl, gatewayApiPort, null, customHttpClient: customHttpClient);
-            
-            var authDto = await nodeClient.GatewayClient!.AuthenticateAsync("", 0).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(authDto.Key))
-                throw new InvalidOperationException();
-
-            nodeClient.GatewayClient.SetAuthToken(authDto.Key);
-
-            return nodeClient;
+            GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
+            GatewayClient = new BeeGatewayClient(GatewayApiUrl, httpClient);
         }
 
         // Dispose.
@@ -91,10 +63,8 @@ namespace Etherna.BeeNet
 
 
         // Properties.
-        public Uri? DebugApiUrl { get; }
-        public IBeeDebugClient? DebugClient { get; }
-        public Uri? GatewayApiUrl { get; }
-        public IBeeGatewayClient? GatewayClient { get; }
+        public Uri GatewayApiUrl { get; }
+        public IBeeGatewayClient GatewayClient { get; }
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)

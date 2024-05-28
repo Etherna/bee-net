@@ -29,20 +29,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
         {
             beeNodeClient = new BeeNodeClient(
                 Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
-                1633,
-                1635);
-        }
-
-        public async Task CreateAuthenticatedClientAsync()
-        {
-            beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633);
         }
 
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
@@ -58,7 +50,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 
         protected async Task<string> UploadChunkFileAndGetReferenceAsync()
         {
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 

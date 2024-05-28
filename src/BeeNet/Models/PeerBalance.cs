@@ -20,38 +20,6 @@ namespace Etherna.BeeNet.Models
     public sealed class PeerBalance
     {
         // Constructors.
-        internal PeerBalance(Clients.DebugApi.Balances balance)
-        {
-            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
-
-            Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
-        }
-
-        internal PeerBalance(Clients.DebugApi.Balances2 balance)
-        {
-            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
-
-            Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
-        }
-
-        internal PeerBalance(Clients.DebugApi.Response4 balance)
-        {
-            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
-
-            Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
-        }
-
-        internal PeerBalance(Clients.DebugApi.Response7 balance)
-        {
-            ArgumentNullException.ThrowIfNull(balance, nameof(balance));
-
-            Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
-        }
-
         internal PeerBalance(Clients.GatewayApi.Balances balance)
         {
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));

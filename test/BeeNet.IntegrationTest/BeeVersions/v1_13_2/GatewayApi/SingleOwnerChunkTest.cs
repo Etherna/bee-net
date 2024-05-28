@@ -25,7 +25,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task SendPssAsync()
         {
             // Arrange 
-            var addresses = await beeNodeClient.DebugClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GatewayClient.GetAddressesAsync();
 
             // Act 
             await beeNodeClient.GatewayClient.UploadSocAsync(addresses.Ethereum.Replace("0x", ""), "cf880b8eeac5093fa27b0825906c600685", "cf880b8eeac5093fa27b0825906c600685");
