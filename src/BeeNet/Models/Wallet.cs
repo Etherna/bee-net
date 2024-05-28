@@ -18,15 +18,7 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class Wallet
     {
-        internal Wallet(Clients.DebugApi.Response32 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Bzz = response.BzzBalance;
-            NativeTokenBalance = response.NativeTokenBalance;
-        }
-
-        internal Wallet(Clients.GatewayApi.Response61 response)
+        internal Wallet(Clients.Response61 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

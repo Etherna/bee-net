@@ -20,25 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class SettlementData
     {
         // Constructors.
-        internal SettlementData(Clients.DebugApi.Settlements settlements)
-        {
-            ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
-
-            Peer = settlements.Peer;
-            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
-        }
-
-        internal SettlementData(Clients.DebugApi.Settlements2 settlements)
-        {
-            ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
-
-            Peer = settlements.Peer;
-            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
-        }
-
-        internal SettlementData(Clients.DebugApi.Response19 settlement)
+        internal SettlementData(Clients.Settlements settlement)
         {
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
@@ -47,16 +29,7 @@ namespace Etherna.BeeNet.Models
             Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementData(Clients.GatewayApi.Settlements settlement)
-        {
-            ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
-
-            Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
-        }
-
-        internal SettlementData(Clients.GatewayApi.Settlements2 settlements)
+        internal SettlementData(Clients.Settlements2 settlements)
         {
             ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
@@ -65,7 +38,7 @@ namespace Etherna.BeeNet.Models
             Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
         }
 
-        internal SettlementData(Clients.GatewayApi.Response35 settlement)
+        internal SettlementData(Clients.Response35 settlement)
         {
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 

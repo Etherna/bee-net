@@ -20,17 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChainState
     {
         // Constructors.
-        internal ChainState(Clients.DebugApi.Response13 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Block = response.Block;
-            ChainTip = response.ChainTip;
-            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
-            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
-        }
-
-        internal ChainState(Clients.GatewayApi.Response30 response)
+        internal ChainState(Clients.Response30 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

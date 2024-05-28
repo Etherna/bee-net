@@ -12,14 +12,24 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi;
-using Etherna.BeeNet.Clients.GatewayApi;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace Etherna.BeeNet
+namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
-    public interface IBeeNodeClient
+    public class WalletTest : BaseTest_Gateway_v5_0_0
     {
-        IBeeDebugClient? DebugClient { get; }
-        IBeeGatewayClient? GatewayClient { get; }
+
+        [Fact]
+        public async Task GetWalletBalance()
+        {
+            // Act.
+            var wallet = await beeNodeClient.GetWalletBalance();
+
+            // Assert.
+            Assert.NotEqual("0", wallet.Bzz);
+            Assert.NotEqual("0", wallet.NativeTokenBalance);
+        }
+
     }
 }

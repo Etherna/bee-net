@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             await Task.Delay(180000);
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CheckIsContentAvailableAsync(reference);
+            var result = await beeNodeClient.CheckIsContentAvailableAsync(reference);
 
 
             // Assert 
@@ -44,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            await beeNodeClient.GatewayClient.ReuploadContentAsync(reference);
+            await beeNodeClient.ReuploadContentAsync(reference);
         }
 
     }

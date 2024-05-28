@@ -6,7 +6,7 @@
 
 #nullable enable
 
-using Etherna.BeeNet.Clients.GatewayApi.Fixer;
+using Etherna.BeeNet.Clients.Fixer;
 using Etherna.BeeNet.Exceptions;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
@@ -22,12 +22,12 @@ using Etherna.BeeNet.Exceptions;
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
 
-namespace Etherna.BeeNet.Clients.GatewayApi
+namespace Etherna.BeeNet.Clients
 {
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial interface IBeeGatewayGeneratedClient
+    internal partial interface IBeeGeneratedClient
     {
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Authenticate - This endpoint is experimental
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response> AuthAsync(Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Refresh the auth token - This endpoint is experimental
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response2> RefreshAsync(Body2 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Upload data
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response3> BytesPostAsync(object swarm_postage_batch_id, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_encrypt = null, object? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -64,7 +64,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Retrieved content specified by reference</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task BytesHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response4> ChunksPostAsync(long? swarm_tag = null, string? swarm_postage_batch_id = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_tag">Associate upload with an existing Tag UID</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Connection established</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ChunksStreamAsync(long? swarm_tag = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -125,7 +125,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.</param>
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -138,7 +138,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -147,7 +147,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task BzzHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -160,7 +160,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -170,7 +170,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="offset">The number of items to skip before starting to collect the result set.</param>
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response6> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -181,7 +181,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Tags can be thought of as upload sessions which can be tracked using the tags endpoint. It will keep track of the chunks that are uploaded as part of the tag and will push them out to the network once a done split is called on the Tag. This happens internally if you use the `Swarm-Deferred-Upload` header.
         /// </remarks>
         /// <returns>New Tag Info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -190,7 +190,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response8> TagsGetAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -199,7 +199,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task TagsDeleteAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -209,7 +209,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="uid">Uid</param>
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response9> TagsPatchAsync(long uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -218,7 +218,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Pin already exists, so no operation</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response10> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -227,7 +227,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Unpinning root hash with reference</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response12> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -236,7 +236,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Reference of the pinned root hash</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response13> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -244,7 +244,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the list of pinned root hash references
         /// </summary>
         /// <returns>List of pinned root hash references</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response14> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -253,7 +253,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="ref">The number of items to skip before starting to collect the result set.</param>
         /// <returns>List of checked root hash references</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response15> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -265,7 +265,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="recipient">Recipient publickey</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Subscribed to topic</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task PssSendAsync(string topic, string targets, string? recipient = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -274,7 +274,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="topic">Topic name</param>
         /// <returns>Returns a WebSocket with a subscription for incoming message data on the requested topic.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task PssSubscribeAsync(string topic, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -287,7 +287,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <returns>Created</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response16> SocAsync(string owner, string id, string sig, object swarm_postage_batch_id, System.IO.Stream body, bool? swarm_pin = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -300,7 +300,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Created</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response17> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -313,7 +313,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="after">Start index (default: 0)</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response18> FeedsGetAsync(string owner, string topic, int? at = null, int? after = null, string? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -322,7 +322,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response19> StewardshipGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -332,7 +332,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="reference">Re-uploads content for specified root hash (can be of any type: collection, file, chunk, etc.)</param>
         /// <param name="swarm_postage_batch_id">Postage batch to use for re-upload. If none is provided and the file was uploaded on the same node before, it will re-use the same batch. If not found, it will return error. If a new batch is provided, the chunks are stamped again with the new batch.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StewardshipPutAsync(string reference, object? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -343,7 +343,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own node underlay and overlay addresses</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response20> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -356,7 +356,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <br/>If node is unhealthy please check node logs for errors.
         /// </remarks>
         /// <returns>Health Status of node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response21> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -364,7 +364,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Readiness endpoint indicates if node is ready to start accepting traffic
         /// </summary>
         /// <returns>OK.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ReadinessAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -375,7 +375,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own balances with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response22> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -387,7 +387,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response23> BalancesGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -398,7 +398,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Anonymous>> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -409,7 +409,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own past due consumption balances with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response24> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -421,7 +421,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response25> ConsumedGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -432,7 +432,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Ethereum address of chequebook contract</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response26> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -443,7 +443,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Balance of the chequebook</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response27> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -452,7 +452,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, object? swarm_cache = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -461,7 +461,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ChunksHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -473,7 +473,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="multiAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response28> ConnectAsync(string multiAddress, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -484,7 +484,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Reserve State</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response29> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -495,7 +495,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Chain State</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response30> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -506,7 +506,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Information about the node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response31> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -517,7 +517,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns overlay addresses of connected peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response32> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -529,7 +529,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Disconnected peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response33> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -541,7 +541,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Returns round trip time for given peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response34> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -553,7 +553,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response35> SettlementsGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -564,7 +564,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response36> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -575,7 +575,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response37> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -586,7 +586,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Swarm topology of the bee node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response38> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -597,7 +597,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Welcome message</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response39> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -608,7 +608,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -620,7 +620,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="peer_id">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response41> ChequebookCashoutGetAsync(string peer_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -634,7 +634,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response42> ChequebookCashoutPostAsync(string peer_id, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -646,7 +646,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="peer_id">Swarm address of peer</param>
         /// <returns>Last cheques</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response43> ChequebookChequeGetAsync(string peer_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -657,7 +657,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Last cheques</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response44> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -670,7 +670,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">amount of tokens to deposit</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response45> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -683,7 +683,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">amount of tokens to withdraw</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response46> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -694,7 +694,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>List of pending transactions</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response47> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -706,7 +706,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response48> TransactionsGetAsync(string txHash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -718,7 +718,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response49> TransactionsPostAsync(string txHash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -731,7 +731,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="txHash">Hash of the transaction</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response50> TransactionsDeleteAsync(string txHash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -742,7 +742,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns an array of postage batches.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response51> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -754,7 +754,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response52> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -766,7 +766,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns extended bucket data of the provided batch ID</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response53> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -784,7 +784,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response54> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -801,7 +801,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response55> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -818,7 +818,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was diluted.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response56> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -829,7 +829,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns an array of all available and currently valid postage batches.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response57> BatchesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -840,7 +840,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="anchor1">The first anchor.</param>
         /// <param name="anchor2">The second anchor.</param>
         /// <returns>Reserve sample response</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response58> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -848,7 +848,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get all accounting associated values with all known peers
         /// </summary>
         /// <returns>Own accounting associated values with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response59> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -856,7 +856,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get current status of node in redistribution game
         /// </summary>
         /// <returns>Redistribution status info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response60> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -864,7 +864,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get wallet balance for BZZ and xDai
         /// </summary>
         /// <returns>Wallet balance info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response61> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -872,7 +872,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
         /// </summary>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(object amount, object address, object coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -885,7 +885,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">Amount of BZZ added that will be deposited for staking.</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -895,7 +895,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <remarks>
         /// This endpoint fetches the staked amount from the blockchain.
         /// </remarks>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -907,7 +907,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -915,7 +915,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get all available loggers.
         /// </summary>
         /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response63> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -924,7 +924,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response64> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -933,7 +933,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>The verbosity was changed successfully.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LoggersPutAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -941,7 +941,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the current status snapshot of this node.
         /// </summary>
         /// <returns>Returns the current node status snapshot.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response65> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -949,13 +949,13 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the current status snapshot of this node connected peers.
         /// </summary>
         /// <returns>Returns the status snapshot of this node connected peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response66> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class BeeGatewayGeneratedClient : IBeeGatewayGeneratedClient
+    internal partial class BeeGeneratedClient : IBeeGeneratedClient
     {
         #pragma warning disable 8618
         private string _baseUrl;
@@ -965,7 +965,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public BeeGatewayGeneratedClient(System.Net.Http.HttpClient httpClient)
+        public BeeGeneratedClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = "http://{apiRoot}:{port}/v1";
@@ -1003,7 +1003,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Authenticate - This endpoint is experimental
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response> AuthAsync(Body body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
@@ -1055,7 +1055,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1065,9 +1065,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response67>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response67>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response67>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -1075,9 +1075,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response68>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response68>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response68>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1085,14 +1085,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response69>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response69>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response69>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1114,7 +1114,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Refresh the auth token - This endpoint is experimental
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response2> RefreshAsync(Body2 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
@@ -1166,7 +1166,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response2>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1176,9 +1176,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response70>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response70>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response70>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -1186,9 +1186,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response71>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response71>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response71>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1196,14 +1196,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response72>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response72>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response72>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1225,7 +1225,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Upload data
         /// </summary>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response3> BytesPostAsync(object swarm_postage_batch_id, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_encrypt = null, object? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -1292,7 +1292,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response3>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1302,9 +1302,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response73>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response73>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response73>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -1312,9 +1312,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response74>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response74>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response74>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1322,14 +1322,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response75>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response75>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response75>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1356,7 +1356,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Retrieved content specified by reference</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -1425,14 +1425,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response76>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response76>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response76>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1455,7 +1455,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BytesHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -1507,9 +1507,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response77>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response77>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response77>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -1517,14 +1517,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response78>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response78>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response78>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1549,7 +1549,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(long? swarm_tag = null, string? swarm_postage_batch_id = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -1603,7 +1603,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response4>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1613,9 +1613,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response79>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response79>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response79>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -1623,9 +1623,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response80>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response80>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response80>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1633,14 +1633,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response81>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response81>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response81>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1667,7 +1667,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_tag">Associate upload with an existing Tag UID</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Connection established</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task ChunksStreamAsync(long? swarm_tag = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -1722,14 +1722,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response82>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response82>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response82>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1771,7 +1771,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.</param>
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(string? name = null, long? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -1852,7 +1852,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response5>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1862,9 +1862,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response83>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response83>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response83>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -1872,9 +1872,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response84>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response84>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response84>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1882,14 +1882,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response85>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response85>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response85>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1916,7 +1916,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -1985,9 +1985,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response86>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response86>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response86>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -1995,9 +1995,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response87>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response87>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response87>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2005,14 +2005,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response88>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response88>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response88>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2035,7 +2035,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BzzHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -2087,9 +2087,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response89>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response89>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response89>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2097,14 +2097,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response90>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response90>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response90>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2131,7 +2131,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -2202,9 +2202,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response91>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response91>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response91>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2212,9 +2212,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response92>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response92>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response92>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2222,14 +2222,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response93>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response93>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response93>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2253,7 +2253,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="offset">The number of items to skip before starting to collect the result set.</param>
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response6> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -2308,7 +2308,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response6>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2318,14 +2318,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response94>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response94>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response94>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2350,7 +2350,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Tags can be thought of as upload sessions which can be tracked using the tags endpoint. It will keep track of the chunks that are uploaded as part of the tag and will push them out to the network once a done split is called on the Tag. This happens internally if you use the `Swarm-Deferred-Upload` header.
         /// </remarks>
         /// <returns>New Tag Info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
@@ -2402,7 +2402,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response7>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2412,14 +2412,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response95>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response95>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response95>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2442,7 +2442,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="uid">Uid</param>
         /// <returns>Tag info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response8> TagsGetAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
@@ -2491,7 +2491,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response8>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2501,9 +2501,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response96>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response96>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response96>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2511,9 +2511,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response97>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response97>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response97>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2521,14 +2521,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response98>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response98>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response98>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2551,7 +2551,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="uid">Uid</param>
         /// <returns>The resource was deleted successfully.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task TagsDeleteAsync(long uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
@@ -2604,9 +2604,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response99>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response99>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response99>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2614,9 +2614,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response100>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response100>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response100>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2624,14 +2624,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response101>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response101>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response101>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2655,7 +2655,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="uid">Uid</param>
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(long uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
@@ -2708,7 +2708,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response9>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2718,9 +2718,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response102>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response102>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response102>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2728,14 +2728,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response103>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response103>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response103>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2758,7 +2758,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Pin already exists, so no operation</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response10> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -2808,7 +2808,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response10>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2818,9 +2818,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response11>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response11>("New pin with root reference was created", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response11>("New pin with root reference was created", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -2828,9 +2828,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response104>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response104>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response104>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2838,9 +2838,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response105>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response105>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response105>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2848,14 +2848,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response106>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response106>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response106>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2878,7 +2878,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Unpinning root hash with reference</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response12> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -2927,7 +2927,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response12>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -2937,9 +2937,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response107>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response107>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response107>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -2947,14 +2947,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response108>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response108>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response108>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2977,7 +2977,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Reference of the pinned root hash</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response13> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -3026,7 +3026,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response13>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3036,9 +3036,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response109>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response109>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response109>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -3046,9 +3046,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response110>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response110>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response110>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3056,14 +3056,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response111>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response111>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response111>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3085,7 +3085,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the list of pinned root hash references
         /// </summary>
         /// <returns>List of pinned root hash references</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response14> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -3130,7 +3130,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response14>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3140,14 +3140,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response112>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response112>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response112>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3170,7 +3170,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="ref">The number of items to skip before starting to collect the result set.</param>
         /// <returns>List of checked root hash references</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response15> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -3221,7 +3221,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response15>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3231,14 +3231,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response113>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response113>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response113>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3264,7 +3264,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="recipient">Recipient publickey</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Subscribed to topic</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task PssSendAsync(string topic, string targets, string? recipient = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (topic == null)
@@ -3332,9 +3332,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response114>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response114>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response114>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -3342,9 +3342,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response115>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response115>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response115>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3352,14 +3352,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response116>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response116>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response116>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3382,7 +3382,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="topic">Topic name</param>
         /// <returns>Returns a WebSocket with a subscription for incoming message data on the requested topic.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task PssSubscribeAsync(string topic, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (topic == null)
@@ -3435,14 +3435,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response117>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response117>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response117>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3469,7 +3469,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <returns>Created</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response16> SocAsync(string owner, string id, string sig, object swarm_postage_batch_id, System.IO.Stream body, bool? swarm_pin = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
@@ -3542,7 +3542,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response16>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3552,9 +3552,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response118>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response118>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response118>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -3562,9 +3562,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response119>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response119>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response119>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -3572,9 +3572,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response120>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response120>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response120>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3582,14 +3582,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response121>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response121>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response121>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3616,7 +3616,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>Created</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response17> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
@@ -3683,7 +3683,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response17>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3693,9 +3693,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response122>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response122>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response122>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -3703,9 +3703,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response123>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response123>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response123>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -3713,9 +3713,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response124>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response124>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response124>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3723,14 +3723,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response125>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response125>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response125>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3757,7 +3757,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="after">Start index (default: 0)</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response18> FeedsGetAsync(string owner, string topic, int? at = null, int? after = null, string? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
@@ -3825,7 +3825,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response18>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3835,9 +3835,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response126>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response126>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response126>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -3845,9 +3845,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response127>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response127>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response127>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3855,14 +3855,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response128>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response128>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response128>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3885,7 +3885,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response19> StewardshipGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -3934,7 +3934,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response19>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -3944,9 +3944,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response129>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response129>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response129>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -3954,14 +3954,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response130>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response130>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response130>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -3985,7 +3985,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="reference">Re-uploads content for specified root hash (can be of any type: collection, file, chunk, etc.)</param>
         /// <param name="swarm_postage_batch_id">Postage batch to use for re-upload. If none is provided and the file was uploaded on the same node before, it will re-use the same batch. If not found, it will return error. If a new batch is provided, the chunks are stamped again with the new batch.</param>
         /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StewardshipPutAsync(string reference, object? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -4042,9 +4042,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response131>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response131>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response131>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -4052,9 +4052,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response132>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response132>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response132>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -4062,14 +4062,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response133>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response133>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response133>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4094,7 +4094,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own node underlay and overlay addresses</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response20> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4139,7 +4139,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response20>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4149,14 +4149,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response134>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response134>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response134>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4183,7 +4183,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <br/>If node is unhealthy please check node logs for errors.
         /// </remarks>
         /// <returns>Health Status of node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response21> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4228,14 +4228,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response21>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4257,7 +4257,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Readiness endpoint indicates if node is ready to start accepting traffic
         /// </summary>
         /// <returns>OK.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task ReadinessAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4306,14 +4306,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response135>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response135>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response135>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4338,7 +4338,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own balances with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response22> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4383,7 +4383,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response22>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4393,14 +4393,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response136>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response136>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response136>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4426,7 +4426,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response23> BalancesGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -4475,7 +4475,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response23>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4485,9 +4485,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response137>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response137>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response137>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -4495,14 +4495,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response138>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response138>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response138>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4527,7 +4527,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Anonymous>> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4572,7 +4572,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Anonymous>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4582,14 +4582,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response139>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response139>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response139>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4614,7 +4614,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Own past due consumption balances with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response24> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4659,7 +4659,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response24>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4669,14 +4669,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response140>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response140>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response140>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4702,7 +4702,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response25> ConsumedGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -4751,7 +4751,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response25>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4761,9 +4761,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response141>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response141>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response141>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -4771,14 +4771,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response142>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response142>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response142>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4803,7 +4803,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Ethereum address of chequebook contract</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response26> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4848,14 +4848,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response26>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4880,7 +4880,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Balance of the chequebook</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response27> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -4925,7 +4925,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response27>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -4935,14 +4935,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response143>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response143>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response143>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -4965,7 +4965,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="reference">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, object? swarm_cache = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -5024,9 +5024,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response144>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response144>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response144>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -5034,9 +5034,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response145>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response145>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response145>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -5044,14 +5044,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response146>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response146>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response146>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5074,7 +5074,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task ChunksHeadAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -5127,9 +5127,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response147>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response147>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response147>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -5137,14 +5137,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response148>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response148>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response148>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5170,7 +5170,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="multiAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response28> ConnectAsync(string multiAddress, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (multiAddress == null)
@@ -5220,7 +5220,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response28>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -5230,9 +5230,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response149>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response149>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response149>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -5240,14 +5240,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response150>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response150>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response150>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5272,7 +5272,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Reserve State</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response29> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -5317,14 +5317,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response29>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5349,7 +5349,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Chain State</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response30> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -5394,14 +5394,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response30>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5426,7 +5426,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Information about the node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response31> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -5471,14 +5471,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response31>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5503,7 +5503,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns overlay addresses of connected peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response32> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -5548,14 +5548,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response32>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5581,7 +5581,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Disconnected peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response33> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -5630,7 +5630,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response33>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -5640,9 +5640,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response151>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response151>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response151>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -5650,14 +5650,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response152>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response152>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response152>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5683,7 +5683,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Returns round trip time for given peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response34> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -5733,7 +5733,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response34>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -5743,9 +5743,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response153>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response153>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response153>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -5753,9 +5753,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response154>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response154>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response154>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -5763,14 +5763,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response155>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response155>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response155>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5796,7 +5796,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Amount of sent or received from settlements with a peer</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response35> SettlementsGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
@@ -5845,7 +5845,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response35>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -5855,9 +5855,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response156>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response156>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response156>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -5865,14 +5865,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response157>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response157>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response157>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5897,7 +5897,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response36> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -5942,7 +5942,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response36>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -5952,14 +5952,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response158>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response158>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response158>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -5984,7 +5984,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response37> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -6029,7 +6029,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response37>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6039,14 +6039,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response159>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response159>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response159>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6071,7 +6071,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Swarm topology of the bee node</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response38> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -6116,14 +6116,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response38>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6148,7 +6148,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Welcome message</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response39> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -6193,7 +6193,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response39>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6203,14 +6203,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response160>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response160>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response160>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6235,7 +6235,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -6284,7 +6284,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response40>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6294,9 +6294,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response161>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response161>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response161>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6304,14 +6304,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response162>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response162>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response162>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6337,7 +6337,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="peer_id">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response41> ChequebookCashoutGetAsync(string peer_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer_id == null)
@@ -6386,7 +6386,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response41>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6396,9 +6396,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response163>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response163>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response163>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6406,14 +6406,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response164>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response164>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response164>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6441,7 +6441,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response42> ChequebookCashoutPostAsync(string peer_id, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer_id == null)
@@ -6497,7 +6497,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response42>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6507,9 +6507,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response165>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response165>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response165>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
@@ -6517,9 +6517,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response166>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response166>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response166>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6527,14 +6527,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response167>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response167>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response167>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6560,7 +6560,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="peer_id">Swarm address of peer</param>
         /// <returns>Last cheques</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response43> ChequebookChequeGetAsync(string peer_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer_id == null)
@@ -6609,7 +6609,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response43>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6619,9 +6619,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response168>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response168>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response168>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6629,14 +6629,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response169>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response169>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response169>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6661,7 +6661,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Last cheques</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response44> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -6706,7 +6706,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response44>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6716,9 +6716,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response170>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response170>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response170>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6726,14 +6726,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response171>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response171>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response171>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6760,7 +6760,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">amount of tokens to deposit</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response45> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
@@ -6815,7 +6815,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response45>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6825,9 +6825,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response172>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response172>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response172>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6835,14 +6835,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response173>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response173>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response173>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6869,7 +6869,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">amount of tokens to withdraw</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response46> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
@@ -6924,7 +6924,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response46>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -6934,9 +6934,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response174>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response174>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response174>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -6944,14 +6944,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response175>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response175>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response175>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -6976,7 +6976,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>List of pending transactions</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response47> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -7021,7 +7021,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response47>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7031,14 +7031,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response176>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response176>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response176>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7064,7 +7064,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response48> TransactionsGetAsync(string txHash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (txHash == null)
@@ -7113,7 +7113,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response48>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7123,9 +7123,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response177>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response177>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response177>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -7133,14 +7133,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response178>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response178>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response178>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7166,7 +7166,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response49> TransactionsPostAsync(string txHash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (txHash == null)
@@ -7216,7 +7216,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response49>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7226,9 +7226,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response179>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response179>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response179>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -7236,14 +7236,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response180>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response180>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response180>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7270,7 +7270,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="txHash">Hash of the transaction</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response50> TransactionsDeleteAsync(string txHash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (txHash == null)
@@ -7322,7 +7322,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response50>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7332,9 +7332,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response181>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response181>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response181>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -7342,14 +7342,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response182>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response182>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response182>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7374,7 +7374,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns an array of postage batches.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response51> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -7419,7 +7419,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response51>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7429,14 +7429,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response183>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response183>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response183>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7462,7 +7462,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response52> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
@@ -7511,7 +7511,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response52>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7521,9 +7521,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response184>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response184>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response184>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -7531,14 +7531,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response185>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response185>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response185>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7564,7 +7564,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns extended bucket data of the provided batch ID</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response53> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
@@ -7614,7 +7614,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response53>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7624,9 +7624,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response186>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response186>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response186>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -7634,14 +7634,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response187>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response187>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response187>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7673,7 +7673,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response54> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
@@ -7743,7 +7743,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response54>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7753,9 +7753,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response188>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response188>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response188>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
@@ -7763,9 +7763,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response189>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response189>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response189>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -7773,14 +7773,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response190>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response190>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response190>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7811,7 +7811,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response55> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
@@ -7872,7 +7872,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response55>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -7882,9 +7882,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response191>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response191>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response191>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
@@ -7892,9 +7892,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response192>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response192>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response192>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
@@ -7902,9 +7902,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response193>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response193>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response193>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -7912,14 +7912,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response194>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response194>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response194>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -7950,7 +7950,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was diluted.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response56> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
@@ -8011,7 +8011,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response56>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8021,9 +8021,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response195>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response195>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response195>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
@@ -8031,9 +8031,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response196>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response196>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response196>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -8041,14 +8041,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response197>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response197>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response197>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8073,7 +8073,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// This endpoint can be restricted if the node is spawned with the `--restricted` flag.
         /// </remarks>
         /// <returns>Returns an array of all available and currently valid postage batches.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response57> BatchesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8118,14 +8118,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response57>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8150,7 +8150,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="anchor1">The first anchor.</param>
         /// <param name="anchor2">The second anchor.</param>
         /// <returns>Reserve sample response</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response58> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (depth == null)
@@ -8209,7 +8209,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response58>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8219,14 +8219,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response198>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response198>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response198>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8248,7 +8248,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get all accounting associated values with all known peers
         /// </summary>
         /// <returns>Own accounting associated values with all known peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response59> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8293,7 +8293,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response59>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8303,14 +8303,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response199>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response199>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response199>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8332,7 +8332,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get current status of node in redistribution game
         /// </summary>
         /// <returns>Redistribution status info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response60> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8377,7 +8377,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response60>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8387,9 +8387,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response200>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response200>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response200>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -8397,14 +8397,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response201>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response201>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response201>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8426,7 +8426,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get wallet balance for BZZ and xDai
         /// </summary>
         /// <returns>Wallet balance info</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response61> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8471,7 +8471,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response61>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8481,14 +8481,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response202>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response202>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response202>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8510,7 +8510,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
         /// </summary>
         /// <returns>OK</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(object amount, object address, object coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (coin == null)
@@ -8570,7 +8570,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response62>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8580,9 +8580,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response203>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response203>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response203>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -8590,14 +8590,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response204>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response204>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response204>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8624,7 +8624,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <param name="amount">Amount of BZZ added that will be deposited for staking.</param>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StakePostAsync(string? amount = null, long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8687,9 +8687,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response205>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response205>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response205>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -8697,14 +8697,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response206>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response206>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response206>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8728,7 +8728,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// <remarks>
         /// This endpoint fetches the staked amount from the blockchain.
         /// </remarks>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8777,14 +8777,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response207>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response207>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response207>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8810,7 +8810,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </remarks>
         /// <param name="gas_price">Gas price for transaction</param>
         /// <param name="gas_limit">Gas limit for transaction</param>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StakeDeleteAsync(long? gas_price = null, long? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8865,9 +8865,9 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response208>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response208>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response208>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -8875,14 +8875,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response209>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response209>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response209>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8904,7 +8904,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get all available loggers.
         /// </summary>
         /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response63> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -8949,7 +8949,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response63>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -8959,14 +8959,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response210>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response210>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response210>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -8989,7 +8989,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response64> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (exp == null)
@@ -9038,7 +9038,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response64>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -9048,14 +9048,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response211>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response211>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response211>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -9078,7 +9078,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// </summary>
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>The verbosity was changed successfully.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task LoggersPutAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (exp == null)
@@ -9132,14 +9132,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response212>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response212>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response212>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -9161,7 +9161,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the current status snapshot of this node.
         /// </summary>
         /// <returns>Returns the current node status snapshot.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response65> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -9206,7 +9206,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response65>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -9216,14 +9216,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response213>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response213>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response213>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response.", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response.", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -9245,7 +9245,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         /// Get the current status snapshot of this node connected peers.
         /// </summary>
         /// <returns>Returns the status snapshot of this node connected peers</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response66> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -9290,7 +9290,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response66>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -9300,14 +9300,14 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                             var objectResponse_ = await ReadObjectResponseAsync<Response214>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new BeeNetGatewayApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetGatewayApiException<Response214>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<Response214>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BeeNetGatewayApiException("Default response.", status_, responseData_, headers_, null);
+                            throw new BeeNetApiException("Default response.", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -9357,7 +9357,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new BeeNetGatewayApiException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new BeeNetApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -9373,7 +9373,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new BeeNetGatewayApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new BeeNetApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -10914,7 +10914,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response52 : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
+    internal partial class Response52 : Etherna.BeeNet.Clients.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
@@ -15993,7 +15993,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Stamps : Etherna.BeeNet.Clients.GatewayApi.Fixer.PostageBatchDto
+    internal partial class Stamps : Etherna.BeeNet.Clients.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;

@@ -27,9 +27,6 @@
     <None Update="Data\BzzFIleForUpload.tar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\TestFileForUpload_Debug.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Data\TestFileForUpload_GatewaySecond.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

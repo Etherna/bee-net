@@ -21,32 +21,24 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 {
     public abstract class BaseTest_Gateway_v5_0_0
     {
-        protected BeeNodeClient beeNodeClient;
+        protected BeeClient beeNodeClient;
         protected string pathTestFileForUpload = "Data/TestFileForUpload_Gateway.txt";
         protected const string version = "4.0.0";
 
         public BaseTest_Gateway_v5_0_0()
         {
-            beeNodeClient = new BeeNodeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
-                1633,
-                1635);
-        }
-
-        public async Task CreateAuthenticatedClientAsync()
-        {
-            beeNodeClient = await BeeNodeClient.AuthenticatedBeeNodeClientAsync(
+            beeNodeClient = new BeeClient(
                 Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
                 1633);
         }
 
         protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.UploadFileAsync(
+            var result = await beeNodeClient.UploadFileAsync(
                 batch,
                 content: File.OpenRead(filePath ?? pathTestFileForUpload),
                 name: Path.GetFileName(filePath) ?? Path.GetFileName(pathTestFileForUpload),
@@ -58,13 +50,13 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 
         protected async Task<string> UploadChunkFileAndGetReferenceAsync()
         {
-            var batch = await beeNodeClient.DebugClient.BuyPostageBatchAsync(500, 32);
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 
 
             // Act 
-            var reference = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
 
             return reference;
         }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi;
+using Etherna.BeeNet.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
             ProofSegments3 = proof.ProofSegments3 ?? Array.Empty<string>();
             ProveSegment = proof.ProveSegment;
             ProveSegment2 = proof.ProveSegment2;
-            SocProof = (proof.SocProof ?? Array.Empty<Clients.GatewayApi.SocProof>()).Select(p => new SocProof(p));
+            SocProof = (proof.SocProof ?? Array.Empty<Clients.SocProof>()).Select(p => new SocProof(p));
         }
 
         internal ReserveCommitmentProof(Proof2 proof)

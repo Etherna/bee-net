@@ -19,23 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class RedistributionState
     {
         // Constructors.
-        internal RedistributionState(Clients.DebugApi.Response31 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            IsFrozen = response.IsFrozen;
-            IsFullySynced = response.IsFullySynced;
-            IsHealthy = response.IsHealthy;
-            Round = response.Round;
-            LastWonRound = response.LastWonRound;
-            LastPlayedRound = response.LastPlayedRound;
-            LastFrozenRound = response.LastFrozenRound;
-            Block = response.Block;
-            Reward = response.Reward;
-            Fees = response.Fees;
-        }
-
-        internal RedistributionState(Clients.GatewayApi.Response60 response)
+        internal RedistributionState(Clients.Response60 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

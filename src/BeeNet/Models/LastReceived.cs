@@ -20,7 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class LastReceived
     {
         // Constructors.
-        internal LastReceived(Clients.DebugApi.Lastreceived lastReceived)
+        internal LastReceived(Clients.Lastreceived lastReceived)
         {
             ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 
@@ -29,25 +29,7 @@ namespace Etherna.BeeNet.Models
             Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
         }
 
-        internal LastReceived(Clients.DebugApi.Lastreceived2 lastReceived)
-        {
-            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
-
-            Beneficiary = lastReceived.Beneficiary;
-            Chequebook = lastReceived.Chequebook;
-            Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
-        }
-
-        internal LastReceived(Clients.GatewayApi.Lastreceived lastReceived)
-        {
-            ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
-
-            Beneficiary = lastReceived.Beneficiary;
-            Chequebook = lastReceived.Chequebook;
-            Payout = long.Parse(lastReceived.Payout, CultureInfo.InvariantCulture);
-        }
-
-        internal LastReceived(Clients.GatewayApi.Lastreceived2 lastReceived)
+        internal LastReceived(Clients.Lastreceived2 lastReceived)
         {
             ArgumentNullException.ThrowIfNull(lastReceived, nameof(lastReceived));
 

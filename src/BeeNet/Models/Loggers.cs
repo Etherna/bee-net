@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class Loggers
     {
         // Constructors.
-        internal Loggers(Clients.DebugApi.Loggers loggers)
+        internal Loggers(Clients.Loggers loggers)
         {
             ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
 
@@ -29,27 +29,7 @@ namespace Etherna.BeeNet.Models
             Verbosity = loggers.Verbosity;
         }
 
-        internal Loggers(Clients.DebugApi.Loggers2 loggers)
-        {
-            ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
-
-            Id = loggers.Id;
-            Logger = loggers.Logger;
-            Subsystem = loggers.Subsystem;
-            Verbosity = loggers.Verbosity;
-        }
-
-        internal Loggers(Clients.GatewayApi.Loggers loggers)
-        {
-            ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
-
-            Id = loggers.Id;
-            Logger = loggers.Logger;
-            Subsystem = loggers.Subsystem;
-            Verbosity = loggers.Verbosity;
-        }
-
-        internal Loggers(Clients.GatewayApi.Loggers2 loggers)
+        internal Loggers(Clients.Loggers2 loggers)
         {
             ArgumentNullException.ThrowIfNull(loggers, nameof(loggers));
 

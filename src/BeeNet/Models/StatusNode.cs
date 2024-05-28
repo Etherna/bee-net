@@ -19,22 +19,22 @@ namespace Etherna.BeeNet.Models
     public sealed class StatusNode
     {
         // Constructors.
-        internal StatusNode(Clients.DebugApi.Response47 status) 
+        internal StatusNode(Clients.Response65 status)
         {
             ArgumentNullException.ThrowIfNull(status, nameof(status));
 
             switch (status.BeeMode)
             {
-                case Clients.DebugApi.Response47BeeMode.Light:
+                case Clients.Response65BeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case Clients.DebugApi.Response47BeeMode.UltraLight:
-                    BeeMode = StatusBeeMode.UltraLight;
-                    break;
-                case Clients.DebugApi.Response47BeeMode.Full:
+                case Clients.Response65BeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case Clients.DebugApi.Response47BeeMode.Unknown:
+                case Clients.Response65BeeMode.UltraLight:
+                    BeeMode = StatusBeeMode.UltraLight;
+                    break;
+                case Clients.Response65BeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }
@@ -50,84 +50,22 @@ namespace Etherna.BeeNet.Models
             StorageRadius = status.StorageRadius;
         }
 
-        internal StatusNode(Clients.DebugApi.Stamps2 status)
+        internal StatusNode(Clients.Stamps2 status)
         {
             ArgumentNullException.ThrowIfNull(status, nameof(status));
 
             switch (status.BeeMode)
             {
-                case Clients.DebugApi.StampsBeeMode.Light:
+                case Clients.StampsBeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case Clients.DebugApi.StampsBeeMode.UltraLight:
-                    BeeMode = StatusBeeMode.UltraLight;
-                    break;
-                case Clients.DebugApi.StampsBeeMode.Full:
+                case Clients.StampsBeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case Clients.DebugApi.StampsBeeMode.Unknown:
-                    BeeMode = StatusBeeMode.Unknown;
-                    break;
-            }
-            BatchCommitment = status.BatchCommitment;
-            ConnectedPeers = status.ConnectedPeers;
-            NeighborhoodSize = status.NeighborhoodSize;
-            Peer = status.Peer;
-            Proximity = status.Proximity;
-            PullsyncRate = status.PullsyncRate;
-            ReserveSize = status.ReserveSize;
-            ReserveSizeWithinRadius = (int)status.ReserveSizeWithinRadius;
-            RequestFailed = status.RequestFailed;
-            StorageRadius = status.StorageRadius;
-        }
-
-        internal StatusNode(Clients.GatewayApi.Response65 status)
-        {
-            ArgumentNullException.ThrowIfNull(status, nameof(status));
-
-            switch (status.BeeMode)
-            {
-                case Clients.GatewayApi.Response65BeeMode.Light:
-                    BeeMode = StatusBeeMode.Light;
-                    break;
-                case Clients.GatewayApi.Response65BeeMode.Full:
-                    BeeMode = StatusBeeMode.Full;
-                    break;
-                case Clients.GatewayApi.Response65BeeMode.UltraLight:
+                case Clients.StampsBeeMode.UltraLight:
                     BeeMode = StatusBeeMode.UltraLight;
                     break;
-                case Clients.GatewayApi.Response65BeeMode.Unknown:
-                    BeeMode = StatusBeeMode.Unknown;
-                    break;
-            }
-            BatchCommitment = status.BatchCommitment;
-            ConnectedPeers = status.ConnectedPeers;
-            NeighborhoodSize = status.NeighborhoodSize;
-            Peer = status.Peer;
-            Proximity = status.Proximity;
-            PullsyncRate = status.PullsyncRate;
-            ReserveSize = status.ReserveSize;
-            ReserveSizeWithinRadius = (int)status.ReserveSizeWithinRadius;
-            RequestFailed = status.RequestFailed;
-            StorageRadius = status.StorageRadius;
-        }
-
-        internal StatusNode(Clients.GatewayApi.Stamps2 status)
-        {
-            ArgumentNullException.ThrowIfNull(status, nameof(status));
-
-            switch (status.BeeMode)
-            {
-                case Clients.GatewayApi.StampsBeeMode.Light:
-                    BeeMode = StatusBeeMode.Light;
-                    break;
-                case Clients.GatewayApi.StampsBeeMode.Full:
-                    BeeMode = StatusBeeMode.Full;
-                    break;
-                case Clients.GatewayApi.StampsBeeMode.UltraLight:
-                    BeeMode = StatusBeeMode.UltraLight;
-                    break;
-                case Clients.GatewayApi.StampsBeeMode.Unknown:
+                case Clients.StampsBeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }

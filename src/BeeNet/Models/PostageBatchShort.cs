@@ -20,22 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PostageBatchShort
     {
         // Constructors.
-        internal PostageBatchShort(Clients.DebugApi.Batches batch)
-        {
-            ArgumentNullException.ThrowIfNull(batch, nameof(batch));
-
-            BatchID = batch.BatchID;
-            BatchTTL = batch.BatchTTL;
-            BucketDepth = batch.BucketDepth;
-            Depth = batch.Depth;
-            ImmutableFlag = batch.ImmutableFlag;
-            Owner = batch.Owner;
-            StartBlockNumber = batch.Start;
-            StorageRadius = batch.StorageRadius;
-            Value = batch.Value;
-        }
-
-        internal PostageBatchShort(Clients.GatewayApi.Batches batch)
+        internal PostageBatchShort(Clients.Batches batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 

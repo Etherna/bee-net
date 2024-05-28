@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class Topology
     {
         // Constructors.
-        internal Topology(Clients.DebugApi.Response22 response)
+        internal Topology(Clients.Response38 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -33,47 +33,18 @@ namespace Etherna.BeeNet.Models
             Depth = response.Depth;
             NetworkAvailability = response.NetworkAvailability switch
             {
-                Clients.DebugApi.Response22NetworkAvailability.Unknown => Models.NetworkAvailability.Unknown,
-                Clients.DebugApi.Response22NetworkAvailability.Available => Models.NetworkAvailability.Available,
-                Clients.DebugApi.Response22NetworkAvailability.Unavailable => Models.NetworkAvailability.Unavailable,
+                Clients.Response38NetworkAvailability.Unknown => Models.NetworkAvailability.Unknown,
+                Clients.Response38NetworkAvailability.Available => Models.NetworkAvailability.Available,
+                Clients.Response38NetworkAvailability.Unavailable => Models.NetworkAvailability.Unavailable,
                 _ => throw new InvalidOperationException(),
             };
             NnLowWatermark = response.NnLowWatermark;
             Population = response.Population;
             Reachability = response.Reachability switch
             {
-                Clients.DebugApi.Response22Reachability.Unknown => Models.Reachability.Unknown,
-                Clients.DebugApi.Response22Reachability.Public => Models.Reachability.Public,
-                Clients.DebugApi.Response22Reachability.Private => Models.Reachability.Private,
-                _ => throw new InvalidOperationException(),
-            };
-            Timestamp = response.Timestamp;
-        }
-
-        internal Topology(Clients.GatewayApi.Response38 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            BaseAddr = response.BaseAddr;
-            Bins = response.Bins.ToDictionary(
-                i => i.Key,
-                i => new PeersAggregate(i.Value));
-            Connected = response.Connected;
-            Depth = response.Depth;
-            NetworkAvailability = response.NetworkAvailability switch
-            {
-                Clients.GatewayApi.Response38NetworkAvailability.Unknown => Models.NetworkAvailability.Unknown,
-                Clients.GatewayApi.Response38NetworkAvailability.Available => Models.NetworkAvailability.Available,
-                Clients.GatewayApi.Response38NetworkAvailability.Unavailable => Models.NetworkAvailability.Unavailable,
-                _ => throw new InvalidOperationException(),
-            };
-            NnLowWatermark = response.NnLowWatermark;
-            Population = response.Population;
-            Reachability = response.Reachability switch
-            {
-                Clients.GatewayApi.Response38Reachability.Unknown => Models.Reachability.Unknown,
-                Clients.GatewayApi.Response38Reachability.Public => Models.Reachability.Public,
-                Clients.GatewayApi.Response38Reachability.Private => Models.Reachability.Private,
+                Clients.Response38Reachability.Unknown => Models.Reachability.Unknown,
+                Clients.Response38Reachability.Public => Models.Reachability.Public,
+                Clients.Response38Reachability.Private => Models.Reachability.Private,
                 _ => throw new InvalidOperationException(),
             };
             Timestamp = response.Timestamp;

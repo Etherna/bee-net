@@ -24,14 +24,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         //public async Task UploadChunkAsync()
         //{
         //    // Arrange 
-        //    var batch = await beeNodeClient.GatewayClient.BuyPostageBatchAsync(500, 32);
-        //    var tag = await beeNodeClient.GatewayClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
+        //    var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+        //    var tag = await beeNodeClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
         //    var fs = File.OpenRead("Data/TestFileForUpload_Debug.txt");
         //    await Task.Delay(180000);
 
 
         //    // Act 
-        //    var result = await beeNodeClient.GatewayClient.UploadChunkAsync(batch, tag.Uid, body: fs);
+        //    var result = await beeNodeClient.UploadChunkAsync(batch, tag.Uid, body: fs);
 
 
         //    // Assert
@@ -46,7 +46,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
         //    // Act 
-        //    var result = await beeNodeClient.GatewayClient.GetChunkAsync(reference);
+        //    var result = await beeNodeClient.GetChunkAsync(reference);
 
 
         //    // Assert
@@ -60,7 +60,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
         //    // Act 
-        //    var result = await beeNodeClient.GatewayClient.ChunksHeadAsync(reference);
+        //    var result = await beeNodeClient.ChunksHeadAsync(reference);
 
 
         //    // Assert
@@ -74,11 +74,55 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
         //    // Act 
-        //    var result = await beeNodeClient.GatewayClient.DeleteChunkAsync(reference);
+        //    var result = await beeNodeClient.DeleteChunkAsync(reference);
 
 
         //    // Assert
         //}
         
+        /*
+        [Fact]
+        public async Task GetChunkAsync()
+        {
+            // Arrange
+            var reference = await UploadFileAndGetReferenceAsync();
+
+
+            // Act
+            var result = await beeNodeClient.GetChunkAsync(reference); //TODO address
+
+
+            // Assert
+        }
+
+        [Fact]
+        public async Task DeleteChunkAsync()
+        {
+            // Arrange
+            var reference = await UploadFileAndGetReferenceAsync();
+
+
+            // Act
+            var result = await beeNodeClient.DeleteChunkAsync(reference);
+
+
+            // Assert
+        }
+
+        private async Task<string> UploadFileAndGetReferenceAsync()
+        {
+            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var tag = await beeNodeClient.CreateTagAsync("6790b12369e6416a16bf4d5b950e0c61c1b001f1f6e9cfb27cc9ca6e341365b7");
+            var fs = File.OpenRead("Data/TestFileForUpload_Debug.txt");
+            await Task.Delay(180000);
+
+
+            // Act
+            var result = await beeNodeClient.UploadChunkAsync(batch, tag.Uid, body: fs);
+
+            return result.Reference;
+        }
+
+        */
     }
 }

@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class StewardshipGet
     {
         // Constructors.
-        internal StewardshipGet(Clients.GatewayApi.Response19 response)
+        internal StewardshipGet(Clients.Response19 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

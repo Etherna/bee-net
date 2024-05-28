@@ -20,8 +20,110 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class ConnectivityTest : BaseTest_Gateway_v5_0_0
     {
+        [Fact]
+        public async Task GetAddressesAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var result = await beeNodeClient.GetAddressesAsync();
+
+
+            // Assert 
+            Assert.StartsWith("0x", result.Ethereum);
+        }
+
+        [Fact]
+        public async Task GetBlocklistedPeerAddressesAsync()
+        {
+            // Act.
+            await beeNodeClient.GetBlocklistedPeerAddressesAsync();
+        }
+
         /*
-        NEED LOGIN ENABLED
+        [Fact]
+        public async Task ConnectToPeerAsync()
+        {
+            // Arrange 
+            var addresses = await beeNodeClient.GetAddressesAsync();
+
+
+            // Act 
+            var result = await beeNodeClient.ConnectToPeerAsync(""); //TODO where i can take multiAddr correct???
+
+
+            // Assert 
+            throw new NotImplementedException();
+        }
         */
+
+        [Fact]
+        public async Task GetAllPeerAddressesAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var result = await beeNodeClient.GetAllPeerAddressesAsync();
+
+
+            // Assert 
+            Assert.NotEmpty(result);
+        }
+
+        /*
+        [Fact]
+        public async Task DeletePeerAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            await beeNodeClient.DeletePeerAsync("address"); //TODO where i can take multiAddr correct???
+
+
+            // Assert 
+            throw new NotImplementedException();
+        }
+        
+
+        [Fact]
+        public async Task TryConnectToPeerAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            await beeNodeClient.TryConnectToPeerAsync("address"); //TODO where i can take multiAddr correct???
+
+
+            // Assert 
+            throw new NotImplementedException();
+        }
+        */
+
+        [Fact]
+        public async Task GetSwarmTopologyAsync()
+        {
+            // Act.
+            await beeNodeClient.GetSwarmTopologyAsync();
+        }
+
+        [Fact]
+        public async Task GetSet_WelcomeMessageAsync()
+        {
+            // Arrange 
+            var message = "MyTEst message welcome";
+
+
+            // Act 
+            await beeNodeClient.SetWelcomeMessageAsync(message);
+
+
+            // Assert 
+            var result = await beeNodeClient.GetWelcomeMessageAsync();
+            Assert.Equal(message, result);
+        }
     }
 }
