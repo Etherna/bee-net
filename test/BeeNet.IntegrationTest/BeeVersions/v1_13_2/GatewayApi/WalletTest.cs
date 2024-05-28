@@ -12,15 +12,12 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.DebugApi
+namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
-    public class WalletTest : BaseTest_Debug_v5_0_0
+    public class WalletTest : BaseTest_Gateway_v5_0_0
     {
 
         [Fact]

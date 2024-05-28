@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,8 +20,61 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class StatusResultTest : BaseTest_Gateway_v5_0_0
     {
-        /*
-        NEED LOGIN ENABLED
-        */
+        [Fact]
+        public async Task GetReserveStateAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var reserveState = await beeNodeClient.GatewayClient.GetReserveStateAsync();
+
+
+            // Assert
+            Assert.True(reserveState.Commitment > 0);
+            Assert.True(reserveState.Radius > 0);
+        }
+
+        [Fact]
+        public async Task GetChainStateAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var chainState = await beeNodeClient.GatewayClient.GetChainStateAsync();
+
+
+            // Assert
+            Assert.True(chainState.Block > 0);
+        }
+
+        [Fact]
+        public async Task GetNodeInfoAsync()
+        {
+            // Arrange 
+
+
+            // Act 
+            var nodeInfo = await beeNodeClient.GatewayClient.GetNodeInfoAsync();
+
+
+            // Assert
+            Assert.True(nodeInfo.ChequebookEnabled);
+            Assert.True(nodeInfo.SwapEnabled);
+        }
+
+        [IgnoreOtherVersionFact(testVersion: version)]
+        public async Task GetHealthAsync()
+        {
+            // Act 
+            var healthAsync = await beeNodeClient.GatewayClient.GetHealthAsync();
+
+            // Assert
+            Assert.Equal("5.0.0", healthAsync.ApiVersion);
+            Assert.Equal("5.0.0", healthAsync.DebugApiVersion);
+            Assert.Equal(StatusValues.Ok, healthAsync.Status);
+            Assert.StartsWith("1.13.2-", healthAsync.Version);
+        }
     }
 }
