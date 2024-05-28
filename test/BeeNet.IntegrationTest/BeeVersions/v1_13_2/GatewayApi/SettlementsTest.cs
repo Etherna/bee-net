@@ -20,8 +20,51 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class SettlementsTest : BaseTest_Gateway_v5_0_0
     {
-        /*
-        NEED LOGIN ENABLED
-        */
+        [Fact]
+        public async Task GetAllSettlementsAsync()
+        {
+            // Arrange 
+            var allCheque = await beeNodeClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
+
+            // Act 
+            var reserveState = await beeNodeClient.GetAllSettlementsAsync();
+
+
+            // Assert
+            Assert.Contains(reserveState.Settlements, i => i.Peer == peerId);
+        }
+
+        [Fact]
+        public async Task GetAllTimeSettlementsAsync()
+        {
+            // Arrange 
+            var allCheque = await beeNodeClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
+
+
+            // Act 
+            var reserveState = await beeNodeClient.GetAllTimeSettlementsAsync();
+
+
+            // Assert
+            Assert.Contains(reserveState.Settlements, i => i.Peer == peerId);
+        }
+
+        [Fact]
+        public async Task GetSettlementsWithPeerAsync()
+        {
+            // Arrange 
+            var allCheque = await beeNodeClient.GetAllChequeBookChequesAsync();
+            var peerId = allCheque.ToList().First().Peer;
+
+
+            // Act 
+            var reserveState = await beeNodeClient.GetSettlementsWithPeerAsync(peerId);
+
+
+            // Assert
+            Assert.Equal(peerId, reserveState.Peer);
+        }
     }
 }

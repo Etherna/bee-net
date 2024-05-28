@@ -12,33 +12,73 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Clients.GatewayApi
+namespace Etherna.BeeNet
 {
-    public class BeeGatewayClient : IBeeGatewayClient
+    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
+    public class BeeClient : IBeeClient, IDisposable
     {
+        // Consts.
+        public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
+
         // Fields.
-        private readonly BeeGatewayGeneratedClient generatedClient;
+        private readonly BeeGeneratedClient generatedClient;
+        private readonly HttpClient httpClient;
+        
+        private bool disposed;
 
         // Constructors.
-        public BeeGatewayClient(Uri baseUrl, HttpClient httpClient)
+        public BeeClient(
+            string baseUrl = "http://localhost/",
+            int gatewayApiPort = 1633,
+            HttpClient? customHttpClient = null)
         {
-            ArgumentNullException.ThrowIfNull(baseUrl, nameof(baseUrl));
+            httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
-            generatedClient = new BeeGatewayGeneratedClient(httpClient) { BaseUrl = baseUrl.ToString() };
+            GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
+            generatedClient = new BeeGeneratedClient(httpClient) { BaseUrl = GatewayApiUrl.ToString() };
         }
 
+        // Dispose.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            // Dispose managed resources.
+            if (disposing)
+                httpClient.Dispose();
+
+            disposed = true;
+        }
+
+
+        // Properties.
+        public Uri GatewayApiUrl { get; }
+        
         // Methods.
+        public async Task<Dictionary<string, Account>> AccountingAsync(
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new Account(i.Value));
+
         public async Task<Auth> AuthenticateAsync(string role, int expiry) =>
             new(await generatedClient.AuthAsync(
                 new Body
@@ -73,7 +113,7 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 await generatedClient.ChunksHeadAsync(address.ToString(), cancellationToken).ConfigureAwait(false);
                 return true;
             }
-            catch (BeeNetGatewayApiException)
+            catch (BeeNetApiException)
             {
                 return false;
             }
@@ -348,13 +388,28 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false));
 
+        public async Task<Wallet> GetWalletBalance(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false));
+
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage;
+
+        public async Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false));
+
+        public async Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default) =>
+            new(await generatedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false));
+
+        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
+            await generatedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
 
         public async Task<string> RebroadcastTransactionAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash;
+
+        public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<string> RefreshAuthAsync(
             string role,
@@ -380,10 +435,6 @@ namespace Etherna.BeeNet.Clients.GatewayApi
             string? recipient = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.PssSendAsync(topic, targets, swarmPostageBatchId, recipient, cancellationToken);
-
-        public void SetAuthToken(
-            string token) =>
-            generatedClient.SetAuthToken(token);
         
         public Task SetWelcomeMessageAsync(
             string welcomeMessage,
@@ -395,6 +446,21 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 },
                 cancellationToken);
 
+        public async Task StakeDeleteAsync(long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeDeleteAsync(gasPrice, gasLimit, cancellationToken).ConfigureAwait(false);
+
+        public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
+
+        public async Task StakePostAsync(string? amount = null, long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default) =>
+            await generatedClient.StakePostAsync(amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false);
+
+        public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default) =>
+            new(await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false));
+
+        public async Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNode(p));
+
         public Task SubscribeToPssAsync(
             string topic,
             CancellationToken cancellationToken = default) =>
@@ -403,8 +469,8 @@ namespace Etherna.BeeNet.Clients.GatewayApi
         public async Task<string> TopUpPostageBatchAsync(
             string id,
             long amount,
-            long? gasPrice,
-            long? gasLimit,
+            long? gasPrice = null,
+            long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsTopupAsync(id, amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
 
@@ -510,10 +576,41 @@ namespace Etherna.BeeNet.Clients.GatewayApi
                 swarmPin,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
+        public async Task<string> WalletWithdrawAsync(
+            long amount,
+            string address,
+            string coin,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.WalletWithdrawAsync(amount.ToString(CultureInfo.InvariantCulture), address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash;
+
         public async Task<string> WithdrawFromChequeBookAsync(
             long amount,
             long? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
+
+        // Helpers.
+        private static string BuildBaseUrl(string url, int port)
+        {
+            var normalizedUrl = url;
+            if (normalizedUrl.Last() != '/')
+                normalizedUrl += '/';
+
+            var baseUrl = "";
+
+            var urlRegex = new Regex(@"^((?<proto>\w+)://)?(?<host>[^/:]+)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(150));
+            var urlMatch = urlRegex.Match(normalizedUrl);
+
+            if (!urlMatch.Success)
+                throw new ArgumentException("Url is not valid", nameof(url));
+
+            if (!string.IsNullOrEmpty(urlMatch.Groups["proto"].Value))
+                baseUrl += urlMatch.Groups["proto"].Value + "://";
+
+            baseUrl += $"{urlMatch.Groups["host"].Value}:{port}";
+
+            return baseUrl;
+        }
     }
 }

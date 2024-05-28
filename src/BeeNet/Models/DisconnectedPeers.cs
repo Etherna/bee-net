@@ -19,15 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class DisconnectedPeers
     {
         // Constructors.
-        internal DisconnectedPeers(Clients.DebugApi.DisconnectedPeers disconnectedPeers)
-        {
-            ArgumentNullException.ThrowIfNull(disconnectedPeers, nameof(disconnectedPeers));
-
-            Address = disconnectedPeers.Address;
-            Metrics = new PeerMetrics(disconnectedPeers.Metrics);
-        }
-
-        internal DisconnectedPeers(Clients.GatewayApi.DisconnectedPeers disconnectedPeers)
+        internal DisconnectedPeers(Clients.DisconnectedPeers disconnectedPeers)
         {
             ArgumentNullException.ThrowIfNull(disconnectedPeers, nameof(disconnectedPeers));
 

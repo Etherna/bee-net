@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Feeds.Models;
@@ -29,10 +28,10 @@ namespace Etherna.BeeNet.Services.Feeds
         // Consts.
 
         // Fields.
-        private readonly IBeeGatewayClient gatewayClient;
+        private readonly IBeeClient gatewayClient;
 
         // Constructor.
-        public FeedService(IBeeGatewayClient gatewayClient)
+        public FeedService(IBeeClient gatewayClient)
         {
             this.gatewayClient = gatewayClient;
         }
@@ -175,7 +174,7 @@ namespace Etherna.BeeNet.Services.Feeds
                 await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
                 return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkAddress);
             }
-            catch (BeeNetGatewayApiException)
+            catch (BeeNetApiException)
             {
                 return null;
             }

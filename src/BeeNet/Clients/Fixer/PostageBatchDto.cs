@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-namespace Etherna.BeeNet.Clients.DebugApi.Fixer
+namespace Etherna.BeeNet.Clients.Fixer
 {
     public class PostageBatchDto
     {

@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.DebugApi;
 using System;
 
 namespace Etherna.BeeNet.Models
@@ -20,66 +19,66 @@ namespace Etherna.BeeNet.Models
     public sealed class StatusNode
     {
         // Constructors.
-        internal StatusNode(Response47 response) 
+        internal StatusNode(Clients.Response65 status)
         {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
+            ArgumentNullException.ThrowIfNull(status, nameof(status));
 
-            switch (response.BeeMode)
+            switch (status.BeeMode)
             {
-                case Response47BeeMode.Light:
+                case Clients.Response65BeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case Response47BeeMode.UltraLight:
-                    BeeMode = StatusBeeMode.UltraLight;
-                    break;
-                case Response47BeeMode.Full:
+                case Clients.Response65BeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case Response47BeeMode.Unknown:
+                case Clients.Response65BeeMode.UltraLight:
+                    BeeMode = StatusBeeMode.UltraLight;
+                    break;
+                case Clients.Response65BeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }
-            BatchCommitment = response.BatchCommitment;
-            ConnectedPeers = response.ConnectedPeers;
-            NeighborhoodSize = response.NeighborhoodSize;
-            Peer = response.Peer;
-            Proximity = response.Proximity;
-            PullsyncRate = response.PullsyncRate;
-            ReserveSize = response.ReserveSize;
-            ReserveSizeWithinRadius = (int)response.ReserveSizeWithinRadius;
-            RequestFailed = response.RequestFailed;
-            StorageRadius = response.StorageRadius;
+            BatchCommitment = status.BatchCommitment;
+            ConnectedPeers = status.ConnectedPeers;
+            NeighborhoodSize = status.NeighborhoodSize;
+            Peer = status.Peer;
+            Proximity = status.Proximity;
+            PullsyncRate = status.PullsyncRate;
+            ReserveSize = status.ReserveSize;
+            ReserveSizeWithinRadius = (int)status.ReserveSizeWithinRadius;
+            RequestFailed = status.RequestFailed;
+            StorageRadius = status.StorageRadius;
         }
 
-        internal StatusNode(Stamps2 stamps)
+        internal StatusNode(Clients.Stamps2 status)
         {
-            ArgumentNullException.ThrowIfNull(stamps, nameof(stamps));
+            ArgumentNullException.ThrowIfNull(status, nameof(status));
 
-            switch (stamps.BeeMode)
+            switch (status.BeeMode)
             {
-                case StampsBeeMode.Light:
+                case Clients.StampsBeeMode.Light:
                     BeeMode = StatusBeeMode.Light;
                     break;
-                case StampsBeeMode.UltraLight:
-                    BeeMode = StatusBeeMode.UltraLight;
-                    break;
-                case StampsBeeMode.Full:
+                case Clients.StampsBeeMode.Full:
                     BeeMode = StatusBeeMode.Full;
                     break;
-                case StampsBeeMode.Unknown:
+                case Clients.StampsBeeMode.UltraLight:
+                    BeeMode = StatusBeeMode.UltraLight;
+                    break;
+                case Clients.StampsBeeMode.Unknown:
                     BeeMode = StatusBeeMode.Unknown;
                     break;
             }
-            BatchCommitment = stamps.BatchCommitment;
-            ConnectedPeers = stamps.ConnectedPeers;
-            NeighborhoodSize = stamps.NeighborhoodSize;
-            Peer = stamps.Peer;
-            Proximity = stamps.Proximity;
-            PullsyncRate = stamps.PullsyncRate;
-            ReserveSize = stamps.ReserveSize;
-            ReserveSizeWithinRadius = (int)stamps.ReserveSizeWithinRadius;
-            RequestFailed = stamps.RequestFailed;
-            StorageRadius = stamps.StorageRadius;
+            BatchCommitment = status.BatchCommitment;
+            ConnectedPeers = status.ConnectedPeers;
+            NeighborhoodSize = status.NeighborhoodSize;
+            Peer = status.Peer;
+            Proximity = status.Proximity;
+            PullsyncRate = status.PullsyncRate;
+            ReserveSize = status.ReserveSize;
+            ReserveSizeWithinRadius = (int)status.ReserveSizeWithinRadius;
+            RequestFailed = status.RequestFailed;
+            StorageRadius = status.StorageRadius;
         }
 
         // Properties.

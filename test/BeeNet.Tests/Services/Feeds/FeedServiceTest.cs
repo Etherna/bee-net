@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Feeds.Models;
@@ -37,8 +36,8 @@ namespace Etherna.BeeNet.Services.Feeds
                 ulong at,
                 SwarmFeedChunk startingChunk,
                 byte[] topic,
-                Action<Mock<IBeeGatewayClient>> arrangeAction,
-                Action<Mock<IBeeGatewayClient>> asserts,
+                Action<Mock<IBeeClient>> arrangeAction,
+                Action<Mock<IBeeClient>> asserts,
                 SwarmFeedChunk expectedResult)
             {
                 Account = account;
@@ -51,8 +50,8 @@ namespace Etherna.BeeNet.Services.Feeds
             }
 
             public byte[] Account { get; }
-            public Action<Mock<IBeeGatewayClient>> ArrangeAction { get; }
-            public Action<Mock<IBeeGatewayClient>> Asserts { get; }
+            public Action<Mock<IBeeClient>> ArrangeAction { get; }
+            public Action<Mock<IBeeClient>> Asserts { get; }
             public ulong At { get; }
             public SwarmFeedChunk ExpectedResult { get; }
             public SwarmFeedChunk StartingChunk { get; }
@@ -83,8 +82,8 @@ namespace Etherna.BeeNet.Services.Feeds
                 ulong at,
                 EpochFeedIndex epochIndex,
                 byte[] topic,
-                Action<Mock<IBeeGatewayClient>> arrangeAction,
-                Action<Mock<IBeeGatewayClient>> asserts,
+                Action<Mock<IBeeClient>> arrangeAction,
+                Action<Mock<IBeeClient>> asserts,
                 SwarmFeedChunk? expectedResult)
             {
                 Account = account;
@@ -97,8 +96,8 @@ namespace Etherna.BeeNet.Services.Feeds
             }
 
             public byte[] Account { get; }
-            public Action<Mock<IBeeGatewayClient>> ArrangeAction { get; }
-            public Action<Mock<IBeeGatewayClient>> Asserts { get; }
+            public Action<Mock<IBeeClient>> ArrangeAction { get; }
+            public Action<Mock<IBeeClient>> Asserts { get; }
             public ulong At { get; }
             public EpochFeedIndex EpochIndex { get; }
             public SwarmFeedChunk? ExpectedResult { get; }
@@ -110,7 +109,7 @@ namespace Etherna.BeeNet.Services.Feeds
         private static readonly byte[] ChunkTopic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
         // Fields.
-        private readonly Mock<IBeeGatewayClient> gatewayClientMock = new();
+        private readonly Mock<IBeeClient> gatewayClientMock = new();
         private readonly FeedService service;
 
         // Constructor.
@@ -194,7 +193,7 @@ namespace Etherna.BeeNet.Services.Feeds
                         gateMock =>
                         {
                             gateMock.Setup(g => g.GetChunkStreamAsync(rightChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                             gateMock.Setup(g => g.GetChunkStreamAsync(leftChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new MemoryStream(leftChildChunkPayload));
                         },
@@ -221,7 +220,7 @@ namespace Etherna.BeeNet.Services.Feeds
                         gateMock =>
                         {
                             gateMock.Setup(g => g.GetChunkStreamAsync(leftChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                         },
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(It.IsAny<SwarmAddress>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Once()),
                         startingChunk));
@@ -249,9 +248,9 @@ namespace Etherna.BeeNet.Services.Feeds
                         gateMock =>
                         {
                             gateMock.Setup(g => g.GetChunkStreamAsync(rightChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                             gateMock.Setup(g => g.GetChunkStreamAsync(leftChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                         },
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(It.IsAny<SwarmAddress>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         startingChunk));
@@ -284,7 +283,7 @@ namespace Etherna.BeeNet.Services.Feeds
                             gateMock.Setup(g => g.GetChunkStreamAsync(rightChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new MemoryStream(rightChildChunkPayload));
                             gateMock.Setup(g => g.GetChunkStreamAsync(leftChildChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                         },
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(It.IsAny<SwarmAddress>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         startingChunk));
@@ -367,7 +366,7 @@ namespace Etherna.BeeNet.Services.Feeds
                         new EpochFeedIndex(0, EpochFeedIndex.MaxLevel),
                         ChunkTopic,
                         gateMock => gateMock.Setup(g => g.GetChunkStreamAsync(It.IsAny<SwarmAddress>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                            .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null)),
+                            .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null)),
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(It.IsAny<SwarmAddress>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Once()),
                         null));
                 }
@@ -408,7 +407,7 @@ namespace Etherna.BeeNet.Services.Feeds
                         gateMock =>
                         {
                             gateMock.Setup(g => g.GetChunkStreamAsync(startingChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                             gateMock.Setup(g => g.GetChunkStreamAsync(leftChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new MemoryStream(leftChunkPayload));
                         },
@@ -462,7 +461,7 @@ namespace Etherna.BeeNet.Services.Feeds
                         gateMock =>
                         {
                             gateMock.Setup(g => g.GetChunkStreamAsync(startingChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                                .Throws(() => new BeeNetGatewayApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                                .Throws(() => new BeeNetApiException("not found", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
                             gateMock.Setup(g => g.GetChunkStreamAsync(parentChunkReference, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new MemoryStream(parentChunkPayload));
                         },
@@ -550,7 +549,7 @@ namespace Etherna.BeeNet.Services.Feeds
                     .Returns(Task.FromResult<Stream>(dataStream));
             else
                 gatewayClientMock.Setup(c => c.GetChunkStreamAsync(referenceHash, It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
-                    .Throws(new BeeNetGatewayApiException("", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
+                    .Throws(new BeeNetApiException("", 404, null, new Dictionary<string, IEnumerable<string>>(), null));
 
             // Act.
             var result = await service.TryGetFeedChunkAsync(referenceHash, index);

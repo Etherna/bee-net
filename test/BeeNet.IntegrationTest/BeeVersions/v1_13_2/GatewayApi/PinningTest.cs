@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            var result = await beeNodeClient.CreatePinAsync(reference);
 
 
             // Assert 
@@ -41,11 +41,11 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await beeNodeClient.CreatePinAsync(reference);
 
 
             // Act 
-            var result = await beeNodeClient.GatewayClient.DeletePinAsync(reference);
+            var result = await beeNodeClient.DeletePinAsync(reference);
 
 
             // Assert 
@@ -57,12 +57,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await beeNodeClient.CreatePinAsync(reference);
             await Task.Delay(60000);
 
 
             // Act 
-            await beeNodeClient.GatewayClient.GetPinStatusAsync(reference);
+            await beeNodeClient.GetPinStatusAsync(reference);
         }
 
         [Fact]
@@ -70,12 +70,12 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-            await beeNodeClient.GatewayClient.CreatePinAsync(reference);
+            await beeNodeClient.CreatePinAsync(reference);
             await Task.Delay(60000);
 
 
             // Act 
-            var results = await beeNodeClient.GatewayClient.GetAllPinsAsync();
+            var results = await beeNodeClient.GetAllPinsAsync();
 
 
             // Assert 

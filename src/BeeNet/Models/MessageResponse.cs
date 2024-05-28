@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class MessageResponse
     {
         // Constructors.
-        internal MessageResponse(Clients.DebugApi.Response16 response)
+        internal MessageResponse(Clients.Response10 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Models
             Code = response.Code;
         }
 
-        internal MessageResponse(Clients.DebugApi.Response10 response)
+        internal MessageResponse(Clients.Response12 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -35,23 +35,7 @@ namespace Etherna.BeeNet.Models
             Code = response.Code;
         }
 
-        internal MessageResponse(Clients.GatewayApi.Response10 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Message = response.Message;
-            Code = response.Code;
-        }
-
-        internal MessageResponse(Clients.GatewayApi.Response12 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Message = response.Message;
-            Code = response.Code;
-        }
-
-        internal MessageResponse(Clients.GatewayApi.Response33 response)
+        internal MessageResponse(Clients.Response33 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

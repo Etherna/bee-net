@@ -20,18 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequebookCashoutGet
     {
         // Constructors.
-        internal ChequebookCashoutGet(Clients.DebugApi.Response25 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            Peer = response.Peer;
-            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedCheque(response.LastCashedCheque) : null;
-            TransactionHash = response.TransactionHash;
-            Result = new ResultChequebook(response.Result);
-            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
-        }
-
-        internal ChequebookCashoutGet(Clients.GatewayApi.Response41 response)
+        internal ChequebookCashoutGet(Clients.Response41 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

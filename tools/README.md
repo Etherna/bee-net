@@ -6,10 +6,9 @@ We are using `speccy` tool (https://github.com/wework/speccy) with these command
 
 ```shell
 speccy resolve -i ./openapi/Swarm.yaml -o GatewaySwarm.yaml
-speccy resolve -i ./openapi/SwarmDebug.yaml -o DebugSwarm.yaml
 ```
 
-How to versioning openapi/*.yaml: 
+How to version openapi/*.yaml: 
     - copy *.yaml from official https://github.com/ethersphere/bee/tree/master/openapi in tools/original-open-api
     - merge tools/original-open-api in new feature/BNET-xx-Beex.x.x
 
@@ -20,6 +19,5 @@ Use Nswag to generate client code. Use NSwagStudio for Windows, or NSwag Cli wit
 NSwag Cli:
 
 ```shell
-nswag run swarm-gateway-api.nswag
-nswag run swarm-debug-api.nswag
+nswag run bee-api.nswag
 ```

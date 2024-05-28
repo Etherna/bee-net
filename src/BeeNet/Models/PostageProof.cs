@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Clients.GatewayApi;
+using Etherna.BeeNet.Clients;
 using System;
 
 namespace Etherna.BeeNet.Models
 {
     public sealed class PostageProof
     {
-        internal PostageProof(Clients.GatewayApi.PostageProof postageProof)
+        internal PostageProof(Clients.PostageProof postageProof)
         {
             ArgumentNullException.ThrowIfNull(postageProof, nameof(postageProof));
             

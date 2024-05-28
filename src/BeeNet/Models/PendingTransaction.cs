@@ -20,22 +20,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PendingTransaction
     {
         // Constructors.
-        internal PendingTransaction(Clients.DebugApi.PendingTransactions tx)
-        {
-            ArgumentNullException.ThrowIfNull(tx, nameof(tx));
-
-            TransactionHash = tx.TransactionHash;
-            To = tx.To;
-            Nonce = tx.Nonce;
-            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
-            GasLimit = tx.GasLimit;
-            Data = tx.Data;
-            Created = tx.Created;
-            Description = tx.Description;
-            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
-        }
-
-        internal PendingTransaction(Clients.GatewayApi.PendingTransactions tx)
+        internal PendingTransaction(Clients.PendingTransactions tx)
         {
             ArgumentNullException.ThrowIfNull(tx, nameof(tx));
 

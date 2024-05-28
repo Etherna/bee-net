@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class Auth
     {
         // Constructors.
-        internal Auth(Clients.GatewayApi.Response response)
+        internal Auth(Clients.Response response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

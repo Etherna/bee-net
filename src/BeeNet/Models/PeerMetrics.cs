@@ -19,19 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class PeerMetrics
     {
         // Constructors
-        internal PeerMetrics(Clients.DebugApi.Metrics metrics)
-        {
-            ArgumentNullException.ThrowIfNull(metrics, nameof(metrics));
-
-            LastSeenTimestamp = metrics.LastSeenTimestamp;
-            SessionConnectionRetry = metrics.SessionConnectionRetry;
-            ConnectionTotalDuration = metrics.ConnectionTotalDuration;
-            SessionConnectionDuration = metrics.SessionConnectionDuration;
-            SessionConnectionDirection = metrics.SessionConnectionDirection;
-            LatencyEWMA = metrics.LatencyEWMA;
-        }
-
-        internal PeerMetrics(Clients.GatewayApi.Metrics metrics)
+        internal PeerMetrics(Clients.Metrics metrics)
         {
             ArgumentNullException.ThrowIfNull(metrics, nameof(metrics));
 

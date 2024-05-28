@@ -19,14 +19,14 @@ namespace Etherna.BeeNet.Models
     public sealed class Health
     {
         // Constructors.
-        internal Health(Clients.DebugApi.Response18 response)
+        internal Health(Clients.Response9 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             StatusIsOk = response.Status switch
             {
-                Clients.DebugApi.Response18Status.Ok => true,
-                Clients.DebugApi.Response18Status.Nok => false,
+                Clients.Response9Status.Ok => true,
+                Clients.Response9Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -34,14 +34,14 @@ namespace Etherna.BeeNet.Models
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal Health(Clients.DebugApi.Response24 response)
+        internal Health(Clients.Response21 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             StatusIsOk = response.Status switch
             {
-                Clients.DebugApi.Response24Status.Ok => true,
-                Clients.DebugApi.Response24Status.Nok => false,
+                Clients.Response21Status.Ok => true,
+                Clients.Response21Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -49,44 +49,14 @@ namespace Etherna.BeeNet.Models
             DebugApiVersion = response.DebugApiVersion;
         }
 
-        internal Health(Clients.GatewayApi.Response9 response)
+        internal Health(Clients.Response40 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             StatusIsOk = response.Status switch
             {
-                Clients.GatewayApi.Response9Status.Ok => true,
-                Clients.GatewayApi.Response9Status.Nok => false,
-                _ => throw new InvalidOperationException()
-            };
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        internal Health(Clients.GatewayApi.Response21 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            StatusIsOk = response.Status switch
-            {
-                Clients.GatewayApi.Response21Status.Ok => true,
-                Clients.GatewayApi.Response21Status.Nok => false,
-                _ => throw new InvalidOperationException()
-            };
-            Version = response.Version;
-            ApiVersion = response.ApiVersion;
-            DebugApiVersion = response.DebugApiVersion;
-        }
-
-        internal Health(Clients.GatewayApi.Response40 response)
-        {
-            ArgumentNullException.ThrowIfNull(response, nameof(response));
-
-            StatusIsOk = response.Status switch
-            {
-                Clients.GatewayApi.Response40Status.Ok => true,
-                Clients.GatewayApi.Response40Status.Nok => false,
+                Clients.Response40Status.Ok => true,
+                Clients.Response40Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;

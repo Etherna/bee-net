@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Models
     public sealed class RedistributionState
     {
         // Constructors.
-        internal RedistributionState(Clients.DebugApi.Response31 response)
+        internal RedistributionState(Clients.Response60 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 

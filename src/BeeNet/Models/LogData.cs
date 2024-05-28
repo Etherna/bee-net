@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Models
     public sealed class LogData
     {
         // Constructors.
-        internal LogData(Clients.DebugApi.Response45 response)
+        internal LogData(Clients.Response63 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Models
             Loggers = response.Loggers.Select(i => new Loggers(i)).ToList();
         }
 
-        internal LogData(Clients.DebugApi.Response46 response)
+        internal LogData(Clients.Response64 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
