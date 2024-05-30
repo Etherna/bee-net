@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal abstract class PipelineBase : IDisposable
+    internal abstract class PipelineBase
     {
         // Fields.
         protected readonly ChunkFeederPipelineStage chunkFeeder;
@@ -34,21 +34,6 @@ namespace Etherna.BeeNet.Pipelines
             chunkFeeder = new ChunkFeederPipelineStage(startStage);
             Putter = putter;
             RedundancyLevel = redundancyLevel;
-        }
-        
-        // Dispose.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                chunkFeeder.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         // Properties.

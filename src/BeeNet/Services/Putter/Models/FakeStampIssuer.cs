@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Services.Putter.Models
                 Nethereum.Util.AddressUtil.ZERO_ADDRESS,
                 PostageBatchId.Zero,
                 10000000,
-                17,
+                24,
                 16,
                 0,
                 true)

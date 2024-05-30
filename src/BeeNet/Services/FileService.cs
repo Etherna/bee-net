@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Services
                     new FakeSigner(),
                     new MemoryStore()));
             
-            using PipelineBase pipeline = encrypt ?
+            PipelineBase pipeline = encrypt ?
                 EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
                 DefaultPipeline.BuildPipeline(putter, redundancyLevel);
             return await pipeline.FeedAsync(stream).ConfigureAwait(false);
@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.Services
             var putter = new StamperPutter(batchId);
 
             // Get file hash.
-            using PipelineBase pipeline = encrypt ?
+            PipelineBase pipeline = encrypt ?
                 EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
                 DefaultPipeline.BuildPipeline(putter, redundancyLevel);
             var fileHash =  await pipeline.FeedAsync(stream).ConfigureAwait(false);

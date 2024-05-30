@@ -14,8 +14,6 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
@@ -24,11 +22,11 @@ namespace Etherna.BeeNet.Pipelines
     /// Produce chunked data with span prefix for successive stages.
     /// Also controls the parallelism on chunk elaboration
     /// </summary>
-    internal sealed class ChunkFeederPipelineStage : PipelineStageBase, IDisposable
+    internal sealed class ChunkFeederPipelineStage : PipelineStageBase
     {
         // Fields.
         private readonly byte[] buffer;
-        private readonly SemaphoreSlim semaphore;
+        // private readonly SemaphoreSlim semaphore;
         
         private int bufferIndex;
         private long wroteBytes;
@@ -44,14 +42,14 @@ namespace Etherna.BeeNet.Pipelines
             : base(nextStage)
         {
             buffer = new byte[SwarmChunk.DataSize];
-            semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
+            // semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
         }
         
-        // Dispose.
-        public void Dispose()
-        {
-            semaphore.Dispose();
-        }
+        // // Dispose.
+        // public void Dispose()
+        // {
+        //     semaphore.Dispose();
+        // }
         
         // Protected methods.
         /// <summary>
@@ -73,7 +71,7 @@ namespace Etherna.BeeNet.Pipelines
             Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
             
             // Consume input data.
-            List<Task> nextTasks = new();
+            // List<Task> nextTasks = new();
             for (var i = 0; i < args.Data.Length;)
             {
                 // At this point the chunk can always be fulfilled because of conditions.
@@ -88,22 +86,27 @@ namespace Etherna.BeeNet.Pipelines
                     chunkData.AsSpan(0, SwarmChunk.SpanSize),
                     SwarmChunk.DataSize);
                 
-                // Invoke next stage with parallelism on chunks.
-                await semaphore.WaitAsync().ConfigureAwait(false);
-                nextTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await FeedNextAsync(new PipelineFeedArgs(
-                                data: chunkData,
-                                span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
-                        }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    }));
+                // // Invoke next stage with parallelism on chunks.
+                // await semaphore.WaitAsync().ConfigureAwait(false);
+                // nextTasks.Add(
+                //     Task.Run(async () =>
+                //     {
+                //         try
+                //         {
+                //             await FeedNextAsync(new PipelineFeedArgs(
+                //                 data: chunkData,
+                //                 span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
+                //         }
+                //         finally
+                //         {
+                //             semaphore.Release();
+                //         }
+                //     }));
+                
+                // Invoke next stage.
+                await FeedNextAsync(new PipelineFeedArgs(
+                    data: chunkData,
+                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
 
                 bufferIndex = 0;
                 wroteBytes += SwarmChunk.DataSize;
@@ -117,8 +120,8 @@ namespace Etherna.BeeNet.Pipelines
                 }
             }
 
-            // Wait the end of all chunk computation.
-            await Task.WhenAll(nextTasks).ConfigureAwait(false);
+            // // Wait the end of all chunk computation.
+            // await Task.WhenAll(nextTasks).ConfigureAwait(false);
         }
         
         /// <summary>

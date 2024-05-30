@@ -133,6 +133,9 @@ namespace Etherna.BeeNet.Pipelines
         public async Task EncodeAsync(int chunkLevel, ParityChunkCallback callback)
         {
             ArgumentNullException.ThrowIfNull(callback, nameof(callback));
+
+            if (Level == RedundancyLevel.None || bufferCursor[chunkLevel] == 0)
+                return;
             
             var shards = bufferCursor[chunkLevel];
             var parities = Parities(shards);
