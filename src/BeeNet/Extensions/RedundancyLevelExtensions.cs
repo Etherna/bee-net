@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Pipelines;
+using Etherna.BeeNet.Redundancy;
 using System;
 
 namespace Etherna.BeeNet.Extensions

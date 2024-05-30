@@ -47,7 +47,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> BuyPostageBatchAsync(
+        Task<PostageBatchId> BuyPostageBatchAsync(
             long amount,
             int depth,
             string? label = null,
@@ -107,16 +107,16 @@ namespace Etherna.BeeNet
         /// <summary>Create an initial feed root manifest</summary>
         /// <param name="owner">Owner</param>
         /// <param name="topic">Topic</param>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> CreateFeedAsync(
+        Task<SwarmAddress> CreateFeedAsync(
             string owner,
             string topic,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             string? type = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default);
@@ -181,12 +181,12 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Dilute an existing postage batch.</summary>
-        /// <param name="id">Batch ID to dilute</param>
+        /// <param name="batchId">Batch ID to dilute</param>
         /// <param name="depth">New batch depth. Must be higher than the previous depth.</param>
         /// <returns>Returns the postage batch ID that was diluted.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> DilutePostageBatchAsync(
-            string id, 
+        Task<PostageBatchId> DilutePostageBatchAsync(
+            PostageBatchId batchId,
             int depth,
             long? gasPrice = null,
             long? gasLimit = null,
@@ -423,11 +423,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get an individual postage batch status</summary>
-        /// <param name="id">Swarm address of the stamp</param>
+        /// <param name="batchId">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<PostageBatch> GetPostageBatchAsync(
-            string id,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace Etherna.BeeNet
         /// <returns>Returns extended bucket data of the provided batch ID</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<StampsBuckets> GetStampsBucketsForBatchAsync(
-            string batchId,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <returns>Swarm topology of the bee node</returns>
@@ -567,14 +567,14 @@ namespace Etherna.BeeNet
         /// <summary>Send to recipient or target with Postal Service for Swarm</summary>
         /// <param name="topic">Topic name</param>
         /// <param name="targets">Target message address prefix. If multiple targets are specified, only one would be matched.</param>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="recipient">Recipient publickey</param>
         /// <returns>Subscribed to topic</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task SendPssAsync(
             string topic,
             string targets,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             string? recipient = null,
             CancellationToken cancellationToken = default);
 
@@ -641,12 +641,12 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Top up an existing postage batch.</summary>
-        /// <param name="id">Batch ID to top up</param>
+        /// <param name="batchId">Batch ID to top up</param>
         /// <param name="amount">Amount of BZZ per chunk to top up to an existing postage batch.</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> TopUpPostageBatchAsync(
-            string id, 
+        Task<PostageBatchId> TopUpPostageBatchAsync(
+            PostageBatchId batchId, 
             long amount,
             long? gasPrice = null,
             long? gasLimit = null,
@@ -671,7 +671,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload Chunk</summary>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
@@ -679,7 +679,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmAddress> UploadChunkAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
@@ -687,20 +687,20 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task UploadChunksStreamAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             int? swarmTag = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload data</summary>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
@@ -710,7 +710,7 @@ namespace Etherna.BeeNet
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmAddress> UploadBytesAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             Stream body,
             int? swarmTag = null, 
             bool? swarmPin = null, 
@@ -720,7 +720,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload file or a collection of files</summary>
-        /// <param name="swarmPostageBatchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="content">Input file content</param>
         /// <param name="name">Filename when uploading single file</param>
         /// <param name="contentType">The specified content-type is preserved for download of the asset</param>
@@ -736,7 +736,8 @@ namespace Etherna.BeeNet
         /// <param name="swarmRedundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> UploadFileAsync(string swarmPostageBatchId,
+        Task<SwarmAddress> UploadFileAsync(
+            PostageBatchId batchId,
             Stream content,
             string? name = null,
             string? contentType = null,
@@ -763,7 +764,7 @@ namespace Etherna.BeeNet
             string owner,
             string id,
             string sig,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             Stream body,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default);

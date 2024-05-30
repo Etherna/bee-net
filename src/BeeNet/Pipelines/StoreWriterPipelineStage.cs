@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services.Putter;
 using System;
 using System.Threading.Tasks;
@@ -21,15 +20,15 @@ namespace Etherna.BeeNet.Pipelines
 {
     internal class StoreWriterPipelineStage : PipelineStageBase
     {
-        private readonly IStoragePutter putter;
+        private readonly IPostageStamper postageStamper;
 
         // Constructor.
         public StoreWriterPipelineStage(
-            IStoragePutter putter,
+            IPostageStamper postageStamper,
             PipelineStageBase? nextStage)
             : base(nextStage)
         {
-            this.putter = putter;
+            this.postageStamper = postageStamper;
         }
 
         // Methods.
@@ -38,7 +37,7 @@ namespace Etherna.BeeNet.Pipelines
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Address is null) throw new InvalidOperationException();
 
-            putter.Put(new SwarmChunk(args.Address.Value, args.Data.ToArray(), true));
+            postageStamper.Stamp(args.Address.Value);
 
             await FeedNextAsync(args).ConfigureAwait(false);
         }

@@ -14,7 +14,6 @@
 
 using System;
 using System.Buffers.Binary;
-using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
@@ -29,39 +28,47 @@ namespace Etherna.BeeNet.Models
         public const int SpanAndDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
-        // Constructor.
-        public SwarmChunk(SwarmAddress address, byte[] data, bool dataHasSpan)
+        // Constructors.
+        public SwarmChunk(SwarmAddress address, byte[] data)
         {
             ArgumentNullException.ThrowIfNull(address, nameof(address));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (data.Length > DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Address = address;
-            if (dataHasSpan)
-            {
-                if (data.Length > SpanAndDataSize)
-                    throw new ArgumentOutOfRangeException(nameof(data), $"Data with span can't be longer than {SpanAndDataSize} bytes");
-                
-                _span = data[..SpanSize];
-                _data = data[SpanSize..];
-            }
-            else
-            {
-                if (data.Length > DataSize)
-                    throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
-                
-                _span = LengthToSpan((ulong)data.Length);
-                _data = data;
-            }
+            _span = LengthToSpan((ulong)data.Length);
+            _data = data;
+        }
+
+        internal SwarmChunk(SwarmAddress address, byte[] span, byte[] data)
+        {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(span, nameof(span));
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            
+            Address = address;
+            _span = span;
+            _data = data;
         }
         
+        // Static builders.
+        internal static SwarmChunk BuildFromSpanAndData(SwarmAddress address, byte[] spanAndData)
+        {
+            if (spanAndData.Length > SpanAndDataSize)
+                throw new ArgumentOutOfRangeException(nameof(spanAndData),
+                    $"Data with span can't be longer than {SpanAndDataSize} bytes");
+
+            var spanSlice = spanAndData[..SpanSize];
+            var dataSlice = spanAndData[SpanSize..];
+
+            return new SwarmChunk(address, spanSlice, dataSlice);
+        }
+
         // Properties.
         public SwarmAddress Address { get; }
         public ReadOnlySpan<byte> Data => _data;
         public ReadOnlySpan<byte> Span => _span;
-        public ReadOnlySpan<byte> SpanData => _span.Concat(_data).ToArray();
-        
-        // Internal properties.
-        internal PostageStamp? PostageStamp { get; set; }
         
         // Static methods.
         public static byte[] LengthToSpan(ulong length)

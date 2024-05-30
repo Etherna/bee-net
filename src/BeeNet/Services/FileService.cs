@@ -40,22 +40,15 @@ namespace Etherna.BeeNet.Services
             bool encrypt,
             RedundancyLevel redundancyLevel)
         {
-            if (encrypt) throw new NotImplementedException("Encrypted feature is not implemented");
-            if (redundancyLevel != RedundancyLevel.None)
-                throw new NotImplementedException("Redundancy is not implemented");
-            
-            // Build pipeline.
-            var putter = new SessionWrapperPutter(
-                new FakePutterSession(),
+            var hasherPipeline = new HasherPipeline(
                 new PostageStamper(
                     new FakeStampIssuer(),
                     new FakeSigner(),
-                    new MemoryStore()));
+                    new MemoryStore()),
+                redundancyLevel,
+                encrypt);
             
-            PipelineBase pipeline = encrypt ?
-                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
-                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
-            return await pipeline.FeedAsync(stream).ConfigureAwait(false);
+            return await hasherPipeline.FeedAsync(stream).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -72,16 +65,18 @@ namespace Etherna.BeeNet.Services
             string contentType,
             string? name,
             bool encrypt,
-            RedundancyLevel redundancyLevel,
-            string batchId)
+            RedundancyLevel redundancyLevel)
         {
-            var putter = new StamperPutter(batchId);
-
+            var hasherPipeline = new HasherPipeline(
+                new PostageStamper(
+                    new FakeStampIssuer(),
+                    new FakeSigner(),
+                    new MemoryStore()),
+                redundancyLevel,
+                encrypt);
+            
             // Get file hash.
-            PipelineBase pipeline = encrypt ?
-                EncryptedPipeline.BuildPipeline(putter, redundancyLevel) :
-                DefaultPipeline.BuildPipeline(putter, redundancyLevel);
-            var fileHash =  await pipeline.FeedAsync(stream).ConfigureAwait(false);
+            var fileHash =  await hasherPipeline.FeedAsync(stream).ConfigureAwait(false);
             name ??= fileHash.ToString();
             
             // Create manifest.

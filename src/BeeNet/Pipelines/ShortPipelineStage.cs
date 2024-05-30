@@ -22,9 +22,9 @@ namespace Etherna.BeeNet.Pipelines
         private ShortPipelineStage(PipelineStageBase? nextStage) : base(nextStage) { }
         
         // Builder.
-        public static ShortPipelineStage BuildNewStage(IStoragePutter putter)
+        public static ShortPipelineStage BuildNewStage(IPostageStamper postageStamper)
         {
-            var storeWriter = new StoreWriterPipelineStage(putter, null);
+            var storeWriter = new StoreWriterPipelineStage(postageStamper, null);
             var next = new ChunkBmtPipelineStage(storeWriter);
             return new ShortPipelineStage(next);
         }

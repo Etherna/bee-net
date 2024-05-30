@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var reference = await beeNodeClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.UploadBytesAsync(batchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Assert
@@ -44,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var reference = await beeNodeClient.UploadBytesAsync(swarmPostageBatchId: batch, body: File.OpenRead(pathTestFileForUpload));
+            var reference = await beeNodeClient.UploadBytesAsync(batchId: batch, body: File.OpenRead(pathTestFileForUpload));
 
 
             // Act 

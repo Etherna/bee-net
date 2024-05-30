@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Putter.Models;
+using Etherna.BeeNet.Redundancy;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
@@ -27,14 +27,14 @@ namespace Etherna.BeeNet.Services.Putter
     /// </summary>
     public class ReplicaPutter : IStoragePutter
     {
-        private readonly IStoragePutter nextPutter;
+        private readonly IPostageStamper postageStamper;
         private readonly RedundancyLevel redundancyLevel;
 
         public ReplicaPutter(
-            IStoragePutter nextPutter,
+            IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel)
         {
-            this.nextPutter = nextPutter;
+            this.postageStamper = postageStamper;
             this.redundancyLevel = redundancyLevel;
         }
 
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Services.Putter
             var errs = new ConcurrentBag<Exception>();
             try
             {
-                nextPutter.Put(chunk);
+                postageStamper.Stamp(chunk.Address);
             }
             catch (Exception e)
             {

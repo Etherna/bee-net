@@ -37,8 +37,8 @@ namespace Etherna.BeeNet.Pipelines
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
 
             args.Address = SwarmChunkBmtHasher.Hash(
-                args.Data[..SwarmChunk.SpanSize],
-                args.Data[SwarmChunk.SpanSize..]);
+                args.Data[..SwarmChunk.SpanSize].ToArray(),
+                args.Data[SwarmChunk.SpanSize..].ToArray());
 
             await FeedNextAsync(args).ConfigureAwait(false);
         }

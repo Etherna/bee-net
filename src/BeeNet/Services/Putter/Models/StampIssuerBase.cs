@@ -28,7 +28,6 @@ namespace Etherna.BeeNet.Services.Putter.Models
         // Consts.
         public const int BucketDepth = 16;
         public const int IndexSize = 8;
-        public const int StampSize = 113;
         
         // Constructor.
         protected StampIssuerBase(

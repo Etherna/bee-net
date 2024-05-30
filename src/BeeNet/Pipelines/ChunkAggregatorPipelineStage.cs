@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Redundancy;
 using Etherna.BeeNet.Services.Putter;
 using System;
 using System.Buffers.Binary;
@@ -24,16 +25,16 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Pipelines
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    internal class HashTriePipelineStage : PipelineStageBase
+    internal class ChunkAggregatorPipelineStage : PipelineStageBase
     {
         // Consts.
         private const int MaxLevel = 8;
         
         // Constructor.
-        public HashTriePipelineStage(
+        public ChunkAggregatorPipelineStage(
             RedundancyParams redundancyParams,
             PipelineStageBase nextStage,
-            IStoragePutter putter)
+            IPostageStamper postageStamper)
             : base(nextStage)
         {
             Cursors = new int[9];
@@ -42,7 +43,7 @@ namespace Etherna.BeeNet.Pipelines
             ChunkCounters = new byte[9];
             EffectiveChunkCounters = new byte[9];
             MaxChildrenChunks = (byte)(redundancyParams.MaxShards + redundancyParams.Parities(redundancyParams.MaxShards));
-            ReplicaPutter = new ReplicaPutter(putter, redundancyParams.Level);
+            ReplicaPutter = new ReplicaPutter(postageStamper, redundancyParams.Level);
             ParityChunkFn = (level, span, address) => WriteToIntermediateLevelAsync(level, true, span, address, Array.Empty<byte>());
         }
 
@@ -89,30 +90,13 @@ namespace Etherna.BeeNet.Pipelines
         // Protected methods.
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
-            var oneRef = SwarmAddress.HashSize + SwarmChunk.SpanSize;
-            var l = args.Span.Length + SwarmAddress.HashSize + (args.EncryptionKey?.Length ?? 0);
-            if (l%oneRef != 0 || l == 0)
-            {
-                throw new InvalidOperationException();
-                //return errInconsistentRefs
-            }
-
             if (IsFull)
-            {
                 throw new InvalidOperationException();
-                //return errTrieFull
-            }
 
-            if (RedundancyParams.Level == RedundancyLevel.None)
-            {
-                await WriteToIntermediateLevelAsync(1, false, args.Span.ToArray(), args.Address!.Value, args.EncryptionKey).ConfigureAwait(false);
-            } else
-            {
-                // write dataChunks to the level above
-                await WriteToIntermediateLevelAsync(1, false, args.Span.ToArray(), args.Address!.Value, args.EncryptionKey).ConfigureAwait(false);
-
+            await WriteToIntermediateLevelAsync(1, false, args.Span.ToArray(), args.Address!.Value, args.EncryptionKey).ConfigureAwait(false);
+            
+            if (RedundancyParams.Level != RedundancyLevel.None)
                 await RedundancyParams.ChunkWriteAsync(0, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
-            }
         }
 
         /// <summary>
@@ -195,7 +179,7 @@ namespace Etherna.BeeNet.Pipelines
 	        if (RedundancyParams.Level != RedundancyLevel.None)
             {
                 var rootData = RedundancyParams.GetRootData();
-                ReplicaPutter.Put(new SwarmChunk(new SwarmAddress(rootHash[..SwarmAddress.HashSize]), rootData, true));
+                ReplicaPutter.Put(SwarmChunk.BuildFromSpanAndData(new SwarmAddress(rootHash[..SwarmAddress.HashSize]), rootData));
 	        }
 
             return rootHash;

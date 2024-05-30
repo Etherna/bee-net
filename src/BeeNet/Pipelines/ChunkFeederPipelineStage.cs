@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Pipelines
             // If new data can be fully buffered without complete a chunk, simply add to buffer and return.
             if (args.Data.Length < SwarmChunk.DataSize - bufferIndex)
             {
-                args.Data.CopyTo(buffer.AsSpan(bufferIndex));
+                args.Data.CopyTo(buffer.AsMemory(bufferIndex));
                 bufferIndex += args.Data.Length;
                 return;
             }
@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.Pipelines
                 // Fill the new chunk with data from source.
                 var fillingDataLength = SwarmChunk.DataSize - bufferIndex;
                 args.Data[i..(i + fillingDataLength)]
-                    .CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize + bufferIndex));
+                    .CopyTo(chunkData.AsMemory(SwarmChunk.SpanSize + bufferIndex));
                 i += fillingDataLength;
                 
                 // Write chunk span.

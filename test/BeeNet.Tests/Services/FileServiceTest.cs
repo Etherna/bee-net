@@ -13,30 +13,22 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using System;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Services
 {
-    public class SessionWrapperPutter : IStoragePutter
+    public class FileServiceTest
     {
-        // Constructor.
-        public SessionWrapperPutter(IPutterSession session, IPostageStamper stamper)
+        [Fact]
+        public async Task GetFileHashTest()
         {
-            Session = session;
-            Stamper = stamper;
-        }
-        
-        // Properties.
-        public IPutterSession Session { get; }
-        public IPostageStamper Stamper { get; }
-
-        // Methods.
-        public void Put(SwarmChunk chunk)
-        {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            await using var fileStream = File.OpenRead("/home/mirkodc/Desktop/test.txt");
+            var fileService = new FileService();
+            var hash = await fileService.GetFileHashAsync(fileStream, false, RedundancyLevel.None);
             
-            chunk.PostageStamp = Stamper.Stamp(chunk.Address);
-            Session.Putter.Put(chunk);
+            Assert.Equal("3cbbc4fd17684b678e0a85d8be2f9a64795ea7cec22f9f8c31d58a7a5345668a", hash);
         }
     }
 }

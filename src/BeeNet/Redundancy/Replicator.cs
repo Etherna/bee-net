@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Redundancy
 {
     public class Replicator
     {

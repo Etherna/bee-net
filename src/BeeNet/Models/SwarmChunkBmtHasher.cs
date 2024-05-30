@@ -21,8 +21,11 @@ namespace Etherna.BeeNet.Models
     public static class SwarmChunkBmtHasher
     {
         // Static methods.
-        public static byte[] Hash(ReadOnlySpan<byte> span, ReadOnlySpan<byte> data)
+        public static byte[] Hash(byte[] span, byte[] data)
         {
+            ArgumentNullException.ThrowIfNull(span, nameof(span));
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            
             if (data.Length > SwarmChunkBmt.MaxDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunkBmt.MaxDataSize} bytes");
             
@@ -31,7 +34,7 @@ namespace Etherna.BeeNet.Models
             for (var start = 0; start < data.Length; start += SwarmChunkBmt.SegmentSize)
             {
                 var end = Math.Min(start + SwarmChunkBmt.SegmentSize, data.Length);
-                segments.Add(data[start..end].ToArray());
+                segments.Add(data[start..end]);
             }
             
             // Build the merkle tree.
@@ -39,7 +42,7 @@ namespace Etherna.BeeNet.Models
             bmt.BuildTree(segments);
             var result = bmt.Root.Hash;
             
-            return SwarmChunkBmt.ComputeHash(span.ToArray().Concat(result).ToArray());
+            return SwarmChunkBmt.ComputeHash(span.Concat(result).ToArray());
         }
     }
 }

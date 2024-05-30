@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Redundancy
 {
-    public class FakePutterSession : IPutterSession
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
+    public class Replica
     {
-        public IStoragePutter Putter { get; } = new FakeStoragePutter();
+        public Replica(byte[] sum, byte[] id)
+        {
+            Addr = Array.Empty<byte>();
+            throw new System.NotImplementedException();
+        }
 
-        public void Done(SwarmAddress address) { }
-
-        public void Cleanup() { }
+        public byte[] Addr { get; }
     }
 }

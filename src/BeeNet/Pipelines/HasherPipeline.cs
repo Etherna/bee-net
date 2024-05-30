@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Redundancy;
 using Etherna.BeeNet.Services.Putter;
 using System;
 using System.IO;
@@ -20,24 +21,45 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal abstract class PipelineBase
+    internal class HasherPipeline
     {
         // Fields.
-        protected readonly ChunkFeederPipelineStage chunkFeeder;
+        private readonly ChunkFeederPipelineStage chunkFeeder;
         
         // Constructor.
-        protected PipelineBase(
-            IStoragePutter putter,
+        public HasherPipeline(
+            IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
-            PipelineStageBase startStage)
+            bool isEncrypted)
         {
+            if (redundancyLevel != RedundancyLevel.None)
+                throw new NotImplementedException();
+
+            PipelineStageBase startStage;
+            if (isEncrypted)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                //build stages
+                var shortPipelineStage = ShortPipelineStage.BuildNewStage(postageStamper);
+                var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
+                    new RedundancyParams(redundancyLevel, false, shortPipelineStage),
+                    shortPipelineStage,
+                    postageStamper
+                );
+                var storeWriterStage = new StoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
+                startStage = new ChunkBmtPipelineStage(storeWriterStage);
+            }
+            
             chunkFeeder = new ChunkFeederPipelineStage(startStage);
-            Putter = putter;
+            PostageStamper = postageStamper;
             RedundancyLevel = redundancyLevel;
         }
 
         // Properties.
-        public IStoragePutter Putter { get; }
+        public IPostageStamper PostageStamper { get; }
         public RedundancyLevel RedundancyLevel { get; }
         
         // Methods.

@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Pipelines
         /// <summary>
         /// Data can include the span too, but it may be encrypted if the pipeline is encrypted
         /// </summary>
-        public ReadOnlySpan<byte> Data => _data;
+        public ReadOnlyMemory<byte> Data => _data;
         
         /// <summary>
         /// Encryption key
@@ -61,6 +61,6 @@ namespace Etherna.BeeNet.Pipelines
         /// <summary>
         /// Always unecrypted span uint64
         /// </summary>
-        public ReadOnlySpan<byte> Span => _span;
+        public ReadOnlyMemory<byte> Span => _span;
     }
 }

@@ -14,11 +14,12 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Pipelines;
 using STH1123.ReedSolomon;
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.Redundancy
 {
     public delegate Task ParityChunkCallback(int level, byte[] span, byte[] address);
     

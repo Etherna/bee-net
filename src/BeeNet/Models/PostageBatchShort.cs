@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public string BatchId { get; }
+        public PostageBatchId BatchId { get; }
         public long BatchTtl { get; }
         public int BucketDepth { get; }
         public int Depth { get; }

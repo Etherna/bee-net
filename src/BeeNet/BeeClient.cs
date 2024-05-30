@@ -87,7 +87,7 @@ namespace Etherna.BeeNet
                     Expiry = expiry
                 }).ConfigureAwait(false));
         
-        public async Task<string> BuyPostageBatchAsync(
+        public async Task<PostageBatchId> BuyPostageBatchAsync(
             long amount,
             int depth,
             string? label = null,
@@ -134,14 +134,14 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
-        public async Task<string> CreateFeedAsync(
+        public async Task<SwarmAddress> CreateFeedAsync(
             string owner,
             string topic,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             string? type = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.FeedsPostAsync(owner, topic, type, swarmPin, swarmPostageBatchId, cancellationToken).ConfigureAwait(false)).Reference;
+            (await generatedClient.FeedsPostAsync(owner, topic, type, swarmPin, batchId.ToString(), cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<MessageResponse> CreatePinAsync(
             SwarmAddress address,
@@ -188,13 +188,13 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<string> DilutePostageBatchAsync(
-            string id,
+        public async Task<PostageBatchId> DilutePostageBatchAsync(
+            PostageBatchId batchId,
             int depth,
             long? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsDiluteAsync(id, depth, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
+            (await generatedClient.StampsDiluteAsync(batchId.ToString(), depth, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false));
@@ -274,7 +274,7 @@ namespace Etherna.BeeNet
             using var memoryStream = new MemoryStream();
             await chunkDto.Stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
             var data = memoryStream.ToArray();
-            return new SwarmChunk(address, data, false);
+            return new SwarmChunk(address, data);
         }
 
         public async Task<Stream> GetChunkStreamAsync(
@@ -348,9 +348,9 @@ namespace Etherna.BeeNet
             (await generatedClient.PinsGetAsync((string)address, cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<PostageBatch> GetPostageBatchAsync(
-            string id,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StampsGetAsync(id, cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.StampsGetAsync(batchId.ToString(), cancellationToken).ConfigureAwait(false));
 
         public async Task<ReserveCommitment> GetReserveCommitmentAsync(int depth, string anchor1, string anchor2,
             CancellationToken cancellationToken = default) =>
@@ -365,9 +365,9 @@ namespace Etherna.BeeNet
             new(await generatedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
 
         public async Task<StampsBuckets> GetStampsBucketsForBatchAsync(
-            string batchId,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StampsBucketsAsync(batchId, cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.StampsBucketsAsync(batchId.ToString(), cancellationToken).ConfigureAwait(false));
 
         public async Task<Topology> GetSwarmTopologyAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.TopologyAsync(cancellationToken).ConfigureAwait(false));
@@ -431,10 +431,10 @@ namespace Etherna.BeeNet
         public Task SendPssAsync(
             string topic,
             string targets,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             string? recipient = null,
             CancellationToken cancellationToken = default) =>
-            generatedClient.PssSendAsync(topic, targets, swarmPostageBatchId, recipient, cancellationToken);
+            generatedClient.PssSendAsync(topic, targets, batchId.ToString(), recipient, cancellationToken);
         
         public Task SetWelcomeMessageAsync(
             string welcomeMessage,
@@ -466,13 +466,13 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             generatedClient.PssSubscribeAsync(topic, cancellationToken);
 
-        public async Task<string> TopUpPostageBatchAsync(
-            string id,
+        public async Task<PostageBatchId> TopUpPostageBatchAsync(
+            PostageBatchId batchId,
             long amount,
             long? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsTopupAsync(id, amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
+            (await generatedClient.StampsTopupAsync(batchId.ToString(), amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<string> TryConnectToPeerAsync(
             string peerId,
@@ -491,7 +491,7 @@ namespace Etherna.BeeNet
                 cancellationToken);
 
         public async Task<SwarmAddress> UploadChunkAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             long? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmDeferredUpload = null,
@@ -499,19 +499,19 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksPostAsync(
                 swarmTag,
-                swarmPostageBatchId,
+                batchId.ToString(),
                 body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
         public Task UploadChunksStreamAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             int? swarmTag = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default) =>
-            generatedClient.ChunksStreamAsync(swarmTag, swarmPostageBatchId, cancellationToken);
+            generatedClient.ChunksStreamAsync(swarmTag, batchId.ToString(), cancellationToken);
 
         public async Task<SwarmAddress> UploadBytesAsync(
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             Stream body,
             int? swarmTag = null,
             bool? swarmPin = null,
@@ -520,7 +520,7 @@ namespace Etherna.BeeNet
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.BytesPostAsync(
-                swarm_postage_batch_id: swarmPostageBatchId,
+                swarm_postage_batch_id: batchId.ToString(),
                 swarm_tag: swarmTag,
                 swarm_pin: swarmPin,
                 swarm_deferred_upload: swarmDeferredUpload,
@@ -529,7 +529,8 @@ namespace Etherna.BeeNet
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<SwarmAddress> UploadFileAsync(string swarmPostageBatchId,
+        public async Task<SwarmAddress> UploadFileAsync(
+            PostageBatchId batchId,
             Stream content,
             string? name = null,
             string? contentType = null,
@@ -553,7 +554,7 @@ namespace Etherna.BeeNet
                 swarm_collection: swarmCollection,
                 swarm_index_document: swarmIndexDocument,
                 swarm_error_document: swarmErrorDocument,
-                swarm_postage_batch_id: swarmPostageBatchId,
+                swarm_postage_batch_id: batchId.ToString(),
                 swarm_deferred_upload: swarmDeferredUpload,
                 swarm_redundancy_level: (SwarmRedundancyLevel)swarmRedundancyLevel,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
@@ -563,7 +564,7 @@ namespace Etherna.BeeNet
             string owner,
             string id,
             string sig,
-            string swarmPostageBatchId,
+            PostageBatchId batchId,
             Stream body,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default) =>
@@ -571,7 +572,7 @@ namespace Etherna.BeeNet
                 owner,
                 id,
                 sig,
-                swarmPostageBatchId,
+                batchId.ToString(),
                 body,
                 swarmPin,
                 cancellationToken).ConfigureAwait(false)).Reference;

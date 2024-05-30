@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Models
             FeedIndexBase index,
             byte[] data,
             SwarmAddress address) :
-            base(address, data, false)
+            base(address, data)
         {
             if (data.Length < MinDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be shorter than {TimeStampSize} bytes");
