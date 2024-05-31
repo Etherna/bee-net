@@ -53,6 +53,13 @@ namespace Etherna.BeeNet.Models
         public bool Equals(SwarmAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress);
+        public uint ToBucketIndex()
+        {
+            var firstBytes = byteAddress[..4];
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(firstBytes);
+            return BitConverter.ToUInt32(firstBytes, 0) >> (32 - PostageBatch.BucketDepth);
+        }
         public byte[] ToByteArray() => (byte[])byteAddress.Clone();
         public ReadOnlySpan<byte> ToReadOnlySpan() => byteAddress;
         public override string ToString() => byteAddress.ToHex();

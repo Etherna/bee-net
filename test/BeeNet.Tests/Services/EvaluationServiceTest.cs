@@ -13,21 +13,27 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace Etherna.BeeNet.Postage
+namespace Etherna.BeeNet.Services
 {
-    public class FakeStampIssuer : StampIssuerBase
+    public class EvaluationServiceTest
     {
-        public FakeStampIssuer()
-            : base(
+        [Fact]
+        public async Task GetFileHashTest()
+        {
+            await using var fileStream = File.OpenRead("/home/mirkodc/Desktop/test.txt");
+            var fileService = new EvaluationService();
+            var result = await fileService.EvaluateFileUploadAsync(
+                fileStream,
+                "",
                 null,
-                Nethereum.Util.AddressUtil.ZERO_ADDRESS,
-                PostageBatchId.Zero,
-                10000000,
-                24,
-                16,
-                0,
-                true)
-        { }
+                false,
+                RedundancyLevel.None);
+            
+            Assert.Equal("3cbbc4fd17684b678e0a85d8be2f9a64795ea7cec22f9f8c31d58a7a5345668a", result.Address);
+        }
     }
 }

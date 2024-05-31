@@ -17,7 +17,6 @@ using Etherna.BeeNet.Feeds;
 using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -25,8 +24,6 @@ namespace Etherna.BeeNet.Services
 {
     public class FeedService : IFeedService
     {
-        // Consts.
-
         // Fields.
         private readonly IBeeClient gatewayClient;
 
@@ -215,8 +212,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="knownNearEpoch">An optional epoch index with known existing chunk</param>
         /// <param name="at">The searched date</param>
         /// <returns>A starting epoch index</returns>
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It is only used inside of an instance")]
-        internal EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
+        internal static EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
         {
             var startEpoch = knownNearEpoch;
             if (startEpoch is not null)

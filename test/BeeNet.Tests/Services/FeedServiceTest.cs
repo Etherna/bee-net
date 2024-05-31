@@ -516,7 +516,7 @@ namespace Etherna.BeeNet.Services
         [Theory, MemberData(nameof(FindStartingEpochOfflineTests))]
         public void FindStartingEpochOffline(FindStartingEpochOfflineTestElement test)
         {
-            var result = service.FindStartingEpochOffline(test.KnownNearEpoch, test.At);
+            var result = FeedService.FindStartingEpochOffline(test.KnownNearEpoch, test.At);
 
             Assert.Equal(test.ExpectedResult, result);
         }

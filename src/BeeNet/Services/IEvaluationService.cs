@@ -15,20 +15,16 @@
 using Etherna.BeeNet.Models;
 using System.IO;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace Etherna.BeeNet.Services
 {
-    public class FileServiceTest
+    public interface IEvaluationService
     {
-        [Fact]
-        public async Task GetFileHashTest()
-        {
-            await using var fileStream = File.OpenRead("/home/mirkodc/Desktop/test.txt");
-            var fileService = new FileService();
-            var hash = await fileService.GetFileHashAsync(fileStream, false, RedundancyLevel.None);
-            
-            Assert.Equal("3cbbc4fd17684b678e0a85d8be2f9a64795ea7cec22f9f8c31d58a7a5345668a", hash);
-        }
+        Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+            Stream stream,
+            string contentType,
+            string? name,
+            bool encrypt,
+            RedundancyLevel redundancyLevel);
     }
 }

@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Postage
     {
         // Constructor.
         public PostageStamper(
-            StampIssuerBase issuer,
+            PostageStampIssuer issuer,
             ISigner signer,
             IStore store)
         {
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Postage
         }
         
         // Properties.
-        public StampIssuerBase Issuer { get; set; }
+        public PostageStampIssuer Issuer { get; set; }
         public ISigner Signer { get; set; }
         public IStore Store { get; set; }
         
@@ -44,23 +44,23 @@ namespace Etherna.BeeNet.Postage
         public PostageStamp Stamp(SwarmAddress address)
         {
             var item = new StampStoreItem(
-                Issuer.BatchId,
+                Issuer.PostageBatch.Id,
                 address);
 
             if (!Store.TryGet(item))
-                item.BatchIndex = Issuer.Increment(address);
+                item.BatchIndex = Issuer.IncrementBucketCount(address);
             item.BatchTimestamp = DateTimeOffset.UtcNow;
             Store.Put(item);
 
             var toSign = ToSignDigest(
                 address,
-                Issuer.BatchId,
+                Issuer.PostageBatch.Id,
                 item.BatchIndex!,
                 item.BatchTimestamp.Value);
 
             var sig = Signer.Sign(toSign);
 
-            return new PostageStamp(Issuer.BatchId, item.BatchIndex!, item.BatchTimestamp.Value, sig);
+            return new PostageStamp(Issuer.PostageBatch.Id, item.BatchIndex!, item.BatchTimestamp.Value, sig);
         }
 
         // Helpers.
