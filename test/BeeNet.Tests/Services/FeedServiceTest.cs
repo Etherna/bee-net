@@ -13,8 +13,8 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Feeds;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Feeds.Models;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Etherna.BeeNet.Services.Feeds
+namespace Etherna.BeeNet.Services
 {
     public class FeedServiceTest
     {

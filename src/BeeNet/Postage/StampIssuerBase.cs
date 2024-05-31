@@ -17,7 +17,7 @@ using System;
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Postage
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public abstract class StampIssuerBase

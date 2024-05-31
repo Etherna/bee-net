@@ -12,21 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Services.Store
-{
-    public interface IStore
-    {
-        /// <summary>
-        /// Unmarshalls object with the given Item.Key.ID into the given Item.
-        /// </summary>
-        /// <param name="item">Item to get</param>
-        /// <returns>True if item found</returns>
-        public bool TryGet(StoreItemBase item);
+using Etherna.BeeNet.Models;
 
-        /// <summary>
-        /// Inserts or updates the given Item identified by its Key.ID.
-        /// </summary>
-        /// <param name="item">Item to put</param>
-        public void Put(StoreItemBase item);
+namespace Etherna.BeeNet.Redundancy
+{
+    public interface IStoragePutter
+    {
+        void Put(SwarmChunk chunk);
     }
 }

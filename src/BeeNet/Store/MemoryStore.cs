@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Etherna.BeeNet.Services.Store
+namespace Etherna.BeeNet.Store
 {
     public class MemoryStore : IStore
     {

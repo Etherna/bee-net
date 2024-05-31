@@ -13,12 +13,21 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Putter.Models;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Postage
 {
-    public interface IPostageStamper
+    public class FakeStampIssuer : StampIssuerBase
     {
-        PostageStamp Stamp(SwarmAddress address);
+        public FakeStampIssuer()
+            : base(
+                null,
+                Nethereum.Util.AddressUtil.ZERO_ADDRESS,
+                PostageBatchId.Zero,
+                10000000,
+                24,
+                16,
+                0,
+                true)
+        { }
     }
 }

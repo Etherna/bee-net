@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
-
-namespace Etherna.BeeNet.Services.Putter.Models
+namespace Etherna.BeeNet.Signer
 {
-    public class FakeStampIssuer : StampIssuerBase
+    public class FakeSigner : ISigner
     {
-        public FakeStampIssuer()
-            : base(
-                null,
-                Nethereum.Util.AddressUtil.ZERO_ADDRESS,
-                PostageBatchId.Zero,
-                10000000,
-                24,
-                16,
-                0,
-                true)
-        { }
+        private const int SignSize = 65;
+        
+        public byte[] Sign(byte[] toSign) => new byte[SignSize];
     }
 }

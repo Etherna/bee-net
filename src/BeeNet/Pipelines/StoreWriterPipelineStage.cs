@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Services.Putter;
+using Etherna.BeeNet.Postage;
 using System;
 using System.Threading.Tasks;
 

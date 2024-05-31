@@ -15,13 +15,12 @@
 using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Putter.Models;
-using Etherna.BeeNet.Services.Signer;
-using Etherna.BeeNet.Services.Store;
+using Etherna.BeeNet.Signer;
+using Etherna.BeeNet.Store;
 using System;
 using System.Linq;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Postage
 {
     public class PostageStamper : IPostageStamper
     {

@@ -12,12 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Services.Signer
+namespace Etherna.BeeNet.Store
 {
-    public class FakeSigner : ISigner
+    public interface IStore
     {
-        private const int SignSize = 65;
-        
-        public byte[] Sign(byte[] toSign) => new byte[SignSize];
+        /// <summary>
+        /// Unmarshalls object with the given Item.Key.ID into the given Item.
+        /// </summary>
+        /// <param name="item">Item to get</param>
+        /// <returns>True if item found</returns>
+        public bool TryGet(StoreItemBase item);
+
+        /// <summary>
+        /// Inserts or updates the given Item identified by its Key.ID.
+        /// </summary>
+        /// <param name="item">Item to put</param>
+        public void Put(StoreItemBase item);
     }
 }

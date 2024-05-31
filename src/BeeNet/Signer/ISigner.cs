@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Etherna.BeeNet.Services.Signer
+namespace Etherna.BeeNet.Signer
 {
     public interface ISigner
     {

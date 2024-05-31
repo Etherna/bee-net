@@ -15,7 +15,7 @@
 using System;
 using Xunit;
 
-namespace Etherna.BeeNet.Services.Feeds.Models
+namespace Etherna.BeeNet.Feeds
 {
     public class EpochFeedIndexTest
     {

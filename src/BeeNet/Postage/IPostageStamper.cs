@@ -14,10 +14,10 @@
 
 using Etherna.BeeNet.Models;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Postage
 {
-    public interface IStoragePutter
+    public interface IPostageStamper
     {
-        void Put(SwarmChunk chunk);
+        PostageStamp Stamp(SwarmAddress address);
     }
 }

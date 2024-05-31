@@ -14,7 +14,7 @@
 
 using Epoche;
 using Etherna.BeeNet.Extensions;
-using Etherna.BeeNet.Services.Feeds.Models;
+using Etherna.BeeNet.Feeds;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;

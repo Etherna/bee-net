@@ -14,10 +14,9 @@
 
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Pipelines;
-using Etherna.BeeNet.Services.Putter;
-using Etherna.BeeNet.Services.Putter.Models;
-using Etherna.BeeNet.Services.Signer;
-using Etherna.BeeNet.Services.Store;
+using Etherna.BeeNet.Postage;
+using Etherna.BeeNet.Signer;
+using Etherna.BeeNet.Store;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;

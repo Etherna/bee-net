@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Postage;
 using Etherna.BeeNet.Redundancy;
-using Etherna.BeeNet.Services.Putter;
 using System;
 using System.IO;
 using System.Threading.Tasks;

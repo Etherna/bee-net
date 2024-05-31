@@ -13,15 +13,15 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Feeds;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services.Feeds.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Feeds
+namespace Etherna.BeeNet.Services
 {
     public class FeedService : IFeedService
     {

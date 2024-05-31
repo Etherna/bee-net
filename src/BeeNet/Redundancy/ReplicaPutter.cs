@@ -13,14 +13,14 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Redundancy;
+using Etherna.BeeNet.Postage;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Services.Putter
+namespace Etherna.BeeNet.Redundancy
 {
     /// <summary>
     /// Implements the integration of dispersed replicas in chunk upload

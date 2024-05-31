@@ -17,7 +17,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Services.Store
+namespace Etherna.BeeNet.Store
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class StampStoreItem : StoreItemBase
