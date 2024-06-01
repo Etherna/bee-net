@@ -13,18 +13,20 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Postage;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public interface IEvaluationService
+    public interface ICalculatorService
     {
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
             string contentType,
             string? name,
             bool encrypt,
-            RedundancyLevel redundancyLevel);
+            RedundancyLevel redundancyLevel,
+            IPostageStampIssuer? postageStampIssuer = null);
     }
 }

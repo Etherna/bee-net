@@ -19,13 +19,13 @@ using Xunit;
 
 namespace Etherna.BeeNet.Services
 {
-    public class EvaluationServiceTest
+    public class CalculatorServiceTest
     {
         [Fact]
         public async Task GetFileHashTest()
         {
             await using var fileStream = File.OpenRead("/home/mirkodc/Desktop/test.txt");
-            var fileService = new EvaluationService();
+            var fileService = new CalculatorService();
             var result = await fileService.EvaluateFileUploadAsync(
                 fileStream,
                 "",

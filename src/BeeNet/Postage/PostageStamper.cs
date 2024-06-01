@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Postage
     {
         // Constructor.
         public PostageStamper(
-            PostageStampIssuer issuer,
+            IPostageStampIssuer issuer,
             ISigner signer,
             IStore store)
         {
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Postage
         }
         
         // Properties.
-        public PostageStampIssuer Issuer { get; set; }
+        public IPostageStampIssuer Issuer { get; set; }
         public ISigner Signer { get; set; }
         public IStore Store { get; set; }
         

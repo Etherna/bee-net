@@ -23,16 +23,17 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public class EvaluationService : IEvaluationService
+    public class CalculatorService : ICalculatorService
     {
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
             string contentType,
             string? name,
             bool encrypt,
-            RedundancyLevel redundancyLevel)
+            RedundancyLevel redundancyLevel,
+            IPostageStampIssuer? postageStampIssuer = null)
         {
-            var postageStampIssuer =
+            postageStampIssuer ??=
                 new PostageStampIssuer(
                     PostageBatch.MaxDepthInstance,
                     AddressUtil.ZERO_ADDRESS);
@@ -55,7 +56,7 @@ namespace Etherna.BeeNet.Services
             // Return result.
             return new UploadEvaluationResult(
                 manifestAddress,
-                postageStampIssuer.MaxBucketCount);
+                postageStampIssuer);
         }
     }
 }

@@ -18,7 +18,7 @@ using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Postage
 {
-    public class PostageStampIssuer
+    public class PostageStampIssuer : IPostageStampIssuer
     {
         // Fields.
         private readonly uint[] _buckets;
@@ -37,39 +37,14 @@ namespace Etherna.BeeNet.Postage
         }
         
         // Properties.
-        /// <summary>
-        /// Collision Buckets: counts per neighbourhoods
-        /// </summary>
         public ReadOnlySpan<uint> Buckets => _buckets;
-
         public uint BucketUpperBound => (uint)1 << (PostageBatch.Depth - PostageBatch.BucketDepth);
-        
-        /// <summary>
-        /// True if batch is mutable and BucketUpperBound has been it
-        /// </summary>
         public bool HasSaturated { get; private set; }
-
-        /// <summary>
-        /// The batch stamps are issued from
-        /// </summary>
         public PostageBatch PostageBatch { get; }
-
-        /// <summary>
-        /// Owner identity
-        /// </summary>
-        public string OwnerEthAddress { get; set; }
-        
-        /// <summary>
-        /// The count of the fullest bucket
-        /// </summary>
-        public uint MaxBucketCount { get; set; }
+        public string OwnerEthAddress { get; }
+        public uint MaxBucketCount { get; private set; }
 
         // Methods.
-        /// <summary>
-        /// Increment bucket collisions
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns>BatchIndex</returns>
         public byte[] IncrementBucketCount(SwarmAddress address)
         {
             var bucketIndex = address.ToBucketIndex();

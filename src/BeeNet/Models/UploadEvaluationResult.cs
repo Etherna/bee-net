@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Postage;
 using System;
 
 namespace Etherna.BeeNet.Models
@@ -21,10 +22,10 @@ namespace Etherna.BeeNet.Models
         // Constructor.
         internal UploadEvaluationResult(
             SwarmAddress address,
-            uint maxChunksPerBucket)
+            IPostageStampIssuer postageStampIssuer)
         {
             Address = address;
-            MaxChunksPerBucket = maxChunksPerBucket;
+            PostageStampIssuer = postageStampIssuer;
         }
 
         // Properties.
@@ -33,18 +34,15 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         public SwarmAddress Address { get; }
 
+        public IPostageStampIssuer PostageStampIssuer { get; }
+
         /// <summary>
         /// Total batch space consumed in bytes
         /// </summary>
         public long ConsumedSize =>
-            MaxChunksPerBucket *
+            PostageStampIssuer.MaxBucketCount *
             (long)Math.Pow(2, PostageBatch.BucketDepth) *
             SwarmChunk.DataSize;
-        
-        /// <summary>
-        /// Max amount of allocated chunks per bucket
-        /// </summary>
-        public uint MaxChunksPerBucket { get; }
         
         /// <summary>
         /// Available postage batch space after the upload, with minimum batch depth
@@ -56,7 +54,7 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         public int RequiredPostageBatchDepth =>
             Math.Max(
-                (int)Math.Ceiling(Math.Log2(MaxChunksPerBucket)) + PostageBatch.BucketDepth,
+                (int)Math.Ceiling(Math.Log2(PostageStampIssuer.MaxBucketCount)) + PostageBatch.BucketDepth,
                 PostageBatch.MinDepth);
         
         /// <summary>
