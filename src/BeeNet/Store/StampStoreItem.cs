@@ -52,9 +52,9 @@ namespace Etherna.BeeNet.Store
             var buffer = new byte[StampItemSize + 1];
 
             var l = 0;
-            BatchId.ToReadOnlySpan().CopyTo(buffer.AsSpan()[..SwarmAddress.HashSize]);
+            BatchId.ToReadOnlyMemory().CopyTo(buffer.AsMemory()[..SwarmAddress.HashSize]);
             l += SwarmAddress.HashSize;
-            ChunkAddress.ToReadOnlySpan().CopyTo(buffer.AsSpan()[l..(l + SwarmAddress.HashSize)]);
+            ChunkAddress.ToReadOnlyMemory().CopyTo(buffer.AsMemory()[l..(l + SwarmAddress.HashSize)]);
             l += SwarmAddress.HashSize;
             Array.Copy(BatchIndex, 0, buffer, l, StampIndexSize);
             l += StampIndexSize;

@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is PostageBatchId other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteId);
         public byte[] ToByteArray() => (byte[])byteId.Clone();
-        public ReadOnlySpan<byte> ToReadOnlySpan() => byteId;
+        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteId;
         public override string ToString() => byteId.ToHex();
         
         // Static methods.
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator PostageBatchId(byte[] value) => new(value);
         
         public static explicit operator byte[](PostageBatchId value) => value.ToByteArray();
-        public static explicit operator ReadOnlySpan<byte>(PostageBatchId value) => value.ToReadOnlySpan();
+        public static explicit operator ReadOnlyMemory<byte>(PostageBatchId value) => value.ToReadOnlyMemory();
         public static explicit operator string(PostageBatchId value) => value.ToString();
     }
 }

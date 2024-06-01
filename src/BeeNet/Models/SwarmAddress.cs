@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Models
             return BitConverter.ToUInt32(firstBytes, 0) >> (32 - PostageBatch.BucketDepth);
         }
         public byte[] ToByteArray() => (byte[])byteAddress.Clone();
-        public ReadOnlySpan<byte> ToReadOnlySpan() => byteAddress;
+        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteAddress;
         public override string ToString() => byteAddress.ToHex();
         
         // Static methods.
@@ -77,7 +77,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator SwarmAddress(byte[] value) => new(value);
         
         public static explicit operator string(SwarmAddress value) => value.ToString();
-        public static explicit operator ReadOnlySpan<byte>(SwarmAddress value) => value.ToReadOnlySpan();
+        public static explicit operator ReadOnlyMemory<byte>(SwarmAddress value) => value.ToReadOnlyMemory();
         public static explicit operator byte[](SwarmAddress value) => value.ToByteArray();
     }
 }

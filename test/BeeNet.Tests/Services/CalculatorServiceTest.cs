@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Services
         [Fact]
         public async Task GetFileHashTest()
         {
-            await using var fileStream = File.OpenRead("/home/mirkodc/Desktop/test.txt");
+            await using var fileStream = File.OpenRead("/home/mirkodc/Downloads/Etherna presentation for Swarm 2.0.mp4");
             var fileService = new CalculatorService();
             var result = await fileService.EvaluateFileUploadAsync(
                 fileStream,
@@ -33,7 +33,8 @@ namespace Etherna.BeeNet.Services
                 false,
                 RedundancyLevel.None);
             
-            Assert.Equal("3cbbc4fd17684b678e0a85d8be2f9a64795ea7cec22f9f8c31d58a7a5345668a", result.Address);
+            Assert.Equal("615c9964d2cdf13c0e557cf8821fe93ae15cf4ed40e3312a5b312d0a4ead9e87", result.Address);
+            Assert.Equal(19, result.RequiredPostageBatchDepth);
         }
     }
 }

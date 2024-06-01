@@ -27,8 +27,35 @@ namespace Etherna.BeeNet.Pipelines
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     internal class ChunkAggregatorPipelineStage : PipelineStageBase
     {
+        // Classes.
+        private class ChunkInfo(bool isParityChunk, ReadOnlyMemory<byte> span, SwarmAddress reference, byte[]? key)
+        {
+            public bool IsParityChunk { get; } = isParityChunk;
+            public ReadOnlyMemory<byte> Span { get; } = span;
+            public SwarmAddress Reference { get; } = reference;
+            public byte[]? Key { get; } = key;
+        }
+        
         // Consts.
         private const int MaxLevel = 8;
+        
+        // Fields.
+        private readonly List<ChunkInfo>[] chunksByLevels;
+        
+        /// <summary>
+        /// Keeps intermediate level data
+        /// </summary>
+        private readonly byte[] buffer;
+
+        /// <summary>
+        /// Counts the chunk references in intermediate chunks. key is the chunk level.
+        /// </summary>
+        private readonly byte[] chunkCounters_old;
+        
+        /// <summary>
+        /// Level cursors, key is level. level 0 is data level holds how many chunks were processed. Intermediate higher levels will always have LOWER cursor values.
+        /// </summary>
+        private readonly int[] cursors;
         
         // Constructor.
         public ChunkAggregatorPipelineStage(
@@ -37,40 +64,31 @@ namespace Etherna.BeeNet.Pipelines
             IPostageStamper postageStamper)
             : base(nextStage)
         {
-            Cursors = new int[9];
-            Buffer = new byte[SwarmChunk.SpanAndDataSize * 9 * 2]; // double size as temp workaround for weak calculation of needed buffer space
-            RedundancyParams = redundancyParams ?? throw new ArgumentNullException(nameof(redundancyParams));
-            ChunkCounters = new byte[9];
+            chunksByLevels = new List<ChunkInfo>[9];
+            for (int i = 0; i < chunksByLevels.Length; i++)
+                chunksByLevels[i] = [];
+            
+            cursors = new int[9];
+            buffer = new byte[SwarmChunk.SpanAndDataSize * 9 * 2]; // double size as temp workaround for weak calculation of needed buffer space
+            chunkCounters_old = new byte[9];
             EffectiveChunkCounters = new byte[9];
+            
+            RedundancyParams = redundancyParams ?? throw new ArgumentNullException(nameof(redundancyParams));
             MaxChildrenChunks = (byte)(redundancyParams.MaxShards + redundancyParams.Parities(redundancyParams.MaxShards));
             ReplicaPutter = new ReplicaPutter(postageStamper, redundancyParams.Level);
-            ParityChunkFn = (level, span, address) => WriteToIntermediateLevelAsync(level, true, span, address, Array.Empty<byte>());
+            ParityChunkFn = (level, span, address) =>
+                AddChunkToLevelAsync(level, new ChunkInfo(true, span, address, null));
         }
 
         // Properties.
         /// <summary>
-        /// Level cursors, key is level. level 0 is data level holds how many chunks were processed. Intermediate higher levels will always have LOWER cursor values.
-        /// </summary>
-        public int[] Cursors { get; }
-
-        /// <summary>
-        /// Keeps intermediate level data
-        /// </summary>
-        public byte[] Buffer { get; }
-
-        /// <summary>
-        /// Indicates whether the trie is full. currently we support (128^7)*4096 = 2305843009213693952 bytes
+        /// Indicates whether the collector is full. currently we support (128^7)*4096 = 2305843009213693952 bytes
         /// </summary>
         public bool IsFull { get; private set; }
 
         public RedundancyParams RedundancyParams { get; }
 
         public ParityChunkCallback ParityChunkFn { get; }
-
-        /// <summary>
-        /// Counts the chunk references in intermediate chunks. key is the chunk level.
-        /// </summary>
-        public byte[] ChunkCounters { get; }
 
         /// <summary>
         /// Counts the effective  chunk references in intermediate chunks. key is the chunk level.
@@ -93,7 +111,9 @@ namespace Etherna.BeeNet.Pipelines
             if (IsFull)
                 throw new InvalidOperationException();
 
-            await WriteToIntermediateLevelAsync(1, false, args.Span.ToArray(), args.Address!.Value, args.EncryptionKey).ConfigureAwait(false);
+            await AddChunkToLevelAsync(
+                1,
+                new ChunkInfo(false, args.Span, args.Address!.Value, args.EncryptionKey)).ConfigureAwait(false);
             
             if (RedundancyParams.Level != RedundancyLevel.None)
                 await RedundancyParams.ChunkWriteAsync(0, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
@@ -121,7 +141,7 @@ namespace Etherna.BeeNet.Pipelines
         {
 	        for (var i = 1; i < MaxLevel; i++)
             {
-                var l = ChunkCounters[i];
+                var l = chunkCounters_old[i];
                 if (l == 0)
                 {
                     // level empty, continue to the next.
@@ -151,12 +171,12 @@ namespace Etherna.BeeNet.Pipelines
                     // we therefore get a "carry-over" behavior between intermediate levels
                     // that might or might not have data. the eventual result is that the last
                     // hash generated will always be carried over to the last level (8), then returned.
-                    Cursors[i + 1] = Cursors[i];
+                    cursors[i + 1] = cursors[i];
                     // replace cached chunk to the level as well
                     await RedundancyParams.ElevateCarrierChunkAsync(i - 1, ParityChunkFn).ConfigureAwait(false);
                     // update counters, subtracting from current level is not necessary
                     EffectiveChunkCounters[i + 1]++;
-                    ChunkCounters[i + 1]++;
+                    chunkCounters_old[i + 1]++;
                 }
                 else
                 {
@@ -167,12 +187,12 @@ namespace Etherna.BeeNet.Pipelines
                 }
             }
 
-            var levelLen = ChunkCounters[MaxLevel];
+            var levelLen = chunkCounters_old[MaxLevel];
             if (levelLen != 1)
                 throw new InvalidOperationException();
 
 	        // return the hash in the highest level, that's all we need
-            var data = Buffer[..Cursors[MaxLevel]];
+            var data = buffer[..cursors[MaxLevel]];
             var rootHash = data[SwarmChunk.SpanSize..];
 
 	        // save disperse replicas of the root chunk
@@ -203,7 +223,7 @@ namespace Etherna.BeeNet.Pipelines
         /// <param name="level"></param>
         private async Task WrapFullLevelAsync(int level)
         {
-            var data = Buffer[Cursors[level + 1]..Cursors[level]];
+            var data = buffer[cursors[level + 1]..cursors[level]];
             ulong sp = 0;
             IEnumerable<byte> hashes = Array.Empty<byte>();
             var offset = 0;
@@ -247,43 +267,56 @@ namespace Etherna.BeeNet.Pipelines
 
             await FeedNextAsync(args).ConfigureAwait(false);
             
-            await WriteToIntermediateLevelAsync(level + 1, false, args.Span.ToArray(), args.Address!.Value.ToByteArray(), args.EncryptionKey!).ConfigureAwait(false);
+            await AddChunkToLevelAsync(
+                level + 1,
+                new ChunkInfo(false, args.Span, args.Address!.Value, args.EncryptionKey)).ConfigureAwait(false);
             await RedundancyParams.ChunkWriteAsync(level, args.Data.ToArray(), ParityChunkFn).ConfigureAwait(false);
             
             // this "truncates" the current level that was wrapped
             // by setting the cursors to the cursors of one level above
-            Cursors[level] = Cursors[level + 1];
-            ChunkCounters[level] = 0;
+            cursors[level] = cursors[level + 1];
+            chunkCounters_old[level] = 0;
             EffectiveChunkCounters[level] = 0;
 
             if (level + 1 == MaxLevel)
                 IsFull = true;
         }
         
-        private async Task WriteToIntermediateLevelAsync(int level, bool parityChunk, byte[] span, SwarmAddress reference, byte[]? key)
+        private async Task AddChunkToLevelAsync(int level, ChunkInfo chunkInfo)
         {
-            ArgumentNullException.ThrowIfNull(span, nameof(span));
-            ArgumentNullException.ThrowIfNull(reference, nameof(reference));
+            ArgumentNullException.ThrowIfNull(chunkInfo, nameof(chunkInfo));
 
-            Array.Copy(span, 0, Buffer, Cursors[level], span.Length);
-            Cursors[level] += span.Length;
-            Array.Copy(reference.ToByteArray(), 0, Buffer, Cursors[level], SwarmAddress.HashSize);
-            Cursors[level] += SwarmAddress.HashSize;
-            if (key != null)
+            // **** OLD ****
+            chunkInfo.Span.CopyTo(                        buffer.AsMemory()[cursors[level]..(cursors[level] + chunkInfo.Span.Length)]);
+            cursors[level] += chunkInfo.Span.Length;
+            
+            chunkInfo.Reference.ToReadOnlyMemory().CopyTo(buffer.AsMemory()[cursors[level]..(cursors[level] + SwarmAddress.HashSize)]);
+            cursors[level] += SwarmAddress.HashSize;
+            
+            if (chunkInfo.Key != null)
             {
-                Array.Copy(key, 0, Buffer, Cursors[level], key.Length);
-                Cursors[level] += key.Length;
+                chunkInfo.Key.AsMemory().CopyTo(          buffer.AsMemory()[cursors[level]..(cursors[level] + chunkInfo.Key.Length)]);
+                cursors[level] += chunkInfo.Key.Length;
             }
 
             // update counters
-            if (!parityChunk)
+            if (!chunkInfo.IsParityChunk)
                 EffectiveChunkCounters[level]++;
-            ChunkCounters[level]++;
-            if (ChunkCounters[level] == MaxChildrenChunks)
+            
+            chunkCounters_old[level]++;
+            if (chunkCounters_old[level] == MaxChildrenChunks)
             {
                 // at this point the erasure coded chunks have been written
                 await WrapFullLevelAsync(level).ConfigureAwait(false);
             }
+            
+            // // **** NEW ****
+            chunksByLevels[level].Add(chunkInfo);
+            // if (chunksByLevels[level].Count == MaxChildrenChunks)
+            // {
+            //     // at this point the erasure coded chunks have been written
+            //     await WrapFullLevelAsync(level).ConfigureAwait(false);
+            // }
         }
     }
 }
