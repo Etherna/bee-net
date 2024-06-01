@@ -44,10 +44,16 @@ namespace Etherna.BeeNet.Pipelines
             {
                 //build stages
                 var shortPipelineStage = ShortPipelineStage.BuildNewStage(postageStamper);
+                
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     new RedundancyParams(redundancyLevel, false, shortPipelineStage),
-                    shortPipelineStage,
-                    postageStamper
+                    postageStamper,
+                    async (span, data) =>
+                    {
+                        var args = new PipelineFeedArgs(data, span);
+                        await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
+                        return args.Address!.Value;
+                    }
                 );
                 var storeWriterStage = new StoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
                 startStage = new ChunkBmtPipelineStage(storeWriterStage);
