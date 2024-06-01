@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public FeedIndexBase Index { get; }
-        public ReadOnlySpan<byte> Payload => Data[TimeStampSize..];
+        public ReadOnlyMemory<byte> Payload => Data[TimeStampSize..];
         public DateTimeOffset TimeStamp
         {
             get
@@ -67,9 +67,9 @@ namespace Etherna.BeeNet.Models
             if (obj is not SwarmFeedChunk objFeedChunk) return false;
             return GetType() == obj.GetType() &&
                 Address.Equals(objFeedChunk.Address) &&
-                Data.SequenceEqual(objFeedChunk.Data) &&
+                Data.Span.SequenceEqual(objFeedChunk.Data.Span) &&
                 Index.Equals(objFeedChunk.Index) &&
-                Span.SequenceEqual(objFeedChunk.Span);
+                Span.Span.SequenceEqual(objFeedChunk.Span.Span);
         }
         
         public override int GetHashCode() =>

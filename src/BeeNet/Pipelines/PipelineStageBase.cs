@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -47,7 +48,7 @@ namespace Etherna.BeeNet.Pipelines
         /// Flush the pipeline and perform the final sum 
         /// </summary>
         /// <returns>The binary digest of sum</returns>
-        public async Task<byte[]> SumAsync()
+        public async Task<SwarmAddress> SumAsync()
         {
             var sum = await SumImplAsync().ConfigureAwait(false);
             IsClosed = true;
@@ -65,13 +66,13 @@ namespace Etherna.BeeNet.Pipelines
         /// Virtual implementation of the sum method
         /// </summary>
         /// <returns>The binary digest of sum</returns>
-        protected virtual Task<byte[]> SumImplAsync() => SumNextAsync();
+        protected virtual Task<SwarmAddress> SumImplAsync() => SumNextAsync();
         
         // Protected helper methods.
         protected Task FeedNextAsync(PipelineFeedArgs args) =>
-            nextStage is not null ? nextStage.FeedAsync(args) : Task.CompletedTask;
+            nextStage?.FeedAsync(args) ?? Task.CompletedTask;
 
-        protected Task<byte[]> SumNextAsync() =>
-            nextStage is not null ? nextStage.SumAsync() : Task.FromResult(Array.Empty<byte>());
+        protected Task<SwarmAddress> SumNextAsync() =>
+            nextStage?.SumAsync() ?? throw new InvalidOperationException();
     }
 }

@@ -67,8 +67,8 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public SwarmAddress Address { get; }
-        public ReadOnlySpan<byte> Data => _data;
-        public ReadOnlySpan<byte> Span => _span;
+        public ReadOnlyMemory<byte> Data => _data;
+        public ReadOnlyMemory<byte> Span => _span;
         
         // Static methods.
         public static byte[] LengthToSpan(ulong length)

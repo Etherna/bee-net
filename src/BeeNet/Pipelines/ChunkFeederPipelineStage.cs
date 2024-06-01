@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Pipelines
         /// respresenting the data written to the feeder.
         /// </summary>
         /// <returns>Cryptographic root-hash representing the data written</returns>
-        protected override async Task<byte[]> SumImplAsync()
+        protected override async Task<SwarmAddress> SumImplAsync()
         {
             if (bufferIndex > 0 || //if we need to flush existing data from the buffer,
                 wroteBytes == 0)   //or if no chunks have been written at all

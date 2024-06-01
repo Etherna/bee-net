@@ -73,8 +73,7 @@ namespace Etherna.BeeNet.Pipelines
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
             await chunkFeeder.FeedAsync(new PipelineFeedArgs(data)).ConfigureAwait(false);
-            var sum = await chunkFeeder.SumAsync().ConfigureAwait(false);
-            return new SwarmAddress(sum);
+            return await chunkFeeder.SumAsync().ConfigureAwait(false);
         }
         
         /// <summary>
@@ -96,8 +95,7 @@ namespace Etherna.BeeNet.Pipelines
                     await chunkFeeder.FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
             } while (chunkReadBytes == SwarmChunk.DataSize);
 
-            var sum = await chunkFeeder.SumAsync().ConfigureAwait(false);
-            return new SwarmAddress(sum);
+            return await chunkFeeder.SumAsync().ConfigureAwait(false);
         }
     }
 }

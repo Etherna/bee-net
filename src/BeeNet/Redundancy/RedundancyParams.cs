@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Redundancy
 {
-    public delegate Task ParityChunkCallback(int level, byte[] span, byte[] address);
+    public delegate Task AddParityChunkCallback(int level, byte[] span, byte[] address);
     
     internal class RedundancyParams
     {
@@ -86,7 +86,7 @@ namespace Etherna.BeeNet.Redundancy
         /// <param name="chunkLevel"></param>
         /// <param name="data"></param>
         /// <param name="callback"></param>
-        public async Task ChunkWriteAsync(int chunkLevel, byte[] data, ParityChunkCallback callback)
+        public async Task ChunkWriteAsync(int chunkLevel, byte[] data, AddParityChunkCallback callback)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
@@ -113,7 +113,7 @@ namespace Etherna.BeeNet.Redundancy
         /// </summary>
         /// <param name="chunkLevel"></param>
         /// <param name="callback"></param>
-        public async Task ElevateCarrierChunkAsync(int chunkLevel, ParityChunkCallback callback)
+        public async Task ElevateCarrierChunkAsync(int chunkLevel, AddParityChunkCallback callback)
         {
             if (Level == RedundancyLevel.None)
                 return;
@@ -131,7 +131,7 @@ namespace Etherna.BeeNet.Redundancy
         /// </summary>
         /// <param name="chunkLevel"></param>
         /// <param name="callback"></param>
-        public async Task EncodeAsync(int chunkLevel, ParityChunkCallback callback)
+        public async Task EncodeAsync(int chunkLevel, AddParityChunkCallback callback)
         {
             ArgumentNullException.ThrowIfNull(callback, nameof(callback));
 
