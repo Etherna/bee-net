@@ -21,11 +21,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.HasherPipeline
 {
     public delegate Task<SwarmAddress> HashChunkDelegateAsync(byte[] span, byte[] data);
     
-    internal sealed class ChunkAggregatorPipelineStage : PipelineStageBase, IDisposable
+    internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
         private class ChunkHeader(SwarmAddress address, ReadOnlyMemory<byte> span, bool isParityChunk, byte[]? key)
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Pipelines
         // Fields.
         private readonly AddParityChunkCallback addParityChunkFunc;
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
-        private readonly Dictionary<long, PipelineFeedArgs> feedingBuffer = new();
+        private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
         private readonly RedundancyParams redundancyParams;
         private readonly HashChunkDelegateAsync hashChunkDelegate;
@@ -57,7 +57,6 @@ namespace Etherna.BeeNet.Pipelines
             RedundancyParams redundancyParams,
             IPostageStamper postageStamper,
             HashChunkDelegateAsync hashChunkDelegate)
-            : base(null)
         {
             addParityChunkFunc = (level, span, address) => AddChunkToLevelAsync(level, new ChunkHeader(address, span, true, null));
             chunkLevels = [];
@@ -68,14 +67,13 @@ namespace Etherna.BeeNet.Pipelines
         }
         
         // Dispose.
-        public override void Dispose()
+        public void Dispose()
         {
             feedChunkMutex.Dispose();
-            base.Dispose();
         }
-
-        // Protected methods.
-        protected override async Task FeedImplAsync(PipelineFeedArgs args)
+        
+        // Methods.
+        public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
             await feedChunkMutex.WaitAsync().ConfigureAwait(false);
             try
@@ -84,7 +82,7 @@ namespace Etherna.BeeNet.Pipelines
                 // Returns only the next sequential arrived chunks.
                 feedingBuffer.Add(args.NumberId, args);
 
-                List<PipelineFeedArgs> chunksToProcess = [];
+                List<HasherPipelineFeedArgs> chunksToProcess = [];
                 while (feedingBuffer.Remove(feededChunkNumberId, out var nextChunk))
                 {
                     chunksToProcess.Add(nextChunk);
@@ -115,7 +113,7 @@ namespace Etherna.BeeNet.Pipelines
             }
         }
 
-        protected override async Task<SwarmAddress> SumImplAsync()
+        public async Task<SwarmAddress> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -150,12 +148,12 @@ namespace Etherna.BeeNet.Pipelines
             
             var rootChunk = chunkLevels.Last()[0];
 
-	        // save disperse replicas of the root chunk
-	        if (redundancyParams.Level != RedundancyLevel.None)
+            // save disperse replicas of the root chunk
+            if (redundancyParams.Level != RedundancyLevel.None)
             {
                 var rootData = redundancyParams.GetRootData();
                 replicaPutter.Put(SwarmChunk.BuildFromSpanAndData(rootChunk.Address, rootData));
-	        }
+            }
 
             return rootChunk.Address;
         }

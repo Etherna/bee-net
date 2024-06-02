@@ -16,17 +16,17 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.HasherPipeline
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
-    internal class PipelineFeedArgs
+    internal class HasherPipelineFeedArgs
     {
         // Fields.
         private readonly byte[] _data;
         private readonly byte[]? _span;
         
         // Constructor.
-        public PipelineFeedArgs(
+        public HasherPipelineFeedArgs(
             byte[] data,
             byte[]? span = null,
             long numberId = 0)

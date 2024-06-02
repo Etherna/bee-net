@@ -16,18 +16,15 @@ using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Postage;
 using Etherna.BeeNet.Redundancy;
 using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.HasherPipeline
 {
-    internal sealed class HasherPipeline : IDisposable
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+    internal static class HasherPipelineBuilder
     {
-        // Fields.
-        private readonly ChunkFeederPipelineStage chunkFeeder;
-        
-        // Constructor.
-        public HasherPipeline(
+        // Static builders.
+        public static IHasherPipeline BuildNewHasherPipeline(
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted)
@@ -35,7 +32,7 @@ namespace Etherna.BeeNet.Pipelines
             if (redundancyLevel != RedundancyLevel.None)
                 throw new NotImplementedException();
 
-            PipelineStageBase startStage;
+            IHasherPipelineStage bmtStage;
             if (isEncrypted)
             {
                 throw new NotImplementedException();
@@ -43,50 +40,29 @@ namespace Etherna.BeeNet.Pipelines
             else
             {
                 //build stages
-                var shortPipelineStage = ShortPipelineStage.BuildNewStage(postageStamper);
+                var shortPipelineStage = BuildNewShortHasherPipeline(postageStamper);
                 
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     new RedundancyParams(redundancyLevel, false, shortPipelineStage),
                     postageStamper,
                     async (span, data) =>
                     {
-                        var args = new PipelineFeedArgs(span: span, data: data);
+                        var args = new HasherPipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
                         return args.Address!.Value;
                     }
                 );
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
-                startStage = new ChunkBmtPipelineStage(storeWriterStage);
+                bmtStage = new ChunkBmtPipelineStage(storeWriterStage);
             }
             
-            chunkFeeder = new ChunkFeederPipelineStage(startStage);
-            PostageStamper = postageStamper;
-            RedundancyLevel = redundancyLevel;
+            return new ChunkFeederPipelineStage(bmtStage);
         }
         
-        // Dispose.
-        public void Dispose()
+        public static IHasherPipelineStage BuildNewShortHasherPipeline(IPostageStamper postageStamper)
         {
-            chunkFeeder.Dispose();
+            var storeWriter = new ChunkStoreWriterPipelineStage(postageStamper, null);
+            return new ChunkBmtPipelineStage(storeWriter);
         }
-
-        // Properties.
-        public IPostageStamper PostageStamper { get; }
-        public RedundancyLevel RedundancyLevel { get; }
-        
-        // Methods.
-        /// <summary>
-        /// Consume a byte array and returns a Swarm address as result
-        /// </summary>
-        /// <param name="data">Input data</param>
-        /// <returns>Resulting swarm address</returns>
-        public Task<SwarmAddress> FeedAsync(byte[] data) => chunkFeeder.FeedAsync(data);
-
-        /// <summary>
-        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
-        /// </summary>
-        /// <param name="dataStream">Input data stream</param>
-        /// <returns>Resulting swarm address</returns>
-        public Task<SwarmAddress> FeedAsync(Stream dataStream) => chunkFeeder.FeedAsync(dataStream);
     }
 }

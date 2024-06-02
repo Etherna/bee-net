@@ -16,20 +16,23 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.HasherPipeline
 {
     /// <summary>
     /// Calculate hash of each chunk
     /// </summary>
-    internal class ChunkBmtPipelineStage : PipelineStageBase
+    internal sealed class ChunkBmtPipelineStage(
+        IHasherPipelineStage nextStage)
+        : IHasherPipelineStage
     {
-        // Constructor.
-        public ChunkBmtPipelineStage(PipelineStageBase nextStage)
-            : base(nextStage)
-        { }
+        // Dispose.
+        public void Dispose()
+        {
+            nextStage.Dispose();
+        }
 
-        // Protected methods.
-        protected override async Task FeedImplAsync(PipelineFeedArgs args)
+        // Methods.
+        public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
             if (args.Data.Length < SwarmChunk.SpanSize)
                 throw new InvalidOperationException("Data can't be shorter than span size here");
@@ -40,7 +43,9 @@ namespace Etherna.BeeNet.Pipelines
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
                 args.Data[SwarmChunk.SpanSize..].ToArray());
 
-            await FeedNextAsync(args).ConfigureAwait(false);
+            await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
+
+        public Task<SwarmAddress> SumAsync() => nextStage.SumAsync();
     }
 }

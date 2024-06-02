@@ -19,67 +19,47 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Pipelines
+namespace Etherna.BeeNet.HasherPipeline
 {
     /// <summary>
     /// Produce chunked data with span prefix for successive stages.
     /// Also controls the parallelism on chunk elaboration
     /// </summary>
-    internal sealed class ChunkFeederPipelineStage : PipelineStageBase
+    internal sealed class ChunkFeederPipelineStage(
+        IHasherPipelineStage nextStage,
+        int chunkConcurrency)
+        : IHasherPipeline
     {
         // Fields.
-        private readonly byte[] buffer;
+        private readonly byte[] buffer = new byte[SwarmChunk.DataSize];
         private readonly List<Task> chunkTasks = new();
-        private readonly SemaphoreSlim semaphore;
+        private readonly SemaphoreSlim semaphore = new(chunkConcurrency, chunkConcurrency);
         
         private int bufferIndex;
         private long wroteBytes;
         
         // Constructor.
-        public ChunkFeederPipelineStage(PipelineStageBase nextStage)
+        public ChunkFeederPipelineStage(IHasherPipelineStage nextStage)
             : this(nextStage, Environment.ProcessorCount)
         { }
-        
-        public ChunkFeederPipelineStage(
-            PipelineStageBase nextStage,
-            int chunkConcurrency)
-            : base(nextStage)
-        {
-            buffer = new byte[SwarmChunk.DataSize];
-            semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
-        }
-        
+
         // Dispose.
-        public override void Dispose()
+        public void Dispose()
         {
+            nextStage.Dispose();
             semaphore.Dispose();
-            base.Dispose();
         }
         
         // Methods.
-        /// <summary>
-        /// Consume a byte array and returns a Swarm address as result
-        /// </summary>
-        /// <param name="data">Input data</param>
-        /// <returns>Resulting swarm address</returns>
-        public async Task<SwarmAddress> FeedAsync(byte[] data)
+        public async Task<SwarmAddress> HashDataAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
-            await FeedAsync(new PipelineFeedArgs(data)).ConfigureAwait(false);
-            
-            // Wait the end of all chunk computation.
-            await Task.WhenAll(chunkTasks).ConfigureAwait(false);
-            
-            return await SumAsync().ConfigureAwait(false);
+            using var memoryStream = new MemoryStream(data);
+            return await HashDataAsync(memoryStream).ConfigureAwait(false);
         }
         
-        /// <summary>
-        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
-        /// </summary>
-        /// <param name="dataStream">Input data stream</param>
-        /// <returns>Resulting swarm address</returns>
-        public async Task<SwarmAddress> FeedAsync(Stream dataStream)
+        public async Task<SwarmAddress> HashDataAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
             
@@ -90,7 +70,7 @@ namespace Etherna.BeeNet.Pipelines
             {
                 chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
                 if (chunkReadBytes > 0)
-                    await FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
+                    await FeedDataAsync(chunkData.AsMemory()[..chunkReadBytes]).ConfigureAwait(false);
             } while (chunkReadBytes == SwarmChunk.DataSize);
 
             // Wait the end of all chunk computation.
@@ -99,18 +79,18 @@ namespace Etherna.BeeNet.Pipelines
             return await SumAsync().ConfigureAwait(false);
         }
 
-        // Protected methods.
+        // Helper methods.
         /// <summary>
         /// Produces data chunks for next stages.
         /// </summary>
         /// <param name="args">Pipeline args</param>
-        protected override async Task FeedImplAsync(PipelineFeedArgs args)
+        private async Task FeedDataAsync(Memory<byte> data)
         {
             // If new data can be fully buffered without complete a chunk, simply add to buffer and return.
-            if (args.Data.Length < SwarmChunk.DataSize - bufferIndex)
+            if (data.Length < SwarmChunk.DataSize - bufferIndex)
             {
-                args.Data.CopyTo(buffer.AsMemory(bufferIndex));
-                bufferIndex += args.Data.Length;
+                data.CopyTo(buffer.AsMemory(bufferIndex));
+                bufferIndex += data.Length;
                 return;
             }
             
@@ -119,12 +99,12 @@ namespace Etherna.BeeNet.Pipelines
             Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
             
             // Consume input data.
-            for (var i = 0; i < args.Data.Length;)
+            for (var i = 0; i < data.Length;)
             {
                 // At this point the chunk can always be fulfilled because of conditions.
                 // Fill the new chunk with data from source.
                 var fillingDataLength = SwarmChunk.DataSize - bufferIndex;
-                args.Data[i..(i + fillingDataLength)]
+                data[i..(i + fillingDataLength)]
                     .CopyTo(chunkData.AsMemory(SwarmChunk.SpanSize + bufferIndex));
                 i += fillingDataLength;
                 
@@ -135,7 +115,7 @@ namespace Etherna.BeeNet.Pipelines
                 
                 // Invoke next stage with parallelism on chunks.
                 await semaphore.WaitAsync().ConfigureAwait(false);
-                var feedArgs = new PipelineFeedArgs(
+                var feedArgs = new HasherPipelineFeedArgs(
                     span: chunkData[..SwarmChunk.SpanSize],
                     data: chunkData,
                     numberId: wroteBytes / SwarmChunk.DataSize);
@@ -144,7 +124,7 @@ namespace Etherna.BeeNet.Pipelines
                     {
                         try
                         {
-                            await FeedNextAsync(feedArgs).ConfigureAwait(false);
+                            await nextStage.FeedAsync(feedArgs).ConfigureAwait(false);
                         }
                         finally
                         {
@@ -156,10 +136,10 @@ namespace Etherna.BeeNet.Pipelines
                 wroteBytes += SwarmChunk.DataSize;
                 
                 // If we can't fill a whole new chunk, buffer the remaining data and exit.
-                if (args.Data.Length - i < SwarmChunk.DataSize)
+                if (data.Length - i < SwarmChunk.DataSize)
                 {
-                    args.Data[i..].CopyTo(buffer);
-                    bufferIndex = args.Data.Length - i;
+                    data[i..].CopyTo(buffer);
+                    bufferIndex = data.Length - i;
                     break; //"i += bufferIndex" is same as "i = args.Data.Length"
                 }
             }
@@ -170,7 +150,7 @@ namespace Etherna.BeeNet.Pipelines
         /// respresenting the data written to the feeder.
         /// </summary>
         /// <returns>Cryptographic root-hash representing the data written</returns>
-        protected override async Task<SwarmAddress> SumImplAsync()
+        private async Task<SwarmAddress> SumAsync()
         {
             if (bufferIndex > 0 || //if we need to flush existing data from the buffer,
                 wroteBytes == 0)   //or if no chunks have been written at all
@@ -184,13 +164,13 @@ namespace Etherna.BeeNet.Pipelines
                     (ulong)bufferIndex);
 
                 // Invoke next stage.
-                await FeedNextAsync(new PipelineFeedArgs(
+                await nextStage.FeedAsync(new HasherPipelineFeedArgs(
                     span: chunkData[..SwarmChunk.SpanSize],
                     data: chunkData,
                     numberId: wroteBytes / SwarmChunk.DataSize)).ConfigureAwait(false);
             }
 
-            return await SumNextAsync().ConfigureAwait(false);
+            return await nextStage.SumAsync().ConfigureAwait(false);
         }
     }
 }

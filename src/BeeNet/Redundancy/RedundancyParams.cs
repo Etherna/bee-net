@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.HasherPipeline;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Pipelines;
 using STH1123.ReedSolomon;
 using System;
 using System.Threading.Tasks;
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Redundancy
         public const int EncryptedBmtSegments = SwarmChunkBmt.SegmentsCount / 2;
         
         // Fields.
-        private readonly PipelineStageBase pipeLine;
+        private readonly IHasherPipelineStage pipeLine;
         
         /// <summary>
         /// Keeps bytes of chunks on each level for producing erasure coded data: [levelIndex][branchIndex][byteIndex]
@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Redundancy
         public RedundancyParams(
             RedundancyLevel level,
             bool encryption,
-            PipelineStageBase pipeLine)
+            IHasherPipelineStage pipeLine)
         {
             bufferCursor = new int[9];
             Encryption = encryption;
@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Redundancy
                 var chunkData = buffer[chunkLevel][i];
                 var span = chunkData[..SwarmChunk.SpanSize];
 
-                var args = new PipelineFeedArgs(
+                var args = new HasherPipelineFeedArgs(
                     data: chunkData,
                     span: span);
                 await pipeLine.FeedAsync(args).ConfigureAwait(false);

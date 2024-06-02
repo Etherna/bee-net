@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.HasherPipeline;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Pipelines;
 using Etherna.BeeNet.Postage;
 using Etherna.BeeNet.Signer;
 using Etherna.BeeNet.Store;
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Services
                     PostageBatch.MaxDepthInstance,
                     AddressUtil.ZERO_ADDRESS);
             
-            using var hasherPipeline = new HasherPipeline(
+            using var hasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 new PostageStamper(
                     postageStampIssuer,
                     new FakeSigner(),
@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.Services
                 encrypt);
             
             // Get file hash.
-            var fileAddress = await hasherPipeline.FeedAsync(stream).ConfigureAwait(false);
+            var fileAddress = await hasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Create manifest.
             name ??= fileAddress.ToString();
