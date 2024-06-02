@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Services
                     PostageBatch.MaxDepthInstance,
                     AddressUtil.ZERO_ADDRESS);
             
-            var hasherPipeline = new HasherPipeline(
+            using var hasherPipeline = new HasherPipeline(
                 new PostageStamper(
                     postageStampIssuer,
                     new FakeSigner(),

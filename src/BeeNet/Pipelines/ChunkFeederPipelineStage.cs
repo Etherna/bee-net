@@ -14,6 +14,9 @@
 
 using Etherna.BeeNet.Models;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
@@ -26,14 +29,15 @@ namespace Etherna.BeeNet.Pipelines
     {
         // Fields.
         private readonly byte[] buffer;
-        // private readonly SemaphoreSlim semaphore;
+        private readonly List<Task> chunkTasks = new();
+        private readonly SemaphoreSlim semaphore;
         
         private int bufferIndex;
         private long wroteBytes;
         
         // Constructor.
         public ChunkFeederPipelineStage(PipelineStageBase nextStage)
-            : this(nextStage, Environment.ProcessorCount * 2)
+            : this(nextStage, Environment.ProcessorCount)
         { }
         
         public ChunkFeederPipelineStage(
@@ -42,15 +46,59 @@ namespace Etherna.BeeNet.Pipelines
             : base(nextStage)
         {
             buffer = new byte[SwarmChunk.DataSize];
-            // semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
+            semaphore = new SemaphoreSlim(chunkConcurrency, chunkConcurrency);
         }
         
-        // // Dispose.
-        // public void Dispose()
-        // {
-        //     semaphore.Dispose();
-        // }
+        // Dispose.
+        public override void Dispose()
+        {
+            semaphore.Dispose();
+            base.Dispose();
+        }
         
+        // Methods.
+        /// <summary>
+        /// Consume a byte array and returns a Swarm address as result
+        /// </summary>
+        /// <param name="data">Input data</param>
+        /// <returns>Resulting swarm address</returns>
+        public async Task<SwarmAddress> FeedAsync(byte[] data)
+        {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+
+            await FeedAsync(new PipelineFeedArgs(data)).ConfigureAwait(false);
+            
+            // Wait the end of all chunk computation.
+            await Task.WhenAll(chunkTasks).ConfigureAwait(false);
+            
+            return await SumAsync().ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
+        /// </summary>
+        /// <param name="dataStream">Input data stream</param>
+        /// <returns>Resulting swarm address</returns>
+        public async Task<SwarmAddress> FeedAsync(Stream dataStream)
+        {
+            ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
+            
+            // Slicing the stream permits to avoid to load all the stream in memory at the same time.
+            var chunkData = new byte[SwarmChunk.DataSize];
+            int chunkReadBytes;
+            do
+            {
+                chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
+                if (chunkReadBytes > 0)
+                    await FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
+            } while (chunkReadBytes == SwarmChunk.DataSize);
+
+            // Wait the end of all chunk computation.
+            await Task.WhenAll(chunkTasks).ConfigureAwait(false);
+
+            return await SumAsync().ConfigureAwait(false);
+        }
+
         // Protected methods.
         /// <summary>
         /// Produces data chunks for next stages.
@@ -71,7 +119,6 @@ namespace Etherna.BeeNet.Pipelines
             Array.Copy(buffer, 0, chunkData, SwarmChunk.SpanSize, bufferIndex);
             
             // Consume input data.
-            // List<Task> nextTasks = new();
             for (var i = 0; i < args.Data.Length;)
             {
                 // At this point the chunk can always be fulfilled because of conditions.
@@ -86,27 +133,24 @@ namespace Etherna.BeeNet.Pipelines
                     chunkData.AsSpan(0, SwarmChunk.SpanSize),
                     SwarmChunk.DataSize);
                 
-                // // Invoke next stage with parallelism on chunks.
-                // await semaphore.WaitAsync().ConfigureAwait(false);
-                // nextTasks.Add(
-                //     Task.Run(async () =>
-                //     {
-                //         try
-                //         {
-                //             await FeedNextAsync(new PipelineFeedArgs(
-                //                 data: chunkData,
-                //                 span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
-                //         }
-                //         finally
-                //         {
-                //             semaphore.Release();
-                //         }
-                //     }));
-                
-                // Invoke next stage.
-                await FeedNextAsync(new PipelineFeedArgs(
+                // Invoke next stage with parallelism on chunks.
+                await semaphore.WaitAsync().ConfigureAwait(false);
+                var feedArgs = new PipelineFeedArgs(
+                    span: chunkData[..SwarmChunk.SpanSize],
                     data: chunkData,
-                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
+                    numberId: wroteBytes / SwarmChunk.DataSize);
+                chunkTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await FeedNextAsync(feedArgs).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }));
 
                 bufferIndex = 0;
                 wroteBytes += SwarmChunk.DataSize;
@@ -119,9 +163,6 @@ namespace Etherna.BeeNet.Pipelines
                     break; //"i += bufferIndex" is same as "i = args.Data.Length"
                 }
             }
-
-            // // Wait the end of all chunk computation.
-            // await Task.WhenAll(nextTasks).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -144,8 +185,9 @@ namespace Etherna.BeeNet.Pipelines
 
                 // Invoke next stage.
                 await FeedNextAsync(new PipelineFeedArgs(
+                    span: chunkData[..SwarmChunk.SpanSize],
                     data: chunkData,
-                    span: chunkData[..SwarmChunk.SpanSize])).ConfigureAwait(false);
+                    numberId: wroteBytes / SwarmChunk.DataSize)).ConfigureAwait(false);
             }
 
             return await SumNextAsync().ConfigureAwait(false);

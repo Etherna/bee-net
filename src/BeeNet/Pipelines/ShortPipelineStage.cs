@@ -13,18 +13,18 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Postage;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal class ShortPipelineStage : PipelineStageBase
+    internal sealed class ShortPipelineStage(PipelineStageBase? nextStage)
+        : PipelineStageBase(nextStage)
     {
-        // Constructor.
-        private ShortPipelineStage(PipelineStageBase? nextStage) : base(nextStage) { }
-        
-        // Builder.
+        // Builders.
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public static ShortPipelineStage BuildNewStage(IPostageStamper postageStamper)
         {
-            var storeWriter = new StoreWriterPipelineStage(postageStamper, null);
+            var storeWriter = new ChunkStoreWriterPipelineStage(postageStamper, null);
             var next = new ChunkBmtPipelineStage(storeWriter);
             return new ShortPipelineStage(next);
         }

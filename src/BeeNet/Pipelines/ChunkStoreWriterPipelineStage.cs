@@ -18,12 +18,12 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal class StoreWriterPipelineStage : PipelineStageBase
+    internal sealed class ChunkStoreWriterPipelineStage : PipelineStageBase
     {
         private readonly IPostageStamper postageStamper;
 
         // Constructor.
-        public StoreWriterPipelineStage(
+        public ChunkStoreWriterPipelineStage(
             IPostageStamper postageStamper,
             PipelineStageBase? nextStage)
             : base(nextStage)

@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal class HasherPipeline
+    internal sealed class HasherPipeline : IDisposable
     {
         // Fields.
         private readonly ChunkFeederPipelineStage chunkFeeder;
@@ -50,18 +50,24 @@ namespace Etherna.BeeNet.Pipelines
                     postageStamper,
                     async (span, data) =>
                     {
-                        var args = new PipelineFeedArgs(data, span);
+                        var args = new PipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
                         return args.Address!.Value;
                     }
                 );
-                var storeWriterStage = new StoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
+                var storeWriterStage = new ChunkStoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
                 startStage = new ChunkBmtPipelineStage(storeWriterStage);
             }
             
             chunkFeeder = new ChunkFeederPipelineStage(startStage);
             PostageStamper = postageStamper;
             RedundancyLevel = redundancyLevel;
+        }
+        
+        // Dispose.
+        public void Dispose()
+        {
+            chunkFeeder.Dispose();
         }
 
         // Properties.
@@ -74,34 +80,13 @@ namespace Etherna.BeeNet.Pipelines
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Resulting swarm address</returns>
-        public async Task<SwarmAddress> FeedAsync(byte[] data)
-        {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
+        public Task<SwarmAddress> FeedAsync(byte[] data) => chunkFeeder.FeedAsync(data);
 
-            await chunkFeeder.FeedAsync(new PipelineFeedArgs(data)).ConfigureAwait(false);
-            return await chunkFeeder.SumAsync().ConfigureAwait(false);
-        }
-        
         /// <summary>
         /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
         /// </summary>
         /// <param name="dataStream">Input data stream</param>
         /// <returns>Resulting swarm address</returns>
-        public async Task<SwarmAddress> FeedAsync(Stream dataStream)
-        {
-            ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
-            
-            // Slicing the stream permits to avoid to load all the stream in memory at the same time.
-            var chunkData = new byte[SwarmChunk.DataSize];
-            int chunkReadBytes;
-            do
-            {
-                chunkReadBytes = await dataStream.ReadAsync(chunkData).ConfigureAwait(false);
-                if (chunkReadBytes > 0)
-                    await chunkFeeder.FeedAsync(new PipelineFeedArgs(chunkData[..chunkReadBytes])).ConfigureAwait(false);
-            } while (chunkReadBytes == SwarmChunk.DataSize);
-
-            return await chunkFeeder.SumAsync().ConfigureAwait(false);
-        }
+        public Task<SwarmAddress> FeedAsync(Stream dataStream) => chunkFeeder.FeedAsync(dataStream);
     }
 }

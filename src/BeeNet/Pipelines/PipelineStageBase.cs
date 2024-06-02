@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal abstract class PipelineStageBase
+    internal abstract class PipelineStageBase : IDisposable
     {
         // Fields.
         private readonly PipelineStageBase? nextStage;
@@ -27,6 +27,12 @@ namespace Etherna.BeeNet.Pipelines
         protected PipelineStageBase(PipelineStageBase? nextStage)
         {
             this.nextStage = nextStage;
+        }
+        
+        // Dispose.
+        public virtual void Dispose()
+        {
+            nextStage?.Dispose();
         }
         
         // Properties.

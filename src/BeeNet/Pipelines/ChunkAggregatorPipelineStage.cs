@@ -18,27 +18,34 @@ using Etherna.BeeNet.Redundancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Pipelines
 {
-    internal class ChunkAggregatorPipelineStage : PipelineStageBase
+    public delegate Task<SwarmAddress> HashChunkDelegateAsync(byte[] span, byte[] data);
+    
+    internal sealed class ChunkAggregatorPipelineStage : PipelineStageBase, IDisposable
     {
         // Private classes.
-        private class ChunkInfo(SwarmAddress address, ReadOnlyMemory<byte> span, bool isParityChunk, byte[]? key)
+        private class ChunkHeader(SwarmAddress address, ReadOnlyMemory<byte> span, bool isParityChunk, byte[]? key)
         {
-            public bool IsParityChunk { get; } = isParityChunk;
-            public ReadOnlyMemory<byte> Span { get; } = span;
             public SwarmAddress Address { get; } = address;
+            public ReadOnlyMemory<byte> Span { get; } = span;
+            public bool IsParityChunk { get; } = isParityChunk;
             public byte[] Key { get; } = key ?? [];
         }
         
         // Fields.
         private readonly AddParityChunkCallback addParityChunkFunc;
-        private readonly List<List<ChunkInfo>> chunkLevels;
+        private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
+        private readonly Dictionary<long, PipelineFeedArgs> feedingBuffer = new();
+        private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
         private readonly RedundancyParams redundancyParams;
-        private readonly Func<byte[], byte[], Task<SwarmAddress>> hashingFuncAsync;
+        private readonly HashChunkDelegateAsync hashChunkDelegate;
         private readonly byte maxChildrenChunks;
+        
+        private long feededChunkNumberId;
         
         /// <summary>
         /// Putter to save dispersed replicas of the root chunk
@@ -49,45 +56,86 @@ namespace Etherna.BeeNet.Pipelines
         public ChunkAggregatorPipelineStage(
             RedundancyParams redundancyParams,
             IPostageStamper postageStamper,
-            Func<byte[], byte[], Task<SwarmAddress>> hashingFuncAsync)
+            HashChunkDelegateAsync hashChunkDelegate)
             : base(null)
         {
-            addParityChunkFunc = (level, span, address) => AddChunkToLevelAsync(level, new ChunkInfo(address, span, true, null));
+            addParityChunkFunc = (level, span, address) => AddChunkToLevelAsync(level, new ChunkHeader(address, span, true, null));
             chunkLevels = [];
-            this.hashingFuncAsync = hashingFuncAsync;
+            this.hashChunkDelegate = hashChunkDelegate;
             maxChildrenChunks = (byte)(redundancyParams.MaxShards + redundancyParams.Parities(redundancyParams.MaxShards));
             this.redundancyParams = redundancyParams ?? throw new ArgumentNullException(nameof(redundancyParams));
             replicaPutter = new ReplicaPutter(postageStamper, redundancyParams.Level);
+        }
+        
+        // Dispose.
+        public override void Dispose()
+        {
+            feedChunkMutex.Dispose();
+            base.Dispose();
         }
 
         // Protected methods.
         protected override async Task FeedImplAsync(PipelineFeedArgs args)
         {
-            await AddChunkToLevelAsync(1,
-                new ChunkInfo(args.Address!.Value, args.Span, false, args.EncryptionKey)).ConfigureAwait(false);
-            
-            if (redundancyParams.Level != RedundancyLevel.None)
-                await redundancyParams.ChunkWriteAsync(
-                    0,
-                    args.Data.ToArray(),
-                    addParityChunkFunc).ConfigureAwait(false);
+            await feedChunkMutex.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                // Catch all the chunks from async tasks.
+                // Returns only the next sequential arrived chunks.
+                feedingBuffer.Add(args.NumberId, args);
+
+                List<PipelineFeedArgs> chunksToProcess = [];
+                while (feedingBuffer.Remove(feededChunkNumberId, out var nextChunk))
+                {
+                    chunksToProcess.Add(nextChunk);
+                    feededChunkNumberId++;
+                }
+                
+                // Process all the ready sequential chunks.
+                foreach (var processingChunk in chunksToProcess)
+                {
+                    await AddChunkToLevelAsync(
+                        1,
+                        new ChunkHeader(
+                            processingChunk.Address!.Value,
+                            processingChunk.Span,
+                            false,
+                            processingChunk.EncryptionKey)).ConfigureAwait(false);
+
+                    if (redundancyParams.Level != RedundancyLevel.None)
+                        await redundancyParams.ChunkWriteAsync(
+                            0,
+                            processingChunk.Data.ToArray(),
+                            addParityChunkFunc).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                feedChunkMutex.Release();
+            }
         }
 
         protected override async Task<SwarmAddress> SumImplAsync()
         {
-            bool isLastLevel = false;
-            for (int i = 0; !isLastLevel; i++)
+            bool rootChunkFound = false;
+            for (int i = 0; !rootChunkFound; i++)
             {
                 var levelChunks = GetLevelChunks(i);
+                var isLastLevel = i == chunkLevels.Count - 1;
                 switch (levelChunks.Count)
                 {
-                    case 0: break; //level empty, continue to the next
+                    case 0:
+                        if (isLastLevel)
+                            throw new InvalidOperationException("Can't be last level with 0 chunks");
+                        break; //level empty, continue to the next
+                    
                     case 1:
-                        isLastLevel = i == chunkLevels.Count - 1;
+                        rootChunkFound = isLastLevel;
                         
                         //replace cached chunk to the level as well
                         await redundancyParams.ElevateCarrierChunkAsync(i - 1, addParityChunkFunc).ConfigureAwait(false);
                         break;
+                    
                     default:
                         if (levelChunks.Count != maxChildrenChunks)
                         {
@@ -113,18 +161,18 @@ namespace Etherna.BeeNet.Pipelines
         }
 
         // Helpers.
-        private async Task AddChunkToLevelAsync(int level, ChunkInfo chunkInfo)
+        private async Task AddChunkToLevelAsync(int level, ChunkHeader chunkHeader)
         {
-            ArgumentNullException.ThrowIfNull(chunkInfo, nameof(chunkInfo));
+            ArgumentNullException.ThrowIfNull(chunkHeader, nameof(chunkHeader));
 
             var levelChunks = GetLevelChunks(level);
-            levelChunks.Add(chunkInfo);
+            levelChunks.Add(chunkHeader);
             
             if (levelChunks.Count == maxChildrenChunks)
                 await WrapFullLevelAsync(level).ConfigureAwait(false);
         }
 
-        private List<ChunkInfo> GetLevelChunks(int level)
+        private List<ChunkHeader> GetLevelChunks(int level)
         {
             while (chunkLevels.Count < level + 1)
                 chunkLevels.Add([]);
@@ -157,8 +205,8 @@ namespace Etherna.BeeNet.Pipelines
             // Run hashing on the new chunk, and add it to next level.
             await AddChunkToLevelAsync(
                 level + 1,
-                new ChunkInfo(
-                    await hashingFuncAsync(totalSpan, totalData).ConfigureAwait(false),
+                new ChunkHeader(
+                    await hashChunkDelegate(totalSpan, totalData).ConfigureAwait(false),
                     totalSpan,
                     false,
                     null)).ConfigureAwait(false);

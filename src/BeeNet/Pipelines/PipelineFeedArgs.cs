@@ -28,7 +28,8 @@ namespace Etherna.BeeNet.Pipelines
         // Constructor.
         public PipelineFeedArgs(
             byte[] data,
-            byte[]? span = null)
+            byte[]? span = null,
+            long numberId = 0)
         {
             if (span is not null)
             {
@@ -40,6 +41,7 @@ namespace Etherna.BeeNet.Pipelines
             
             _data = data;
             _span = span;
+            NumberId = numberId;
         }
         
         // Properties.
@@ -62,5 +64,10 @@ namespace Etherna.BeeNet.Pipelines
         /// Always unecrypted span uint64
         /// </summary>
         public ReadOnlyMemory<byte> Span => _span;
+        
+        /// <summary>
+        /// Ordered Id, from 0 to n with the last chunk
+        /// </summary>
+        public long NumberId { get; }
     }
 }
