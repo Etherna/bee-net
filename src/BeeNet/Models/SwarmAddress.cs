@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Models
         public bool Equals(SwarmAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress);
-        public uint ToBucketIndex()
+        public uint ToBucketId()
         {
             var firstBytes = byteAddress[..4];
             if (BitConverter.IsLittleEndian)

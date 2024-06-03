@@ -17,14 +17,42 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class PostageBatch
+    public class PostageBatch
     {
         // Consts.
         public const int BucketDepth = 16;
         public const int MaxDepth = 47;
         public const int MinDepth = BucketDepth + 1;
         
-        // Constructors.
+        // Public constructor.
+        public PostageBatch(
+            PostageBatchId id,
+            long amount,
+            int blockNumber,
+            int depth,
+            bool exists,
+            bool isImmutable,
+            bool isUsable,
+            string? label,
+            TimeSpan ttl,
+            uint utilization)
+        {
+            if (depth is < MinDepth or > MaxDepth)
+                throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
+
+            Id = id;
+            Amount = amount;
+            BlockNumber = blockNumber;
+            Depth = depth;
+            Exists = exists;
+            IsImmutable = isImmutable;
+            IsUsable = isUsable;
+            Label = label;
+            Ttl = ttl;
+            Utilization = utilization;
+        }
+        
+        // Internal constructors.
         internal PostageBatch(Clients.Stamps batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
@@ -62,22 +90,19 @@ namespace Etherna.BeeNet.Models
             IsUsable = batch.Usable;
             Utilization = batch.Utilization;
         }
-
-        internal PostageBatch(
-            PostageBatchId id,
-            int depth)
-        {
-            if (depth is < MinDepth or > MaxDepth)
-                throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
-
-            Id = id;
-            Depth = depth;
-        }
         
         // Static properties.
         public static PostageBatch MaxDepthInstance { get; } = new(
             PostageBatchId.Zero,
-            MaxDepth);
+            0,
+            0,
+            MaxDepth,
+            true,
+            false,
+            true,
+            null,
+            TimeSpan.FromDays(3650),
+            0);
 
         // Properties.
         public PostageBatchId Id { get; }

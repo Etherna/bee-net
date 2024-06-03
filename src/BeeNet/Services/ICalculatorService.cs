@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Postage;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -21,12 +21,22 @@ namespace Etherna.BeeNet.Services
 {
     public interface ICalculatorService
     {
+        /// <summary>
+        /// Evaluate the result of upload a file
+        /// </summary>
+        /// <param name="stream">The file stream</param>
+        /// <param name="contentType">The file content type</param>
+        /// <param name="name">The file name</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
             string contentType,
             string? name,
-            bool encrypt,
-            RedundancyLevel redundancyLevel,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null);
     }
 }

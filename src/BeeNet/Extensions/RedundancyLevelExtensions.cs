@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Hasher.Bmt;
+using Etherna.BeeNet.Hasher.Redundancy;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Redundancy;
 using System;
 
 namespace Etherna.BeeNet.Extensions

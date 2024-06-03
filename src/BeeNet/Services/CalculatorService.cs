@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.HasherPipeline;
+using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Signer;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Postage;
-using Etherna.BeeNet.Signer;
-using Etherna.BeeNet.Store;
-using Nethereum.Util;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -34,14 +33,12 @@ namespace Etherna.BeeNet.Services
             IPostageStampIssuer? postageStampIssuer = null)
         {
             postageStampIssuer ??=
-                new PostageStampIssuer(
-                    PostageBatch.MaxDepthInstance,
-                    AddressUtil.ZERO_ADDRESS);
+                new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             
             using var hasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 new PostageStamper(
-                    postageStampIssuer,
                     new FakeSigner(),
+                    postageStampIssuer,
                     new MemoryStore()),
                 redundancyLevel,
                 encrypt);
