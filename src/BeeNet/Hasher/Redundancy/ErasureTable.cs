@@ -15,7 +15,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Models
+namespace Etherna.BeeNet.Hasher.Redundancy
 {
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")]

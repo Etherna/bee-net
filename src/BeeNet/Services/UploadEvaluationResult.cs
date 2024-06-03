@@ -13,9 +13,10 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Models;
 using System;
 
-namespace Etherna.BeeNet.Models
+namespace Etherna.BeeNet.Services
 {
     public class UploadEvaluationResult
     {
