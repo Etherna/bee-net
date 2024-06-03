@@ -25,16 +25,16 @@ namespace Etherna.BeeNet.Services
         /// Evaluate the result of upload a file
         /// </summary>
         /// <param name="stream">The file stream</param>
-        /// <param name="contentType">The file content type</param>
-        /// <param name="name">The file name</param>
+        /// <param name="fileContentType">The file content type</param>
+        /// <param name="fileName">The file name</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
-            string contentType,
-            string? name,
+            string fileContentType,
+            string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null);

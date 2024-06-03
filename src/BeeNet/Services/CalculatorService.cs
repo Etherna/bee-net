@@ -16,7 +16,9 @@ using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Hasher.Signer;
 using Etherna.BeeNet.Hasher.Store;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -26,29 +28,49 @@ namespace Etherna.BeeNet.Services
     {
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
-            string contentType,
-            string? name,
+            string fileContentType,
+            string? fileName,
             bool encrypt,
             RedundancyLevel redundancyLevel,
             IPostageStampIssuer? postageStampIssuer = null)
         {
-            postageStampIssuer ??=
-                new PostageStampIssuer(PostageBatch.MaxDepthInstance);
-            
-            using var hasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
-                new PostageStamper(
-                    new FakeSigner(),
-                    postageStampIssuer,
-                    new MemoryStore()),
-                redundancyLevel,
-                encrypt);
+            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
+            var postageStamper = new PostageStamper(
+                new FakeSigner(),
+                postageStampIssuer,
+                new MemoryStore());
             
             // Get file hash.
-            var fileAddress = await hasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                postageStamper,
+                redundancyLevel,
+                encrypt);
+            var fileAddress = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Create manifest.
-            name ??= fileAddress.ToString();
-            var manifestAddress = fileAddress;
+            fileName ??= fileAddress.ToString();
+            using var manifestHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                postageStamper,
+                redundancyLevel,
+                encrypt);
+            var manifest = new MantarayManifest(manifestHasherPipeline, encrypt);
+
+            var rootMetadata = new Dictionary<string, string>()
+            {
+                [MantarayManifest.WebsiteIndexDocumentSuffixKey] = fileName,
+            };
+
+            manifest.Add(MantarayManifest.RootPath, new ManifestEntry(SwarmAddress.Zero, rootMetadata));
+
+            var fileMtdt = new Dictionary<string, string>
+            {
+                [MantarayManifest.EntryMetadataContentTypeKey] = fileContentType,
+                [MantarayManifest.EntryMetadataFilenameKey] = fileName
+            };
+            
+            manifest.Add(fileName, new ManifestEntry(fileAddress, fileMtdt));
+
+            var manifestAddress = manifest.Store();
             
             // Return result.
             return new UploadEvaluationResult(

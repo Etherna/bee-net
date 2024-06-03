@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Hasher.Pipeline
+namespace Etherna.BeeNet.Manifest
 {
-    public interface IHasherPipeline : IDisposable
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
+    public class MantarayNodeFork(
+        byte[] prefix,
+        MantarayNode node)
     {
         /// <summary>
-        /// Consume a byte array and returns a Swarm address as result
+        /// the non-branching part of the subpath
         /// </summary>
-        /// <param name="data">Input data</param>
-        /// <returns>Resulting swarm address</returns>
-        Task<SwarmAddress> HashDataAsync(byte[] data);
+        public byte[] Prefix { get; } = prefix;
 
         /// <summary>
-        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
+        /// in memory structure that represents the Node
         /// </summary>
-        /// <param name="dataStream">Input data stream</param>
-        /// <returns>Resulting swarm address</returns>
-        Task<SwarmAddress> HashDataAsync(Stream dataStream);
+        public MantarayNode Node { get; } = node;
     }
 }

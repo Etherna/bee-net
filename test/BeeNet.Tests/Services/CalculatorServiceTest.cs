@@ -24,12 +24,14 @@ namespace Etherna.BeeNet.Services
         [Fact]
         public async Task GetFileHashTest()
         {
-            await using var fileStream = File.OpenRead("/home/mirkodc/Downloads/Etherna presentation for Swarm 2.0.mp4");
+            var filePath = "/home/mirkodc/Downloads/Etherna presentation for Swarm 2.0.mp4";
+            
+            await using var fileStream = File.OpenRead(filePath);
             var fileService = new CalculatorService();
             var result = await fileService.EvaluateFileUploadAsync(
                 fileStream,
                 "",
-                null,
+                Path.GetFileName(filePath),
                 false,
                 RedundancyLevel.None);
             
