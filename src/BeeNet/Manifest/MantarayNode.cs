@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
@@ -84,20 +85,19 @@ namespace Etherna.BeeNet.Manifest
         public static byte[] Version02HashBytes => Version02HashString.HexToByteArray();
 
         // Methods.
-        public void Add(byte[] path, byte[]? entry, Dictionary<string, string> metadata, IHasherPipeline hasherPipeline)
+        public void Add(byte[] path, byte[] entry, Dictionary<string, string> metadata, IHasherPipeline hasherPipeline)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(entry, nameof(entry));
             ArgumentNullException.ThrowIfNull(metadata, nameof(metadata));
-            
-            entry ??= Array.Empty<byte>();
 
             if (RefBytesSize == 0)
             {
                 if (entry.Length > 256)
                     throw new ArgumentOutOfRangeException(nameof(entry), $"node entry size > 256: {entry.Length}");
 
-                // empty entry for directories
-                if (entry.Length > 0)
+                // zero entry for directories
+                if (entry != SwarmAddress.Zero)
                     RefBytesSize = entry.Length;
             }
             else if (entry.Length > 0 && RefBytesSize != entry.Length)
@@ -117,8 +117,7 @@ namespace Etherna.BeeNet.Manifest
                 return;
             }
 
-            var f = Forks![path[0]];
-            if (f == null)
+            if (!Forks.TryGetValue(path[0], out var f))
             {
                 var nn = new MantarayNode();
                 if (ObfuscationKey.Length > 0)
