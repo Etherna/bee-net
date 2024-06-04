@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using System;
+using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Extensions
 {
@@ -26,10 +27,7 @@ namespace Etherna.BeeNet.Extensions
             if (dateTimeByteArray.Length != SwarmFeedChunk.TimeStampSize)
                 throw new ArgumentOutOfRangeException(nameof(dateTimeByteArray), "Invalid date time byte array length");
 
-            var fixedDateTimeByteArray = new byte[dateTimeByteArray.Length]; //don't reverse original
-            Array.Copy(dateTimeByteArray, fixedDateTimeByteArray, fixedDateTimeByteArray.Length);
-            if (BitConverter.IsLittleEndian) Array.Reverse(fixedDateTimeByteArray);
-            return BitConverter.ToUInt64(fixedDateTimeByteArray, 0);
+            return BinaryPrimitives.ReadUInt64BigEndian(dateTimeByteArray);
         }
     }
 }
