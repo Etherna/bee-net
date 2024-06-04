@@ -13,10 +13,13 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Pipeline;
+using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
@@ -29,21 +32,45 @@ namespace Etherna.BeeNet.Manifest
         public const int NodeForkHeaderSize = NodeForkTypeBytesSize + NodeForkPrefixBytesSize;
         public const int NodeForkMetadataBytesSize = 2;
         public const int NodeForkPreReferenceSize = 32;
+        public const int NodeHeaderSize = NodeObfuscationKeySize + VersionHashSize + NodeRefBytesSize;
         public const byte NodeTypeValue = 2;
         public const byte NodeTypeEdge = 4;
         public const byte NodeTypeWithPathSeparator = 8;
         public const byte NodeTypeWithMetadata = 16;
         public const byte NodeTypeMask = 255;
+        public const int NodeObfuscationKeySize = 32;
         public const int NodePrefixMaxSize = NodeForkPreReferenceSize - NodeForkHeaderSize;
+        public const int NodeRefBytesSize = 1;
         public const int ObfuscationKeySize = 32;
         public const char PathSeparator = '/';
+        public const int VersionHashSize = 31;
+
+        public const string VersionNameString = "mantaray";
+        public const string VersionCode01String = "0.1";
+        public const string VersionCode02String = "0.2";
+        public const string VersionSeparatorString = ":";
+
+        public const string Version01String = VersionNameString + VersionSeparatorString + VersionCode01String;   // "mantaray:0.1"
+        public const string Version01HashString = "025184789d63635766d78c41900196b57d7400875ebe4d9b5d1e76bd9652a9b7"; // pre-calculated version string, Keccak-256
+
+        public const string Version02String = VersionNameString + VersionSeparatorString + VersionCode02String;   // "mantaray:0.2"
+        public const string Version02HashString = "5768b3b6a7db56d21d1abff40d41cebfc83448fed8d7e9b06ec0d3b073f28f7b"; // pre-calculated version string, Keccak-256
+        
+        // Fields.
+        private byte[]? _obfuscationKey;
         
         // Properties.
         public byte[]? Entry { get; private set; }
-        public Dictionary<byte, MantarayNodeFork?> Forks { get; } = new();
+        public Dictionary<byte, MantarayNodeFork> Forks { get; } = new();
+        public bool IsWithMetadataType => (NodeType & NodeTypeWithMetadata) == NodeTypeWithMetadata;
         public Dictionary<string, string> Metadata { get; private set; } = new();
         public byte NodeType { get; private set; }
-        public ReadOnlyMemory<byte> ObfuscationKey { get; set; }
+
+        public ReadOnlyMemory<byte> ObfuscationKey
+        {
+            get => _obfuscationKey;
+            set => _obfuscationKey = value.ToArray();
+        }
         
         /// <summary>
         /// reference to uninstantiated Node persisted serialised
@@ -53,7 +80,9 @@ namespace Etherna.BeeNet.Manifest
         
         // Static properties.
         public static ReadOnlyMemory<byte> ZeroObfuscationKey { get; } = new byte[ObfuscationKeySize];
-        
+        public static byte[] Version01HashBytes => Version01HashString.HexToByteArray();
+        public static byte[] Version02HashBytes => Version02HashString.HexToByteArray();
+
         // Methods.
         public void Add(byte[] path, byte[]? entry, Dictionary<string, string> metadata, IHasherPipeline hasherPipeline)
         {
@@ -147,9 +176,55 @@ namespace Etherna.BeeNet.Manifest
             MakeEdge();
         }
 
+        public async Task SaveAsync(IHasherPipeline hasherPipeline)
+        {
+            ArgumentNullException.ThrowIfNull(hasherPipeline, nameof(hasherPipeline));
+            
+            if (Ref != null)
+                return;
+
+            foreach (var fork in Forks.Values)
+                await fork.Node.SaveAsync(hasherPipeline).ConfigureAwait(false);
+
+            var bytes = MarshalBinary();
+            Ref = (await hasherPipeline.HashDataAsync(bytes).ConfigureAwait(false)).ToByteArray();
+            
+            Forks.Clear();
+        }
+
         // Helpers.
         private static byte[] Common(byte[] a, byte[] b) =>
             a.TakeWhile((ab, i) => b[i] == ab).ToArray();
+
+        /// <summary>
+        /// encryptDecrypt runs a XOR encryption on the input bytes, encrypting it if it
+        /// hasn't already been, and decrypting it if it has, using the key provided.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private static byte[] EncryptDecrypt(byte[] input, byte[] key)
+        {
+            var output = new byte[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+                output[i] = (byte)(input[i] ^ key[i % key.Length]);
+
+            return output;
+        }
+
+        private static bool GetUint8(byte[] bb, byte i) =>
+            ((bb[i / 8] >> (i % 8)) & 1) > 0;
+
+        private static void Iter(byte[] bb, Func<byte, bool> f)
+        {
+            for (byte i = 0; ; i++)
+            {
+                if (GetUint8(bb, i) && f(i))
+                    throw new InvalidOperationException();
+                if (i == 255) return;
+            }
+        }
         
         private void MakeEdge() => NodeType |= NodeTypeEdge;
 
@@ -160,6 +235,68 @@ namespace Etherna.BeeNet.Manifest
         private void MakeWithMetadata() => NodeType |= NodeTypeWithMetadata;
 
         private void MakeWithPathSeparator() => NodeType |= NodeTypeWithPathSeparator;
+
+        private byte[] MarshalBinary()
+        {
+            var bytes = new List<byte>();
+            
+            // header
+            var headerBytes = new byte[NodeHeaderSize];
+
+            //generate obfuscation key
+            if (ObfuscationKey.Length == 0)
+                RandomNumberGenerator.Fill(_obfuscationKey);
+            
+            ObfuscationKey.CopyTo(headerBytes.AsMemory()[..NodeObfuscationKeySize]);
+            Version02HashBytes.CopyTo(
+                headerBytes.AsMemory()[NodeObfuscationKeySize..(NodeObfuscationKeySize + VersionHashSize)]);
+            headerBytes[NodeObfuscationKeySize + VersionHashSize] = (byte)RefBytesSize;
+
+            bytes.AddRange(headerBytes);
+
+            // entry
+            var entryBytes = new byte[RefBytesSize];
+            Entry.CopyTo(entryBytes.AsSpan());
+            bytes.AddRange(entryBytes);
+
+            // index
+            var indexBytes = new byte[32];
+            foreach (var k in Forks.Keys)
+                indexBytes[k / 8] |= (byte)(1 << (k % 8));
+            
+            bytes.AddRange(indexBytes);
+            Iter(indexBytes, b =>
+            {
+                var f = Forks[b];
+                try
+                {
+                    Ref = f.Bytes();
+                }
+#pragma warning disable CA1031
+                catch
+#pragma warning restore CA1031
+                {
+                    return false;
+                }
+                bytes.AddRange(Ref);
+                return true;
+            });
+            
+            // perform XOR encryption on bytes after obfuscation key
+            var xorEncryptedBytes = new byte[bytes.Count];
+            bytes.ToArray()[..NodeObfuscationKeySize].CopyTo(xorEncryptedBytes.AsMemory());
+            for (int i = NodeObfuscationKeySize; i < bytes.Count; i += NodeObfuscationKeySize)
+            {
+                var end = i + NodeObfuscationKeySize;
+                if (end > bytes.Count)
+                    end = bytes.Count;
+
+                var encrypted = EncryptDecrypt(bytes.ToArray()[i..end], _obfuscationKey!);
+                encrypted.CopyTo(xorEncryptedBytes.AsMemory()[i..end]);
+            }
+            
+            return xorEncryptedBytes;
+        }
 
         private void UpdateIsWithPathSeparator(byte[] path)
         {

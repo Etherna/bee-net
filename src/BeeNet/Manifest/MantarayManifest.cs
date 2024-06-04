@@ -16,6 +16,7 @@ using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
@@ -59,26 +60,10 @@ namespace Etherna.BeeNet.Manifest
             trie.Add(p, e, entry.Metadata, hasherPipeline);
         }
 
-        public SwarmAddress Store()
+        public async Task<SwarmAddress> StoreAsync()
         {
-            var ls mantaray.LoadSaver
-            if len(storeSizeFn) > 0 {
-                ls = &mantarayLoadSaver{
-                    ls:          m.ls,
-                    storeSizeFn: storeSizeFn,
-                }
-            } else {
-                ls = m.ls
-            }
-
-            err := m.trie.Save(ctx, ls)
-            if err != nil {
-                return swarm.ZeroAddress, fmt.Errorf("manifest save error: %w", err)
-            }
-
-            address := swarm.NewAddress(m.trie.Reference())
-
-            return address, nil
+            await trie.SaveAsync(hasherPipeline).ConfigureAwait(false);
+            return new SwarmAddress(trie.Ref!);
         }
     }
 }

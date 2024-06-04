@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Services
             
             manifest.Add(fileName, new ManifestEntry(fileAddress, fileMtdt));
 
-            var manifestAddress = manifest.Store();
+            var manifestAddress = await manifest.StoreAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
