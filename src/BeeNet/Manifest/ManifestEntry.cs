@@ -17,11 +17,35 @@ using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ManifestEntry(
-        SwarmAddress address,
-        Dictionary<string, string> metadata)
+    public class ManifestEntry
     {
-        public SwarmAddress Address { get; } = address;
-        public IReadOnlyDictionary<string, string> Metadata { get; } = metadata;
+        // Consts.
+        public const string ContentTypeKey = "Content-Type";
+        public const string FilenameKey = "Filename";
+        public const string WebsiteErrorDocPathKey = "website-error-document";
+        public const string WebsiteIndexDocPathKey = "website-index-document";
+        
+        // Constructor.
+        private ManifestEntry(
+            SwarmAddress address,
+            IReadOnlyDictionary<string, string> metadata)
+        {
+            Address = address;
+            Metadata = metadata;
+        }
+        
+        // Static builders.
+        public static ManifestEntry NewDirectory(
+            IReadOnlyDictionary<string, string> metadata) =>
+            new(SwarmAddress.Zero, metadata);
+
+        public static ManifestEntry NewFile(
+            SwarmAddress fileAddress,
+            IReadOnlyDictionary<string, string> metadata) =>
+            new(fileAddress, metadata);
+        
+        // Properties.
+        public SwarmAddress Address { get; }
+        public IReadOnlyDictionary<string, string> Metadata { get; }
     }
 }

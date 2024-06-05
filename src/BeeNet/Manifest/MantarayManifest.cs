@@ -23,27 +23,19 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayManifest
     {
         // Consts.
-        public const string EntryMetadataContentTypeKey = "Content-Type";
-        public const string EntryMetadataFilenameKey = "Filename";
         public const string RootPath = "/";
-        public const string WebsiteErrorDocumentPathKey = "website-error-document";
-        public const string WebsiteIndexDocumentSuffixKey = "website-index-document";
         
         // Fields.
-        private readonly Func<IHasherPipeline> hasherPipelineBuilder;
+        private readonly Func<IHasherPipeline> hasherBuilder;
         private readonly MantarayNode trie;
 
         // Constructor.
         public MantarayManifest(
-            Func<IHasherPipeline> hasherPipelineBuilder,
+            Func<IHasherPipeline> hasherBuilder,
             bool isEncrypted)
         {
-            this.hasherPipelineBuilder = hasherPipelineBuilder;
-            trie = new MantarayNode();
-
-            // Use empty obfuscation key if not encrypting.
-            if (!isEncrypted)
-                trie.ObfuscationKey = MantarayNode.ZeroObfuscationKey;
+            this.hasherBuilder = hasherBuilder;
+            trie = new MantarayNode(isEncrypted);
         }
 
         // Methods.
@@ -57,10 +49,10 @@ namespace Etherna.BeeNet.Manifest
             trie.Add(p, e, entry.Metadata);
         }
 
-        public async Task<SwarmAddress> StoreAsync()
+        public async Task<SwarmAddress> GetHashAsync()
         {
-            await trie.SaveAsync(hasherPipelineBuilder).ConfigureAwait(false);
-            return new SwarmAddress(trie.Ref!);
+            await trie.SaveAsync(hasherBuilder).ConfigureAwait(false);
+            return new SwarmAddress(trie.Reference!);
         }
     }
 }

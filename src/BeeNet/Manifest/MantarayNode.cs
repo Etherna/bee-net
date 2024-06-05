@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -29,48 +29,43 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayNode
     {
         // Consts.
-        public const int NodeForkTypeBytesSize = 1;
-        public const int NodeForkPrefixBytesSize = 1;
-        public const int NodeForkHeaderSize = NodeForkTypeBytesSize + NodeForkPrefixBytesSize;
-        public const int NodeForkPreReferenceSize = 32;
         public const int NodeHeaderSize = ObfuscationKeySize + VersionHashSize + NodeRefBytesSize;
-        public const int NodePrefixMaxSize = NodeForkPreReferenceSize - NodeForkHeaderSize;
         public const int NodeRefBytesSize = 1;
         public const int ObfuscationKeySize = 32;
         public const char PathSeparator = '/';
+        public static readonly byte[] Version02Hash =
+            Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
-
-        public const string VersionNameString = "mantaray";
-        public const string VersionCode02String = "0.2";
-        public const string VersionSeparatorString = ":";
-
-        public const string Version02String = VersionNameString + VersionSeparatorString + VersionCode02String;   // "mantaray:0.2"
-        public const string Version02HashString = "5768b3b6a7db56d21d1abff40d41cebfc83448fed8d7e9b06ec0d3b073f28f7b"; // pre-calculated version string, Keccak-256
         
         // Fields.
+        private readonly Dictionary<byte, MantarayNodeFork> _forks = new();
         private byte[]? _obfuscationKey;
-        
+
+        public MantarayNode(bool isEncrypted)
+        {
+            IsEncrypted = isEncrypted;
+            
+            // Use empty obfuscation key if not encrypting.
+            if (!isEncrypted)
+                _obfuscationKey = new byte[ObfuscationKeySize];
+        }
+
         // Properties.
         public byte[]? Entry { get; private set; }
-        public Dictionary<byte, MantarayNodeFork> Forks { get; } = new();
+        public IReadOnlyDictionary<byte, MantarayNodeFork> Forks => _forks;
+        public bool IsEncrypted { get; }
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
         public NodeType NodeTypeFlags { get; private set; }
-
-        public ReadOnlyMemory<byte> ObfuscationKey
-        {
-            get => _obfuscationKey;
-            set => _obfuscationKey = value.ToArray();
-        }
+        public ReadOnlyMemory<byte> ObfuscationKey => _obfuscationKey;
         
         /// <summary>
         /// reference to uninstantiated Node persisted serialised
         /// </summary>
-        public byte[]? Ref { get; private set; }
-        public int RefBytesSize { get; private set; }
+        public byte[]? Reference { get; private set; }
+        public int ReferenceBytesSize { get; private set; }
         
         // Static properties.
         public static ReadOnlyMemory<byte> ZeroObfuscationKey { get; } = new byte[ObfuscationKeySize];
-        public static byte[] Version02HashBytes => Version02HashString.HexToByteArray().Take(VersionHashSize).ToArray();
 
         // Methods.
         public void Add(byte[] path, byte[] entry, IReadOnlyDictionary<string, string> metadata)
@@ -79,17 +74,17 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
             ArgumentNullException.ThrowIfNull(metadata, nameof(metadata));
 
-            if (RefBytesSize == 0)
+            if (ReferenceBytesSize == 0)
             {
                 if (entry.Length > 256)
-                    throw new ArgumentOutOfRangeException(nameof(entry), $"node entry size > 256: {entry.Length}");
+                    throw new ArgumentOutOfRangeException(nameof(entry), $"Node entry size > 256: {entry.Length}");
 
                 // zero entry for directories
                 if (entry != SwarmAddress.Zero)
-                    RefBytesSize = entry.Length;
+                    ReferenceBytesSize = entry.Length;
             }
-            else if (entry.Length > 0 && RefBytesSize != entry.Length)
-                throw new InvalidOperationException($"invalid entry size: {entry.Length}, expected: {RefBytesSize}");
+            else if (entry.Length > 0 && ReferenceBytesSize != entry.Length)
+                throw new InvalidOperationException($"Invalid entry size: {entry.Length}, expected: {ReferenceBytesSize}");
 
             if (path.Length == 0)
             {
@@ -101,25 +96,25 @@ namespace Etherna.BeeNet.Manifest
                     SetNodeTypeFlag(NodeType.WithMetadata);
                 }
 
-                Ref = null;
+                Reference = null;
                 return;
             }
 
-            if (!Forks.TryGetValue(path[0], out var f))
+            if (!Forks.TryGetValue(path[0], out var fork))
             {
-                var nn = new MantarayNode();
-                if (ObfuscationKey.Length > 0)
-                    nn.ObfuscationKey = ObfuscationKey;
-                nn.RefBytesSize = RefBytesSize;
+                var nn = new MantarayNode(IsEncrypted);
+                if (_obfuscationKey?.Length > 0)
+                    nn._obfuscationKey = _obfuscationKey;
+                nn.ReferenceBytesSize = ReferenceBytesSize;
                 
                 // check for prefix size limit
-                if (path.Length > NodePrefixMaxSize)
+                if (path.Length > MantarayNodeFork.PrefixMaxSize)
                 {
-                    var prefix = path[..NodePrefixMaxSize];
-                    var rest_ = path[NodePrefixMaxSize..];
+                    var prefix = path[..MantarayNodeFork.PrefixMaxSize];
+                    var rest_ = path[MantarayNodeFork.PrefixMaxSize..];
                     nn.Add(rest_, entry, metadata);
                     nn.UpdateFlagIsWithPathSeparator(prefix);
-                    Forks[path[0]] = new MantarayNodeFork(prefix, nn);
+                    _forks[path[0]] = new MantarayNodeFork(prefix, nn);
                     SetNodeTypeFlag(NodeType.Edge);
                     return;
                 }
@@ -132,23 +127,23 @@ namespace Etherna.BeeNet.Manifest
                 }
                 nn.SetNodeTypeFlag(NodeType.Value);
                 nn.UpdateFlagIsWithPathSeparator(path);
-                Forks[path[0]] = new MantarayNodeFork(path, nn);
+                _forks[path[0]] = new MantarayNodeFork(path, nn);
                 SetNodeTypeFlag(NodeType.Edge);
                 return;
             }
 
-            var common = f.Prefix.ToArray().FindCommonPrefixWith(path);
-            var rest = f.Prefix[common.Length..].ToArray();
-            var nn_ = f.Node;
+            var common = fork.Prefix.ToArray().FindCommonPrefixWith(path);
+            var rest = fork.Prefix[common.Length..].ToArray();
+            var nn_ = fork.Node;
             if (rest.Length > 0)
             {
                 // move current common prefix node
-                nn_ = new MantarayNode();
-                if (ObfuscationKey.Length > 0)
-                    nn_.ObfuscationKey = ObfuscationKey;
-                nn_.RefBytesSize = RefBytesSize;
-                f.Node.UpdateFlagIsWithPathSeparator(rest);
-                nn_.Forks[rest[0]] = new MantarayNodeFork(rest, f.Node);
+                nn_ = new MantarayNode(IsEncrypted);
+                if (_obfuscationKey?.Length > 0)
+                    nn_._obfuscationKey = _obfuscationKey;
+                nn_.ReferenceBytesSize = ReferenceBytesSize;
+                fork.Node.UpdateFlagIsWithPathSeparator(rest);
+                nn_._forks[rest[0]] = new MantarayNodeFork(rest, fork.Node);
                 nn_.SetNodeTypeFlag(NodeType.Edge);
                 // if common path is full path new node is value type
                 if (path.Length == common.Length)
@@ -159,7 +154,7 @@ namespace Etherna.BeeNet.Manifest
             nn_.UpdateFlagIsWithPathSeparator(path);
 	        // add new for shared prefix
             nn_.Add(path[common.Length..], entry, metadata);
-            Forks[path[0]] = new MantarayNodeFork(common, nn_);
+            _forks[path[0]] = new MantarayNodeFork(common, nn_);
             SetNodeTypeFlag(NodeType.Edge);
         }
 
@@ -167,7 +162,7 @@ namespace Etherna.BeeNet.Manifest
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
-            if (Ref != null)
+            if (Reference != null)
                 return;
 
             foreach (var fork in Forks.Values)
@@ -175,9 +170,9 @@ namespace Etherna.BeeNet.Manifest
 
             var bytes = MarshalBinary();
             using var hasherPipeline = hasherPipelineBuilder();
-            Ref = (await hasherPipeline.HashDataAsync(bytes).ConfigureAwait(false)).ToByteArray();
+            Reference = (await hasherPipeline.HashDataAsync(bytes).ConfigureAwait(false)).ToByteArray();
             
-            Forks.Clear();
+            _forks.Clear();
         }
 
         // Helpers.
@@ -213,26 +208,26 @@ namespace Etherna.BeeNet.Manifest
 
         private byte[] MarshalBinary()
         {
+            // Generate obfuscation key if required.
+            if (_obfuscationKey is null)
+                RandomNumberGenerator.Fill(_obfuscationKey);
+            
             var bytes = new List<byte>();
             
             // header
             var headerBytes = new byte[NodeHeaderSize];
-
-            //generate obfuscation key
-            if (ObfuscationKey.Length == 0)
-                RandomNumberGenerator.Fill(_obfuscationKey);
             
-            ObfuscationKey.CopyTo(headerBytes.AsMemory()[..ObfuscationKeySize]);
-            Version02HashBytes.CopyTo(
+            _obfuscationKey.AsSpan().CopyTo(headerBytes);
+            Version02Hash.CopyTo(
                 headerBytes.AsMemory()[ObfuscationKeySize..(ObfuscationKeySize + VersionHashSize)]);
-            headerBytes[ObfuscationKeySize + VersionHashSize] = (byte)RefBytesSize;
+            headerBytes[ObfuscationKeySize + VersionHashSize] = (byte)ReferenceBytesSize;
 
             bytes.AddRange(headerBytes);
 
             // entry
-            if (RefBytesSize > 0)
+            if (ReferenceBytesSize > 0)
             {
-                var entryBytes = new byte[RefBytesSize];
+                var entryBytes = new byte[ReferenceBytesSize];
                 Entry.CopyTo(entryBytes.AsSpan());
                 bytes.AddRange(entryBytes);
             }
@@ -248,7 +243,7 @@ namespace Etherna.BeeNet.Manifest
                 var f = Forks[b];
                 try
                 {
-                    Ref = f.Bytes();
+                    Reference = f.Bytes();
                 }
 #pragma warning disable CA1031
                 catch
@@ -256,7 +251,7 @@ namespace Etherna.BeeNet.Manifest
                 {
                     return false;
                 }
-                bytes.AddRange(Ref);
+                bytes.AddRange(Reference);
                 return true;
             });
             

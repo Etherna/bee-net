@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
 using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
@@ -26,38 +27,39 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayNodeFork
     {
         // Consts.
-        public const int NodeForkTypeBytesSize = 1;
-        public const int NodeForkPrefixBytesSize = 1;
-        public const int NodeForkHeaderSize = NodeForkTypeBytesSize + NodeForkPrefixBytesSize;
-        public const int NodeForkPreReferenceSize = 32;
-        public const int NodePrefixMaxSize = NodeForkPreReferenceSize - NodeForkHeaderSize;
-        public const int NodeForkMetadataBytesSize = 2;
+        public const int HeaderSize = TypeSize + PrefixSize;
+        public const int MetadataBytesSize = 2;
+        public const int PrefixMaxSize = PreReferenceSize - HeaderSize;
+        public const int PrefixSize = 1;
+        public const int PreReferenceSize = SwarmAddress.HashSize;
+        public const int TypeSize = 1;
         
         // Constructor.
         public MantarayNodeFork(
             byte[] prefix,
             MantarayNode node)
         {
+            ArgumentNullException.ThrowIfNull(node, nameof(node));
+            ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
+            if (prefix.Length > PrefixMaxSize)
+                throw new ArgumentOutOfRangeException(nameof(prefix));
+            
             Prefix = prefix;
             Node = node;
         }
 
         // Properties.
         /// <summary>
-        /// the non-branching part of the subpath
+        /// The non-branching part of the subpath
         /// </summary>
         public ReadOnlyMemory<byte> Prefix { get; }
-
-        /// <summary>
-        /// in memory structure that represents the Node
-        /// </summary>
         public MantarayNode Node { get; }
 
         public byte[] Bytes()
         {
             List<byte> b = new();
             
-            var r = Node.Ref;
+            var r = Node.Reference;
             // using 1 byte ('f.Node.refBytesSize') for size
             if (r!.Length > 256)
                 throw new InvalidOperationException($"node reference size > 256: {r.Length}");
@@ -65,7 +67,7 @@ namespace Etherna.BeeNet.Manifest
             b.Add((byte)Node.NodeTypeFlags);
             b.Add((byte)Prefix.Length);
 
-            var prefixBytes = new byte[NodePrefixMaxSize];
+            var prefixBytes = new byte[PrefixMaxSize];
             Prefix.CopyTo(prefixBytes);
             b.AddRange(prefixBytes);
 
@@ -80,7 +82,7 @@ namespace Etherna.BeeNet.Manifest
                 var metadataJson = JsonConvert.SerializeObject(Node.Metadata);
                 var metadataJSONBytes = Encoding.UTF8.GetBytes(metadataJson);
 
-                var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + NodeForkMetadataBytesSize;
+                var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + MetadataBytesSize;
                 
                 // pad JSON bytes if necessary
                 if (metadataJSONBytesSizeWithSize < MantarayNode.ObfuscationKeySize)
@@ -102,7 +104,7 @@ namespace Etherna.BeeNet.Manifest
                 if (metadataJSONBytesSize > ushort.MaxValue)
                     throw new InvalidOperationException("metadata too large");
 
-                var mBytesSize = new byte[NodeForkMetadataBytesSize];
+                var mBytesSize = new byte[MetadataBytesSize];
                 BinaryPrimitives.WriteUInt16BigEndian(mBytesSize, (ushort)metadataJSONBytesSize);
                 
                 b.AddRange(mBytesSize);

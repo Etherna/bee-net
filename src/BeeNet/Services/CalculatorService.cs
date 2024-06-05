@@ -46,9 +46,9 @@ namespace Etherna.BeeNet.Services
                 redundancyLevel,
                 encrypt);
             var fileAddress = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            fileName ??= fileAddress.ToString(); //if missing, set file name with its address
             
             // Create manifest.
-            fileName ??= fileAddress.ToString();
             var manifest = new MantarayManifest(
                 () => HasherPipelineBuilder.BuildNewHasherPipeline(
                     postageStamper,
@@ -56,26 +56,29 @@ namespace Etherna.BeeNet.Services
                     encrypt),
                 encrypt);
 
-            var rootMetadata = new Dictionary<string, string>()
-            {
-                [MantarayManifest.WebsiteIndexDocumentSuffixKey] = fileName,
-            };
-
-            manifest.Add(MantarayManifest.RootPath, new ManifestEntry(SwarmAddress.Zero, rootMetadata));
-
-            var fileMtdt = new Dictionary<string, string>
-            {
-                [MantarayManifest.EntryMetadataContentTypeKey] = fileContentType,
-                [MantarayManifest.EntryMetadataFilenameKey] = fileName
-            };
+            manifest.Add(
+                MantarayManifest.RootPath,
+                ManifestEntry.NewDirectory(
+                    new Dictionary<string, string>
+                    {
+                        [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
+                    }));
             
-            manifest.Add(fileName, new ManifestEntry(fileAddress, fileMtdt));
+            manifest.Add(
+                fileName,
+                ManifestEntry.NewFile(
+                    fileAddress,
+                    new Dictionary<string, string>
+                    {
+                        [ManifestEntry.ContentTypeKey] = fileContentType,
+                        [ManifestEntry.FilenameKey] = fileName
+                    }));
 
-            var manifestAddress = await manifest.StoreAsync().ConfigureAwait(false);
+            var finalAddress = await manifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
-                manifestAddress,
+                finalAddress,
                 postageStampIssuer);
         }
     }
