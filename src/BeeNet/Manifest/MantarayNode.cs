@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
@@ -31,15 +32,8 @@ namespace Etherna.BeeNet.Manifest
         public const int NodeForkTypeBytesSize = 1;
         public const int NodeForkPrefixBytesSize = 1;
         public const int NodeForkHeaderSize = NodeForkTypeBytesSize + NodeForkPrefixBytesSize;
-        public const int NodeForkMetadataBytesSize = 2;
         public const int NodeForkPreReferenceSize = 32;
-        public const int NodeHeaderSize = NodeObfuscationKeySize + VersionHashSize + NodeRefBytesSize;
-        public const byte NodeTypeValue = 2;
-        public const byte NodeTypeEdge = 4;
-        public const byte NodeTypeWithPathSeparator = 8;
-        public const byte NodeTypeWithMetadata = 16;
-        public const byte NodeTypeMask = 255;
-        public const int NodeObfuscationKeySize = 32;
+        public const int NodeHeaderSize = ObfuscationKeySize + VersionHashSize + NodeRefBytesSize;
         public const int NodePrefixMaxSize = NodeForkPreReferenceSize - NodeForkHeaderSize;
         public const int NodeRefBytesSize = 1;
         public const int ObfuscationKeySize = 32;
@@ -47,12 +41,8 @@ namespace Etherna.BeeNet.Manifest
         public const int VersionHashSize = 31;
 
         public const string VersionNameString = "mantaray";
-        public const string VersionCode01String = "0.1";
         public const string VersionCode02String = "0.2";
         public const string VersionSeparatorString = ":";
-
-        public const string Version01String = VersionNameString + VersionSeparatorString + VersionCode01String;   // "mantaray:0.1"
-        public const string Version01HashString = "025184789d63635766d78c41900196b57d7400875ebe4d9b5d1e76bd9652a9b7"; // pre-calculated version string, Keccak-256
 
         public const string Version02String = VersionNameString + VersionSeparatorString + VersionCode02String;   // "mantaray:0.2"
         public const string Version02HashString = "5768b3b6a7db56d21d1abff40d41cebfc83448fed8d7e9b06ec0d3b073f28f7b"; // pre-calculated version string, Keccak-256
@@ -63,9 +53,8 @@ namespace Etherna.BeeNet.Manifest
         // Properties.
         public byte[]? Entry { get; private set; }
         public Dictionary<byte, MantarayNodeFork> Forks { get; } = new();
-        public bool IsWithMetadataType => (NodeType & NodeTypeWithMetadata) == NodeTypeWithMetadata;
-        public Dictionary<string, string> Metadata { get; private set; } = new();
-        public byte NodeType { get; private set; }
+        public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
+        public NodeType NodeTypeFlags { get; private set; }
 
         public ReadOnlyMemory<byte> ObfuscationKey
         {
@@ -81,11 +70,10 @@ namespace Etherna.BeeNet.Manifest
         
         // Static properties.
         public static ReadOnlyMemory<byte> ZeroObfuscationKey { get; } = new byte[ObfuscationKeySize];
-        public static byte[] Version01HashBytes => Version01HashString.HexToByteArray().Take(VersionHashSize).ToArray();
         public static byte[] Version02HashBytes => Version02HashString.HexToByteArray().Take(VersionHashSize).ToArray();
 
         // Methods.
-        public void Add(byte[] path, byte[] entry, Dictionary<string, string> metadata, Func<IHasherPipeline> hasherPipelineBuilder)
+        public void Add(byte[] path, byte[] entry, IReadOnlyDictionary<string, string> metadata)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
@@ -106,11 +94,11 @@ namespace Etherna.BeeNet.Manifest
             if (path.Length == 0)
             {
                 Entry = entry;
-                MakeValue();
+                SetNodeTypeFlag(NodeType.Value);
                 if (metadata.Count > 0)
                 {
                     Metadata = metadata;
-                    MakeWithMetadata();
+                    SetNodeTypeFlag(NodeType.WithMetadata);
                 }
 
                 Ref = null;
@@ -129,10 +117,10 @@ namespace Etherna.BeeNet.Manifest
                 {
                     var prefix = path[..NodePrefixMaxSize];
                     var rest_ = path[NodePrefixMaxSize..];
-                    nn.Add(rest_, entry, metadata, hasherPipelineBuilder);
-                    nn.UpdateIsWithPathSeparator(prefix);
+                    nn.Add(rest_, entry, metadata);
+                    nn.UpdateFlagIsWithPathSeparator(prefix);
                     Forks[path[0]] = new MantarayNodeFork(prefix, nn);
-                    MakeEdge();
+                    SetNodeTypeFlag(NodeType.Edge);
                     return;
                 }
 
@@ -140,17 +128,17 @@ namespace Etherna.BeeNet.Manifest
                 if (metadata.Count > 0)
                 {
                     nn.Metadata = metadata;
-                    nn.MakeWithMetadata();
+                    nn.SetNodeTypeFlag(NodeType.WithMetadata);
                 }
-                nn.MakeValue();
-                nn.UpdateIsWithPathSeparator(path);
+                nn.SetNodeTypeFlag(NodeType.Value);
+                nn.UpdateFlagIsWithPathSeparator(path);
                 Forks[path[0]] = new MantarayNodeFork(path, nn);
-                MakeEdge();
+                SetNodeTypeFlag(NodeType.Edge);
                 return;
             }
 
-            var c = Common(f.Prefix, path);
-            var rest = f.Prefix[c.Length..];
+            var common = f.Prefix.ToArray().FindCommonPrefixWith(path);
+            var rest = f.Prefix[common.Length..].ToArray();
             var nn_ = f.Node;
             if (rest.Length > 0)
             {
@@ -159,20 +147,20 @@ namespace Etherna.BeeNet.Manifest
                 if (ObfuscationKey.Length > 0)
                     nn_.ObfuscationKey = ObfuscationKey;
                 nn_.RefBytesSize = RefBytesSize;
-                f.Node.UpdateIsWithPathSeparator(rest);
+                f.Node.UpdateFlagIsWithPathSeparator(rest);
                 nn_.Forks[rest[0]] = new MantarayNodeFork(rest, f.Node);
-                nn_.MakeEdge();
+                nn_.SetNodeTypeFlag(NodeType.Edge);
                 // if common path is full path new node is value type
-                if (path.Length == c.Length)
-                    nn_.MakeValue();
+                if (path.Length == common.Length)
+                    nn_.SetNodeTypeFlag(NodeType.Value);
             }
             
 	        // NOTE: special case on edge split
-            nn_.UpdateIsWithPathSeparator(path);
+            nn_.UpdateFlagIsWithPathSeparator(path);
 	        // add new for shared prefix
-            nn_.Add(path[c.Length..], entry, metadata, hasherPipelineBuilder);
-            Forks[path[0]] = new MantarayNodeFork(c, nn_);
-            MakeEdge();
+            nn_.Add(path[common.Length..], entry, metadata);
+            Forks[path[0]] = new MantarayNodeFork(common, nn_);
+            SetNodeTypeFlag(NodeType.Edge);
         }
 
         public async Task SaveAsync(Func<IHasherPipeline> hasherPipelineBuilder)
@@ -193,9 +181,6 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Helpers.
-        private static byte[] Common(byte[] a, byte[] b) =>
-            a.TakeWhile((ab, i) => b[i] == ab).ToArray();
-
         /// <summary>
         /// encryptDecrypt runs a XOR encryption on the input bytes, encrypting it if it
         /// hasn't already been, and decrypting it if it has, using the key provided.
@@ -225,16 +210,6 @@ namespace Etherna.BeeNet.Manifest
                 if (i == 255) return;
             }
         }
-        
-        private void MakeEdge() => NodeType |= NodeTypeEdge;
-
-        private void MakeNotWithPathSeparator() => NodeType &= NodeTypeMask ^ NodeTypeWithPathSeparator;
-
-        private void MakeValue() => NodeType |= NodeTypeValue;
-
-        private void MakeWithMetadata() => NodeType |= NodeTypeWithMetadata;
-
-        private void MakeWithPathSeparator() => NodeType |= NodeTypeWithPathSeparator;
 
         private byte[] MarshalBinary()
         {
@@ -247,10 +222,10 @@ namespace Etherna.BeeNet.Manifest
             if (ObfuscationKey.Length == 0)
                 RandomNumberGenerator.Fill(_obfuscationKey);
             
-            ObfuscationKey.CopyTo(headerBytes.AsMemory()[..NodeObfuscationKeySize]);
+            ObfuscationKey.CopyTo(headerBytes.AsMemory()[..ObfuscationKeySize]);
             Version02HashBytes.CopyTo(
-                headerBytes.AsMemory()[NodeObfuscationKeySize..(NodeObfuscationKeySize + VersionHashSize)]);
-            headerBytes[NodeObfuscationKeySize + VersionHashSize] = (byte)RefBytesSize;
+                headerBytes.AsMemory()[ObfuscationKeySize..(ObfuscationKeySize + VersionHashSize)]);
+            headerBytes[ObfuscationKeySize + VersionHashSize] = (byte)RefBytesSize;
 
             bytes.AddRange(headerBytes);
 
@@ -287,10 +262,10 @@ namespace Etherna.BeeNet.Manifest
             
             // perform XOR encryption on bytes after obfuscation key
             var xorEncryptedBytes = new byte[bytes.Count];
-            bytes.ToArray()[..NodeObfuscationKeySize].CopyTo(xorEncryptedBytes.AsMemory());
-            for (int i = NodeObfuscationKeySize; i < bytes.Count; i += NodeObfuscationKeySize)
+            bytes.ToArray()[..ObfuscationKeySize].CopyTo(xorEncryptedBytes.AsMemory());
+            for (int i = ObfuscationKeySize; i < bytes.Count; i += ObfuscationKeySize)
             {
-                var end = i + NodeObfuscationKeySize;
+                var end = i + ObfuscationKeySize;
                 if (end > bytes.Count)
                     end = bytes.Count;
 
@@ -301,12 +276,18 @@ namespace Etherna.BeeNet.Manifest
             return xorEncryptedBytes;
         }
 
-        private void UpdateIsWithPathSeparator(byte[] path)
+        private void RemoveNodeTypeFlag(NodeType flag) =>
+            NodeTypeFlags &= ~flag;
+
+        private void SetNodeTypeFlag(NodeType flag) =>
+            NodeTypeFlags |= flag;
+
+        private void UpdateFlagIsWithPathSeparator(byte[] path)
         {
             if (Array.FindIndex(path, b => b == PathSeparator) > 0)
-                MakeWithPathSeparator();
+                SetNodeTypeFlag(NodeType.WithPathSeparator);
             else
-                MakeNotWithPathSeparator();
+                RemoveNodeTypeFlag(NodeType.WithPathSeparator);
         }
     }
 }

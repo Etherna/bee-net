@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
+using System.Linq;
 
 namespace Etherna.BeeNet.Extensions
 {
@@ -29,5 +30,8 @@ namespace Etherna.BeeNet.Extensions
 
             return BinaryPrimitives.ReadUInt64BigEndian(dateTimeByteArray);
         }
+
+        public static byte[] FindCommonPrefixWith(this byte[] x, byte[] y) =>
+            x.TakeWhile((current, i) => i < y.Length && y[i] == current).ToArray();
     }
 }

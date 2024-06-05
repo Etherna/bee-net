@@ -43,10 +43,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Use empty obfuscation key if not encrypting.
             if (!isEncrypted)
-            {
-                // NOTE: it will be copied to all trie nodes
                 trie.ObfuscationKey = MantarayNode.ZeroObfuscationKey;
-            }
         }
 
         // Methods.
@@ -56,8 +53,8 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
             var p = Encoding.UTF8.GetBytes(path);
-            var e = entry.Reference.ToByteArray();
-            trie.Add(p, e, entry.Metadata, hasherPipelineBuilder);
+            var e = entry.Address.ToByteArray();
+            trie.Add(p, e, entry.Metadata);
         }
 
         public async Task<SwarmAddress> StoreAsync()

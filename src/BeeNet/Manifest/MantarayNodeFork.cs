@@ -34,7 +34,8 @@ namespace Etherna.BeeNet.Manifest
         public const int NodeForkMetadataBytesSize = 2;
         
         // Constructor.
-        public MantarayNodeFork(byte[] prefix,
+        public MantarayNodeFork(
+            byte[] prefix,
             MantarayNode node)
         {
             Prefix = prefix;
@@ -45,7 +46,7 @@ namespace Etherna.BeeNet.Manifest
         /// <summary>
         /// the non-branching part of the subpath
         /// </summary>
-        public byte[] Prefix { get; }
+        public ReadOnlyMemory<byte> Prefix { get; }
 
         /// <summary>
         /// in memory structure that represents the Node
@@ -61,11 +62,11 @@ namespace Etherna.BeeNet.Manifest
             if (r!.Length > 256)
                 throw new InvalidOperationException($"node reference size > 256: {r.Length}");
             
-            b.Add(Node.NodeType);
+            b.Add((byte)Node.NodeTypeFlags);
             b.Add((byte)Prefix.Length);
 
             var prefixBytes = new byte[NodePrefixMaxSize];
-            Prefix.CopyTo(prefixBytes.AsSpan());
+            Prefix.CopyTo(prefixBytes);
             b.AddRange(prefixBytes);
 
             var refBytes = new byte[r.Length];
@@ -73,7 +74,7 @@ namespace Etherna.BeeNet.Manifest
             
             b.AddRange(refBytes);
 
-            if (Node.IsWithMetadataType)
+            if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))
             {
                 // using JSON encoding for metadata
                 var metadataJson = JsonConvert.SerializeObject(Node.Metadata);
@@ -82,16 +83,16 @@ namespace Etherna.BeeNet.Manifest
                 var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + NodeForkMetadataBytesSize;
                 
                 // pad JSON bytes if necessary
-                if (metadataJSONBytesSizeWithSize < MantarayNode.NodeObfuscationKeySize)
+                if (metadataJSONBytesSizeWithSize < MantarayNode.ObfuscationKeySize)
                 {
-                    var paddingLength = MantarayNode.NodeObfuscationKeySize - metadataJSONBytesSizeWithSize;
+                    var paddingLength = MantarayNode.ObfuscationKeySize - metadataJSONBytesSizeWithSize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
                 }
-                else if (metadataJSONBytesSizeWithSize > MantarayNode.NodeObfuscationKeySize)
+                else if (metadataJSONBytesSizeWithSize > MantarayNode.ObfuscationKeySize)
                 {
-                    var paddingLength = MantarayNode.NodeObfuscationKeySize - metadataJSONBytesSizeWithSize % MantarayNode.NodeObfuscationKeySize;
+                    var paddingLength = MantarayNode.ObfuscationKeySize - metadataJSONBytesSizeWithSize % MantarayNode.ObfuscationKeySize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();

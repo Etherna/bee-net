@@ -12,16 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Models;
-using System.Collections.Generic;
-
 namespace Etherna.BeeNet.Manifest
 {
-    public class ManifestEntry(
-        SwarmAddress address,
-        Dictionary<string, string> metadata)
+    [System.Flags]
+    public enum NodeType
     {
-        public SwarmAddress Address { get; } = address;
-        public IReadOnlyDictionary<string, string> Metadata { get; } = metadata;
+        None = 0,
+        Value = 2,
+        Edge = 4,
+        WithPathSeparator = 8,
+        WithMetadata = 16
+    }
+
+    public static class NodeTypeFlagExtensions
+    {
+        public static bool HasFlag(this NodeType value, NodeType flag)
+        {
+            return (value & flag) != 0;
+        }
     }
 }
