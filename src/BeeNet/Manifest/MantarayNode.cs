@@ -81,8 +81,8 @@ namespace Etherna.BeeNet.Manifest
         
         // Static properties.
         public static ReadOnlyMemory<byte> ZeroObfuscationKey { get; } = new byte[ObfuscationKeySize];
-        public static byte[] Version01HashBytes => Version01HashString.HexToByteArray();
-        public static byte[] Version02HashBytes => Version02HashString.HexToByteArray();
+        public static byte[] Version01HashBytes => Version01HashString.HexToByteArray().Take(VersionHashSize).ToArray();
+        public static byte[] Version02HashBytes => Version02HashString.HexToByteArray().Take(VersionHashSize).ToArray();
 
         // Methods.
         public void Add(byte[] path, byte[] entry, Dictionary<string, string> metadata, IHasherPipeline hasherPipeline)
@@ -219,7 +219,7 @@ namespace Etherna.BeeNet.Manifest
         {
             for (byte i = 0; ; i++)
             {
-                if (GetUint8(bb, i) && f(i))
+                if (GetUint8(bb, i) && !f(i))
                     throw new InvalidOperationException();
                 if (i == 255) return;
             }
@@ -254,9 +254,12 @@ namespace Etherna.BeeNet.Manifest
             bytes.AddRange(headerBytes);
 
             // entry
-            var entryBytes = new byte[RefBytesSize];
-            Entry.CopyTo(entryBytes.AsSpan());
-            bytes.AddRange(entryBytes);
+            if (RefBytesSize > 0)
+            {
+                var entryBytes = new byte[RefBytesSize];
+                Entry.CopyTo(entryBytes.AsSpan());
+                bytes.AddRange(entryBytes);
+            }
 
             // index
             var indexBytes = new byte[32];
