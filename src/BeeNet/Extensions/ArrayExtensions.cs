@@ -15,11 +15,12 @@
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class ByteArrayExtensions
+    public static class ArrayExtensions
     {
         public static ulong ByteArrayToUnixDateTime(this byte[] dateTimeByteArray)
         {
@@ -31,7 +32,14 @@ namespace Etherna.BeeNet.Extensions
             return BinaryPrimitives.ReadUInt64BigEndian(dateTimeByteArray);
         }
 
-        public static byte[] FindCommonPrefixWith(this byte[] x, byte[] y) =>
-            x.TakeWhile((current, i) => i < y.Length && y[i] == current).ToArray();
+        public static string FindCommonPrefix(this string x, string y)
+        {
+            ArgumentNullException.ThrowIfNull(x, nameof(x));
+            ArgumentNullException.ThrowIfNull(y, nameof(y));
+            return new(FindCommonPrefix(x.ToCharArray(), y.ToCharArray()));
+        }
+
+        public static T[] FindCommonPrefix<T>(this T[] x, T[] y) =>
+            x.TakeWhile((current, i) => i < y.Length && EqualityComparer<T>.Default.Equals(y[i], current)).ToArray();
     }
 }

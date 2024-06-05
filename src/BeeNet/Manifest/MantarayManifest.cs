@@ -15,28 +15,19 @@
 using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayManifest
+    public class MantarayManifest(
+        Func<IHasherPipeline> hasherBuilder,
+        bool isEncrypted)
     {
         // Consts.
         public const string RootPath = "/";
         
         // Fields.
-        private readonly Func<IHasherPipeline> hasherBuilder;
-        private readonly MantarayNode trie;
-
-        // Constructor.
-        public MantarayManifest(
-            Func<IHasherPipeline> hasherBuilder,
-            bool isEncrypted)
-        {
-            this.hasherBuilder = hasherBuilder;
-            trie = new MantarayNode(isEncrypted);
-        }
+        private readonly MantarayNode rootNode = new(isEncrypted);
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -44,15 +35,13 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
-            var p = Encoding.UTF8.GetBytes(path);
-            var e = entry.Address.ToByteArray();
-            trie.Add(p, e, entry.Metadata);
+            rootNode.Add(path, entry);
         }
 
         public async Task<SwarmAddress> GetHashAsync()
         {
-            await trie.SaveAsync(hasherBuilder).ConfigureAwait(false);
-            return new SwarmAddress(trie.Reference!);
+            await rootNode.SaveAsync(hasherBuilder).ConfigureAwait(false);
+            return new SwarmAddress(rootNode.Reference!);
         }
     }
 }

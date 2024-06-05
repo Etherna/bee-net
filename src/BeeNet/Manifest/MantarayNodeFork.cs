@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Manifest
         
         // Constructor.
         public MantarayNodeFork(
-            byte[] prefix,
+            string prefix,
             MantarayNode node)
         {
             ArgumentNullException.ThrowIfNull(node, nameof(node));
@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Manifest
         /// <summary>
         /// The non-branching part of the subpath
         /// </summary>
-        public ReadOnlyMemory<byte> Prefix { get; }
+        public string Prefix { get; }
         public MantarayNode Node { get; }
 
         public byte[] Bytes()
@@ -68,7 +68,7 @@ namespace Etherna.BeeNet.Manifest
             b.Add((byte)Prefix.Length);
 
             var prefixBytes = new byte[PrefixMaxSize];
-            Prefix.CopyTo(prefixBytes);
+            Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
             b.AddRange(prefixBytes);
 
             var refBytes = new byte[r.Length];

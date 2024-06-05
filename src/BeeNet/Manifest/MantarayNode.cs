@@ -63,32 +63,28 @@ namespace Etherna.BeeNet.Manifest
         /// </summary>
         public byte[]? Reference { get; private set; }
         public int ReferenceBytesSize { get; private set; }
-        
-        // Static properties.
-        public static ReadOnlyMemory<byte> ZeroObfuscationKey { get; } = new byte[ObfuscationKeySize];
 
         // Methods.
-        public void Add(byte[] path, byte[] entry, IReadOnlyDictionary<string, string> metadata)
+        public void Add(string path, ManifestEntry entry)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
-            ArgumentNullException.ThrowIfNull(metadata, nameof(metadata));
+            
+            byte[] entryBytes = entry.Address.ToByteArray();
+            IReadOnlyDictionary<string, string> metadata = entry.Metadata;
 
             if (ReferenceBytesSize == 0)
             {
-                if (entry.Length > 256)
-                    throw new ArgumentOutOfRangeException(nameof(entry), $"Node entry size > 256: {entry.Length}");
-
                 // zero entry for directories
-                if (entry != SwarmAddress.Zero)
-                    ReferenceBytesSize = entry.Length;
+                if (entryBytes != SwarmAddress.Zero)
+                    ReferenceBytesSize = entryBytes.Length;
             }
-            else if (entry.Length > 0 && ReferenceBytesSize != entry.Length)
-                throw new InvalidOperationException($"Invalid entry size: {entry.Length}, expected: {ReferenceBytesSize}");
+            else if (entryBytes.Length > 0 && ReferenceBytesSize != entryBytes.Length)
+                throw new InvalidOperationException($"Invalid entry size: {entryBytes.Length}, expected: {ReferenceBytesSize}");
 
             if (path.Length == 0)
             {
-                Entry = entry;
+                Entry = entryBytes;
                 SetNodeTypeFlag(NodeType.Value);
                 if (metadata.Count > 0)
                 {
@@ -100,7 +96,7 @@ namespace Etherna.BeeNet.Manifest
                 return;
             }
 
-            if (!Forks.TryGetValue(path[0], out var fork))
+            if (!_forks.TryGetValue((byte)path[0], out var fork))
             {
                 var nn = new MantarayNode(IsEncrypted);
                 if (_obfuscationKey?.Length > 0)
@@ -112,14 +108,14 @@ namespace Etherna.BeeNet.Manifest
                 {
                     var prefix = path[..MantarayNodeFork.PrefixMaxSize];
                     var rest_ = path[MantarayNodeFork.PrefixMaxSize..];
-                    nn.Add(rest_, entry, metadata);
+                    nn.Add(rest_, entry);
                     nn.UpdateFlagIsWithPathSeparator(prefix);
-                    _forks[path[0]] = new MantarayNodeFork(prefix, nn);
+                    _forks[(byte)path[0]] = new MantarayNodeFork(prefix, nn);
                     SetNodeTypeFlag(NodeType.Edge);
                     return;
                 }
 
-                nn.Entry = entry;
+                nn.Entry = entryBytes;
                 if (metadata.Count > 0)
                 {
                     nn.Metadata = metadata;
@@ -127,13 +123,13 @@ namespace Etherna.BeeNet.Manifest
                 }
                 nn.SetNodeTypeFlag(NodeType.Value);
                 nn.UpdateFlagIsWithPathSeparator(path);
-                _forks[path[0]] = new MantarayNodeFork(path, nn);
+                _forks[(byte)path[0]] = new MantarayNodeFork(path, nn);
                 SetNodeTypeFlag(NodeType.Edge);
                 return;
             }
 
-            var common = fork.Prefix.ToArray().FindCommonPrefixWith(path);
-            var rest = fork.Prefix[common.Length..].ToArray();
+            var common = fork.Prefix.FindCommonPrefix(path);
+            var rest = fork.Prefix[common.Length..];
             var nn_ = fork.Node;
             if (rest.Length > 0)
             {
@@ -143,7 +139,7 @@ namespace Etherna.BeeNet.Manifest
                     nn_._obfuscationKey = _obfuscationKey;
                 nn_.ReferenceBytesSize = ReferenceBytesSize;
                 fork.Node.UpdateFlagIsWithPathSeparator(rest);
-                nn_._forks[rest[0]] = new MantarayNodeFork(rest, fork.Node);
+                nn_._forks[(byte)rest[0]] = new MantarayNodeFork(rest, fork.Node);
                 nn_.SetNodeTypeFlag(NodeType.Edge);
                 // if common path is full path new node is value type
                 if (path.Length == common.Length)
@@ -153,8 +149,8 @@ namespace Etherna.BeeNet.Manifest
 	        // NOTE: special case on edge split
             nn_.UpdateFlagIsWithPathSeparator(path);
 	        // add new for shared prefix
-            nn_.Add(path[common.Length..], entry, metadata);
-            _forks[path[0]] = new MantarayNodeFork(common, nn_);
+            nn_.Add(path[common.Length..], entry);
+            _forks[(byte)path[0]] = new MantarayNodeFork(common, nn_);
             SetNodeTypeFlag(NodeType.Edge);
         }
 
@@ -277,9 +273,9 @@ namespace Etherna.BeeNet.Manifest
         private void SetNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags |= flag;
 
-        private void UpdateFlagIsWithPathSeparator(byte[] path)
+        private void UpdateFlagIsWithPathSeparator(string path)
         {
-            if (Array.FindIndex(path, b => b == PathSeparator) > 0)
+            if (path.IndexOf(PathSeparator, StringComparison.InvariantCulture) > 0)
                 SetNodeTypeFlag(NodeType.WithPathSeparator);
             else
                 RemoveNodeTypeFlag(NodeType.WithPathSeparator);
