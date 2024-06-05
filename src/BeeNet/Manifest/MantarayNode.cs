@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Manifest
         public static byte[] Version02HashBytes => Version02HashString.HexToByteArray().Take(VersionHashSize).ToArray();
 
         // Methods.
-        public void Add(byte[] path, byte[] entry, Dictionary<string, string> metadata, IHasherPipeline hasherPipeline)
+        public void Add(byte[] path, byte[] entry, Dictionary<string, string> metadata, Func<IHasherPipeline> hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Manifest
                 {
                     var prefix = path[..NodePrefixMaxSize];
                     var rest_ = path[NodePrefixMaxSize..];
-                    nn.Add(rest_, entry, metadata, hasherPipeline);
+                    nn.Add(rest_, entry, metadata, hasherPipelineBuilder);
                     nn.UpdateIsWithPathSeparator(prefix);
                     Forks[path[0]] = new MantarayNodeFork(prefix, nn);
                     MakeEdge();
@@ -170,22 +170,23 @@ namespace Etherna.BeeNet.Manifest
 	        // NOTE: special case on edge split
             nn_.UpdateIsWithPathSeparator(path);
 	        // add new for shared prefix
-            nn_.Add(path[c.Length..], entry, metadata, hasherPipeline);
+            nn_.Add(path[c.Length..], entry, metadata, hasherPipelineBuilder);
             Forks[path[0]] = new MantarayNodeFork(c, nn_);
             MakeEdge();
         }
 
-        public async Task SaveAsync(IHasherPipeline hasherPipeline)
+        public async Task SaveAsync(Func<IHasherPipeline> hasherPipelineBuilder)
         {
-            ArgumentNullException.ThrowIfNull(hasherPipeline, nameof(hasherPipeline));
+            ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
             if (Ref != null)
                 return;
 
             foreach (var fork in Forks.Values)
-                await fork.Node.SaveAsync(hasherPipeline).ConfigureAwait(false);
+                await fork.Node.SaveAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
             var bytes = MarshalBinary();
+            using var hasherPipeline = hasherPipelineBuilder();
             Ref = (await hasherPipeline.HashDataAsync(bytes).ConfigureAwait(false)).ToByteArray();
             
             Forks.Clear();

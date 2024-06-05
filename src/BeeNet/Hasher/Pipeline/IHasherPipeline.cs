@@ -21,6 +21,8 @@ namespace Etherna.BeeNet.Hasher.Pipeline
 {
     public interface IHasherPipeline : IDisposable
     {
+        bool IsUsable { get; }
+        
         /// <summary>
         /// Consume a byte array and returns a Swarm address as result
         /// </summary>

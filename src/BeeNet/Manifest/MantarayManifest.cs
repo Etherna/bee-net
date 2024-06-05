@@ -30,15 +30,15 @@ namespace Etherna.BeeNet.Manifest
         public const string WebsiteIndexDocumentSuffixKey = "website-index-document";
         
         // Fields.
-        private readonly IHasherPipeline hasherPipeline;
+        private readonly Func<IHasherPipeline> hasherPipelineBuilder;
         private readonly MantarayNode trie;
 
         // Constructor.
         public MantarayManifest(
-            IHasherPipeline hasherPipeline,
+            Func<IHasherPipeline> hasherPipelineBuilder,
             bool isEncrypted)
         {
-            this.hasherPipeline = hasherPipeline;
+            this.hasherPipelineBuilder = hasherPipelineBuilder;
             trie = new MantarayNode();
 
             // Use empty obfuscation key if not encrypting.
@@ -57,12 +57,12 @@ namespace Etherna.BeeNet.Manifest
 
             var p = Encoding.UTF8.GetBytes(path);
             var e = entry.Reference.ToByteArray();
-            trie.Add(p, e, entry.Metadata, hasherPipeline);
+            trie.Add(p, e, entry.Metadata, hasherPipelineBuilder);
         }
 
         public async Task<SwarmAddress> StoreAsync()
         {
-            await trie.SaveAsync(hasherPipeline).ConfigureAwait(false);
+            await trie.SaveAsync(hasherPipelineBuilder).ConfigureAwait(false);
             return new SwarmAddress(trie.Ref!);
         }
     }

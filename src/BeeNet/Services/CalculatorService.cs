@@ -49,11 +49,12 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             fileName ??= fileAddress.ToString();
-            using var manifestHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
-                postageStamper,
-                redundancyLevel,
+            var manifest = new MantarayManifest(
+                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                    postageStamper,
+                    redundancyLevel,
+                    encrypt),
                 encrypt);
-            var manifest = new MantarayManifest(manifestHasherPipeline, encrypt);
 
             var rootMetadata = new Dictionary<string, string>()
             {

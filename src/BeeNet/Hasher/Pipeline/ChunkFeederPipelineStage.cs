@@ -48,6 +48,9 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             semaphore.Dispose();
         }
         
+        // Properties.
+        public bool IsUsable { get; private set; } = true;
+
         // Methods.
         public async Task<SwarmAddress> HashDataAsync(byte[] data)
         {
@@ -60,6 +63,12 @@ namespace Etherna.BeeNet.Hasher.Pipeline
         public async Task<SwarmAddress> HashDataAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
+
+            if (!IsUsable)
+                throw new InvalidOperationException("Pipeline has already been used");
+            
+            // Make it no more usable.
+            IsUsable = false;
             
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
             var chunkBuffer = new byte[SwarmChunk.DataSize];
