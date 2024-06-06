@@ -38,11 +38,12 @@ namespace Etherna.BeeNet.Manifest
         // Fields.
         private SwarmAddress? _address;
         private readonly Dictionary<char, MantarayNodeFork> forks = new();
-        private bool lastEntryIsNotDirectory;
+        private bool skipWriteEntryAddress;
 
         public MantarayNode(XorEncryptKey? obfuscationKey)
         {
             ObfuscationKey = obfuscationKey;
+            skipWriteEntryAddress = true;
         }
 
         // Properties.
@@ -60,11 +61,11 @@ namespace Etherna.BeeNet.Manifest
             if (path.Any(c => c >= byte.MaxValue))
                 throw new ArgumentException("path only support ASCII chars", nameof(path));
 
-            // Determine if the new entry is a directory.
+            // Determine if the last entry is not a directory. In that case, force writing entry address.
             if (!entry.IsDirectory)
-                lastEntryIsNotDirectory = true;
+                skipWriteEntryAddress = false;
 
-            // If the new entry doesn't have a path, this become a value node and directly take entry.
+            // If the new entry doesn't have a path, this become a value node and directly takes entry.
             if (path.Length == 0)
             {
                 SetNodeTypeFlag(NodeType.Value);
@@ -77,67 +78,84 @@ namespace Etherna.BeeNet.Manifest
                 }
 
                 _address = null; //require to calculate address again.
-                return;
             }
 
-            // Else, if already exists a fork that contains the path.
-            if (forks.TryGetValue(path[0], out var fork))
-            {
-                var commonPrefix = fork.Prefix.FindCommonPrefix(path);
-                var rest = fork.Prefix[commonPrefix.Length..];
-                var nn = fork.Node;
-                if (rest.Length > 0)
-                {
-                    // move current common prefix node
-                    nn = new MantarayNode(ObfuscationKey)
-                    {
-                        lastEntryIsNotDirectory = lastEntryIsNotDirectory
-                    };
-                    fork.Node.UpdateFlagIsWithPathSeparator(rest);
-                    nn.forks[rest[0]] = new MantarayNodeFork(rest, fork.Node);
-                    nn.SetNodeTypeFlag(NodeType.Edge);
-                    // if common path is full path new node is value type
-                    if (path.Length == commonPrefix.Length)
-                        nn.SetNodeTypeFlag(NodeType.Value);
-                }
-            
-                // NOTE: special case on edge split
-                nn.UpdateFlagIsWithPathSeparator(path);
-                // add new for shared prefix
-                nn.Add(path[commonPrefix.Length..], entry);
-                forks[path[0]] = new MantarayNodeFork(commonPrefix, nn);
-                SetNodeTypeFlag(NodeType.Edge);
-            }
-
-            // Else, create the new fork.
+            // Else, set this as an edge node, and pass entry to a fork node.
             else
             {
-                var nn = new MantarayNode(ObfuscationKey)
+                // If already exists a fork that contains the path.
+                if (forks.TryGetValue(path[0], out var fork))
                 {
-                    lastEntryIsNotDirectory = lastEntryIsNotDirectory
-                };
+                    var commonPrefix = fork.Prefix.FindCommonPrefix(path);
+                    
+                    // If the fork prefix doesn't contain the path, split it in parent and child. 
+                    if (fork.Prefix.Length > commonPrefix.Length)
+                    {
+                        var childPrefix = fork.Prefix[commonPrefix.Length..];
+                        var childNode = fork.Node;
+                        childNode.UpdateFlagIsWithPathSeparator(childPrefix);
+                        
+                        // Create new parent node.
+                        //parentPrefix = commonPrefix
+                        var parentNode = new MantarayNode(ObfuscationKey)
+                        {
+                            forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
+                            skipWriteEntryAddress = skipWriteEntryAddress
+                        };
 
-                // check for prefix size limit
-                if (path.Length > MantarayNodeFork.PrefixMaxSize)
-                {
-                    var prefix = path[..MantarayNodeFork.PrefixMaxSize];
-                    var rest = path[MantarayNodeFork.PrefixMaxSize..];
-                    nn.Add(rest, entry);
-                    nn.UpdateFlagIsWithPathSeparator(prefix);
-                    forks[path[0]] = new MantarayNodeFork(prefix, nn);
-                    SetNodeTypeFlag(NodeType.Edge);
-                    return;
+                        //if parent node has same prefix of path, parent node is value type
+                        if (commonPrefix.Length == path.Length)
+                            parentNode.SetNodeTypeFlag(NodeType.Value);
+                        parentNode.SetNodeTypeFlag(NodeType.Edge);
+
+                        parentNode.UpdateFlagIsWithPathSeparator(path);
+                        parentNode.Add(path[commonPrefix.Length..], entry);
+                        
+                        // Replace fork with the new one.
+                        forks[path[0]] = new MantarayNodeFork(commonPrefix, parentNode);
+                    }
+                    else // Else, reuse the same fork node.
+                    {
+                        fork.Node.UpdateFlagIsWithPathSeparator(path);
+                        fork.Node.Add(path[commonPrefix.Length..], entry);
+                    }
                 }
 
-                nn.EntryAddress = entry.Address;
-                if (entry.Metadata.Count > 0)
+                // Else, create the new fork for the path.
+                else
                 {
-                    nn.Metadata = entry.Metadata;
-                    nn.SetNodeTypeFlag(NodeType.WithMetadata);
+                    var newNode = new MantarayNode(ObfuscationKey)
+                    {
+                        skipWriteEntryAddress = skipWriteEntryAddress
+                    };
+
+                    // check for prefix size limit
+                    if (path.Length > MantarayNodeFork.PrefixMaxSize)
+                    {
+                        var prefix = path[..MantarayNodeFork.PrefixMaxSize];
+                        var rest = path[MantarayNodeFork.PrefixMaxSize..];
+
+                        newNode.Add(rest, entry);
+                        newNode.UpdateFlagIsWithPathSeparator(prefix);
+
+                        forks[path[0]] = new MantarayNodeFork(prefix, newNode);
+                    }
+                    else
+                    {
+                        newNode.EntryAddress = entry.Address;
+                        if (entry.Metadata.Count > 0)
+                        {
+                            newNode.Metadata = entry.Metadata;
+                            newNode.SetNodeTypeFlag(NodeType.WithMetadata);
+                        }
+
+                        newNode.SetNodeTypeFlag(NodeType.Value);
+                        newNode.UpdateFlagIsWithPathSeparator(path);
+
+                        forks[path[0]] = new MantarayNodeFork(path, newNode);
+                    }
                 }
-                nn.SetNodeTypeFlag(NodeType.Value);
-                nn.UpdateFlagIsWithPathSeparator(path);
-                forks[path[0]] = new MantarayNodeFork(path, nn);
+
                 SetNodeTypeFlag(NodeType.Edge);
             }
         }
@@ -174,7 +192,7 @@ namespace Etherna.BeeNet.Manifest
             bytes.AddRange(MarshalHeader());
 
             // Write last entry address.
-            if (lastEntryIsNotDirectory)
+            if (!skipWriteEntryAddress)
                 bytes.AddRange((EntryAddress ?? SwarmAddress.Zero).ToByteArray());
 
             // Write forks.
@@ -213,7 +231,7 @@ namespace Etherna.BeeNet.Manifest
             var headerBytes = new byte[NodeHeaderSize];
             
             Version02Hash.CopyTo(headerBytes.AsMemory()[..VersionHashSize]);
-            headerBytes[VersionHashSize] = (byte)(lastEntryIsNotDirectory ? SwarmAddress.HashSize : 0);
+            headerBytes[VersionHashSize] = (byte)(skipWriteEntryAddress ? 0 : SwarmAddress.HashSize);
             
             return headerBytes;
         }

@@ -30,9 +30,8 @@ namespace Etherna.BeeNet.Manifest
         private const int HeaderSize = TypeSize + PrefixSize;
         private const int MetadataBytesSize = 2;
         private const int PrefixSize = 1;
-        private const int PreReferenceSize = SwarmAddress.HashSize;
         private const int TypeSize = 1;
-        public const int PrefixMaxSize = PreReferenceSize - HeaderSize;
+        public const int PrefixMaxSize = SwarmAddress.HashSize - HeaderSize;
         
         // Constructor.
         public MantarayNodeFork(
