@@ -40,8 +40,8 @@ namespace Etherna.BeeNet.Manifest
 
         public async Task<SwarmAddress> GetHashAsync()
         {
-            await rootNode.SaveAsync(hasherBuilder).ConfigureAwait(false);
-            return new SwarmAddress(rootNode.Reference!);
+            await rootNode.ComputeAddressAsync(hasherBuilder).ConfigureAwait(false);
+            return rootNode.Address!;
         }
     }
 }

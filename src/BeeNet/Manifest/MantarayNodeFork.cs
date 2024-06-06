@@ -59,7 +59,7 @@ namespace Etherna.BeeNet.Manifest
         {
             List<byte> b = new();
             
-            var r = Node.Reference;
+            var r = Node.Address;
             // using 1 byte ('f.Node.refBytesSize') for size
             if (r!.Length > 256)
                 throw new InvalidOperationException($"node reference size > 256: {r.Length}");
@@ -85,16 +85,16 @@ namespace Etherna.BeeNet.Manifest
                 var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + MetadataBytesSize;
                 
                 // pad JSON bytes if necessary
-                if (metadataJSONBytesSizeWithSize < MantarayNode.ObfuscationKeySize)
+                if (metadataJSONBytesSizeWithSize < ObfuscationKey.KeySize)
                 {
-                    var paddingLength = MantarayNode.ObfuscationKeySize - metadataJSONBytesSizeWithSize;
+                    var paddingLength = ObfuscationKey.KeySize - metadataJSONBytesSizeWithSize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
                 }
-                else if (metadataJSONBytesSizeWithSize > MantarayNode.ObfuscationKeySize)
+                else if (metadataJSONBytesSizeWithSize > ObfuscationKey.KeySize)
                 {
-                    var paddingLength = MantarayNode.ObfuscationKeySize - metadataJSONBytesSizeWithSize % MantarayNode.ObfuscationKeySize;
+                    var paddingLength = ObfuscationKey.KeySize - metadataJSONBytesSizeWithSize % ObfuscationKey.KeySize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
