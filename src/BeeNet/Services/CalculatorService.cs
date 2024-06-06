@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Services
                         [ManifestEntry.FilenameKey] = fileName
                     }));
 
-            var finalAddress = await manifest.GetHashAsync().ConfigureAwait(false);
+            var finalAddress = await manifest.GetAddressAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(

@@ -17,12 +17,24 @@ using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ObfuscationKey(
-        byte[] bytes)
+    public class ObfuscationKey
     {
         // Consts.
         public const int KeySize = 32;
         
+        // Fields.
+        private readonly byte[] bytes;
+
+        // Constructor.
+        public ObfuscationKey(byte[] bytes)
+        {
+            ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
+            if (bytes.Length != KeySize)
+                throw new ArgumentOutOfRangeException(nameof(bytes));
+            
+            this.bytes = bytes;
+        }
+
         // Builders.
         public static ObfuscationKey BuildNewRandom()
         {
@@ -44,16 +56,10 @@ namespace Etherna.BeeNet.Manifest
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Encrypted/decrypted data</returns>
-        public byte[] EncryptDecrypt(byte[] data)
+        public void EncryptDecrypt(Span<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-            
-            var output = new byte[data.Length];
-
             for (var i = 0; i < data.Length; i++)
-                output[i] = (byte)(data[i] ^ bytes[i % bytes.Length]);
-
-            return output;
+                data[i] = (byte)(data[i] ^ bytes[i % bytes.Length]);
         }
     }
 }

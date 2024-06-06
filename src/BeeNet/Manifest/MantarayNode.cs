@@ -218,20 +218,10 @@ namespace Etherna.BeeNet.Manifest
                 return true;
             });
             
-            // perform XOR encryption on bytes after obfuscation key
-            var xorEncryptedBytes = new byte[bytes.Count];
-            bytes.ToArray()[..ObfuscationKey.KeySize].CopyTo(xorEncryptedBytes.AsMemory());
-            for (int i = ObfuscationKey.KeySize; i < bytes.Count; i += ObfuscationKey.KeySize)
-            {
-                var end = i + ObfuscationKey.KeySize;
-                if (end > bytes.Count)
-                    end = bytes.Count;
-
-                var encrypted = obfuscKey.EncryptDecrypt(bytes.ToArray()[i..end]);
-                encrypted.CopyTo(xorEncryptedBytes.AsMemory()[i..end]);
-            }
-            
-            return xorEncryptedBytes;
+            // Obfuscate with key (except for key in header).
+            var bytesArray = bytes.ToArray();
+            obfuscKey.EncryptDecrypt(bytesArray.AsSpan()[ObfuscationKey.KeySize..]);
+            return bytesArray;
         }
 
         private void RemoveNodeTypeFlag(NodeType flag) =>
