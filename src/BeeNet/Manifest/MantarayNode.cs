@@ -61,6 +61,9 @@ namespace Etherna.BeeNet.Manifest
             if (path.Any(c => c >= byte.MaxValue))
                 throw new ArgumentException("path only support ASCII chars", nameof(path));
 
+            if (_address is not null)
+                throw new InvalidOperationException("Address already calculated, the node is immutable now");
+
             // Determine if the last entry is not a directory. In that case, force writing entry address.
             if (!entry.IsDirectory)
                 skipWriteEntryAddress = false;
@@ -76,8 +79,6 @@ namespace Etherna.BeeNet.Manifest
                     Metadata = entry.Metadata;
                     SetNodeTypeFlag(NodeType.WithMetadata);
                 }
-
-                _address = null; //require to calculate address again.
             }
 
             // Else, set this as an edge node, and pass entry to a fork node.
@@ -124,36 +125,21 @@ namespace Etherna.BeeNet.Manifest
                 // Else, create the new fork for the path.
                 else
                 {
+                    // Check for prefix size limit.
+                    var prefix = path.Length > MantarayNodeFork.PrefixMaxSize ?
+                        path[..MantarayNodeFork.PrefixMaxSize] : path;
+                    var prefixRest = path.Length > MantarayNodeFork.PrefixMaxSize ?
+                        path[MantarayNodeFork.PrefixMaxSize..] : "";
+                    
                     var newNode = new MantarayNode(ObfuscationKey)
                     {
                         skipWriteEntryAddress = skipWriteEntryAddress
                     };
 
-                    // check for prefix size limit
-                    if (path.Length > MantarayNodeFork.PrefixMaxSize)
-                    {
-                        var prefix = path[..MantarayNodeFork.PrefixMaxSize];
-                        var rest = path[MantarayNodeFork.PrefixMaxSize..];
+                    newNode.Add(prefixRest, entry);
+                    newNode.UpdateFlagIsWithPathSeparator(prefix);
 
-                        newNode.Add(rest, entry);
-                        newNode.UpdateFlagIsWithPathSeparator(prefix);
-
-                        forks[path[0]] = new MantarayNodeFork(prefix, newNode);
-                    }
-                    else
-                    {
-                        newNode.EntryAddress = entry.Address;
-                        if (entry.Metadata.Count > 0)
-                        {
-                            newNode.Metadata = entry.Metadata;
-                            newNode.SetNodeTypeFlag(NodeType.WithMetadata);
-                        }
-
-                        newNode.SetNodeTypeFlag(NodeType.Value);
-                        newNode.UpdateFlagIsWithPathSeparator(path);
-
-                        forks[path[0]] = new MantarayNodeFork(path, newNode);
-                    }
+                    forks[path[0]] = new MantarayNodeFork(prefix, newNode);
                 }
 
                 SetNodeTypeFlag(NodeType.Edge);
