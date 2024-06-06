@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Manifest
         public async Task<SwarmAddress> GetAddressAsync()
         {
             await rootNode.ComputeAddressAsync(hasherBuilder).ConfigureAwait(false);
-            return rootNode.Address!;
+            return rootNode.Address;
         }
     }
 }

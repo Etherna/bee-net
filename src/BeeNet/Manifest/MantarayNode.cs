@@ -28,15 +28,16 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayNode
     {
         // Consts.
-        public const int NodeHeaderSize = ObfuscationKey.KeySize + VersionHashSize + NodeRefBytesSize;
-        public const int NodeRefBytesSize = 1;
-        public const char PathSeparator = '/';
-        public static readonly byte[] Version02Hash =
+        private const int NodeHeaderSize = VersionHashSize + NodeRefBytesSize;
+        private const int NodeRefBytesSize = 1;
+        private const char PathSeparator = '/';
+        private static readonly byte[] Version02Hash =
             Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
-        public const int VersionHashSize = 31;
+        private const int VersionHashSize = 31;
         
         // Fields.
-        private readonly Dictionary<byte, MantarayNodeFork> forks = new();
+        private byte[]? _address;
+        private readonly Dictionary<char, MantarayNodeFork> forks = new();
         private ObfuscationKey? obfuscKey;
 
         public MantarayNode(bool isEncrypted)
@@ -49,7 +50,7 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
-        public byte[]? Address { get; private set; }
+        public byte[] Address => _address ?? throw new InvalidOperationException("Address not computed");
         public byte[]? Entry { get; private set; }
         public bool IsEncrypted { get; }
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
@@ -62,6 +63,8 @@ namespace Etherna.BeeNet.Manifest
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
+            if (path.Any(c => c >= byte.MaxValue))
+                throw new ArgumentException("path only support ASCII chars", nameof(path));
 
             if (ReferenceBytesSize == 0)
             {
@@ -80,11 +83,11 @@ namespace Etherna.BeeNet.Manifest
                     SetNodeTypeFlag(NodeType.WithMetadata);
                 }
 
-                Address = null;
+                _address = null;
                 return;
             }
 
-            if (!forks.TryGetValue((byte)path[0], out var fork))
+            if (!forks.TryGetValue(path[0], out var fork))
             {
                 var nn = new MantarayNode(IsEncrypted);
                 if (obfuscKey != null)
@@ -98,7 +101,7 @@ namespace Etherna.BeeNet.Manifest
                     var rest_ = path[MantarayNodeFork.PrefixMaxSize..];
                     nn.Add(rest_, entry);
                     nn.UpdateFlagIsWithPathSeparator(prefix);
-                    forks[(byte)path[0]] = new MantarayNodeFork(prefix, nn);
+                    forks[path[0]] = new MantarayNodeFork(prefix, nn);
                     SetNodeTypeFlag(NodeType.Edge);
                     return;
                 }
@@ -111,7 +114,7 @@ namespace Etherna.BeeNet.Manifest
                 }
                 nn.SetNodeTypeFlag(NodeType.Value);
                 nn.UpdateFlagIsWithPathSeparator(path);
-                forks[(byte)path[0]] = new MantarayNodeFork(path, nn);
+                forks[path[0]] = new MantarayNodeFork(path, nn);
                 SetNodeTypeFlag(NodeType.Edge);
                 return;
             }
@@ -127,7 +130,7 @@ namespace Etherna.BeeNet.Manifest
                     nn_.obfuscKey = obfuscKey;
                 nn_.ReferenceBytesSize = ReferenceBytesSize;
                 fork.Node.UpdateFlagIsWithPathSeparator(rest);
-                nn_.forks[(byte)rest[0]] = new MantarayNodeFork(rest, fork.Node);
+                nn_.forks[rest[0]] = new MantarayNodeFork(rest, fork.Node);
                 nn_.SetNodeTypeFlag(NodeType.Edge);
                 // if common path is full path new node is value type
                 if (path.Length == common.Length)
@@ -138,7 +141,7 @@ namespace Etherna.BeeNet.Manifest
             nn_.UpdateFlagIsWithPathSeparator(path);
 	        // add new for shared prefix
             nn_.Add(path[common.Length..], entry);
-            forks[(byte)path[0]] = new MantarayNodeFork(common, nn_);
+            forks[path[0]] = new MantarayNodeFork(common, nn_);
             SetNodeTypeFlag(NodeType.Edge);
         }
 
@@ -146,48 +149,34 @@ namespace Etherna.BeeNet.Manifest
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
-            if (Address != null)
+            if (_address != null)
                 return;
 
+            // Recursively compute address for each fork nodes.
             foreach (var fork in forks.Values)
                 await fork.Node.ComputeAddressAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
-            var bytes = MarshalBinary();
+            // Marshal current node, and set address as its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            Address = (await hasherPipeline.HashDataAsync(bytes).ConfigureAwait(false)).ToByteArray();
+            _address = (await hasherPipeline.HashDataAsync(MarshalBinary()).ConfigureAwait(false)).ToByteArray();
             
+            // Clean forks.
             forks.Clear();
         }
 
         // Helpers.
-        private static void Iterate(byte[] bytes, Func<byte, bool> byteEvaluator)
-        {
-            for (byte i = 0; ; i++)
-            {
-                if (((bytes[i / 8] >> (i % 8)) & 1) > 0 && !byteEvaluator(i))
-                    throw new InvalidOperationException();
-                if (i == 255) return;
-            }
-        }
-
         private byte[] MarshalBinary()
         {
-            // Generate obfuscation key if required.
-            obfuscKey ??= ObfuscationKey.BuildNewRandom();
-            
             var bytes = new List<byte>();
             
-            // header
-            var headerBytes = new byte[NodeHeaderSize];
+            // Write obfuscation key.
+            obfuscKey ??= ObfuscationKey.BuildNewRandom(); //generate obfuscation key if required
+            bytes.AddRange(obfuscKey.Bytes.ToArray());
             
-            obfuscKey.Bytes.CopyTo(headerBytes);
-            Version02Hash.CopyTo(
-                headerBytes.AsMemory()[ObfuscationKey.KeySize..(ObfuscationKey.KeySize + VersionHashSize)]);
-            headerBytes[ObfuscationKey.KeySize + VersionHashSize] = (byte)ReferenceBytesSize;
+            // Write header.
+            bytes.AddRange(MarshalHeader());
 
-            bytes.AddRange(headerBytes);
-
-            // entry
+            // Write entry.
             if (ReferenceBytesSize > 0)
             {
                 var entryBytes = new byte[ReferenceBytesSize];
@@ -195,33 +184,45 @@ namespace Etherna.BeeNet.Manifest
                 bytes.AddRange(entryBytes);
             }
 
-            // index
-            var indexBytes = new byte[32];
-            foreach (var k in forks.Keys)
-                indexBytes[k / 8] |= (byte)(1 << (k % 8));
-            
-            bytes.AddRange(indexBytes);
-            Iterate(indexBytes, b =>
-            {
-                var fork = forks[b];
-                try
-                {
-                    Address = fork.Bytes();
-                }
-#pragma warning disable CA1031
-                catch
-#pragma warning restore CA1031
-                {
-                    return false;
-                }
-                bytes.AddRange(Address);
-                return true;
-            });
-            
-            // Obfuscate with key (except for key in header).
+            // Write forks.
+            bytes.AddRange(MarshalForks());
+
+            // Obfuscate with key (except for key as first value).
             var bytesArray = bytes.ToArray();
             obfuscKey.EncryptDecrypt(bytesArray.AsSpan()[ObfuscationKey.KeySize..]);
             return bytesArray;
+        }
+
+        private byte[] MarshalForks()
+        {
+            // Create a fork index of 32 bytes size, using each bit to represent the existence of the key.
+            // Keys are ASCII chars in [0, 255], and can't be duplicated. We can map presence in a space of 32*8 bits.
+            // After the index, write the serialized forks bytes.
+            
+            List<byte> bytes = [];
+            
+            //index
+            var index = new byte[32];
+            foreach (var k in forks.Keys)
+                index[(byte)k / 8] |= (byte)(1 << (k % 8));
+            
+            bytes.AddRange(index);
+
+            //forks
+            foreach (var fork in forks.OrderBy(f => f.Key))
+                bytes.AddRange(fork.Value.Bytes());
+
+            return bytes.ToArray();
+        }
+
+        private byte[] MarshalHeader()
+        {
+            var headerBytes = new byte[NodeHeaderSize];
+            
+            Version02Hash.CopyTo(headerBytes.AsMemory()[..VersionHashSize]);
+            headerBytes[VersionHashSize] = (byte)ReferenceBytesSize;
+            
+            return headerBytes;
         }
 
         private void RemoveNodeTypeFlag(NodeType flag) =>
