@@ -46,6 +46,7 @@ namespace Etherna.BeeNet.Manifest
         
         // Properties.
         public SwarmAddress Address { get; }
+        public bool IsDirectory => Address == SwarmAddress.Zero;
         public IReadOnlyDictionary<string, string> Metadata { get; }
     }
 }
