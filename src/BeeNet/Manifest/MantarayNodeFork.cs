@@ -27,12 +27,12 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayNodeFork
     {
         // Consts.
-        public const int HeaderSize = TypeSize + PrefixSize;
-        public const int MetadataBytesSize = 2;
+        private const int HeaderSize = TypeSize + PrefixSize;
+        private const int MetadataBytesSize = 2;
+        private const int PrefixSize = 1;
+        private const int PreReferenceSize = SwarmAddress.HashSize;
+        private const int TypeSize = 1;
         public const int PrefixMaxSize = PreReferenceSize - HeaderSize;
-        public const int PrefixSize = 1;
-        public const int PreReferenceSize = SwarmAddress.HashSize;
-        public const int TypeSize = 1;
         
         // Constructor.
         public MantarayNodeFork(
@@ -57,24 +57,18 @@ namespace Etherna.BeeNet.Manifest
 
         public byte[] Bytes()
         {
-            List<byte> b = new();
-            
-            var r = Node.Address;
-            // using 1 byte ('f.Node.refBytesSize') for size
-            if (r!.Length > 256)
-                throw new InvalidOperationException($"node reference size > 256: {r.Length}");
-            
-            b.Add((byte)Node.NodeTypeFlags);
-            b.Add((byte)Prefix.Length);
+            List<byte> b =
+            [
+                (byte)Node.NodeTypeFlags,
+                (byte)Prefix.Length
+            ];
 
             var prefixBytes = new byte[PrefixMaxSize];
             Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
             b.AddRange(prefixBytes);
 
-            var refBytes = new byte[r.Length];
-            r.CopyTo(refBytes.AsSpan());
-            
-            b.AddRange(refBytes);
+            // Add node address.
+            b.AddRange(Node.Address.ToByteArray());
 
             if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))
             {
@@ -85,16 +79,16 @@ namespace Etherna.BeeNet.Manifest
                 var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + MetadataBytesSize;
                 
                 // pad JSON bytes if necessary
-                if (metadataJSONBytesSizeWithSize < ObfuscationKey.KeySize)
+                if (metadataJSONBytesSizeWithSize < XorEncryptKey.KeySize)
                 {
-                    var paddingLength = ObfuscationKey.KeySize - metadataJSONBytesSizeWithSize;
+                    var paddingLength = XorEncryptKey.KeySize - metadataJSONBytesSizeWithSize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
                 }
-                else if (metadataJSONBytesSizeWithSize > ObfuscationKey.KeySize)
+                else if (metadataJSONBytesSizeWithSize > XorEncryptKey.KeySize)
                 {
-                    var paddingLength = ObfuscationKey.KeySize - metadataJSONBytesSizeWithSize % ObfuscationKey.KeySize;
+                    var paddingLength = XorEncryptKey.KeySize - metadataJSONBytesSizeWithSize % XorEncryptKey.KeySize;
                     var padding = new byte[paddingLength];
                     Array.Fill(padding, (byte)'\n');
                     metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();

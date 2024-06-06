@@ -27,7 +27,10 @@ namespace Etherna.BeeNet.Manifest
         public const string RootPath = "/";
         
         // Fields.
-        private readonly MantarayNode rootNode = new(isEncrypted);
+        private readonly MantarayNode rootNode = new(
+            isEncrypted ?
+                null : //auto-generate random on address building
+                XorEncryptKey.Empty);
 
         // Methods.
         public void Add(string path, ManifestEntry entry)

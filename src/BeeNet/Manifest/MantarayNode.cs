@@ -36,26 +36,20 @@ namespace Etherna.BeeNet.Manifest
         private const int VersionHashSize = 31;
         
         // Fields.
-        private byte[]? _address;
+        private SwarmAddress? _address;
         private readonly Dictionary<char, MantarayNodeFork> forks = new();
-        private ObfuscationKey? obfuscKey;
 
-        public MantarayNode(bool isEncrypted)
+        public MantarayNode(XorEncryptKey? obfuscationKey)
         {
-            IsEncrypted = isEncrypted;
-            
-            // Use empty obfuscation key if not encrypting.
-            if (!isEncrypted)
-                obfuscKey = ObfuscationKey.Empty;
+            ObfuscationKey = obfuscationKey;
         }
 
         // Properties.
-        public byte[] Address => _address ?? throw new InvalidOperationException("Address not computed");
+        public SwarmAddress Address => _address ?? throw new InvalidOperationException("Address not computed");
         public byte[]? Entry { get; private set; }
-        public bool IsEncrypted { get; }
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
         public NodeType NodeTypeFlags { get; private set; }
-        public ObfuscationKey? ObfuscKey => obfuscKey;
+        public XorEncryptKey? ObfuscationKey { get; private set; }
         public int ReferenceBytesSize { get; private set; }
 
         // Methods.
@@ -89,11 +83,11 @@ namespace Etherna.BeeNet.Manifest
 
             if (!forks.TryGetValue(path[0], out var fork))
             {
-                var nn = new MantarayNode(IsEncrypted);
-                if (obfuscKey != null)
-                    nn.obfuscKey = obfuscKey;
-                nn.ReferenceBytesSize = ReferenceBytesSize;
-                
+                var nn = new MantarayNode(ObfuscationKey)
+                {
+                    ReferenceBytesSize = ReferenceBytesSize
+                };
+
                 // check for prefix size limit
                 if (path.Length > MantarayNodeFork.PrefixMaxSize)
                 {
@@ -125,10 +119,10 @@ namespace Etherna.BeeNet.Manifest
             if (rest.Length > 0)
             {
                 // move current common prefix node
-                nn_ = new MantarayNode(IsEncrypted);
-                if (obfuscKey != null)
-                    nn_.obfuscKey = obfuscKey;
-                nn_.ReferenceBytesSize = ReferenceBytesSize;
+                nn_ = new MantarayNode(ObfuscationKey)
+                {
+                    ReferenceBytesSize = ReferenceBytesSize
+                };
                 fork.Node.UpdateFlagIsWithPathSeparator(rest);
                 nn_.forks[rest[0]] = new MantarayNodeFork(rest, fork.Node);
                 nn_.SetNodeTypeFlag(NodeType.Edge);
@@ -158,7 +152,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Marshal current node, and set address as its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            _address = (await hasherPipeline.HashDataAsync(MarshalBinary()).ConfigureAwait(false)).ToByteArray();
+            _address = await hasherPipeline.HashDataAsync(MarshalBinary()).ConfigureAwait(false);
             
             // Clean forks.
             forks.Clear();
@@ -170,8 +164,8 @@ namespace Etherna.BeeNet.Manifest
             var bytes = new List<byte>();
             
             // Write obfuscation key.
-            obfuscKey ??= ObfuscationKey.BuildNewRandom(); //generate obfuscation key if required
-            bytes.AddRange(obfuscKey.Bytes.ToArray());
+            ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
+            bytes.AddRange(ObfuscationKey.Bytes.ToArray());
             
             // Write header.
             bytes.AddRange(MarshalHeader());
@@ -189,7 +183,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Obfuscate with key (except for key as first value).
             var bytesArray = bytes.ToArray();
-            obfuscKey.EncryptDecrypt(bytesArray.AsSpan()[ObfuscationKey.KeySize..]);
+            ObfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
             return bytesArray;
         }
 

@@ -17,7 +17,7 @@ using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ObfuscationKey
+    public class XorEncryptKey
     {
         // Consts.
         public const int KeySize = 32;
@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Manifest
         private readonly byte[] bytes;
 
         // Constructor.
-        public ObfuscationKey(byte[] bytes)
+        public XorEncryptKey(byte[] bytes)
         {
             ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
             if (bytes.Length != KeySize)
@@ -36,18 +36,18 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Builders.
-        public static ObfuscationKey BuildNewRandom()
+        public static XorEncryptKey BuildNewRandom()
         {
             var keyBytes = new byte[KeySize];
             RandomNumberGenerator.Fill(keyBytes);
-            return new ObfuscationKey(keyBytes);
+            return new XorEncryptKey(keyBytes);
         }
         
         // Properties.
         public Memory<byte> Bytes => bytes;
         
         // Static properties.
-        public static ObfuscationKey Empty { get; } = new(new byte[KeySize]);
+        public static XorEncryptKey Empty { get; } = new(new byte[KeySize]);
         
         // Methods.
         /// <summary>
