@@ -27,6 +27,24 @@ namespace Etherna.BeeNet.Services
     public class CalculatorService : ICalculatorService
     {
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+            byte[] data,
+            string fileContentType,
+            string? fileName,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStampIssuer? postageStampIssuer = null)
+        {
+            using var stream = new MemoryStream(data);
+            return await EvaluateFileUploadAsync(
+                stream,
+                fileContentType,
+                fileName,
+                encrypt,
+                redundancyLevel,
+                postageStampIssuer).ConfigureAwait(false);
+        }
+
+        public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
             string fileContentType,
             string? fileName,
