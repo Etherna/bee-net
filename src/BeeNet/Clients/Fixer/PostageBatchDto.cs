@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Clients.Fixer
         public string BatchID { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("utilization")]
-        public int Utilization { get; set; } = default!;
+        public uint Utilization { get; set; } = default!;
 
         /// <summary>
         /// Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.

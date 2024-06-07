@@ -17,7 +17,7 @@ using Etherna.BeeNet.Extensions;
 using System;
 using System.Collections.ObjectModel;
 
-namespace Etherna.BeeNet.Feeds.Models
+namespace Etherna.BeeNet.Feeds
 {
     public sealed class EpochFeedIndex : FeedIndexBase
     {

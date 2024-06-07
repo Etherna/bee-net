@@ -12,17 +12,20 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System;
+using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class UlongExtensions
+    public static class LongExtensions
     {
+        public static byte[] UnixDateTimeToByteArray(this long unixDateTime) =>
+            ((ulong)unixDateTime).UnixDateTimeToByteArray();
+        
         public static byte[] UnixDateTimeToByteArray(this ulong unixDateTime)
         {
-            var byteArrayDateTime = BitConverter.GetBytes(unixDateTime);
-            if (BitConverter.IsLittleEndian) Array.Reverse(byteArrayDateTime);
-            return byteArrayDateTime;
+            var buffer = new byte[8];
+            BinaryPrimitives.WriteUInt64BigEndian(buffer, unixDateTime);
+            return buffer;
         }
     }
 }

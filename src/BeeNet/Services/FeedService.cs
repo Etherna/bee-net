@@ -13,19 +13,17 @@
 //   limitations under the License.
 
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Feeds.Models;
+using Etherna.BeeNet.Feeds;
+using Etherna.BeeNet.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Services
 {
     public class FeedService : IFeedService
     {
-        // Consts.
-
         // Fields.
         private readonly IBeeClient gatewayClient;
 
@@ -36,14 +34,14 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Methods.
-        public Task<FeedChunk> CreateNextEpochFeedChunkAsync(
+        public Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
             string account,
             byte[] topic,
             byte[] contentPayload,
             EpochFeedIndex? knownNearEpochIndex) =>
             CreateNextEpochFeedChunkAsync(account.HexToByteArray(), topic, contentPayload, knownNearEpochIndex);
 
-        public async Task<FeedChunk> CreateNextEpochFeedChunkAsync(
+        public async Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
             byte[] account,
             byte[] topic,
             byte[] contentPayload,
@@ -66,20 +64,20 @@ namespace Etherna.BeeNet.Feeds
                 nextEpochIndex = (EpochFeedIndex)lastEpochFeedChunk.Index.GetNext(at);
 
             // Create new chunk.
-            var chunkPayload = FeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkReferenceHash = FeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
+            var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
+            var chunkReferenceHash = SwarmFeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
 
-            return new FeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
+            return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
         }
 
-        public Task<FeedChunk?> TryFindEpochFeedAsync(
+        public Task<SwarmFeedChunk?> TryFindEpochFeedAsync(
             string account,
             byte[] topic,
             DateTimeOffset at,
             EpochFeedIndex? knownNearEpochIndex) =>
             TryFindEpochFeedAsync(account.HexToByteArray(), topic, at, knownNearEpochIndex);
 
-        public async Task<FeedChunk?> TryFindEpochFeedAsync(
+        public async Task<SwarmFeedChunk?> TryFindEpochFeedAsync(
             byte[] account,
             byte[] topic,
             DateTimeOffset at,
@@ -158,20 +156,20 @@ namespace Etherna.BeeNet.Feeds
                 startChunk).ConfigureAwait(false);
         }
 
-        public Task<FeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index) =>
+        public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index) =>
             TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
 
-        public Task<FeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
-            TryGetFeedChunkAsync(FeedChunk.BuildReferenceHash(account, topic, index), index);
+        public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
+            TryGetFeedChunkAsync(SwarmFeedChunk.BuildReferenceHash(account, topic, index), index);
 
-        public async Task<FeedChunk?> TryGetFeedChunkAsync(string chunkReference, FeedIndexBase index)
+        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkAddress, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkAsync(chunkReference).ConfigureAwait(false);
+                using var chunkStream = await gatewayClient.GetChunkStreamAsync(chunkAddress).ConfigureAwait(false);
                 using var chunkMemoryStream = new MemoryStream();
                 await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
-                return new FeedChunk(index, chunkMemoryStream.ToArray(), chunkReference);
+                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkAddress);
             }
             catch (BeeNetApiException)
             {
@@ -180,7 +178,7 @@ namespace Etherna.BeeNet.Feeds
         }
 
         // Helpers.
-        internal async Task<FeedChunk> FindLastEpochChunkBeforeDateAsync(byte[] account, byte[] topic, ulong at, FeedChunk currentChunk)
+        internal async Task<SwarmFeedChunk> FindLastEpochChunkBeforeDateAsync(byte[] account, byte[] topic, ulong at, SwarmFeedChunk currentChunk)
         {
             // If currentChunk is at max resolution, return it.
             var currentIndex = (EpochFeedIndex)currentChunk.Index;
@@ -194,7 +192,7 @@ namespace Etherna.BeeNet.Feeds
             // Try chunk on child epoch at date.
             var childIndexAtDate = currentIndex.GetChildAt(at);
             var childChunkAtDate = await TryGetFeedChunkAsync(account, topic, childIndexAtDate).ConfigureAwait(false);
-            if (childChunkAtDate != null && (ulong)childChunkAtDate.GetTimeStamp().ToUnixTimeSeconds() <= at)
+            if (childChunkAtDate != null && (ulong)childChunkAtDate.TimeStamp.ToUnixTimeSeconds() <= at)
                 return await FindLastEpochChunkBeforeDateAsync(account, topic, at, childChunkAtDate).ConfigureAwait(false);
 
             // Try left brother if different.
@@ -214,8 +212,7 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="knownNearEpoch">An optional epoch index with known existing chunk</param>
         /// <param name="at">The searched date</param>
         /// <returns>A starting epoch index</returns>
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It is only used inside of an instance")]
-        internal EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
+        internal static EpochFeedIndex FindStartingEpochOffline(EpochFeedIndex? knownNearEpoch, ulong at)
         {
             var startEpoch = knownNearEpoch;
             if (startEpoch is not null)
@@ -245,13 +242,13 @@ namespace Etherna.BeeNet.Feeds
         /// <param name="at">The searched date</param>
         /// <param name="epochIndex">The epoch to analyze containing current date</param>
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
-        internal async Task<FeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
+        internal async Task<SwarmFeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
         {
             // Try get chunk payload on network.
             var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex).ConfigureAwait(false);
 
             // If chunk exists and date is prior.
-            if (chunk != null && (ulong)chunk.GetTimeStamp().ToUnixTimeSeconds() <= at)
+            if (chunk != null && (ulong)chunk.TimeStamp.ToUnixTimeSeconds() <= at)
                 return chunk;
 
             // Else, if chunk is not found, or if chunk timestamp is later than target date.

@@ -48,7 +48,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert
-            Assert.Equal(500, resultBatch.AmountPaid);
+            Assert.Equal(500, resultBatch.Amount);
             Assert.Equal(32, resultBatch.Depth);
         }
 
@@ -123,7 +123,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert
-            Assert.Contains(results, i => i.BatchID == batch);
+            Assert.Contains(results, i => i.BatchId == batch);
         }
     }
 }

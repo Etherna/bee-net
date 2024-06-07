@@ -15,7 +15,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace Etherna.BeeNet.Feeds.Models
+namespace Etherna.BeeNet.Feeds
 {
     public abstract class FeedIndexBase
     {

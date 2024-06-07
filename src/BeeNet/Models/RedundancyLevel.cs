@@ -16,10 +16,29 @@ namespace Etherna.BeeNet.Models
 {
     public enum RedundancyLevel
     {
-        None0 = 0,
-        Medium1 = 1,
-        Strong5 = 2,
-        Insane10 = 3,
-        Paranoid50 = 4
+        /// <summary>
+        /// 0%
+        /// </summary>
+        None = 0,
+        
+        /// <summary>
+        /// 1%
+        /// </summary>
+        Medium = 1,
+        
+        /// <summary>
+        /// 5%
+        /// </summary>
+        Strong = 2,
+        
+        /// <summary>
+        /// 10%
+        /// </summary>
+        Insane = 3,
+        
+        /// <summary>
+        /// 50%
+        /// </summary>
+        Paranoid = 4
     }
 }
