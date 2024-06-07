@@ -17,13 +17,10 @@ using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 
 namespace Etherna.BeeNet.Manifest
 {
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class MantarayNodeFork
     {
         // Consts.
@@ -31,6 +28,7 @@ namespace Etherna.BeeNet.Manifest
         private const int MetadataBytesSize = 2;
         private const int PrefixSize = 1;
         private const int TypeSize = 1;
+        
         public const int PrefixMaxSize = SwarmAddress.HashSize - HeaderSize;
         
         // Constructor.
@@ -48,63 +46,56 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
-        /// <summary>
-        /// The non-branching part of the subpath
-        /// </summary>
         public string Prefix { get; }
         public MantarayNode Node { get; }
 
+        // Methods.
         public byte[] ToByteArray()
         {
-            List<byte> b =
+            // Header.
+            List<byte> bytes =
             [
                 (byte)Node.NodeTypeFlags,
                 (byte)Prefix.Length
             ];
-
+            
+            // Prefix.
             var prefixBytes = new byte[PrefixMaxSize];
             Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
-            b.AddRange(prefixBytes);
+            bytes.AddRange(prefixBytes);
 
-            // Add node address.
-            b.AddRange(Node.Address.ToByteArray());
+            // Node address.
+            bytes.AddRange(Node.Address.ToByteArray());
 
+            // Metadata.
             if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))
             {
-                // using JSON encoding for metadata
-                var metadataJson = JsonConvert.SerializeObject(Node.Metadata);
-                var metadataJSONBytes = Encoding.UTF8.GetBytes(metadataJson);
-
-                var metadataJSONBytesSizeWithSize = metadataJSONBytes.Length + MetadataBytesSize;
+                var metadataBytes = new List<byte>();
                 
-                // pad JSON bytes if necessary
-                if (metadataJSONBytesSizeWithSize < XorEncryptKey.KeySize)
+                // Using Json encoding for metadata.
+                metadataBytes.AddRange(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Node.Metadata)));
+                var metadataTotalSize = metadataBytes.Count + MetadataBytesSize;
+                
+                // Pad bytes if necessary.
+                if (metadataTotalSize % XorEncryptKey.KeySize != 0)
                 {
-                    var paddingLength = XorEncryptKey.KeySize - metadataJSONBytesSizeWithSize;
-                    var padding = new byte[paddingLength];
+                    var padding = new byte[XorEncryptKey.KeySize - metadataTotalSize % XorEncryptKey.KeySize];
                     Array.Fill(padding, (byte)'\n');
-                    metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
-                }
-                else if (metadataJSONBytesSizeWithSize > XorEncryptKey.KeySize)
-                {
-                    var paddingLength = XorEncryptKey.KeySize - metadataJSONBytesSizeWithSize % XorEncryptKey.KeySize;
-                    var padding = new byte[paddingLength];
-                    Array.Fill(padding, (byte)'\n');
-                    metadataJSONBytes = metadataJSONBytes.Concat(padding).ToArray();
+                    metadataBytes.AddRange(padding);
                 }
 
-                var metadataJSONBytesSize = metadataJSONBytes.Length;
-                if (metadataJSONBytesSize > ushort.MaxValue)
+                // Add metadata.
+                if (metadataBytes.Count > ushort.MaxValue)
                     throw new InvalidOperationException("metadata too large");
-
-                var mBytesSize = new byte[MetadataBytesSize];
-                BinaryPrimitives.WriteUInt16BigEndian(mBytesSize, (ushort)metadataJSONBytesSize);
                 
-                b.AddRange(mBytesSize);
-                b.AddRange(metadataJSONBytes);
+                var sizeBytes = new byte[MetadataBytesSize];
+                BinaryPrimitives.WriteUInt16BigEndian(sizeBytes, (ushort)metadataBytes.Count);
+                
+                bytes.AddRange(sizeBytes);
+                bytes.AddRange(metadataBytes);
             }
             
-            return b.ToArray();
+            return bytes.ToArray();
         }
     }
 }
