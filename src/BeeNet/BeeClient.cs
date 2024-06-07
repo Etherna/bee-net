@@ -288,7 +288,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
 
-        public async Task<string> GetFeedAsync(
+        public async Task<SwarmAddress> GetFeedAsync(
             string owner,
             string topic,
             int? at = null,

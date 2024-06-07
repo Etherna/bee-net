@@ -342,7 +342,7 @@ namespace Etherna.BeeNet
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> GetFeedAsync(
+        Task<SwarmAddress> GetFeedAsync(
             string owner,
             string topic,
             int? at = null,
