@@ -35,8 +35,8 @@ namespace Etherna.BeeNet.Services
                 false,
                 RedundancyLevel.None);
             
-            Assert.Equal("7bf7cfd6f406a27314837eafcc0ae79b0b296dc4f8aa163c822691f9c3234616", result.Address);
-            Assert.Equal(17, result.RequiredPostageBatchDepth);
+            Assert.Equal("db70334cd3ec7aa9e9bd235ab7b8b3db3d2729ffb7afc180230d8c71d4e3bb94", result.Address);
+            Assert.Equal(18, result.RequiredPostageBatchDepth);
         }
     }
 }
