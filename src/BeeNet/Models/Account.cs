@@ -23,22 +23,22 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
 
-            Balance = value.Balance;
-            ThresholdReceived = value.ThresholdReceived;
-            ThresholdGiven = value.ThresholdGiven;
-            SurplusBalance = value.SurplusBalance;
-            ReservedBalance = value.ReservedBalance;
-            ShadowReservedBalance = value.ShadowReservedBalance;
-            GhostBalance = value.GhostBalance;
+            Balance = BzzBalance.FromPlurString(value.Balance);
+            ThresholdReceived = BzzBalance.FromPlurString(value.ThresholdReceived);
+            ThresholdGiven = BzzBalance.FromPlurString(value.ThresholdGiven);
+            SurplusBalance = BzzBalance.FromPlurString(value.SurplusBalance);
+            ReservedBalance = BzzBalance.FromPlurString(value.ReservedBalance);
+            ShadowReservedBalance = BzzBalance.FromPlurString(value.ShadowReservedBalance);
+            GhostBalance = BzzBalance.FromPlurString(value.GhostBalance);
         }
 
         // Properties.
-        public string Balance { get; set; }
-        public string ThresholdReceived { get; set; }
-        public string ThresholdGiven { get; set; }
-        public string SurplusBalance { get; set; }
-        public string ReservedBalance { get; set; }
-        public string ShadowReservedBalance { get; set; }
-        public string GhostBalance { get; set; }
+        public BzzBalance Balance { get; set; }
+        public BzzBalance ThresholdReceived { get; set; }
+        public BzzBalance ThresholdGiven { get; set; }
+        public BzzBalance SurplusBalance { get; set; }
+        public BzzBalance ReservedBalance { get; set; }
+        public BzzBalance ShadowReservedBalance { get; set; }
+        public BzzBalance GhostBalance { get; set; }
     }
 }

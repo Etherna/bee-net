@@ -18,15 +18,17 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class Wallet
     {
+        // Constructors.
         internal Wallet(Clients.Response61 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Bzz = response.BzzBalance;
+            Bzz = BzzBalance.FromPlurString(response.BzzBalance);
             NativeTokenBalance = response.NativeTokenBalance;
         }
 
-        public string Bzz { get; }
+        // Properties.
+        public BzzBalance Bzz { get; }
         public string NativeTokenBalance { get; }
     }
 }

@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public string Index { get; }
-        public string PostageId { get; }
+        public PostageBatchId PostageId { get; }
         public string Signature { get; }
         public string TimeStamp { get; }
     }

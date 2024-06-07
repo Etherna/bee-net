@@ -24,8 +24,8 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
-            LastReceived = response.Lastreceived is not null ? new LastReceived(response.Lastreceived) : null;
-            LastSent = response.Lastsent is not null ? new LastSent(response.Lastsent) : null;
+            LastReceived = response.Lastreceived is not null ? new ChequePayment(response.Lastreceived) : null;
+            LastSent = response.Lastsent is not null ? new ChequePayment(response.Lastsent) : null;
         }
 
         internal ChequebookChequeGet(Clients.Response43 response)
@@ -33,13 +33,13 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
-            LastReceived = response.Lastreceived is not null ? new LastReceived(response.Lastreceived) : null;
-            LastSent = response.Lastsent is not null ? new LastSent(response.Lastsent) : null;
+            LastReceived = response.Lastreceived is not null ? new ChequePayment(response.Lastreceived) : null;
+            LastSent = response.Lastsent is not null ? new ChequePayment(response.Lastsent) : null;
         }
 
         // Properties.
         public string Peer { get; }
-        public LastReceived? LastReceived { get; }
-        public LastSent? LastSent { get; }
+        public ChequePayment? LastReceived { get; }
+        public ChequePayment? LastSent { get; }
     }
 }

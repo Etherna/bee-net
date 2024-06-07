@@ -25,25 +25,25 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
             BatchId = batch.BatchID;
-            BatchTtl = batch.BatchTTL;
             BucketDepth = batch.BucketDepth;
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;
             Owner = batch.Owner;
             StartBlockNumber = batch.Start;
             StorageRadius = batch.StorageRadius;
+            Ttl = TimeSpan.FromSeconds(batch.BatchTTL);
             Value = batch.Value;
         }
 
         // Properties.
         public PostageBatchId BatchId { get; }
-        public long BatchTtl { get; }
         public int BucketDepth { get; }
         public int Depth { get; }
         public bool ImmutableFlag { get; }
         public string Owner { get; }
         public int StartBlockNumber { get; }
         public int StorageRadius { get; }
+        public TimeSpan Ttl { get; }
         public string Value { get; }
     }
 }
