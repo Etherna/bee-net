@@ -23,10 +23,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.Response9Status.Ok => StatusValues.Ok,
-                Clients.Response9Status.Nok => StatusValues.Nok,
+                Clients.Response9Status.Ok => true,
+                Clients.Response9Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -38,10 +38,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.Response21Status.Ok => StatusValues.Ok,
-                Clients.Response21Status.Nok => StatusValues.Nok,
+                Clients.Response21Status.Ok => true,
+                Clients.Response21Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -53,10 +53,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            Status = response.Status switch
+            StatusIsOk = response.Status switch
             {
-                Clients.Response40Status.Ok => StatusValues.Ok,
-                Clients.Response40Status.Nok => StatusValues.Nok,
+                Clients.Response40Status.Ok => true,
+                Clients.Response40Status.Nok => false,
                 _ => throw new InvalidOperationException()
             };
             Version = response.Version;
@@ -67,7 +67,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public StatusValues Status { get; }
+        public bool StatusIsOk { get; }
         public string Version { get; }
         public string ApiVersion { get; }
         public string DebugApiVersion { get; }

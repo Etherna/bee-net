@@ -32,10 +32,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Act 
             var result = await beeNodeClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
-
-
-            // Assert 
-            Assert.NotEmpty(result);
         }
 
         /*

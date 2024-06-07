@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 using Etherna.BeeNet;
+using Etherna.BeeNet.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
                 1633);
         }
 
-        protected async Task<string> UploadBZZFileAndGetReferenceAsync(string filePath = null)
+        protected async Task<SwarmAddress> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
@@ -48,7 +49,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
             return result;
         }
 
-        protected async Task<string> UploadChunkFileAndGetReferenceAsync()
+        protected async Task<SwarmAddress> UploadChunkFileAndGetReferenceAsync()
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);

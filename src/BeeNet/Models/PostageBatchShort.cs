@@ -24,8 +24,8 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
 
-            BatchID = batch.BatchID;
-            BatchTTL = Convert.ToInt64(batch.BatchTTL, CultureInfo.InvariantCulture); //TODO CAST to Long or change return type in String
+            BatchId = batch.BatchID;
+            BatchTtl = batch.BatchTTL;
             BucketDepth = batch.BucketDepth;
             Depth = batch.Depth;
             ImmutableFlag = batch.ImmutableFlag;
@@ -36,8 +36,8 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public string BatchID { get; }
-        public long BatchTTL { get; }
+        public PostageBatchId BatchId { get; }
+        public long BatchTtl { get; }
         public int BucketDepth { get; }
         public int Depth { get; }
         public bool ImmutableFlag { get; }

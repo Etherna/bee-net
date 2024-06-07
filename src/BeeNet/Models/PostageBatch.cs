@@ -14,61 +14,139 @@
 
 using System;
 using System.Globalization;
-using System.Text.Json;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class PostageBatch
+    public class PostageBatch
     {
-        // Constructors.
+        // Consts.
+        public const int BucketDepth = 16;
+        public const int MaxDepth = 47;
+        public const int MinDepth = BucketDepth + 1;
+        
+        // Public constructor.
+        public PostageBatch(
+            PostageBatchId id,
+            long amount,
+            int blockNumber,
+            int depth,
+            bool exists,
+            bool isImmutable,
+            bool isUsable,
+            string? label,
+            TimeSpan ttl,
+            uint utilization)
+        {
+            if (depth is < MinDepth or > MaxDepth)
+                throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
+
+            Id = id;
+            Amount = amount;
+            BlockNumber = blockNumber;
+            Depth = depth;
+            Exists = exists;
+            IsImmutable = isImmutable;
+            IsUsable = isUsable;
+            Label = label;
+            Ttl = ttl;
+            Utilization = utilization;
+        }
+        
+        // Internal constructors.
         internal PostageBatch(Clients.Stamps batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
+            if (batch.Depth is < MinDepth or > MaxDepth)
+                throw new ArgumentOutOfRangeException(nameof(batch), "Batch depth out of range");
 
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            if (long.TryParse(batch.Amount, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
+                Amount = amount;
+            Depth = batch.Depth;
+            BlockNumber = batch.BlockNumber;
             Exists = batch.Exists;
             Id = batch.BatchID;
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
+            IsImmutable = batch.ImmutableFlag;
             Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
+            Ttl = TimeSpan.FromSeconds(batch.BatchTTL);
+            IsUsable = batch.Usable;
+            Utilization = batch.Utilization;
         }
 
         internal PostageBatch(Clients.Response52 batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
+            if (batch.Depth is < MinDepth or > MaxDepth)
+                throw new ArgumentOutOfRangeException(nameof(batch), "Batch depth out of range");
 
-            AmountPaid = batch.Amount is null ? null : long.Parse(batch.Amount, CultureInfo.InvariantCulture);
-            BatchTTL = batch.BatchTTL;
+            if (long.TryParse(batch.Amount, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
+                Amount = amount;
+            Depth = batch.Depth;
+            BlockNumber = batch.BlockNumber;
             Exists = batch.Exists;
             Id = batch.BatchID;
-            Utilization = batch.Utilization;
-            Usable = batch.Usable;
+            IsImmutable = batch.ImmutableFlag;
             Label = batch.Label;
-            Depth = batch.Depth;
-            BucketDepth = batch.BucketDepth;
-            BlockNumber = batch.BlockNumber;
-            ImmutableFlag = batch.ImmutableFlag;
+            Ttl = TimeSpan.FromSeconds(batch.BatchTTL);
+            IsUsable = batch.Usable;
+            Utilization = batch.Utilization;
         }
+        
+        // Static properties.
+        public static PostageBatch MaxDepthInstance { get; } = new(
+            PostageBatchId.Zero,
+            0,
+            0,
+            MaxDepth,
+            true,
+            false,
+            true,
+            null,
+            TimeSpan.FromDays(3650),
+            0);
 
         // Properties.
-        public string Id { get; }
-        public long? AmountPaid { get; }
-        /// <summary>The time (in seconds) remaining until the batch expires; -1 signals that the batch never expires; 0 signals that the batch has already expired.</summary>
-        public long BatchTTL { get; }
+        public PostageBatchId Id { get; }
+        
+        /// <summary>
+        /// Amount paid for the batch
+        /// </summary>
+        public long Amount { get; }
+        
+        /// <summary>
+        /// Block number when this batch was created
+        /// </summary>
         public int BlockNumber { get; }
-        public int BucketDepth { get; }
+        
+        /// <summary>
+        /// Batch depth: batchSize = 2^depth * chunkSize
+        /// </summary>
         public int Depth { get; }
+        
         public bool Exists { get; }
-        public bool ImmutableFlag { get; }
+        
+        /// <summary>
+        /// Specifies immutability of the batch
+        /// </summary>
+        public bool IsImmutable { get; }
+        
+        /// <summary>
+        /// True if the batch is usable
+        /// </summary>
+        public bool IsUsable { get; }
+        
+        /// <summary>
+        /// Label to identify the batch
+        /// </summary>
         public string? Label { get; }
-        /// <summary>Indicate that the batch was discovered by the Bee node, but it awaits enough on-chain confirmations before declaring the batch as usable.</summary>
-        public bool Usable { get; }
-        public int? Utilization { get; }
+        
+        /// <summary>
+        /// Time to live before expiration
+        /// </summary>
+        public TimeSpan Ttl { get; }
+        
+        /// <summary>
+        /// The count of the fullest bucket
+        /// </summary>
+        public uint Utilization { get; }
     }
-
 }

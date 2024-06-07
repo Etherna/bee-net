@@ -1,0 +1,50 @@
+// Copyright 2021-present Etherna SA
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Models;
+using System;
+using System.Threading.Tasks;
+
+namespace Etherna.BeeNet.Manifest
+{
+    public class MantarayManifest(
+        Func<IHasherPipeline> hasherBuilder,
+        bool isEncrypted)
+    {
+        // Consts.
+        public const string RootPath = "/";
+        
+        // Fields.
+        private readonly MantarayNode rootNode = new(
+            isEncrypted ?
+                null : //auto-generate random on address building
+                XorEncryptKey.Empty);
+
+        // Methods.
+        public void Add(string path, ManifestEntry entry)
+        {
+            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(entry, nameof(entry));
+
+            rootNode.Add(path, entry);
+        }
+
+        public async Task<SwarmAddress> GetAddressAsync()
+        {
+            await rootNode.ComputeAddressAsync(hasherBuilder).ConfigureAwait(false);
+            return rootNode.Address;
+        }
+    }
+}

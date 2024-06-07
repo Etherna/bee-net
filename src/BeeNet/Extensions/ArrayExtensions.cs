@@ -12,24 +12,34 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using Etherna.BeeNet.Feeds.Models;
+using Etherna.BeeNet.Models;
 using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class ByteArrayExtensions
+    public static class ArrayExtensions
     {
         public static ulong ByteArrayToUnixDateTime(this byte[] dateTimeByteArray)
         {
             ArgumentNullException.ThrowIfNull(dateTimeByteArray, nameof(dateTimeByteArray));
 
-            if (dateTimeByteArray.Length != FeedChunk.TimeStampByteSize)
+            if (dateTimeByteArray.Length != SwarmFeedChunk.TimeStampSize)
                 throw new ArgumentOutOfRangeException(nameof(dateTimeByteArray), "Invalid date time byte array length");
 
-            var fixedDateTimeByteArray = new byte[dateTimeByteArray.Length]; //don't reverse original
-            Array.Copy(dateTimeByteArray, fixedDateTimeByteArray, fixedDateTimeByteArray.Length);
-            if (BitConverter.IsLittleEndian) Array.Reverse(fixedDateTimeByteArray);
-            return BitConverter.ToUInt64(fixedDateTimeByteArray, 0);
+            return BinaryPrimitives.ReadUInt64BigEndian(dateTimeByteArray);
         }
+
+        public static string FindCommonPrefix(this string x, string y)
+        {
+            ArgumentNullException.ThrowIfNull(x, nameof(x));
+            ArgumentNullException.ThrowIfNull(y, nameof(y));
+            return new(FindCommonPrefix(x.ToCharArray(), y.ToCharArray()));
+        }
+
+        public static T[] FindCommonPrefix<T>(this T[] x, T[] y) =>
+            x.TakeWhile((current, i) => i < y.Length && EqualityComparer<T>.Default.Equals(y[i], current)).ToArray();
     }
 }
