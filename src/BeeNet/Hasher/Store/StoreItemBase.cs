@@ -15,11 +15,9 @@
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Models;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public abstract class StoreItemBase
     {
         // Consts.

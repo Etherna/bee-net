@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Manifest
         public string Prefix { get; }
         public MantarayNode Node { get; }
 
-        public byte[] Bytes()
+        public byte[] ToByteArray()
         {
             List<byte> b =
             [

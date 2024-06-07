@@ -18,13 +18,11 @@ using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class MantarayNode
     {
         // Consts.
@@ -159,38 +157,14 @@ namespace Etherna.BeeNet.Manifest
 
             // Marshal current node, and set address as its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            _address = await hasherPipeline.HashDataAsync(MarshalBinary()).ConfigureAwait(false);
+            _address = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
             
             // Clean forks.
             forks.Clear();
         }
 
         // Helpers.
-        private byte[] MarshalBinary()
-        {
-            var bytes = new List<byte>();
-            
-            // Write obfuscation key.
-            ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
-            bytes.AddRange(ObfuscationKey.Bytes.ToArray());
-            
-            // Write header.
-            bytes.AddRange(MarshalHeader());
-
-            // Write last entry address.
-            if (!skipWriteEntryAddress)
-                bytes.AddRange((EntryAddress ?? SwarmAddress.Zero).ToByteArray());
-
-            // Write forks.
-            bytes.AddRange(MarshalForks());
-
-            // Obfuscate with key (except for key as first value).
-            var bytesArray = bytes.ToArray();
-            ObfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
-            return bytesArray;
-        }
-
-        private byte[] MarshalForks()
+        private byte[] ForksToByteArray()
         {
             // Create a fork index of 32 bytes size, using each bit to represent the existence of the key.
             // Keys are ASCII chars in [0, 255], and can't be duplicated. We can map presence in a space of 32*8 bits.
@@ -207,12 +181,12 @@ namespace Etherna.BeeNet.Manifest
 
             //forks
             foreach (var fork in forks.OrderBy(f => f.Key))
-                bytes.AddRange(fork.Value.Bytes());
+                bytes.AddRange(fork.Value.ToByteArray());
 
             return bytes.ToArray();
         }
 
-        private byte[] MarshalHeader()
+        private byte[] HeaderToByteArray()
         {
             var headerBytes = new byte[NodeHeaderSize];
             
@@ -227,6 +201,30 @@ namespace Etherna.BeeNet.Manifest
 
         private void SetNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags |= flag;
+        
+        private byte[] ToByteArray()
+        {
+            var bytes = new List<byte>();
+            
+            // Write obfuscation key.
+            ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
+            bytes.AddRange(ObfuscationKey.Bytes.ToArray());
+            
+            // Write header.
+            bytes.AddRange(HeaderToByteArray());
+
+            // Write last entry address.
+            if (!skipWriteEntryAddress)
+                bytes.AddRange((EntryAddress ?? SwarmAddress.Zero).ToByteArray());
+
+            // Write forks.
+            bytes.AddRange(ForksToByteArray());
+
+            // Obfuscate with key (except for key as first value).
+            var bytesArray = bytes.ToArray();
+            ObfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
+            return bytesArray;
+        }
 
         private void UpdateFlagIsWithPathSeparator(string path)
         {
