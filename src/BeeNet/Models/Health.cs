@@ -62,8 +62,6 @@ namespace Etherna.BeeNet.Models
             Version = response.Version;
             ApiVersion = response.ApiVersion;
             DebugApiVersion = response.DebugApiVersion;
-            if (response.AdditionalProperties.TryGetValue("reference", out object? reference))
-                Reference = reference.ToString();
         }
 
         // Properties.
@@ -71,6 +69,5 @@ namespace Etherna.BeeNet.Models
         public string Version { get; }
         public string ApiVersion { get; }
         public string DebugApiVersion { get; }
-        public string? Reference { get; }
     }
 }

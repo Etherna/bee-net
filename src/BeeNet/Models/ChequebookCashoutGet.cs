@@ -25,18 +25,18 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Peer = response.Peer;
-            LastCashedCheque = response.LastCashedCheque is not null ? new LastCashedCheque(response.LastCashedCheque) : null;
+            LastCashedCheque = response.LastCashedCheque is not null ? new ChequePayment(response.LastCashedCheque) : null;
             TransactionHash = response.TransactionHash;
             Result = new ResultChequebook(response.Result);
-            UncashedAmount = long.Parse(response.UncashedAmount, CultureInfo.InvariantCulture);
+            UncashedAmount = BzzBalance.FromPlurString(response.UncashedAmount);
         }
 
         // Properties.
         public string Peer { get; }
-        public LastCashedCheque? LastCashedCheque { get; }
+        public ChequePayment? LastCashedCheque { get; }
         public string TransactionHash { get; }
         public ResultChequebook Result { get; }
-        public long UncashedAmount { get; }
+        public BzzBalance UncashedAmount { get; }
     }
 
 }

@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public int Duration { get; set; }
-        public string Hash { get; set; }
+        public SwarmAddress Hash { get; set; }
         public ReserveCommitmentProof Proof1 { get; set; }
         public ReserveCommitmentProof Proof2 { get; set; }
         public ReserveCommitmentProof ProofLast { get; set; }

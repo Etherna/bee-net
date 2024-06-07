@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Models
             LastPlayedRound = response.LastPlayedRound;
             LastFrozenRound = response.LastFrozenRound;
             Block = response.Block;
-            Reward = response.Reward;
+            Reward = BzzBalance.FromPlurString(response.Reward);
             Fees = response.Fees;
         }
 
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Models
         public int LastPlayedRound { get; set; } 
         public int LastFrozenRound { get; set; } 
         public int Block { get; set; } 
-        public string Reward { get; set; }
+        public BzzBalance Reward { get; set; }
         public string Fees { get; set; } 
     }
 }

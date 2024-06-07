@@ -12,6 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,7 +28,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             var wallet = await beeNodeClient.GetWalletBalance();
 
             // Assert.
-            Assert.NotEqual("0", wallet.Bzz);
+            Assert.NotEqual(new BzzBalance(0), wallet.Bzz);
             Assert.NotEqual("0", wallet.NativeTokenBalance);
         }
 

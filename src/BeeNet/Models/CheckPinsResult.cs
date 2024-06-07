@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Models
         
         public int Invalid { get; }
         public int Missing { get; }
-        public string Reference { get; }
+        public SwarmAddress Reference { get; }
         public int Total { get; }
     }
 }
