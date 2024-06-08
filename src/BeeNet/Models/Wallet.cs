@@ -24,11 +24,11 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
             Bzz = BzzBalance.FromPlurString(response.BzzBalance);
-            NativeTokenBalance = response.NativeTokenBalance;
+            NativeTokenBalance = XDaiBalance.FromWeiString(response.NativeTokenBalance);
         }
 
         // Properties.
         public BzzBalance Bzz { get; }
-        public string NativeTokenBalance { get; }
+        public XDaiBalance NativeTokenBalance { get; }
     }
 }

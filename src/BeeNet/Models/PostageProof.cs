@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Clients;
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
@@ -26,7 +27,8 @@ namespace Etherna.BeeNet.Models
             Index = postageProof.Index;
             PostageId = postageProof.PostageId;
             Signature = postageProof.Signature;
-            TimeStamp = postageProof.TimeStamp;
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(
+                long.Parse(postageProof.TimeStamp, CultureInfo.InvariantCulture));
         }
 
         internal PostageProof(PostageProof2 postageProof)
@@ -36,7 +38,8 @@ namespace Etherna.BeeNet.Models
             Index = postageProof.Index;
             PostageId = postageProof.PostageId;
             Signature = postageProof.Signature;
-            TimeStamp = postageProof.TimeStamp;
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(
+                long.Parse(postageProof.TimeStamp, CultureInfo.InvariantCulture));
         }
 
         internal PostageProof(PostageProof3 postageProof)
@@ -46,13 +49,14 @@ namespace Etherna.BeeNet.Models
             Index = postageProof.Index;
             PostageId = postageProof.PostageId;
             Signature = postageProof.Signature;
-            TimeStamp = postageProof.TimeStamp;
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(
+                long.Parse(postageProof.TimeStamp, CultureInfo.InvariantCulture));
         }
 
         // Properties.
         public string Index { get; }
         public PostageBatchId PostageId { get; }
         public string Signature { get; }
-        public string TimeStamp { get; }
+        public DateTimeOffset TimeStamp { get; }
     }
 }

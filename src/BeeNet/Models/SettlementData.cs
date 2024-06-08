@@ -25,8 +25,8 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
+            Received = BzzBalance.FromPlurString(settlement.Received);
+            Sent = BzzBalance.FromPlurString(settlement.Sent);
         }
 
         internal SettlementData(Clients.Settlements2 settlements)
@@ -34,8 +34,8 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(settlements, nameof(settlements));
 
             Peer = settlements.Peer;
-            Received = Convert.ToInt64(settlements.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlements.Sent, CultureInfo.InvariantCulture);
+            Received = BzzBalance.FromPlurString(settlements.Received);
+            Sent = BzzBalance.FromPlurString(settlements.Sent);
         }
 
         internal SettlementData(Clients.Response35 settlement)
@@ -43,13 +43,13 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(settlement, nameof(settlement));
 
             Peer = settlement.Peer;
-            Received = Convert.ToInt64(settlement.Received, CultureInfo.InvariantCulture);
-            Sent = Convert.ToInt64(settlement.Sent, CultureInfo.InvariantCulture);
+            Received = BzzBalance.FromPlurString(settlement.Received);
+            Sent = BzzBalance.FromPlurString(settlement.Sent);
         }
 
         // Properties.
         public string Peer { get; }
-        public long Received { get; }
-        public long Sent { get; }
+        public BzzBalance Received { get; }
+        public BzzBalance Sent { get; }
     }
 }

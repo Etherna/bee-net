@@ -88,21 +88,32 @@ namespace Etherna.BeeNet
                 }).ConfigureAwait(false));
         
         public async Task<PostageBatchId> BuyPostageBatchAsync(
-            long amount,
+            BzzBalance amount,
             int depth,
             string? label = null,
             bool? immutable = null,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsPostAsync(amount.ToString(CultureInfo.InvariantCulture), depth, label, immutable, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
+            (await generatedClient.StampsPostAsync(
+                amount.ToPlurString(),
+                depth,
+                label,
+                immutable,
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<string> CashoutChequeForPeerAsync(
             string peerId,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChequebookCashoutPostAsync(peerId, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.ChequebookCashoutPostAsync(
+                peerId,
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<bool> CheckChunkExistsAsync(
             SwarmAddress address,
@@ -173,28 +184,36 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             generatedClient.TagsDeleteAsync(uid, cancellationToken);
 
-        public async Task<IEnumerable<string>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference;
-
         public async Task<string> DeleteTransactionAsync(
             string txHash,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.TransactionsDeleteAsync(txHash, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.TransactionsDeleteAsync(
+                txHash,
+                gasPrice?.ToWeiLong(),
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> DepositIntoChequeBookAsync(
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChequebookDepositAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.ChequebookDepositAsync(
+                amount.ToPlurLong(),
+                gasPrice?.ToWeiLong(),
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<PostageBatchId> DilutePostageBatchAsync(
             PostageBatchId batchId,
             int depth,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsDiluteAsync(batchId.ToString(), depth, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
+            (await generatedClient.StampsDiluteAsync(
+                batchId.ToString(),
+                depth,
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false));
@@ -210,6 +229,10 @@ namespace Etherna.BeeNet
 
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
+
+        public async Task<IEnumerable<SwarmAddress>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference
+            .Select(a => new SwarmAddress(a));
 
         public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false));
@@ -339,8 +362,8 @@ namespace Etherna.BeeNet
         public async Task<IEnumerable<PostageBatch>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatch(i));
 
-        public async Task<IEnumerable<PendingTransaction>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new PendingTransaction(i));
+        public async Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new TxInfo(i));
 
         public async Task<string> GetPinStatusAsync(
             SwarmAddress address,
@@ -383,7 +406,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             ((await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ?? Array.Empty<Tags>()).Select(i => new TagInfo(i));
 
-        public async Task<TransactionInfo> GetTransactionInfoAsync(
+        public async Task<TxInfo> GetTransactionInfoAsync(
             string txHash,
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false));
@@ -446,14 +469,28 @@ namespace Etherna.BeeNet
                 },
                 cancellationToken);
 
-        public async Task StakeDeleteAsync(long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default) =>
-            await generatedClient.StakeDeleteAsync(gasPrice, gasLimit, cancellationToken).ConfigureAwait(false);
+        public async Task StakeDeleteAsync(
+            XDaiBalance? gasPrice = null,
+            long? gasLimit = null,
+            CancellationToken cancellationToken = default) =>
+            await generatedClient.StakeDeleteAsync(
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false);
 
         public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
             await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
 
-        public async Task StakePostAsync(string? amount = null, long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default) =>
-            await generatedClient.StakePostAsync(amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false);
+        public async Task StakePostAsync(
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
+            long? gasLimit = null,
+            CancellationToken cancellationToken = default) =>
+            await generatedClient.StakePostAsync(
+                amount.ToPlurString(),
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false);
 
         public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false));
@@ -468,11 +505,16 @@ namespace Etherna.BeeNet
 
         public async Task<PostageBatchId> TopUpPostageBatchAsync(
             PostageBatchId batchId,
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsTopupAsync(batchId.ToString(), amount, gasPrice, gasLimit, cancellationToken).ConfigureAwait(false)).BatchID;
+            (await generatedClient.StampsTopupAsync(
+                batchId.ToString(),
+                amount.ToPlurLong(),
+                gasPrice?.ToWeiLong(),
+                gasLimit,
+                cancellationToken).ConfigureAwait(false)).BatchID;
 
         public async Task<string> TryConnectToPeerAsync(
             string peerId,
@@ -578,17 +620,24 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<string> WalletWithdrawAsync(
-            long amount,
+            BzzBalance amount,
             string address,
-            string coin,
+            XDaiBalance coin,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.WalletWithdrawAsync(amount.ToString(CultureInfo.InvariantCulture), address, coin, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.WalletWithdrawAsync(
+                amount.ToPlurString(),
+                address,
+                coin,
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequeBookAsync(
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChequebookWithdrawAsync(amount, gasPrice, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.ChequebookWithdrawAsync(
+                amount.ToPlurLong(),
+                gasPrice?.ToWeiLong(),
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         // Helpers.
         private static string BuildBaseUrl(string url, int port)

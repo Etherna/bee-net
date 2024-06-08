@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
             LastFrozenRound = response.LastFrozenRound;
             Block = response.Block;
             Reward = BzzBalance.FromPlurString(response.Reward);
-            Fees = response.Fees;
+            Fees = XDaiBalance.FromWeiString(response.Fees);
         }
 
         // Properties.
@@ -45,6 +45,6 @@ namespace Etherna.BeeNet.Models
         public int LastFrozenRound { get; set; } 
         public int Block { get; set; } 
         public BzzBalance Reward { get; set; }
-        public string Fees { get; set; } 
+        public XDaiBalance Fees { get; set; } 
     }
 }
