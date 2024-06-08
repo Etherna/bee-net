@@ -26,14 +26,14 @@ namespace Etherna.BeeNet.Models
 
             Block = response.Block;
             ChainTip = response.ChainTip;
-            CurrentPrice = Convert.ToInt64(response.CurrentPrice, CultureInfo.InvariantCulture);
-            TotalAmount = Convert.ToInt64(response.TotalAmount, CultureInfo.InvariantCulture);
+            CurrentPrice = BzzBalance.FromPlurString(response.CurrentPrice);
+            TotalAmount = BzzBalance.FromPlurString(response.TotalAmount);
         }
 
         // Properties.
         public long Block { get; }
         public int ChainTip { get; }
-        public long CurrentPrice { get; }
-        public long TotalAmount { get; }
+        public BzzBalance CurrentPrice { get; }
+        public BzzBalance TotalAmount { get; }
     }
 }

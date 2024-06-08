@@ -17,33 +17,48 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class PendingTransaction
+    public sealed class TxInfo
     {
         // Constructors.
-        internal PendingTransaction(Clients.PendingTransactions tx)
+        internal TxInfo(Clients.PendingTransactions tx)
         {
             ArgumentNullException.ThrowIfNull(tx, nameof(tx));
 
             TransactionHash = tx.TransactionHash;
             To = tx.To;
             Nonce = tx.Nonce;
-            GasPrice = long.Parse(tx.GasPrice, CultureInfo.InvariantCulture);
+            GasPrice = XDaiBalance.FromWeiString(tx.GasPrice);
             GasLimit = tx.GasLimit;
             Data = tx.Data;
             Created = tx.Created;
             Description = tx.Description;
-            Value = long.Parse(tx.Value, CultureInfo.InvariantCulture);
+            Value = XDaiBalance.FromWeiString(tx.Value);
+        }
+        
+        internal TxInfo(Clients.Response48 tx)
+        {
+            ArgumentNullException.ThrowIfNull(tx, nameof(tx));
+
+            TransactionHash = tx.TransactionHash;
+            To = tx.To;
+            Nonce = tx.Nonce;
+            GasPrice = XDaiBalance.FromWeiString(tx.GasPrice);
+            GasLimit = tx.GasLimit;
+            Data = tx.Data;
+            Created = tx.Created;
+            Description = tx.Description;
+            Value = XDaiBalance.FromWeiString(tx.Value);
         }
 
         // Properties.
         public string TransactionHash { get; }
         public string To { get; }
         public int Nonce { get; }
-        public long GasPrice { get; }
+        public XDaiBalance GasPrice { get; }
         public long GasLimit { get; }
         public string Data { get; }
         public DateTimeOffset Created { get; }
         public string Description { get; }
-        public long Value { get; }
+        public XDaiBalance Value { get; }
     }
 }

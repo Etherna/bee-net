@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Models
         // Public constructor.
         public PostageBatch(
             PostageBatchId id,
-            long amount,
+            BzzBalance amount,
             int blockNumber,
             int depth,
             bool exists,
@@ -59,8 +59,7 @@ namespace Etherna.BeeNet.Models
             if (batch.Depth is < MinDepth or > MaxDepth)
                 throw new ArgumentOutOfRangeException(nameof(batch), "Batch depth out of range");
 
-            if (long.TryParse(batch.Amount, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
-                Amount = amount;
+            Amount = BzzBalance.FromPlurString(batch.Amount);
             Depth = batch.Depth;
             BlockNumber = batch.BlockNumber;
             Exists = batch.Exists;
@@ -78,8 +77,7 @@ namespace Etherna.BeeNet.Models
             if (batch.Depth is < MinDepth or > MaxDepth)
                 throw new ArgumentOutOfRangeException(nameof(batch), "Batch depth out of range");
 
-            if (long.TryParse(batch.Amount, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
-                Amount = amount;
+            Amount = BzzBalance.FromPlurString(batch.Amount);
             Depth = batch.Depth;
             BlockNumber = batch.BlockNumber;
             Exists = batch.Exists;
@@ -110,7 +108,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Amount paid for the batch
         /// </summary>
-        public long Amount { get; }
+        public BzzBalance Amount { get; }
         
         /// <summary>
         /// Block number when this batch was created

@@ -12,24 +12,24 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients;
 using System;
-using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
     public sealed class ChequebookBalance
     {
         // Constructors.
-        internal ChequebookBalance(Clients.Response27 response)
+        internal ChequebookBalance(Response27 response)
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            TotalBalance = long.Parse(response.TotalBalance, CultureInfo.InvariantCulture);
-            AvailableBalance = long.Parse(response.AvailableBalance, CultureInfo.InvariantCulture);
+            TotalBalance = BzzBalance.FromPlurString(response.TotalBalance);
+            AvailableBalance = BzzBalance.FromPlurString(response.AvailableBalance);
         }
 
         // Properties.
-        public long TotalBalance { get; }
-        public long AvailableBalance { get; }
+        public BzzBalance TotalBalance { get; }
+        public BzzBalance AvailableBalance { get; }
     }
 }

@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public string ChunkAddr { get; set; }
+        public SwarmAddress ChunkAddr { get; set; }
         public string Identifier { get; set; }
         public string Signature { get; set; }
         public string Signer { get; set; }

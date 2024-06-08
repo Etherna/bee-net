@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+            Balance = BzzBalance.FromPlurString(balance.Balance);
         }
 
         internal PeerBalance(Clients.Balances2 balance)
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+            Balance = BzzBalance.FromPlurString(balance.Balance);
         }
 
         internal PeerBalance(Clients.Response23 balance)
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+            Balance = BzzBalance.FromPlurString(balance.Balance);
         }
 
         internal PeerBalance(Clients.Response25 balance)
@@ -49,11 +49,11 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(balance, nameof(balance));
 
             Peer = balance.Peer;
-            Balance = long.Parse(balance.Balance, CultureInfo.InvariantCulture);
+            Balance = BzzBalance.FromPlurString(balance.Balance);
         }
 
         // Properties.
         public string Peer { get; }
-        public long Balance { get; }
+        public BzzBalance Balance { get; }
     }
 }

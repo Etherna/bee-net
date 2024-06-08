@@ -26,8 +26,8 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
+            TotalReceived = BzzBalance.FromPlurString(response.TotalReceived);
+            TotalSent = BzzBalance.FromPlurString(response.TotalSent);
             Settlements = response.Settlements
                 .Select(i => new SettlementData(i));
         }
@@ -36,15 +36,15 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
-            TotalReceived = Convert.ToInt64(response.TotalReceived, CultureInfo.InvariantCulture);
-            TotalSent = Convert.ToInt64(response.TotalSent, CultureInfo.InvariantCulture);
+            TotalReceived = BzzBalance.FromPlurString(response.TotalReceived);
+            TotalSent = BzzBalance.FromPlurString(response.TotalSent);
             Settlements = response.Settlements
                 .Select(i => new SettlementData(i));
         }
 
         // Properties.
-        public long TotalReceived { get; }
-        public long TotalSent { get; }
+        public BzzBalance TotalReceived { get; }
+        public BzzBalance TotalSent { get; }
         public IEnumerable<SettlementData> Settlements { get; }
     }
 }
