@@ -29,7 +29,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Assert.
             Assert.NotEqual(new BzzBalance(0), wallet.Bzz);
-            Assert.NotEqual("0", wallet.NativeTokenBalance);
+            Assert.NotEqual(new XDaiBalance(0), wallet.NativeTokenBalance);
         }
 
     }

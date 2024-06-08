@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Etherna.BeeNet.Models
@@ -47,7 +48,8 @@ namespace Etherna.BeeNet.Models
                 Clients.Response38Reachability.Private => Models.Reachability.Private,
                 _ => throw new InvalidOperationException(),
             };
-            Timestamp = response.Timestamp;
+            Timestamp = DateTimeOffset.FromUnixTimeSeconds(
+                long.Parse(response.Timestamp, CultureInfo.InvariantCulture));
         }
 
         // Properties.
@@ -59,6 +61,6 @@ namespace Etherna.BeeNet.Models
         public int NnLowWatermark { get; }
         public int Population { get; }
         public Reachability Reachability { get; }
-        public string Timestamp { get; }
+        public DateTimeOffset Timestamp { get; }
     }
 }

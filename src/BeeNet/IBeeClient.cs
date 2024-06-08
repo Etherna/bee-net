@@ -48,11 +48,11 @@ namespace Etherna.BeeNet
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<PostageBatchId> BuyPostageBatchAsync(
-            long amount,
+            BzzBalance amount,
             int depth,
             string? label = null,
             bool? immutable = null,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
@@ -64,7 +64,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> CashoutChequeForPeerAsync(
             string peerId,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
@@ -167,7 +167,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> DeleteTransactionAsync(
             string txHash,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Deposit tokens from overlay address into chequebook</summary>
@@ -176,8 +176,8 @@ namespace Etherna.BeeNet
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> DepositIntoChequeBookAsync(
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Dilute an existing postage batch.</summary>
@@ -188,7 +188,7 @@ namespace Etherna.BeeNet
         Task<PostageBatchId> DilutePostageBatchAsync(
             PostageBatchId batchId,
             int depth,
-            long? gasPrice = null,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
@@ -220,7 +220,7 @@ namespace Etherna.BeeNet
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<IEnumerable<string>> GetAllPinsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<SwarmAddress>> GetAllPinsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get settlements with all known peers and total amount sent or received</summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
@@ -384,7 +384,7 @@ namespace Etherna.BeeNet
         /// <param name="swarmChunkRetrievalTimeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Models.FileResponse> GetFileWithPathAsync(
+        Task<FileResponse> GetFileWithPathAsync(
             SwarmAddress address,
             string path,
             RedundancyStrategy? swarmRedundancyStrategy = null,
@@ -412,7 +412,7 @@ namespace Etherna.BeeNet
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<IEnumerable<PendingTransaction>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
         /// <param name="address">Swarm reference of the root hash</param>
@@ -491,7 +491,7 @@ namespace Etherna.BeeNet
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<TransactionInfo> GetTransactionInfoAsync(
+        Task<TxInfo> GetTransactionInfoAsync(
             string txHash,
             CancellationToken cancellationToken = default);
 
@@ -595,7 +595,10 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakeDeleteAsync(long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default);
+        Task StakeDeleteAsync(
+            XDaiBalance? gasPrice = null,
+            long? gasLimit = null,
+            CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -618,7 +621,11 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
-        Task StakePostAsync(string? amount = null, long? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default);
+        Task StakePostAsync(
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
+            long? gasLimit = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get the current status snapshot of this node.
@@ -647,8 +654,8 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<PostageBatchId> TopUpPostageBatchAsync(
             PostageBatchId batchId, 
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default);
 
@@ -755,6 +762,7 @@ namespace Etherna.BeeNet
         /// <param name="owner">Owner</param>
         /// <param name="id">Id</param>
         /// <param name="sig">Signature</param>
+        /// <param name="batchId"></param>
         /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
@@ -777,9 +785,9 @@ namespace Etherna.BeeNet
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
         Task<string> WalletWithdrawAsync(
-            long amount,
+            BzzBalance amount,
             string address,
-            string coin,
+            XDaiBalance coin,
             CancellationToken cancellationToken = default);
 
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
@@ -788,8 +796,8 @@ namespace Etherna.BeeNet
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> WithdrawFromChequeBookAsync(
-            long amount,
-            long? gasPrice = null,
+            BzzBalance amount,
+            XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default);
     }
 }
