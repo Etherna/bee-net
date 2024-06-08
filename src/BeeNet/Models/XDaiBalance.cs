@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public struct XDaiBalance : IEquatable<XDaiBalance>
+    public readonly struct XDaiBalance : IEquatable<XDaiBalance>
     {
         // Consts.
         public const int DecimalPrecision = 18;
@@ -31,14 +31,21 @@ namespace Etherna.BeeNet.Models
             _balance = decimal.Round(balance, DecimalPrecision)
                        / 1.000000000000000000000000000000000m; //remove final zeros
         }
+        
+        // Builders.
+        public static XDaiBalance FromDecimal(decimal value) => new(value);
+        public static XDaiBalance FromDouble(double value) => new((decimal)value);
+        public static XDaiBalance FromInt32(int value) => new(value);
+        public static XDaiBalance FromWeiLong(long weiValue) =>
+            decimal.Divide(weiValue, (decimal)Math.Pow(10, DecimalPrecision));
+        public static XDaiBalance FromWeiString(string weiValue) =>
+            FromWeiLong(long.Parse(weiValue, CultureInfo.InvariantCulture));
 
         // Methods.
         public int CompareTo(XDaiBalance other) => _balance.CompareTo(other._balance);
-
         public override bool Equals(object? obj) =>
             obj is XDaiBalance xDaiObj &&
             Equals(xDaiObj);
-
         public bool Equals(XDaiBalance other) => _balance == other._balance;
         public override int GetHashCode() => _balance.GetHashCode();
         public decimal ToDecimal() => _balance;
@@ -48,9 +55,6 @@ namespace Etherna.BeeNet.Models
         public static XDaiBalance Add(XDaiBalance left, XDaiBalance right) => left + right;
         public static XDaiBalance Decrement(XDaiBalance balance) => --balance;
         public static XDaiBalance Divide(XDaiBalance left, XDaiBalance right) => left / right;
-        public static XDaiBalance FromDecimal(decimal value) => new(value);
-        public static XDaiBalance FromDouble(double value) => new((decimal)value);
-        public static XDaiBalance FromInt32(int value) => new(value);
         public static XDaiBalance Increment(XDaiBalance balance) => ++balance;
         public static XDaiBalance Multiply(XDaiBalance left, XDaiBalance right) => left * right;
         public static XDaiBalance Negate(XDaiBalance balance) => -balance;
