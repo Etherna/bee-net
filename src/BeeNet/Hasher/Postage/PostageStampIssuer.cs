@@ -19,15 +19,24 @@ namespace Etherna.BeeNet.Hasher.Postage
 {
     public class PostageStampIssuer : IPostageStampIssuer
     {
+        // Consts.
+        public const int BucketsSize = 1 << PostageBatch.BucketDepth;
+        
         // Fields.
-        private readonly uint[] _buckets = new uint[1 << PostageBatch.BucketDepth];
+        private readonly uint[] _buckets;
         
         // Constructor.
         public PostageStampIssuer(
-            PostageBatch postageBatch)
+            PostageBatch postageBatch,
+            uint[]? initialBuckets = null)
         {
             ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
-            
+            if (initialBuckets is not null &&
+                initialBuckets.Length != BucketsSize)
+                throw new ArgumentOutOfRangeException(nameof(initialBuckets),
+                    $"Initial buckets must have length {BucketsSize}, or be null");
+
+            _buckets = initialBuckets ?? new uint[BucketsSize];
             BucketUpperBound = (uint)1 << (postageBatch.Depth - PostageBatch.BucketDepth);
             PostageBatch = postageBatch;
         }
