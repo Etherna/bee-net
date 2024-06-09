@@ -12,8 +12,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+using Etherna.BeeNet.Clients;
 using System;
-using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Internal constructors.
-        internal PostageBatch(Clients.Stamps batch)
+        internal PostageBatch(Stamps batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
             if (batch.Depth is < MinDepth or > MaxDepth)
@@ -71,7 +71,7 @@ namespace Etherna.BeeNet.Models
             Utilization = batch.Utilization;
         }
 
-        internal PostageBatch(Clients.Response52 batch)
+        internal PostageBatch(Response52 batch)
         {
             ArgumentNullException.ThrowIfNull(batch, nameof(batch));
             if (batch.Depth is < MinDepth or > MaxDepth)
@@ -146,5 +146,15 @@ namespace Etherna.BeeNet.Models
         /// The count of the fullest bucket
         /// </summary>
         public uint Utilization { get; }
+        
+        // Static methods.
+        public static BzzBalance CalculateAmount(BzzBalance chainPrice, TimeSpan ttl) =>
+            (decimal)(ttl / GnosisChain.BlockTime) * chainPrice;
+        
+        public static BzzBalance CalculatePrice(BzzBalance amount, int depth) =>
+            amount * (decimal)Math.Pow(2, depth);
+
+        public static BzzBalance CalculatePrice(BzzBalance chainPrice, TimeSpan ttl, int depth) =>
+            CalculatePrice(CalculateAmount(chainPrice, ttl), depth);
     }
 }

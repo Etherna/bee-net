@@ -21,8 +21,7 @@ namespace Etherna.BeeNet.Models
     {
         // Consts.
         public const int DecimalPrecision = 16;
-        private static readonly decimal TenPowerDecimalPrecision =
-            (decimal)Math.Pow(10, DecimalPrecision);
+        public static readonly decimal PlursInBzz = (decimal)Math.Pow(10, DecimalPrecision);
 
         // Fields.
         private readonly decimal balance;
@@ -38,8 +37,7 @@ namespace Etherna.BeeNet.Models
         public static BzzBalance FromDecimal(decimal value) => new(value);
         public static BzzBalance FromDouble(double value) => new((decimal)value);
         public static BzzBalance FromInt32(int value) => new(value);
-        public static BzzBalance FromPlurLong(long plurValue) =>
-            decimal.Divide(plurValue, TenPowerDecimalPrecision);
+        public static BzzBalance FromPlurLong(long plurValue) => decimal.Divide(plurValue, PlursInBzz);
         public static BzzBalance FromPlurString(string plurValue) =>
             FromPlurLong(long.Parse(plurValue, CultureInfo.InvariantCulture));
 
@@ -51,24 +49,28 @@ namespace Etherna.BeeNet.Models
         public bool Equals(BzzBalance other) => balance == other.balance;
         public override int GetHashCode() => balance.GetHashCode();
         public decimal ToDecimal() => balance;
-        public long ToPlurLong() => (long)decimal.Multiply(balance, TenPowerDecimalPrecision);
-        public string ToPlurString() => decimal.Multiply(balance, TenPowerDecimalPrecision).ToString(CultureInfo.InvariantCulture);
+        public long ToPlurLong() => (long)decimal.Multiply(balance, PlursInBzz);
+        public string ToPlurString() => decimal.Multiply(balance, PlursInBzz).ToString(CultureInfo.InvariantCulture);
         public override string ToString() => balance.ToString(CultureInfo.InvariantCulture);
 
         // Static methods.
         public static BzzBalance Add(BzzBalance left, BzzBalance right) => left + right;
         public static BzzBalance Decrement(BzzBalance balance) => --balance;
-        public static BzzBalance Divide(BzzBalance left, BzzBalance right) => left / right;
+        public static decimal Divide(BzzBalance left, BzzBalance right) => left.balance / right.balance;
+        public static BzzBalance Divide(BzzBalance left, decimal right) => left.balance / right;
         public static BzzBalance Increment(BzzBalance balance) => ++balance;
-        public static BzzBalance Multiply(BzzBalance left, BzzBalance right) => left * right;
+        public static BzzBalance Multiply(BzzBalance left, decimal right) => left.balance * right;
+        public static BzzBalance Multiply(decimal left, BzzBalance right) => left * right.balance;
         public static BzzBalance Negate(BzzBalance balance) => -balance;
         public static BzzBalance Subtract(BzzBalance left, BzzBalance right) => left - right;
 
         // Operator methods.
-        public static BzzBalance operator +(BzzBalance left, BzzBalance right) => new(left.balance + right.balance);
-        public static BzzBalance operator -(BzzBalance left, BzzBalance right) => new(left.balance - right.balance);
-        public static BzzBalance operator *(BzzBalance left, BzzBalance right) => new(left.balance * right.balance);
-        public static BzzBalance operator /(BzzBalance left, BzzBalance right) => new(left.balance / right.balance);
+        public static BzzBalance operator +(BzzBalance left, BzzBalance right) => left.balance + right.balance;
+        public static BzzBalance operator -(BzzBalance left, BzzBalance right) => left.balance - right.balance;
+        public static BzzBalance operator *(BzzBalance left, decimal right) => left.balance * right;
+        public static BzzBalance operator *(decimal left, BzzBalance right) => left * right.balance;
+        public static decimal operator /(BzzBalance left, BzzBalance right) => left.balance / right.balance;
+        public static BzzBalance operator /(BzzBalance left, decimal right) => left.balance / right;
 
         public static bool operator ==(BzzBalance left, BzzBalance right) => left.Equals(right);
         public static bool operator !=(BzzBalance left, BzzBalance right) => !(left == right);
