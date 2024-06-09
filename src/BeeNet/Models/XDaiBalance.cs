@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Models
         public decimal ToDecimal() => balance;
         public override string ToString() => balance.ToString(CultureInfo.InvariantCulture);
         public long ToWeiLong()=> (long)decimal.Multiply(balance, WeisInXDai);
-        public string ToWeiString() => decimal.Multiply(balance, WeisInXDai).ToString(CultureInfo.InvariantCulture);
+        public string ToWeiString() => decimal.Multiply(balance, WeisInXDai).ToString("F0", CultureInfo.InvariantCulture);
 
         // Static methods.
         public static XDaiBalance Add(XDaiBalance left, XDaiBalance right) => left + right;

@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Models
         public override int GetHashCode() => balance.GetHashCode();
         public decimal ToDecimal() => balance;
         public long ToPlurLong() => (long)decimal.Multiply(balance, PlursInBzz);
-        public string ToPlurString() => decimal.Multiply(balance, PlursInBzz).ToString(CultureInfo.InvariantCulture);
+        public string ToPlurString() => decimal.Multiply(balance, PlursInBzz).ToString("F0", CultureInfo.InvariantCulture);
         public override string ToString() => balance.ToString(CultureInfo.InvariantCulture);
 
         // Static methods.
