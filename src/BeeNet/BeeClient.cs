@@ -32,6 +32,7 @@ namespace Etherna.BeeNet
     public class BeeClient : IBeeClient, IDisposable
     {
         // Consts.
+        public const int DefaultPort = 1633;
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
 
         // Fields.
@@ -43,13 +44,19 @@ namespace Etherna.BeeNet
         // Constructors.
         public BeeClient(
             string baseUrl = "http://localhost/",
-            int gatewayApiPort = 1633,
+            int port = DefaultPort,
+            HttpClient? httpClient = null)
+            : this(BuildBaseUrl(baseUrl, port), httpClient)
+        { }
+
+        public BeeClient(
+            Uri baseUrl,
             HttpClient? httpClient = null)
         {
             this.httpClient = httpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
-            GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
-            generatedClient = new BeeGeneratedClient(this.httpClient) { BaseUrl = GatewayApiUrl.ToString() };
+            BaseUrl = baseUrl;
+            generatedClient = new BeeGeneratedClient(this.httpClient) { BaseUrl = BaseUrl.ToString() };
         }
 
         // Dispose.
@@ -72,7 +79,7 @@ namespace Etherna.BeeNet
 
 
         // Properties.
-        public Uri GatewayApiUrl { get; }
+        public Uri BaseUrl { get; }
         
         // Methods.
         public async Task<Dictionary<string, Account>> AccountingAsync(
@@ -640,7 +647,7 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         // Helpers.
-        private static string BuildBaseUrl(string url, int port)
+        private static Uri BuildBaseUrl(string url, int port)
         {
             var normalizedUrl = url;
             if (normalizedUrl.Last() != '/')
@@ -660,7 +667,7 @@ namespace Etherna.BeeNet
 
             baseUrl += $"{urlMatch.Groups["host"].Value}:{port}";
 
-            return baseUrl;
+            return new Uri(baseUrl);
         }
     }
 }
