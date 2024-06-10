@@ -18,13 +18,13 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using FileResponse = Etherna.BeeNet.Models.FileResponse;
 
 namespace Etherna.BeeNet
 {
@@ -44,12 +44,12 @@ namespace Etherna.BeeNet
         public BeeClient(
             string baseUrl = "http://localhost/",
             int gatewayApiPort = 1633,
-            HttpClient? customHttpClient = null)
+            HttpClient? httpClient = null)
         {
-            httpClient = customHttpClient ?? new HttpClient { Timeout = DefaultTimeout };
+            this.httpClient = httpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
             GatewayApiUrl = new Uri(BuildBaseUrl(baseUrl, gatewayApiPort));
-            generatedClient = new BeeGeneratedClient(httpClient) { BaseUrl = GatewayApiUrl.ToString() };
+            generatedClient = new BeeGeneratedClient(this.httpClient) { BaseUrl = GatewayApiUrl.ToString() };
         }
 
         // Dispose.
@@ -320,7 +320,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.FeedsGetAsync(owner, topic, at, after, type, cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<Models.FileResponse> GetFileAsync(
+        public async Task<FileResponse> GetFileAsync(
             SwarmAddress address,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
@@ -338,7 +338,7 @@ namespace Etherna.BeeNet
         public Task GetFileHeadAsync(SwarmAddress address, CancellationToken cancellationToken = default) =>
             generatedClient.BzzHeadAsync((string)address, cancellationToken);
 
-        public async Task<Models.FileResponse> GetFileWithPathAsync(
+        public async Task<FileResponse> GetFileWithPathAsync(
             SwarmAddress address,
             string path,
             RedundancyStrategy? swarmRedundancyStrategy = null,
