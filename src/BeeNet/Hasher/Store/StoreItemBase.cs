@@ -20,23 +20,19 @@ namespace Etherna.BeeNet.Hasher.Store
 {
     public abstract class StoreItemBase
     {
-        // Consts.
-        public const int StampIndexSize = 8;
-        public const int StampTimestampSize = 8;
-        
         // Constructor.
         protected StoreItemBase(
             PostageBatchId batchId,
-            SwarmAddress chunkAddress)
+            SwarmHash chunkHash)
         {
             BatchId = batchId;
-            ChunkAddress = chunkAddress;
+            ChunkHash = chunkHash;
         }
 
         // Properties.
         public PostageBatchId BatchId { get; protected set; }
         public DateTimeOffset? BucketTimestamp { get; set; }
-        public SwarmAddress ChunkAddress { get; protected set; }
+        public SwarmHash ChunkHash { get; protected set; }
         
         /// <summary>
         /// ID is the unique identifier of Item.

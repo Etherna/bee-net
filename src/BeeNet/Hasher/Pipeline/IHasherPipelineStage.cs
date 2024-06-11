@@ -21,6 +21,6 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     internal interface IHasherPipelineStage : IDisposable
     {
         Task FeedAsync(HasherPipelineFeedArgs args);
-        Task<SwarmAddress> SumAsync();
+        Task<SwarmHash> SumAsync();
     }
 }

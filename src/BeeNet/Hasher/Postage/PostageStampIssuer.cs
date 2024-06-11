@@ -49,9 +49,9 @@ namespace Etherna.BeeNet.Hasher.Postage
         public uint MaxBucketCount { get; private set; }
 
         // Methods.
-        public StampBucketIndex IncrementBucketCount(SwarmAddress address)
+        public StampBucketIndex IncrementBucketCount(SwarmHash hash)
         {
-            var bucketId = address.ToBucketId();
+            var bucketId = hash.ToBucketId();
 
             if (_buckets[bucketId] == BucketUpperBound)
             {

@@ -22,18 +22,18 @@ namespace Etherna.BeeNet.Services
     {
         // Constructor.
         internal UploadEvaluationResult(
-            SwarmAddress address,
+            SwarmHash hash,
             IPostageStampIssuer postageStampIssuer)
         {
-            Address = address;
+            Hash = hash;
             PostageStampIssuer = postageStampIssuer;
         }
 
         // Properties.
         /// <summary>
-        /// The upload resulting address
+        /// The upload resulting hash
         /// </summary>
-        public SwarmAddress Address { get; }
+        public SwarmHash Hash { get; }
 
         public IPostageStampIssuer PostageStampIssuer { get; }
 

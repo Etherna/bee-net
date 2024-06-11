@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Manifest
         // Fields.
         private readonly MantarayNode rootNode = new(
             isEncrypted ?
-                null : //auto-generate random on address building
+                null : //auto-generate random on hash building
                 XorEncryptKey.Empty);
 
         // Methods.
@@ -41,10 +41,10 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmAddress> GetAddressAsync()
+        public async Task<SwarmHash> GetHashAsync()
         {
-            await rootNode.ComputeAddressAsync(hasherBuilder).ConfigureAwait(false);
-            return rootNode.Address;
+            await rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
+            return rootNode.Hash;
         }
     }
 }

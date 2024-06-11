@@ -72,28 +72,28 @@ namespace Etherna.BeeNet
         /// <summary>
         /// Check if chunk at address exists locally
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="hash">Swarm hash of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<bool> CheckChunkExistsAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Check if content is available</summary>
-        /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
+        /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<StewardshipGet> CheckIsContentAvailableAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Validate pinned chunks integerity
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="hash"></param>
         /// <returns></returns>
         Task<CheckPinsResult> CheckPinsAsync(
-            SwarmAddress? address,
+            SwarmHash? hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Connect to address</summary>
@@ -113,7 +113,7 @@ namespace Etherna.BeeNet
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> CreateFeedAsync(
+        Task<SwarmHash> CreateFeedAsync(
             string owner,
             string topic,
             PostageBatchId batchId,
@@ -122,18 +122,18 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Pin the root hash with the given reference</summary>
-        /// <param name="address">Swarm reference of the root hash</param>
+        /// <param name="hash">Swarm reference of the root hash</param>
         /// <returns>Pin already exists, so no operation</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<MessageResponse> CreatePinAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Create Tag</summary>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> CreateTagAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
@@ -145,11 +145,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Unpin the root hash with the given reference</summary>
-        /// <param name="address">Swarm reference of the root hash</param>
+        /// <param name="hash">Swarm reference of the root hash</param>
         /// <returns>Unpinning root hash with reference</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<MessageResponse> DeletePinAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Delete Tag information using Uid</summary>
@@ -220,7 +220,7 @@ namespace Etherna.BeeNet
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<IEnumerable<SwarmAddress>> GetAllPinsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get settlements with all known peers and total amount sent or received</summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
@@ -249,7 +249,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get referenced data</summary>
-        /// <param name="address">Swarm address reference to content</param>
+        /// <param name="hash">Swarm hash reference to content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -257,7 +257,7 @@ namespace Etherna.BeeNet
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Stream> GetBytesAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -267,10 +267,10 @@ namespace Etherna.BeeNet
         /// <summary>
         /// Requests the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="hash">Swarm hash of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task GetBytesHeadAsync(SwarmAddress address, CancellationToken cancellationToken = default);
+        Task GetBytesHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
@@ -309,20 +309,20 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="hash">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmChunk> GetChunkAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="hash">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Stream> GetChunkStreamAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             CancellationToken cancellationToken = default);
 
@@ -342,7 +342,7 @@ namespace Etherna.BeeNet
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> GetFeedAsync(
+        Task<SwarmHash> GetFeedAsync(
             string owner,
             string topic,
             int? at = null,
@@ -351,7 +351,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get file or index document from a collection of files</summary>
-        /// <param name="address">Swarm address of content</param>
+        /// <param name="hash">Swarm address of content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -359,7 +359,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Models.FileResponse> GetFileAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -369,15 +369,15 @@ namespace Etherna.BeeNet
         /// <summary>
         /// Get the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="hash">Swarm address of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task GetFileHeadAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get referenced file from a collection of files</summary>
-        /// <param name="address">Swarm address of content</param>
+        /// <param name="hash">Swarm address of content</param>
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -385,7 +385,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<FileResponse> GetFileWithPathAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             string path,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -415,11 +415,11 @@ namespace Etherna.BeeNet
         Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
-        /// <param name="address">Swarm reference of the root hash</param>
+        /// <param name="hash">Swarm reference of the root hash</param>
         /// <returns>Reference of the pinned root hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> GetPinStatusAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get an individual postage batch status</summary>
@@ -557,11 +557,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Reupload a root hash to the network</summary>
-        /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
+        /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task ReuploadContentAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Send to recipient or target with Postal Service for Swarm</summary>
@@ -669,12 +669,12 @@ namespace Etherna.BeeNet
 
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>
         /// <param name="uid">Uid</param>
-        /// <param name="address">Can contain swarm hash to use for the tag</param>
+        /// <param name="hash">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task UpdateTagAsync(
             long uid,
-            SwarmAddress? address = null,
+            SwarmHash? hash = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload Chunk</summary>
@@ -685,7 +685,7 @@ namespace Etherna.BeeNet
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> UploadChunkAsync(
+        Task<SwarmHash> UploadChunkAsync(
             PostageBatchId batchId,
             long? swarmTag = null,
             bool? swarmPin = null,
@@ -716,7 +716,7 @@ namespace Etherna.BeeNet
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> UploadBytesAsync(
+        Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
             int? swarmTag = null, 
@@ -743,7 +743,7 @@ namespace Etherna.BeeNet
         /// <param name="swarmRedundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> UploadFileAsync(
+        Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,
             Stream content,
             string? name = null,
@@ -768,7 +768,7 @@ namespace Etherna.BeeNet
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmAddress> UploadSocAsync(
+        Task<SwarmHash> UploadSocAsync(
             string owner,
             string id,
             string sig,

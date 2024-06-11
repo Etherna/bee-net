@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             
-            ChunkAddr = socProof.ChunkAddr;
+            ChunkHash = socProof.ChunkAddr;
             Identifier = socProof.Identifier;
             Signature = socProof.Signature;
             Signer = socProof.Signer;
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             
-            ChunkAddr = socProof.ChunkAddr;
+            ChunkHash = socProof.ChunkAddr;
             Identifier = socProof.Identifier;
             Signature = socProof.Signature;
             Signer = socProof.Signer;
@@ -44,14 +44,14 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(socProof, nameof(socProof));
             
-            ChunkAddr = socProof.ChunkAddr;
+            ChunkHash = socProof.ChunkAddr;
             Identifier = socProof.Identifier;
             Signature = socProof.Signature;
             Signer = socProof.Signer;
         }
 
         // Properties.
-        public SwarmAddress ChunkAddr { get; set; }
+        public SwarmHash ChunkHash { get; set; }
         public string Identifier { get; set; }
         public string Signature { get; set; }
         public string Signer { get; set; }

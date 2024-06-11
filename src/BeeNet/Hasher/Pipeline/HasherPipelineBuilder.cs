@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     {
                         var args = new HasherPipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
-                        return args.Address!.Value;
+                        return args.Hash!.Value;
                     }
                 );
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(postageStamper, chunkAggregatorStage);

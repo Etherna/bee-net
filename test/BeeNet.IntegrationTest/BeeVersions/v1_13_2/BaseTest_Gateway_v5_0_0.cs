@@ -33,7 +33,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
                 1633);
         }
 
-        protected async Task<SwarmAddress> UploadBZZFileAndGetReferenceAsync(string filePath = null)
+        protected async Task<SwarmHash> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
@@ -49,7 +49,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
             return result;
         }
 
-        protected async Task<SwarmAddress> UploadChunkFileAndGetReferenceAsync()
+        protected async Task<SwarmHash> UploadChunkFileAndGetReferenceAsync()
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);

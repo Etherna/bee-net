@@ -43,6 +43,6 @@ namespace Etherna.BeeNet.Hasher.Postage
         public uint MaxBucketCount { get; }
 
         // Methods.
-        StampBucketIndex IncrementBucketCount(SwarmAddress address);
+        StampBucketIndex IncrementBucketCount(SwarmHash hash);
     }
 }

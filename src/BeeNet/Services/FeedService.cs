@@ -65,9 +65,9 @@ namespace Etherna.BeeNet.Services
 
             // Create new chunk.
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkReferenceHash = SwarmFeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
+            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex);
 
-            return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
+            return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }
 
         public Task<SwarmFeedChunk?> TryFindEpochFeedAsync(
@@ -160,16 +160,16 @@ namespace Etherna.BeeNet.Services
             TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
 
         public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
-            TryGetFeedChunkAsync(SwarmFeedChunk.BuildReferenceHash(account, topic, index), index);
+            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index), index);
 
-        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkAddress, FeedIndexBase index)
+        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmHash hash, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkStreamAsync(chunkAddress).ConfigureAwait(false);
+                using var chunkStream = await gatewayClient.GetChunkStreamAsync(hash).ConfigureAwait(false);
                 using var chunkMemoryStream = new MemoryStream();
                 await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
-                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkAddress);
+                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), hash);
             }
             catch (BeeNetApiException)
             {

@@ -123,12 +123,12 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<bool> CheckChunkExistsAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                await generatedClient.ChunksHeadAsync(address.ToString(), cancellationToken).ConfigureAwait(false);
+                await generatedClient.ChunksHeadAsync(hash.ToString(), cancellationToken).ConfigureAwait(false);
                 return true;
             }
             catch (BeeNetApiException)
@@ -138,21 +138,21 @@ namespace Etherna.BeeNet
         }
 
         public async Task<StewardshipGet> CheckIsContentAvailableAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StewardshipGetAsync((string)address, cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.StewardshipGetAsync((string)hash, cancellationToken).ConfigureAwait(false));
 
         public async Task<CheckPinsResult> CheckPinsAsync(
-            SwarmAddress? address,
+            SwarmHash? hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsCheckAsync(address?.ToString(), cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.PinsCheckAsync(hash?.ToString(), cancellationToken).ConfigureAwait(false));
 
         public async Task<string> ConnectToPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
-        public async Task<SwarmAddress> CreateFeedAsync(
+        public async Task<SwarmHash> CreateFeedAsync(
             string owner,
             string topic,
             PostageBatchId batchId,
@@ -162,17 +162,17 @@ namespace Etherna.BeeNet
             (await generatedClient.FeedsPostAsync(owner, topic, type, swarmPin, batchId.ToString(), cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<MessageResponse> CreatePinAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsPostAsync((string)address, cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.PinsPostAsync((string)hash, cancellationToken).ConfigureAwait(false));
 
         public async Task<TagInfo> CreateTagAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.TagsPostAsync(
                 new Body3
                 {
-                    Address = address.ToString()
+                    Address = hash.ToString()
                 },
                 cancellationToken).ConfigureAwait(false));
 
@@ -182,9 +182,9 @@ namespace Etherna.BeeNet
             new(await generatedClient.PeersDeleteAsync(peerAddress, cancellationToken).ConfigureAwait(false));
 
         public async Task<MessageResponse> DeletePinAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsDeleteAsync((string)address, cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.PinsDeleteAsync((string)hash, cancellationToken).ConfigureAwait(false));
 
         public Task DeleteTagAsync(
             long uid,
@@ -237,9 +237,9 @@ namespace Etherna.BeeNet
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
 
-        public async Task<IEnumerable<SwarmAddress>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
+        public async Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference
-            .Select(a => new SwarmAddress(a));
+            .Select(h => new SwarmHash(h));
 
         public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false));
@@ -256,22 +256,22 @@ namespace Etherna.BeeNet
             new(await generatedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
 
         public async Task<Stream> GetBytesAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.BytesGetAsync(
-                (string)address,
+                (string)hash,
                 swarmCache,
                 (SwarmRedundancyStrategy?)swarmRedundancyStrategy,
                 swarmRedundancyFallbackMode,
                 swarmChunkRetrievalTimeout,
                 cancellationToken).ConfigureAwait(false)).Stream;
 
-        public Task GetBytesHeadAsync(SwarmAddress address, CancellationToken cancellationToken = default) =>
-            generatedClient.BytesHeadAsync(address.ToString(), cancellationToken);
+        public Task GetBytesHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            generatedClient.BytesHeadAsync(hash.ToString(), cancellationToken);
 
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1);
@@ -296,29 +296,29 @@ namespace Etherna.BeeNet
             new(await generatedClient.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false));
 
         public async Task<SwarmChunk> GetChunkAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             CancellationToken cancellationToken = default)
         {
-            var chunkDto = await generatedClient.ChunksGetAsync((string)address, swarmCache, cancellationToken).ConfigureAwait(false);
+            var chunkDto = await generatedClient.ChunksGetAsync((string)hash, swarmCache, cancellationToken).ConfigureAwait(false);
             using var memoryStream = new MemoryStream();
             await chunkDto.Stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
             var data = memoryStream.ToArray();
-            return new SwarmChunk(address, data);
+            return new SwarmChunk(hash, data);
         }
 
         public async Task<Stream> GetChunkStreamAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChunksGetAsync(address.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
+            (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
         public async Task<PeerBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
 
-        public async Task<SwarmAddress> GetFeedAsync(
+        public async Task<SwarmHash> GetFeedAsync(
             string owner,
             string topic,
             int? at = null,
@@ -328,32 +328,32 @@ namespace Etherna.BeeNet
             (await generatedClient.FeedsGetAsync(owner, topic, at, after, type, cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<FileResponse> GetFileAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.BzzGetAsync(
-                (string)address,
+                (string)hash,
                 swarmCache,
                 (SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
                 swarmRedundancyFallbackMode,
                 swarmChunkRetrievalTimeout,
                 cancellationToken).ConfigureAwait(false));
 
-        public Task GetFileHeadAsync(SwarmAddress address, CancellationToken cancellationToken = default) =>
-            generatedClient.BzzHeadAsync((string)address, cancellationToken);
+        public Task GetFileHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            generatedClient.BzzHeadAsync((string)hash, cancellationToken);
 
         public async Task<FileResponse> GetFileWithPathAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             string path,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default) =>
             new(await generatedClient.BzzGetAsync(
-                (string)address,
+                (string)hash,
                 path,
                 (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
                 swarmRedundancyFallbackMode,
@@ -373,9 +373,9 @@ namespace Etherna.BeeNet
             (await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new TxInfo(i));
 
         public async Task<string> GetPinStatusAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync((string)address, cancellationToken).ConfigureAwait(false)).Reference;
+            (await generatedClient.PinsGetAsync((string)hash, cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<PostageBatch> GetPostageBatchAsync(
             PostageBatchId batchId,
@@ -454,9 +454,9 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).Key;
 
         public Task ReuploadContentAsync(
-            SwarmAddress address,
+            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            generatedClient.StewardshipPutAsync((string)address, cancellationToken: cancellationToken);
+            generatedClient.StewardshipPutAsync((string)hash, cancellationToken: cancellationToken);
 
         public Task SendPssAsync(
             string topic,
@@ -530,16 +530,16 @@ namespace Etherna.BeeNet
 
         public Task UpdateTagAsync(
             long uid,
-            SwarmAddress? address = null,
+            SwarmHash? hash = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.TagsPatchAsync(
                 uid,
-                address is null ?
-                    null :
-                    new Body4 { Address = (string)address },
+                hash.HasValue ?
+                    new Body4 { Address = hash.Value.ToString() } :
+                    null,
                 cancellationToken);
 
-        public async Task<SwarmAddress> UploadChunkAsync(
+        public async Task<SwarmHash> UploadChunkAsync(
             PostageBatchId batchId,
             long? swarmTag = null,
             bool? swarmPin = null,
@@ -559,7 +559,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             generatedClient.ChunksStreamAsync(swarmTag, batchId.ToString(), cancellationToken);
 
-        public async Task<SwarmAddress> UploadBytesAsync(
+        public async Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
             int? swarmTag = null,
@@ -578,7 +578,7 @@ namespace Etherna.BeeNet
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<SwarmAddress> UploadFileAsync(
+        public async Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,
             Stream content,
             string? name = null,
@@ -609,7 +609,7 @@ namespace Etherna.BeeNet
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
 
-        public async Task<SwarmAddress> UploadSocAsync(
+        public async Task<SwarmHash> UploadSocAsync(
             string owner,
             string id,
             string sig,
