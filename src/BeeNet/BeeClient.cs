@@ -328,37 +328,34 @@ namespace Etherna.BeeNet
             (await generatedClient.FeedsGetAsync(owner, topic, at, after, type, cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<FileResponse> GetFileAsync(
-            SwarmHash hash,
+            SwarmAddress address,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.BzzGetAsync(
-                (string)hash,
-                swarmCache,
-                (SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
-                swarmRedundancyFallbackMode,
-                swarmChunkRetrievalTimeout,
-                cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+
+            return address.RelativePath is null
+                ? new(await generatedClient.BzzGetAsync(
+                    address.Hash.ToString(),
+                    swarmCache,
+                    (SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
+                    swarmRedundancyFallbackMode,
+                    swarmChunkRetrievalTimeout,
+                    cancellationToken).ConfigureAwait(false))
+                : new(await generatedClient.BzzGetAsync(
+                    address.Hash.ToString(),
+                    address.RelativePath.ToString(),
+                    (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                    swarmRedundancyFallbackMode,
+                    swarmChunkRetrievalTimeout,
+                    cancellationToken).ConfigureAwait(false));
+        }
 
         public Task GetFileHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             generatedClient.BzzHeadAsync((string)hash, cancellationToken);
-
-        public async Task<FileResponse> GetFileWithPathAsync(
-            SwarmHash hash,
-            string path,
-            RedundancyStrategy? swarmRedundancyStrategy = null,
-            bool? swarmRedundancyFallbackMode = null,
-            string? swarmChunkRetrievalTimeout = null,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.BzzGetAsync(
-                (string)hash,
-                path,
-                (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
-                swarmRedundancyFallbackMode,
-                swarmChunkRetrievalTimeout,
-                cancellationToken).ConfigureAwait(false));
 
         public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default) =>
             new(await generatedClient.HealthAsync(cancellationToken).ConfigureAwait(false));

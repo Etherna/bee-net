@@ -351,7 +351,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get file or index document from a collection of files</summary>
-        /// <param name="hash">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
         /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
@@ -359,7 +359,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Models.FileResponse> GetFileAsync(
-            SwarmHash hash,
+            SwarmAddress address,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
@@ -374,22 +374,6 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task GetFileHeadAsync(
             SwarmHash hash,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Get referenced file from a collection of files</summary>
-        /// <param name="hash">Swarm address of content</param>
-        /// <param name="path">Path to the file in the collection.</param>
-        /// <param name="swarmRedundancyStrategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
-        /// <param name="swarmRedundancyFallbackMode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
-        /// <param name="swarmChunkRetrievalTimeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
-        /// <returns>Ok</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<FileResponse> GetFileWithPathAsync(
-            SwarmHash hash,
-            string path,
-            RedundancyStrategy? swarmRedundancyStrategy = null,
-            bool? swarmRedundancyFallbackMode = null,
-            string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>

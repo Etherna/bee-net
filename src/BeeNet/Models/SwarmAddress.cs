@@ -18,7 +18,7 @@ using System.IO;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class SwarmAddress : IEquatable<SwarmAddress>
+    public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Constructor.
         public SwarmAddress(SwarmHash hash, Uri? relativePath = null)
@@ -53,19 +53,12 @@ namespace Etherna.BeeNet.Models
         public Uri? RelativePath { get; }
         
         // Methods.
-        public bool Equals(SwarmAddress? other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
-            return Hash.Equals(other.Hash) &&
-                   EqualityComparer<Uri>.Default.Equals(RelativePath, other.RelativePath);
-        }
-
-        public override bool Equals(object? obj) => Equals(obj as SwarmAddress);
-
+        public bool Equals(SwarmAddress other) =>
+            Hash.Equals(other.Hash) &&
+            EqualityComparer<Uri>.Default.Equals(RelativePath, other.RelativePath);
+        public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
                                              (RelativePath?.GetHashCode() ?? 0);
-
         public override string ToString()
         {
             if (RelativePath is null)
@@ -77,5 +70,20 @@ namespace Etherna.BeeNet.Models
 
             return Hash + "/" + pathString;
         }
+        
+        // Static methods.
+        public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
+        public static SwarmAddress FromString(string value) => new(value);
+        
+        // Operator methods.
+        public static bool operator ==(SwarmAddress left, SwarmAddress right) => left.Equals(right);
+        public static bool operator !=(SwarmAddress left, SwarmAddress right) => !(left == right);
+        
+        // Implicit conversion operator methods.
+        public static implicit operator SwarmAddress(SwarmHash value) => new(value);
+        public static implicit operator SwarmAddress(string value) => new(value);
+        
+        // Explicit conversion operator methods.
+        public static explicit operator string(SwarmAddress value) => value.ToString();
     }
 }

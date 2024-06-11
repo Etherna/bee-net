@@ -72,6 +72,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator SwarmHash(string value) => new(value);
         public static implicit operator SwarmHash(byte[] value) => new(value);
         
+        // Explicit conversion operator methods.
         public static explicit operator string(SwarmHash value) => value.ToString();
         public static explicit operator ReadOnlyMemory<byte>(SwarmHash value) => value.ToReadOnlyMemory();
         public static explicit operator byte[](SwarmHash value) => value.ToByteArray();

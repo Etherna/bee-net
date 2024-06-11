@@ -106,7 +106,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GetFileWithPathAsync(reference, "");
+            var result = await beeNodeClient.GetFileAsync(reference);
 
 
             // Assert 
