@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 
 namespace Etherna.BeeNet.Models
 {
@@ -26,21 +27,38 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentException("Path needs to be relative", nameof(relativePath));
                 
             Hash = hash;
-            Path = relativePath;
+            RelativePath = relativePath;
+        }
+        public SwarmAddress(string address)
+        {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            
+            // Trim initial and final slash.
+            address = address.Trim('/');
+
+            // Extract hash root.
+            var slashIndex = address.IndexOf('/', StringComparison.InvariantCulture);
+            var root = slashIndex > 0 ? address[..slashIndex] : address;
+            var path = slashIndex > 0 ? address[(slashIndex + 1)..] : null;
+            
+            // Set hash and path.
+            Hash = new SwarmHash(root);
+            if (!string.IsNullOrEmpty(path))
+                RelativePath = new Uri(path, UriKind.Relative);
         }
         
         // Properties.
         public SwarmHash Hash { get; }
-        public Uri? Path { get; }
+        public Uri? RelativePath { get; }
         
         // Methods.
         public override string ToString()
         {
-            if (Path is null)
+            if (RelativePath is null)
                 return Hash + "/";
             
-            var pathString = Path.ToString();
-            if (System.IO.Path.IsPathRooted(pathString))
+            var pathString = RelativePath.ToString();
+            if (Path.IsPathRooted(pathString))
                 return Hash + pathString;
 
             return Hash + "/" + pathString;
