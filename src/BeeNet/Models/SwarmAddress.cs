@@ -13,11 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmAddress
+    public sealed class SwarmAddress : IEquatable<SwarmAddress>
     {
         // Constructor.
         public SwarmAddress(SwarmHash hash, Uri? relativePath = null)
@@ -52,6 +53,19 @@ namespace Etherna.BeeNet.Models
         public Uri? RelativePath { get; }
         
         // Methods.
+        public bool Equals(SwarmAddress? other)
+        {
+            if (ReferenceEquals(this, other)) return true;
+            if (other is null) return false;
+            return Hash.Equals(other.Hash) &&
+                   EqualityComparer<Uri>.Default.Equals(RelativePath, other.RelativePath);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as SwarmAddress);
+
+        public override int GetHashCode() => Hash.GetHashCode() ^
+                                             (RelativePath?.GetHashCode() ?? 0);
+
         public override string ToString()
         {
             if (RelativePath is null)
