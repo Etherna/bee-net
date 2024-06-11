@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Services
 {
     public class FeedServiceTest
     {
-        // Internal classes
+        // Internal classes.
         public class FindLastEpochChunkBeforeDateTestElement
         {
             public FindLastEpochChunkBeforeDateTestElement(
