@@ -34,16 +34,16 @@ namespace Etherna.BeeNet.Hasher.Postage
         public IStore Store { get; } = store;
 
         // Methods.
-        public PostageStamp Stamp(SwarmAddress address)
+        public PostageStamp Stamp(SwarmHash hash)
         {
             StoreItemBase item = new StampStoreItem(
                 StampIssuer.PostageBatch.Id,
-                address);
+                hash);
 
             if (Store.TryGet(item.StoreKey, out var storedItem))
                 item = storedItem;
             else
-                item.StampBucketIndex = StampIssuer.IncrementBucketCount(address);
+                item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
 
             if (item.StampBucketIndex is null)
                 throw new InvalidOperationException();
@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Hasher.Postage
             Store.Put(item);
 
             var toSignDigest = ToSignDigest(
-                address,
+                hash,
                 StampIssuer.PostageBatch.Id,
                 item.StampBucketIndex!,
                 item.BucketTimestamp.Value);
@@ -71,14 +71,14 @@ namespace Etherna.BeeNet.Hasher.Postage
         /// <summary>
         /// Creates a digest to represent the stamp which is to be signed by the owner
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="hash"></param>
         /// <param name="batchId"></param>
-        /// <param name="index"></param>
+        /// <param name="stampBucketIndex"></param>
         /// <param name="timeStamp"></param>
         /// <returns></returns>
-        private static byte[] ToSignDigest(SwarmAddress address, PostageBatchId batchId, StampBucketIndex stampBucketIndex, DateTimeOffset timeStamp) =>
+        private static byte[] ToSignDigest(SwarmHash hash, PostageBatchId batchId, StampBucketIndex stampBucketIndex, DateTimeOffset timeStamp) =>
             Keccak256.ComputeHash(
-                address.ToByteArray()
+                hash.ToByteArray()
                     .Concat(batchId.ToByteArray())
                     .Concat(stampBucketIndex.ToByteArray())
                     .Concat(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray()).ToArray());

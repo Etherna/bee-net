@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Manifest
         private const int PrefixSize = 1;
         private const int TypeSize = 1;
         
-        public const int PrefixMaxSize = SwarmAddress.HashSize - HeaderSize;
+        public const int PrefixMaxSize = SwarmHash.HashSize - HeaderSize;
         
         // Constructor.
         public MantarayNodeFork(
@@ -64,8 +64,8 @@ namespace Etherna.BeeNet.Manifest
             Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
             bytes.AddRange(prefixBytes);
 
-            // Node address.
-            bytes.AddRange(Node.Address.ToByteArray());
+            // Node hash.
+            bytes.AddRange(Node.Hash.ToByteArray());
 
             // Metadata.
             if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))

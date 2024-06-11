@@ -63,8 +63,8 @@ namespace Etherna.BeeNet.Services
                 postageStamper,
                 redundancyLevel,
                 encrypt);
-            var fileAddress = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            fileName ??= fileAddress.ToString(); //if missing, set file name with its address
+            var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            fileName ??= fileHash.ToString(); //if missing, set file name with its address
             
             // Create manifest.
             var manifest = new MantarayManifest(
@@ -85,18 +85,18 @@ namespace Etherna.BeeNet.Services
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileAddress,
+                    fileHash,
                     new Dictionary<string, string>
                     {
                         [ManifestEntry.ContentTypeKey] = fileContentType,
                         [ManifestEntry.FilenameKey] = fileName
                     }));
 
-            var finalAddress = await manifest.GetAddressAsync().ConfigureAwait(false);
+            var finalHash = await manifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
-                finalAddress,
+                finalHash,
                 postageStampIssuer);
         }
     }

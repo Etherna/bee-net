@@ -18,11 +18,11 @@ namespace Etherna.BeeNet.Hasher.Store
 {
     public class StampStoreItem(
         PostageBatchId batchId,
-        SwarmAddress chunkAddress)
-        : StoreItemBase(batchId, chunkAddress)
+        SwarmHash chunkHash)
+        : StoreItemBase(batchId, chunkHash)
     {
         // Properties.
-        public override string Id => string.Join("/", BatchId.ToString(), ChunkAddress.ToString());
+        public override string Id => string.Join("/", BatchId.ToString(), ChunkHash.ToString());
         public override string NamespaceStr => "stampItem";
     }
 }

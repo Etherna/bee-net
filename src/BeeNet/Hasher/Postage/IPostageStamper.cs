@@ -18,6 +18,6 @@ namespace Etherna.BeeNet.Hasher.Postage
 {
     internal interface IPostageStamper
     {
-        PostageStamp Stamp(SwarmAddress address);
+        PostageStamp Stamp(SwarmHash hash);
     }
 }

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Bmt;
-using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -23,14 +22,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hasher.Pipeline
 {
-    internal delegate Task<SwarmAddress> HashChunkDelegateAsync(byte[] span, byte[] data);
+    internal delegate Task<SwarmHash> HashChunkDelegateAsync(byte[] span, byte[] data);
     
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
-        private class ChunkHeader(SwarmAddress address, ReadOnlyMemory<byte> span, bool isParityChunk)
+        private class ChunkHeader(SwarmHash hash, ReadOnlyMemory<byte> span, bool isParityChunk)
         {
-            public SwarmAddress Address { get; } = address;
+            public SwarmHash Hash { get; } = hash;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
         }
@@ -82,7 +81,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     await AddChunkToLevelAsync(
                         1,
                         new ChunkHeader(
-                            processingChunk.Address!.Value,
+                            processingChunk.Hash!.Value,
                             processingChunk.Span,
                             false)).ConfigureAwait(false);
                 }
@@ -93,7 +92,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             }
         }
 
-        public async Task<SwarmAddress> SumAsync()
+        public async Task<SwarmHash> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -119,7 +118,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
 
-            return rootChunk.Address;
+            return rootChunk.Hash;
         }
 
         // Helpers.
@@ -151,9 +150,9 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     .Select(c => SwarmChunk.SpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             
-            // Build total data from total span, and all the addresses in level.
+            // Build total data from total span, and all the hashes in level.
             var totalData = totalSpan.Concat(
-                levelChunks.SelectMany(c => c.Address.ToByteArray()))
+                levelChunks.SelectMany(c => c.Hash.ToByteArray()))
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.

@@ -23,15 +23,15 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(response, nameof(response));
 
+            Hash = response.Reference;
             Invalid = response.Invalid;
             Missing = response.Missing;
-            Reference = response.Reference;
             Total = response.Total;
         }
         
+        public SwarmHash Hash { get; }
         public int Invalid { get; }
         public int Missing { get; }
-        public SwarmAddress Reference { get; }
         public int Total { get; }
     }
 }

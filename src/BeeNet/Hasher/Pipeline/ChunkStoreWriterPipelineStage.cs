@@ -44,10 +44,10 @@ namespace Etherna.BeeNet.Hasher.Pipeline
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
-            if (args.Address is null) throw new InvalidOperationException();
+            if (args.Hash is null) throw new InvalidOperationException();
 
             // Stamp chunk and store stamp.
-            postageStamper.Stamp(args.Address.Value);
+            postageStamper.Stamp(args.Hash.Value);
             
             // Store chunk.
             //not implemented...
@@ -56,7 +56,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                 await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
         
-        public Task<SwarmAddress> SumAsync() =>
+        public Task<SwarmHash> SumAsync() =>
             nextStage?.SumAsync() ?? throw new InvalidOperationException();
     }
 }

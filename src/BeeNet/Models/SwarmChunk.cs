@@ -30,31 +30,31 @@ namespace Etherna.BeeNet.Models
         public const int SpanSize = 8;
         
         // Constructors.
-        public SwarmChunk(SwarmAddress address, byte[] data)
+        public SwarmChunk(SwarmHash hash, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (data.Length > DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
-            Address = address;
+            Hash = hash;
             _span = LengthToSpan((ulong)data.Length);
             _data = data;
         }
 
-        internal SwarmChunk(SwarmAddress address, byte[] span, byte[] data)
+        internal SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
-            Address = address;
+            Hash = hash;
             _span = span;
             _data = data;
         }
         
         // Static builders.
-        internal static SwarmChunk BuildFromSpanAndData(SwarmAddress address, byte[] spanAndData)
+        internal static SwarmChunk BuildFromSpanAndData(SwarmHash hash, byte[] spanAndData)
         {
             if (spanAndData.Length > SpanAndDataSize)
                 throw new ArgumentOutOfRangeException(nameof(spanAndData),
@@ -63,11 +63,11 @@ namespace Etherna.BeeNet.Models
             var spanSlice = spanAndData[..SpanSize];
             var dataSlice = spanAndData[SpanSize..];
 
-            return new SwarmChunk(address, spanSlice, dataSlice);
+            return new SwarmChunk(hash, spanSlice, dataSlice);
         }
 
         // Properties.
-        public SwarmAddress Address { get; }
+        public SwarmHash Hash { get; }
         public ReadOnlyMemory<byte> Data => _data;
         public ReadOnlyMemory<byte> Span => _span;
         

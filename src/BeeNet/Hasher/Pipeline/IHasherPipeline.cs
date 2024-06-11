@@ -24,17 +24,17 @@ namespace Etherna.BeeNet.Hasher.Pipeline
         bool IsUsable { get; }
         
         /// <summary>
-        /// Consume a byte array and returns a Swarm address as result
+        /// Consume a byte array and returns a Swarm hash as result
         /// </summary>
         /// <param name="data">Input data</param>
-        /// <returns>Resulting swarm address</returns>
-        Task<SwarmAddress> HashDataAsync(byte[] data);
+        /// <returns>Resulting swarm hash</returns>
+        Task<SwarmHash> HashDataAsync(byte[] data);
 
         /// <summary>
-        /// Consume a stream slicing it in chunk size parts, and returns a Swarm address as result
+        /// Consume a stream slicing it in chunk size parts, and returns a Swarm hash as result
         /// </summary>
         /// <param name="dataStream">Input data stream</param>
-        /// <returns>Resulting swarm address</returns>
-        Task<SwarmAddress> HashDataAsync(Stream dataStream);
+        /// <returns>Resulting swarm hash</returns>
+        Task<SwarmHash> HashDataAsync(Stream dataStream);
     }
 }
