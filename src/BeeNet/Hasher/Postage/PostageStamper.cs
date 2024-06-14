@@ -25,22 +25,22 @@ namespace Etherna.BeeNet.Hasher.Postage
     internal class PostageStamper(
         ISigner signer,
         IPostageStampIssuer stampIssuer,
-        IStore store)
+        IStampStore stampStore)
         : IPostageStamper
     {
         // Properties.
         public ISigner Signer { get; } = signer;
         public IPostageStampIssuer StampIssuer { get; } = stampIssuer;
-        public IStore Store { get; } = store;
+        public IStampStore StampStore { get; } = stampStore;
 
         // Methods.
         public PostageStamp Stamp(SwarmHash hash)
         {
-            StoreItemBase item = new StampStoreItem(
+            var item = new StampStoreItem(
                 StampIssuer.PostageBatch.Id,
                 hash);
 
-            if (Store.TryGet(item.StoreKey, out var storedItem))
+            if (StampStore.TryGet(item.StoreKey, out var storedItem))
                 item = storedItem;
             else
                 item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Hasher.Postage
 
             item.BucketTimestamp = DateTimeOffset.UtcNow;
             
-            Store.Put(item);
+            StampStore.Put(item);
 
             var toSignDigest = ToSignDigest(
                 hash,

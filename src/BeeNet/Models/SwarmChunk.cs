@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Bmt;
+using Etherna.BeeNet.Hasher.Postage;
 using System;
 using System.Buffers.Binary;
 
@@ -42,7 +43,7 @@ namespace Etherna.BeeNet.Models
             _data = data;
         }
 
-        internal SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
+        public SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(span, nameof(span));
@@ -54,7 +55,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Static builders.
-        internal static SwarmChunk BuildFromSpanAndData(SwarmHash hash, byte[] spanAndData)
+        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlySpan<byte> spanAndData)
         {
             if (spanAndData.Length > SpanAndDataSize)
                 throw new ArgumentOutOfRangeException(nameof(spanAndData),
@@ -63,13 +64,23 @@ namespace Etherna.BeeNet.Models
             var spanSlice = spanAndData[..SpanSize];
             var dataSlice = spanAndData[SpanSize..];
 
-            return new SwarmChunk(hash, spanSlice, dataSlice);
+            return new SwarmChunk(hash, spanSlice.ToArray(), dataSlice.ToArray());
         }
 
         // Properties.
         public SwarmHash Hash { get; }
         public ReadOnlyMemory<byte> Data => _data;
+        public PostageStamp? PostageStamp { get; set; }
         public ReadOnlyMemory<byte> Span => _span;
+        
+        // Methods.
+        public byte[] GetSpanAndData()
+        {
+            var spanAndData = new byte[SpanSize + _data.Length];
+            Span.CopyTo(spanAndData.AsMemory()[..SpanSize]);
+            Data.CopyTo(spanAndData.AsMemory()[SpanSize..]);
+            return spanAndData;
+        }
         
         // Static methods.
         public static byte[] LengthToSpan(ulong length)

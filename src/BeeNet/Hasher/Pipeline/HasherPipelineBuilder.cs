@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -24,6 +25,18 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     {
         // Static builders.
         public static IHasherPipeline BuildNewHasherPipeline(
+            IPostageStamper postageStamper,
+            RedundancyLevel redundancyLevel,
+            bool isEncrypted,
+            string? chunkStoreDirectory) =>
+            BuildNewHasherPipeline(
+                chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
+                postageStamper,
+                redundancyLevel,
+                isEncrypted);
+        
+        public static IHasherPipeline BuildNewHasherPipeline(
+            IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted)
@@ -39,7 +52,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             else
             {
                 //build stages
-                var shortPipelineStage = BuildNewShortHasherPipeline(postageStamper);
+                var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper);
                 
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     async (span, data) =>
@@ -49,16 +62,18 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                         return args.Hash!.Value;
                     }
                 );
-                var storeWriterStage = new ChunkStoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
+                var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
                 bmtStage = new ChunkBmtPipelineStage(storeWriterStage);
             }
             
             return new ChunkFeederPipelineStage(bmtStage);
         }
         
-        public static IHasherPipelineStage BuildNewShortHasherPipeline(IPostageStamper postageStamper)
+        public static IHasherPipelineStage BuildNewShortHasherPipeline(
+            IChunkStore chunkStore,
+            IPostageStamper postageStamper)
         {
-            var storeWriter = new ChunkStoreWriterPipelineStage(postageStamper, null);
+            var storeWriter = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
             return new ChunkBmtPipelineStage(storeWriter);
         }
     }

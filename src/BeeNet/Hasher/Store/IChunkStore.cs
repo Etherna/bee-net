@@ -12,25 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Models;
-using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    public class StampStoreItem(
-        PostageBatchId batchId,
-        SwarmHash chunkHash)
+    public interface IChunkStore
     {
-        // Consts.
-        public const string NamespaceStr = "stampItem";
+        public Task<IEnumerable<SwarmHash>> GetAllHashesAsync();
         
-        // Properties.
-        public PostageBatchId BatchId { get; protected set; } = batchId;
-        public DateTimeOffset? BucketTimestamp { get; set; }
-        public SwarmHash ChunkHash { get; protected set; } = chunkHash;
-        public string Id => string.Join("/", BatchId.ToString(), ChunkHash.ToString());
-        public StampBucketIndex? StampBucketIndex { get; set; }
-        public string StoreKey => string.Join("/", NamespaceStr, Id);
+        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash);
+
+        /// <summary>
+        /// Add a chunk in the store
+        /// </summary>
+        /// <param name="chunk">The chuck to add</param>
+        /// <returns>True if chunk has been added, false if already existing</returns>
+        public Task<bool> AddAsync(SwarmChunk chunk);
     }
 }

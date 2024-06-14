@@ -32,7 +32,8 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null)
+            IPostageStampIssuer? postageStampIssuer = null,
+            string? chunkStoreDirectory = null)
         {
             using var stream = new MemoryStream(data);
             return await EvaluateFileUploadAsync(
@@ -41,7 +42,8 @@ namespace Etherna.BeeNet.Services
                 fileName,
                 encrypt,
                 redundancyLevel,
-                postageStampIssuer).ConfigureAwait(false);
+                postageStampIssuer,
+                chunkStoreDirectory).ConfigureAwait(false);
         }
 
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
@@ -50,19 +52,21 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt,
             RedundancyLevel redundancyLevel,
-            IPostageStampIssuer? postageStampIssuer = null)
+            IPostageStampIssuer? postageStampIssuer = null,
+            string? chunkStoreDirectory = null)
         {
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
                 postageStampIssuer,
-                new MemoryStore());
+                new MemoryStampStore());
             
             // Get file hash.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 postageStamper,
                 redundancyLevel,
-                encrypt);
+                encrypt,
+                chunkStoreDirectory);
             var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             fileName ??= fileHash.ToString(); //if missing, set file name with its address
             
@@ -71,7 +75,8 @@ namespace Etherna.BeeNet.Services
                 () => HasherPipelineBuilder.BuildNewHasherPipeline(
                     postageStamper,
                     redundancyLevel,
-                    encrypt),
+                    encrypt,
+                    chunkStoreDirectory),
                 encrypt);
 
             manifest.Add(
