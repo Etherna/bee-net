@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Manifest
         private readonly Dictionary<char, MantarayNodeFork> forks = new();
         private bool skipWriteEntryHash;
 
-        public MantarayNode(XorEncryptKey? obfuscationKey)
+        public MantarayNode(XorEncryptKey? obfuscationKey = null)
         {
             ObfuscationKey = obfuscationKey;
             skipWriteEntryHash = true;

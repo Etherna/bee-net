@@ -13,24 +13,54 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayManifest(
-        Func<IHasherPipeline> hasherBuilder,
-        bool isEncrypted)
+    public class MantarayManifest
     {
         // Consts.
         public const string RootPath = "/";
         
         // Fields.
-        private readonly MantarayNode rootNode = new(
-            isEncrypted ?
-                null : //auto-generate random on hash building
-                XorEncryptKey.Empty);
+        private readonly Func<IHasherPipeline> hasherBuilder1;
+
+        // Constructors.
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            bool isEncrypted)
+            : this(hasherBuilder,
+                new MantarayNode(isEncrypted
+                    ? null //auto-generate random on hash building
+                    : XorEncryptKey.Empty))
+        { }
+
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            MantarayNode rootNode)
+        {
+            hasherBuilder1 = hasherBuilder;
+            RootNode = rootNode;
+        }
+        
+        // Builder methods.
+        public static async Task<MantarayManifest> CreateFromStoredChunkAsync(
+            IChunkStore chunkStore,
+            SwarmHash rootHash,
+            Func<IHasherPipeline> hasherBuilder)
+        {
+            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+            
+            var rootChunk = await chunkStore.GetAsync(rootHash).ConfigureAwait(false);
+            return new MantarayManifest(hasherBuilder, new StoredMantarayNode(rootChunk, chunkStore));
+        }
+        
+        // Properties.
+        public MantarayNode RootNode { get; }
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -38,13 +68,18 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
-            rootNode.Add(path, entry);
+            RootNode.Add(path, entry);
         }
 
         public async Task<SwarmHash> GetHashAsync()
         {
-            await rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
-            return rootNode.Hash;
+            await RootNode.ComputeHashAsync(hasherBuilder1).ConfigureAwait(false);
+            return RootNode.Hash;
+        }
+
+        public Task<Stream> GetResourceStreamAsync(SwarmAddress address)
+        {
+            throw new NotImplementedException();
         }
     }
 }

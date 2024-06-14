@@ -104,5 +104,28 @@ namespace Etherna.BeeNet.Services
                 finalHash,
                 postageStampIssuer);
         }
+
+        public async Task<Stream> GetResourceStreamFromChunks(
+            string chunkStoreDirectory,
+            SwarmAddress address)
+        {
+            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
+
+            var rootManifest = await MantarayManifest.CreateFromStoredChunkAsync(
+                chunkStore,
+                address.Hash,
+                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                    new FakePostageStamper(),
+                    RedundancyLevel.None,
+                    false,
+                    chunkStoreDirectory)).ConfigureAwait(false);
+
+            return await rootManifest.GetResourceStreamAsync(address).ConfigureAwait(false);
+        }
+
+        public Task<IEnumerable<string>> GetResourceListFromChunks(string chunkStoreDirectory, SwarmAddress address)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
