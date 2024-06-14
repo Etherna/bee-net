@@ -23,15 +23,16 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayNode
+    public class MantarayNode : IReadOnlyMantarayNode
     {
         // Consts.
-        private const int NodeHeaderSize = VersionHashSize + NodeRefBytesSize;
-        private const int NodeRefBytesSize = 1;
-        private const char PathSeparator = '/';
-        private static readonly byte[] Version02Hash =
+        public const int ForksIndexSize = 32;
+        public const int NodeHeaderSize = VersionHashSize + NodeRefBytesSize;
+        public const int NodeRefBytesSize = 1;
+        public const char PathSeparator = '/';
+        public static readonly byte[] Version02Hash =
             Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
-        private const int VersionHashSize = 31;
+        public const int VersionHashSize = 31;
         
         // Fields.
         private SwarmHash? _hash;
@@ -45,8 +46,8 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
-        public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
         public SwarmHash? EntryHash { get; private set; }
+        public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
         public NodeType NodeTypeFlags { get; private set; }
         public XorEncryptKey? ObfuscationKey { get; private set; }
@@ -173,7 +174,7 @@ namespace Etherna.BeeNet.Manifest
             List<byte> bytes = [];
             
             //index
-            var index = new byte[32];
+            var index = new byte[ForksIndexSize];
             foreach (var k in forks.Keys)
                 index[(byte)k / 8] |= (byte)(1 << (k % 8));
             

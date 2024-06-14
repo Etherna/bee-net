@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkStoreDirectory">Optional path where store chunks</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             byte[] data,
@@ -40,7 +41,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
-            string? chunkStoreDirectory = null);
+            IChunkStore? chunkStore = null);
         
         /// <summary>
         /// Evaluate the result of upload a file
@@ -51,7 +52,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkStoreDirectory">Optional path where store chunks</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
@@ -60,9 +61,9 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
-            string? chunkStoreDirectory = null);
+            IChunkStore? chunkStore = null);
         
-        Task<Stream> GetResourceStreamFromChunks(
+        Task<Stream> GetResourceStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address);
 

@@ -20,6 +20,7 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -33,7 +34,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
-            string? chunkStoreDirectory = null)
+            IChunkStore? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
             return await EvaluateFileUploadAsync(
@@ -43,18 +44,20 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 redundancyLevel,
                 postageStampIssuer,
-                chunkStoreDirectory).ConfigureAwait(false);
+                chunkStore).ConfigureAwait(false);
         }
 
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
             string fileContentType,
             string? fileName,
-            bool encrypt,
-            RedundancyLevel redundancyLevel,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
-            string? chunkStoreDirectory = null)
+            IChunkStore? chunkStore = null)
         {
+            chunkStore ??= new FakeChunkStore();
+            
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
@@ -63,20 +66,20 @@ namespace Etherna.BeeNet.Services
             
             // Get file hash.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                chunkStore,
                 postageStamper,
                 redundancyLevel,
-                encrypt,
-                chunkStoreDirectory);
+                encrypt);
             var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             fileName ??= fileHash.ToString(); //if missing, set file name with its address
             
             // Create manifest.
             var manifest = new MantarayManifest(
                 () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                    chunkStore,
                     postageStamper,
                     redundancyLevel,
-                    encrypt,
-                    chunkStoreDirectory),
+                    encrypt),
                 encrypt);
 
             manifest.Add(
@@ -105,22 +108,25 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer);
         }
 
-        public async Task<Stream> GetResourceStreamFromChunks(
+        public async Task<Stream> GetResourceStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address)
         {
             var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
-
-            var rootManifest = await MantarayManifest.CreateFromStoredChunkAsync(
+            var chunkJoiner = new ChunkJoiner(chunkStore);
+            
+            var rootManifest = new ReferencedMantarayManifest(
                 chunkStore,
-                address.Hash,
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    new FakePostageStamper(),
-                    RedundancyLevel.None,
-                    false,
-                    chunkStoreDirectory)).ConfigureAwait(false);
-
-            return await rootManifest.GetResourceStreamAsync(address).ConfigureAwait(false);
+                address.Hash);
+            
+            var resourceHash = await rootManifest.ResolveResourceHashAsync(address).ConfigureAwait(false);
+            
+            var memoryStream = new MemoryStream();
+            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(resourceHash).ConfigureAwait(false);
+            memoryStream.Write(resourceData.ToArray());
+            memoryStream.Position = 0;
+            
+            return memoryStream;
         }
 
         public Task<IEnumerable<string>> GetResourceListFromChunks(string chunkStoreDirectory, SwarmAddress address)
