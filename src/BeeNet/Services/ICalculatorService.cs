@@ -30,6 +30,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkStoreDirectory">Optional path where store chunks</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             byte[] data,
@@ -37,7 +38,8 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null);
+            IPostageStampIssuer? postageStampIssuer = null,
+            string? chunkStoreDirectory = null);
         
         /// <summary>
         /// Evaluate the result of upload a file
@@ -48,6 +50,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkStoreDirectory">Optional path where store chunks</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
@@ -55,6 +58,7 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null);
+            IPostageStampIssuer? postageStampIssuer = null,
+            string? chunkStoreDirectory = null);
     }
 }

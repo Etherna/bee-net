@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Hasher.Postage
 {
-    internal class PostageStamp
+    public class PostageStamp
     {
         // Constructor.
         public PostageStamp(

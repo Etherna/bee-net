@@ -17,16 +17,16 @@ using System.Collections.Concurrent;
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    public class MemoryStore : IStore
+    public class MemoryStampStore : IStampStore
     {
         // Fields.
-        private readonly ConcurrentDictionary<string, StoreItemBase> storeDictionary = new();
+        private readonly ConcurrentDictionary<string, StampStoreItem> storeDictionary = new();
 
         // Methods.
-        public bool TryGet(string storeKey, out StoreItemBase item) =>
+        public bool TryGet(string storeKey, out StampStoreItem item) =>
             storeDictionary.TryGetValue(storeKey, out item!);
 
-        public void Put(StoreItemBase item)
+        public void Put(StampStoreItem item)
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
             storeDictionary.TryAdd(item.StoreKey, item);

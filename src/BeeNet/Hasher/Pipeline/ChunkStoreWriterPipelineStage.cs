@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
@@ -22,14 +23,17 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     internal sealed class ChunkStoreWriterPipelineStage : IHasherPipelineStage
     {
         // Fields.
+        private readonly IChunkStore chunkStore;
         private readonly IHasherPipelineStage? nextStage;
         private readonly IPostageStamper postageStamper;
 
         // Constructor.
         public ChunkStoreWriterPipelineStage(
+            IChunkStore chunkStore,
             IPostageStamper postageStamper,
             IHasherPipelineStage? nextStage)
         {
+            this.chunkStore = chunkStore;
             this.nextStage = nextStage;
             this.postageStamper = postageStamper;
         }
@@ -47,10 +51,12 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             if (args.Hash is null) throw new InvalidOperationException();
 
             // Stamp chunk and store stamp.
-            postageStamper.Stamp(args.Hash.Value);
+            var stamp = postageStamper.Stamp(args.Hash.Value);
             
             // Store chunk.
-            //not implemented...
+            var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
+            chunk.PostageStamp = stamp;
+            await chunkStore.AddAsync(chunk).ConfigureAwait(false);
 
             if (nextStage is not null)
                 await nextStage.FeedAsync(args).ConfigureAwait(false);

@@ -14,10 +14,10 @@
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    public interface IStore
+    public interface IStampStore
     {
-        public bool TryGet(string storeKey, out StoreItemBase item);
+        public bool TryGet(string storeKey, out StampStoreItem item);
 
-        public void Put(StoreItemBase item);
+        public void Put(StampStoreItem item);
     }
 }
