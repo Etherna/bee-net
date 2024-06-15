@@ -24,12 +24,11 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayNodeFork
     {
         // Consts.
-        private const int HeaderSize = TypeSize + PrefixSize;
-        private const int MetadataBytesSize = 2;
-        private const int PrefixSize = 1;
-        private const int TypeSize = 1;
-        
+        public const int HeaderSize = TypeSize + PrefixSize;
+        public const int MetadataBytesSize = 2;
         public const int PrefixMaxSize = SwarmHash.HashSize - HeaderSize;
+        public const int PrefixSize = 1;
+        public const int TypeSize = 1;
         
         // Constructor.
         public MantarayNodeFork(

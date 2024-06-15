@@ -128,10 +128,5 @@ namespace Etherna.BeeNet.Services
             
             return memoryStream;
         }
-
-        public Task<IEnumerable<string>> GetResourceListFromChunks(string chunkStoreDirectory, SwarmAddress address)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

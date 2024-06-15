@@ -15,7 +15,6 @@
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -64,10 +63,6 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null);
         
         Task<Stream> GetResourceStreamFromChunksAsync(
-            string chunkStoreDirectory,
-            SwarmAddress address);
-
-        Task<IEnumerable<string>> GetResourceListFromChunks(
             string chunkStoreDirectory,
             SwarmAddress address);
     }

@@ -1,5 +1,6 @@
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
@@ -11,5 +12,8 @@ namespace Etherna.BeeNet.Manifest
         IReadOnlyDictionary<string, string> Metadata { get; }
         NodeType NodeTypeFlags { get; }
         XorEncryptKey? ObfuscationKey { get; }
+        
+        // Methods.
+        Task<SwarmHash> ResolveResourceHashAsync(string path);
     }
 }

@@ -27,8 +27,6 @@ namespace Etherna.BeeNet.Manifest
     {
         // Consts.
         public const int ForksIndexSize = 32;
-        public const int NodeHeaderSize = VersionHashSize + NodeRefBytesSize;
-        public const int NodeRefBytesSize = 1;
         public const char PathSeparator = '/';
         public static readonly byte[] Version02Hash =
             Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
@@ -36,7 +34,7 @@ namespace Etherna.BeeNet.Manifest
         
         // Fields.
         private SwarmHash? _hash;
-        private readonly Dictionary<char, MantarayNodeFork> forks = new();
+        private readonly Dictionary<char, MantarayNodeFork> _forks = new();
         private bool skipWriteEntryHash;
 
         public MantarayNode(XorEncryptKey? obfuscationKey = null)
@@ -47,6 +45,7 @@ namespace Etherna.BeeNet.Manifest
 
         // Properties.
         public SwarmHash? EntryHash { get; private set; }
+        public IReadOnlyDictionary<char, MantarayNodeFork> Forks => _forks;
         public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
         public NodeType NodeTypeFlags { get; private set; }
@@ -84,7 +83,7 @@ namespace Etherna.BeeNet.Manifest
             else
             {
                 // If already exists a fork that contains the path.
-                if (forks.TryGetValue(path[0], out var fork))
+                if (_forks.TryGetValue(path[0], out var fork))
                 {
                     var commonPrefix = fork.Prefix.FindCommonPrefix(path);
                     
@@ -99,7 +98,7 @@ namespace Etherna.BeeNet.Manifest
                         //parentPrefix = commonPrefix
                         var parentNode = new MantarayNode(ObfuscationKey)
                         {
-                            forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
+                            _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
                             skipWriteEntryHash = skipWriteEntryHash
                         };
 
@@ -112,7 +111,7 @@ namespace Etherna.BeeNet.Manifest
                         parentNode.Add(path[commonPrefix.Length..], entry);
                         
                         // Replace fork with the new one.
-                        forks[path[0]] = new MantarayNodeFork(commonPrefix, parentNode);
+                        _forks[path[0]] = new MantarayNodeFork(commonPrefix, parentNode);
                     }
                     else // Else, reuse the same fork node.
                     {
@@ -138,7 +137,7 @@ namespace Etherna.BeeNet.Manifest
                     newNode.Add(prefixRest, entry);
                     newNode.UpdateFlagIsWithPathSeparator(prefix);
 
-                    forks[path[0]] = new MantarayNodeFork(prefix, newNode);
+                    _forks[path[0]] = new MantarayNodeFork(prefix, newNode);
                 }
 
                 SetNodeTypeFlag(NodeType.Edge);
@@ -153,7 +152,7 @@ namespace Etherna.BeeNet.Manifest
                 return;
 
             // Recursively compute hash for each fork nodes.
-            foreach (var fork in forks.Values)
+            foreach (var fork in _forks.Values)
                 await fork.Node.ComputeHashAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
@@ -161,7 +160,7 @@ namespace Etherna.BeeNet.Manifest
             _hash = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
             
             // Clean forks.
-            forks.Clear();
+            _forks.Clear();
         }
 
         // Helpers.
@@ -175,30 +174,26 @@ namespace Etherna.BeeNet.Manifest
             
             //index
             var index = new byte[ForksIndexSize];
-            foreach (var k in forks.Keys)
+            foreach (var k in _forks.Keys)
                 index[(byte)k / 8] |= (byte)(1 << (k % 8));
             
             bytes.AddRange(index);
 
             //forks
-            foreach (var fork in forks.OrderBy(f => f.Key))
+            foreach (var fork in _forks.OrderBy(f => f.Key))
                 bytes.AddRange(fork.Value.ToByteArray());
 
             return bytes.ToArray();
         }
 
-        private byte[] HeaderToByteArray()
-        {
-            var headerBytes = new byte[NodeHeaderSize];
-            
-            Version02Hash.CopyTo(headerBytes.AsMemory()[..VersionHashSize]);
-            headerBytes[VersionHashSize] = (byte)(skipWriteEntryHash ? 0 : SwarmHash.HashSize);
-            
-            return headerBytes;
-        }
-
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
+        
+        public Task<SwarmHash> ResolveResourceHashAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
 
         private void SetNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags |= flag;
@@ -211,10 +206,11 @@ namespace Etherna.BeeNet.Manifest
             ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
             bytes.AddRange(ObfuscationKey.Bytes.ToArray());
             
-            // Write header.
-            bytes.AddRange(HeaderToByteArray());
+            // Write version.
+            bytes.AddRange(Version02Hash);
 
             // Write last entry hash.
+            bytes.Add((byte)(skipWriteEntryHash ? 0 : SwarmHash.HashSize));
             if (!skipWriteEntryHash)
                 bytes.AddRange((EntryHash ?? SwarmHash.Zero).ToByteArray());
 

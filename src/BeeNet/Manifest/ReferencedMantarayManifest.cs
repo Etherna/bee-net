@@ -14,30 +14,36 @@
 
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
     public class ReferencedMantarayManifest : IReadOnlyMantarayManifest
     {
+        // Fields.
+        private readonly ReferencedMantarayNode _rootNode;
+
         // Constructors.
         public ReferencedMantarayManifest(
             IChunkStore chunkStore,
             SwarmHash rootHash)
         {
-            RootNode = new ReferencedMantarayNode(chunkStore, rootHash);
+            _rootNode = new ReferencedMantarayNode(chunkStore, rootHash, null, NodeType.Edge);
         }
         
         // Properties.
-        public IReadOnlyMantarayNode RootNode { get; }
+        public IReadOnlyMantarayNode RootNode => _rootNode;
 
         // Methods.
         public Task<SwarmHash> GetHashAsync() => Task.FromResult(RootNode.Hash);
 
-        public Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
+        public async Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
         {
-            throw new NotImplementedException();
+            if (!_rootNode.IsDecoded)
+                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
+
+            return await RootNode.ResolveResourceHashAsync(
+                address.RelativePath?.ToString() ?? "").ConfigureAwait(false);
         }
     }
 }
