@@ -22,6 +22,8 @@ namespace Etherna.BeeNet.Hasher.Store
     {
         public Task<IEnumerable<SwarmHash>> GetAllHashesAsync();
         
+        public Task<SwarmChunk> GetAsync(SwarmHash hash);
+        
         public Task<SwarmChunk?> TryGetAsync(SwarmHash hash);
 
         /// <summary>

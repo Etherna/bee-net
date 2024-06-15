@@ -19,18 +19,35 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayManifest(
-        Func<IHasherPipeline> hasherBuilder,
-        bool isEncrypted)
+    public class MantarayManifest : IReadOnlyMantarayManifest
     {
         // Consts.
         public const string RootPath = "/";
         
         // Fields.
-        private readonly MantarayNode rootNode = new(
-            isEncrypted ?
-                null : //auto-generate random on hash building
-                XorEncryptKey.Empty);
+        private readonly Func<IHasherPipeline> hasherBuilder;
+        private readonly MantarayNode _rootNode;
+
+        // Constructors.
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            bool isEncrypted)
+            : this(hasherBuilder,
+                new MantarayNode(isEncrypted
+                    ? null //auto-generate random on hash building
+                    : XorEncryptKey.Empty))
+        { }
+
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            MantarayNode rootNode)
+        {
+            this.hasherBuilder = hasherBuilder;
+            _rootNode = rootNode;
+        }
+        
+        // Properties.
+        public IReadOnlyMantarayNode RootNode => _rootNode;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -38,13 +55,13 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
-            rootNode.Add(path, entry);
+            _rootNode.Add(path, entry);
         }
 
         public async Task<SwarmHash> GetHashAsync()
         {
-            await rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
-            return rootNode.Hash;
+            await _rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
+            return _rootNode.Hash;
         }
     }
 }

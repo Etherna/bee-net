@@ -28,6 +28,9 @@ namespace Etherna.BeeNet.Hasher.Store
     [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
     public class LocalDirectoryChunkStore : IChunkStore
     {
+        // Consts.
+        const string ChunkFileExtension = ".chunk";
+        
         // Constructor.
         public LocalDirectoryChunkStore(string directoryPath, bool createDirectory = false)
         {
@@ -48,7 +51,7 @@ namespace Etherna.BeeNet.Hasher.Store
         // Methods.
         public Task<IEnumerable<SwarmHash>> GetAllHashesAsync()
         {
-            var files = Directory.GetFiles(DirectoryPath, "*.chunk");
+            var files = Directory.GetFiles(DirectoryPath, '*' + ChunkFileExtension);
             var hashes = new List<SwarmHash>();
             
             foreach (var file in files)
@@ -60,9 +63,17 @@ namespace Etherna.BeeNet.Hasher.Store
             return Task.FromResult<IEnumerable<SwarmHash>>(hashes);
         }
 
+        public async Task<SwarmChunk> GetAsync(SwarmHash hash)
+        {
+            var chunk = await TryGetAsync(hash).ConfigureAwait(false);
+            if (chunk is null)
+                throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
+            return chunk;
+        }
+
         public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
         {
-            var chunkPath = Path.Combine(DirectoryPath, hash.ToString());
+            var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
             
             if (!File.Exists(chunkPath))
                 return null;
@@ -79,7 +90,7 @@ namespace Etherna.BeeNet.Hasher.Store
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
-            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + ".chunk");
+            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + ChunkFileExtension);
             
             if (File.Exists(chunkPath))
                 return false;

@@ -24,6 +24,9 @@ namespace Etherna.BeeNet.Hasher.Store
         public Task<IEnumerable<SwarmHash>> GetAllHashesAsync() =>
             Task.FromResult<IEnumerable<SwarmHash>>(Array.Empty<SwarmHash>());
 
+        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
+            throw new KeyNotFoundException("Chunk get on a fake chunk store");
+
         public Task<SwarmChunk?> TryGetAsync(SwarmHash hash) => Task.FromResult<SwarmChunk?>(null);
 
         public Task<bool> AddAsync(SwarmChunk chunk) => Task.FromResult(true);
