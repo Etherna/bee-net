@@ -167,14 +167,8 @@ namespace Etherna.BeeNet
             new(await generatedClient.PinsPostAsync((string)hash, cancellationToken).ConfigureAwait(false));
 
         public async Task<TagInfo> CreateTagAsync(
-            SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TagsPostAsync(
-                new Body3
-                {
-                    Address = hash.ToString()
-                },
-                cancellationToken).ConfigureAwait(false));
+            new(await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false));
 
         public async Task<MessageResponse> DeletePeerAsync(
             string peerAddress,
@@ -536,17 +530,16 @@ namespace Etherna.BeeNet
                     null,
                 cancellationToken);
 
-        public async Task<SwarmHash> UploadChunkAsync(
-            PostageBatchId batchId,
+        public async Task<SwarmHash> UploadChunkAsync(PostageBatchId batchId,
+            Stream chunkData,
+            bool swarmPin = false,
+            bool swarmDeferredUpload = true,
             long? swarmTag = null,
-            bool? swarmPin = null,
-            bool? swarmDeferredUpload = null,
-            Stream? body = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksPostAsync(
                 swarmTag,
                 batchId.ToString(),
-                body,
+                chunkData,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
         public Task UploadChunksStreamAsync(

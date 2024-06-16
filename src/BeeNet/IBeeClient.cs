@@ -133,7 +133,6 @@ namespace Etherna.BeeNet
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> CreateTagAsync(
-            SwarmHash hash,
             CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
@@ -663,18 +662,19 @@ namespace Etherna.BeeNet
 
         /// <summary>Upload Chunk</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <param name="chunkData"></param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        ///     <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmHash> UploadChunkAsync(
-            PostageBatchId batchId,
+        Task<SwarmHash> UploadChunkAsync(PostageBatchId batchId,
+            Stream chunkData,
+            bool swarmPin = false,
+            bool swarmDeferredUpload = true,
             long? swarmTag = null,
-            bool? swarmPin = null,
-            bool? swarmDeferredUpload = null,
-            Stream? body = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
