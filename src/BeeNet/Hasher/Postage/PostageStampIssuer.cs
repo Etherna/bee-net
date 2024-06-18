@@ -19,11 +19,9 @@ namespace Etherna.BeeNet.Hasher.Postage
 {
     public class PostageStampIssuer : IPostageStampIssuer
     {
-        // Consts.
-        public const int BucketsSize = 1 << PostageBatch.BucketDepth;
-        
         // Fields.
-        private readonly uint[] _buckets;
+        private readonly PostageBuckets _buckets;
+        private readonly object maxBucketCountLock = new();
         
         // Constructor.
         public PostageStampIssuer(
@@ -31,18 +29,14 @@ namespace Etherna.BeeNet.Hasher.Postage
             uint[]? initialBuckets = null)
         {
             ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
-            if (initialBuckets is not null &&
-                initialBuckets.Length != BucketsSize)
-                throw new ArgumentOutOfRangeException(nameof(initialBuckets),
-                    $"Initial buckets must have length {BucketsSize}, or be null");
 
-            _buckets = initialBuckets ?? new uint[BucketsSize];
+            _buckets = new PostageBuckets(initialBuckets);
             BucketUpperBound = (uint)1 << (postageBatch.Depth - PostageBatch.BucketDepth);
             PostageBatch = postageBatch;
         }
-        
+
         // Properties.
-        public ReadOnlySpan<uint> Buckets => _buckets;
+        public ReadOnlySpan<uint> Buckets => _buckets.Buckets;
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; private set; }
         public PostageBatch PostageBatch { get; }
@@ -53,19 +47,26 @@ namespace Etherna.BeeNet.Hasher.Postage
         {
             var bucketId = hash.ToBucketId();
 
-            if (_buckets[bucketId] == BucketUpperBound)
+            var collisions = _buckets.GetCollisions(bucketId);
+            if (collisions == BucketUpperBound)
             {
                 if (PostageBatch.IsImmutable)
                     throw new InvalidOperationException("Immutable postage overflowed");
                 HasSaturated = true;
-                _buckets[bucketId] = 0;
+                _buckets.ResetBucket(bucketId);
+                collisions = 0;
             }
 
-            _buckets[bucketId]++;
-            if (_buckets[bucketId] > MaxBucketCount)
-                MaxBucketCount = _buckets[bucketId];
+            _buckets.IncrementCollisions(bucketId);
+            collisions++;
 
-            return new StampBucketIndex(bucketId, _buckets[bucketId]);
+            lock (maxBucketCountLock)
+            {
+                if (collisions > MaxBucketCount)
+                    MaxBucketCount = collisions;
+            }
+
+            return new StampBucketIndex(bucketId, collisions);
         }
     }
 }
