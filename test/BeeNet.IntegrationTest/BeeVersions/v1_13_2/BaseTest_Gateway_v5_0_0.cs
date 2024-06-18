@@ -57,7 +57,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 
 
             // Act 
-            var reference = await beeNodeClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.UploadChunkAsync(batch, fs, swarmDeferredUpload: false);
 
             return reference;
         }
