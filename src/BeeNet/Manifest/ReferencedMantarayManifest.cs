@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -36,6 +37,15 @@ namespace Etherna.BeeNet.Manifest
 
         // Methods.
         public Task<SwarmHash> GetHashAsync() => Task.FromResult(RootNode.Hash);
+
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(SwarmAddress address)
+        {
+            if (!_rootNode.IsDecoded)
+                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
+
+            return await RootNode.GetResourceMetadataAsync(
+                address.RelativePath?.ToString() ?? "").ConfigureAwait(false);
+        }
 
         public async Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
         {

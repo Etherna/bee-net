@@ -134,5 +134,18 @@ namespace Etherna.BeeNet.Services
             
             return memoryStream;
         }
+
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataFromChunksAsync(
+            string chunkStoreDirectory,
+            SwarmAddress address)
+        {
+            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
+            
+            var rootManifest = new ReferencedMantarayManifest(
+                chunkStore,
+                address.Hash);
+            
+            return await rootManifest.GetResourceMetadataAsync(address).ConfigureAwait(false);
+        }
     }
 }

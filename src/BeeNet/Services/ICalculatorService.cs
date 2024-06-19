@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -65,7 +66,23 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             IChunkStore? chunkStore = null);
+
+        /// <summary>
+        /// Get resource metadata from a directory of chunks and the resource address
+        /// </summary>
+        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <param name="address">Resource address</param>
+        /// <returns>Resource metadata</returns>
+        Task<IReadOnlyDictionary<string, string>> GetResourceMetadataFromChunksAsync(
+            string chunkStoreDirectory,
+            SwarmAddress address);
         
+        /// <summary>
+        /// Get resource stream from a directory of chunks and the resource address
+        /// </summary>
+        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <param name="address">Resource address</param>
+        /// <returns>Resource stream</returns>
         Task<Stream> GetResourceStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address);
