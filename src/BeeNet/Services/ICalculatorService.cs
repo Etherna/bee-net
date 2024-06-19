@@ -28,6 +28,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="data">The file data in byte array</param>
         /// <param name="fileContentType">The file content type</param>
         /// <param name="fileName">The file name</param>
+        /// <param name="compactionLevel">Value of required postage buckets compaction, in range [0, 100]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
@@ -37,6 +38,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -48,6 +50,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="stream">The file stream</param>
         /// <param name="fileContentType">The file content type</param>
         /// <param name="fileName">The file name</param>
+        /// <param name="compactionLevel">Value of required postage buckets compaction, in range [0, 100]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
@@ -57,6 +60,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,

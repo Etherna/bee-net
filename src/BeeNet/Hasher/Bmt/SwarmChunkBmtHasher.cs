@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Etherna.BeeNet.Hasher.Bmt
     internal static class SwarmChunkBmtHasher
     {
         // Static methods.
-        public static byte[] Hash(byte[] span, byte[] data)
+        public static SwarmHash Hash(byte[] span, byte[] data)
         {
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));

@@ -21,7 +21,6 @@ namespace Etherna.BeeNet.Hasher.Postage
     {
         // Fields.
         private readonly PostageBuckets _buckets;
-        private readonly object maxBucketCountLock = new();
         
         // Constructor.
         public PostageStampIssuer(
@@ -40,9 +39,12 @@ namespace Etherna.BeeNet.Hasher.Postage
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; private set; }
         public PostageBatch PostageBatch { get; }
-        public uint MaxBucketCount { get; private set; }
+        public uint MaxBucketCount => _buckets.MaxBucketCount;
+        public long TotalChunks => _buckets.TotalChunks;
 
         // Methods.
+        public ulong GetCollisions(uint bucketId) => _buckets.GetCollisions(bucketId);
+        
         public StampBucketIndex IncrementBucketCount(SwarmHash hash)
         {
             var bucketId = hash.ToBucketId();
@@ -53,18 +55,12 @@ namespace Etherna.BeeNet.Hasher.Postage
                 if (PostageBatch.IsImmutable)
                     throw new InvalidOperationException("Immutable postage overflowed");
                 HasSaturated = true;
-                _buckets.ResetBucket(bucketId);
+                _buckets.ResetBucketCollisions(bucketId);
                 collisions = 0;
             }
 
             _buckets.IncrementCollisions(bucketId);
             collisions++;
-
-            lock (maxBucketCountLock)
-            {
-                if (collisions > MaxBucketCount)
-                    MaxBucketCount = collisions;
-            }
 
             return new StampBucketIndex(bucketId, collisions);
         }

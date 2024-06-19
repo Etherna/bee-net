@@ -28,18 +28,21 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
-            string? chunkStoreDirectory) =>
+            string? chunkStoreDirectory,
+            int compactionLevel) =>
             BuildNewHasherPipeline(
                 chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
                 postageStamper,
                 redundancyLevel,
-                isEncrypted);
+                isEncrypted,
+                compactionLevel);
         
         public static IHasherPipeline BuildNewHasherPipeline(
             IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
-            bool isEncrypted)
+            bool isEncrypted,
+            int compactionLevel)
         {
             if (redundancyLevel != RedundancyLevel.None)
                 throw new NotImplementedException();
@@ -63,10 +66,10 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     }
                 );
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
-                bmtStage = new ChunkBmtPipelineStage(storeWriterStage);
+                bmtStage = new ChunkBmtPipelineStage(compactionLevel, storeWriterStage, postageStamper.StampIssuer);
             }
             
-            return new ChunkFeederPipelineStage(bmtStage);
+            return new ChunkFeederPipelineStage(compactionLevel != 0, bmtStage);
         }
         
         public static IHasherPipelineStage BuildNewShortHasherPipeline(
@@ -74,7 +77,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             IPostageStamper postageStamper)
         {
             var storeWriter = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
-            return new ChunkBmtPipelineStage(storeWriter);
+            return new ChunkBmtPipelineStage(0, storeWriter, postageStamper.StampIssuer);
         }
     }
 }

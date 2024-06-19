@@ -31,6 +31,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -41,6 +42,7 @@ namespace Etherna.BeeNet.Services
                 stream,
                 fileContentType,
                 fileName,
+                compactionLevel,
                 encrypt,
                 redundancyLevel,
                 postageStampIssuer,
@@ -51,6 +53,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -69,7 +72,8 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 postageStamper,
                 redundancyLevel,
-                encrypt);
+                encrypt,
+                compactionLevel);
             var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             fileName ??= fileHash.ToString(); //if missing, set file name with its address
             
@@ -79,7 +83,8 @@ namespace Etherna.BeeNet.Services
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
-                    encrypt),
+                    encrypt,
+                    0),
                 encrypt);
 
             manifest.Add(

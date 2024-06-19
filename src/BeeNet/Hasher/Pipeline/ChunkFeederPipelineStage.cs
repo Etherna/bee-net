@@ -16,6 +16,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,21 +26,32 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     /// Produce chunked data with span prefix for successive stages.
     /// Also controls the parallelism on chunk elaboration
     /// </summary>
-    internal sealed class ChunkFeederPipelineStage(
-        IHasherPipelineStage nextStage,
-        int chunkConcurrency)
-        : IHasherPipeline
+    internal sealed class ChunkFeederPipelineStage : IHasherPipeline
     {
         // Fields.
         private readonly List<Task> nextStageTasks = new();
-        private readonly SemaphoreSlim semaphore = new(chunkConcurrency, chunkConcurrency);
+        private readonly SemaphoreSlim semaphore;
         
         private long passedBytes;
-        
+        private readonly bool useCompaction;
+        private readonly IHasherPipelineStage nextStage;
+
         // Constructor.
-        public ChunkFeederPipelineStage(IHasherPipelineStage nextStage)
-            : this(nextStage, Environment.ProcessorCount)
+        public ChunkFeederPipelineStage(
+            bool useCompaction,
+            IHasherPipelineStage nextStage)
+            : this(useCompaction, nextStage, Environment.ProcessorCount)
         { }
+
+        public ChunkFeederPipelineStage(
+            bool useCompaction,
+            IHasherPipelineStage nextStage,
+            int chunkConcurrency)
+        {
+            this.useCompaction = useCompaction;
+            this.nextStage = nextStage;
+            semaphore = new(chunkConcurrency, chunkConcurrency);
+        }
 
         // Dispose.
         public void Dispose()
@@ -70,8 +82,13 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             // Make it no more usable.
             IsUsable = false;
             
+            // If we are using compaction, use first data byte for the seed.
+            var chunkDataSize = SwarmChunk.DataSize;
+            if (useCompaction)
+                chunkDataSize--;
+            
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
-            var chunkBuffer = new byte[SwarmChunk.DataSize];
+            var chunkBuffer = new byte[chunkDataSize];
             int chunkReadSize;
             do
             {
@@ -81,20 +98,31 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     passedBytes == 0)    //or if the first and only one is empty
                 {
                     // Copy read data from buffer to a new chunk data byte[]. Include also span
-                    var chunkData = new byte[SwarmChunk.SpanSize + chunkReadSize];
-                    chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize));
+                    var chunkData = useCompaction
+                        ? new byte[SwarmChunk.SpanSize + chunkReadSize + 1]
+                        : new byte[SwarmChunk.SpanSize + chunkReadSize];
+                    chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(
+                        chunkData.AsSpan(useCompaction
+                            ? SwarmChunk.SpanSize + 1
+                            : SwarmChunk.SpanSize));
+
+                    // If we are using compaction, initialize the seed byte with a random number.
+                    if (useCompaction)
+                        chunkData[SwarmChunk.SpanSize] = RandomNumberGenerator.GetBytes(1)[0];
                     
                     // Write chunk span.
                     SwarmChunk.WriteSpan(
                         chunkData.AsSpan(0, SwarmChunk.SpanSize),
-                        (ulong)chunkReadSize);
+                        useCompaction
+                            ? (ulong)chunkReadSize + 1
+                            : (ulong)chunkReadSize);
                 
                     // Invoke next stage with parallelism on chunks.
                     await semaphore.WaitAsync().ConfigureAwait(false);
                     var feedArgs = new HasherPipelineFeedArgs(
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
-                        numberId: passedBytes / SwarmChunk.DataSize);
+                        numberId: passedBytes / chunkDataSize);
                     nextStageTasks.Add(
                         Task.Run(async () =>
                         {
@@ -110,7 +138,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     
                     passedBytes += chunkReadSize;
                 }
-            } while (chunkReadSize == SwarmChunk.DataSize);
+            } while (chunkReadSize == chunkDataSize);
 
             // Wait the end of all chunk computation.
             await Task.WhenAll(nextStageTasks).ConfigureAwait(false);

@@ -43,6 +43,8 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public ReadOnlySpan<uint> Buckets => DictionaryToBuckets(_buckets);
+        public uint MaxBucketCount { get; private set; }
+        public long TotalChunks { get; private set; }
         
         // Methods.
         public uint GetCollisions(uint bucketId)
@@ -50,11 +52,28 @@ namespace Etherna.BeeNet.Models
             _buckets.TryGetValue(bucketId, out var collisions);
             return collisions;
         }
-        
-        public void IncrementCollisions(uint bucketId) =>
-            _buckets.AddOrUpdate(bucketId, _ => 1, (_, c) => c + 1);
 
-        public void ResetBucket(uint bucketId) =>
+        public void IncrementCollisions(uint bucketId)
+        {
+            _buckets.AddOrUpdate(
+                bucketId,
+                _ =>
+                {
+                    TotalChunks++;
+                    if (1 > MaxBucketCount)
+                        MaxBucketCount = 1;
+                    return 1;
+                },
+                (_, c) =>
+                {
+                    TotalChunks++;
+                    if (c + 1 > MaxBucketCount)
+                        MaxBucketCount = c + 1;
+                    return c + 1;
+                });
+        }
+
+        public void ResetBucketCollisions(uint bucketId) =>
             _buckets.AddOrUpdate(bucketId, _ => 0, (_, _) => 0);
         
         // Helpers.
