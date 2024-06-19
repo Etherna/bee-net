@@ -82,9 +82,11 @@ namespace Etherna.BeeNet.Services
         /// </summary>
         /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <param name="address">Resource address</param>
+        /// <param name="isCompacted">True if data chunks has compaction enabled</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetResourceStreamFromChunksAsync(
             string chunkStoreDirectory,
-            SwarmAddress address);
+            SwarmAddress address,
+            bool isCompacted);
     }
 }

@@ -116,7 +116,8 @@ namespace Etherna.BeeNet.Services
 
         public async Task<Stream> GetResourceStreamFromChunksAsync(
             string chunkStoreDirectory,
-            SwarmAddress address)
+            SwarmAddress address,
+            bool isCompacted)
         {
             var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
             var chunkJoiner = new ChunkJoiner(chunkStore);
@@ -128,7 +129,7 @@ namespace Etherna.BeeNet.Services
             var resourceHash = await rootManifest.ResolveResourceHashAsync(address).ConfigureAwait(false);
             
             var memoryStream = new MemoryStream();
-            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(resourceHash).ConfigureAwait(false);
+            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(resourceHash, isCompacted).ConfigureAwait(false);
             memoryStream.Write(resourceData.ToArray());
             memoryStream.Position = 0;
             
