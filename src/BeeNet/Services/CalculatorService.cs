@@ -102,7 +102,8 @@ namespace Etherna.BeeNet.Services
                     new Dictionary<string, string>
                     {
                         [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
+                        [ManifestEntry.FilenameKey] = fileName,
+                        [ManifestEntry.CompactedChunksKey] = (compactionLevel != 0).ToString()
                     }));
 
             var finalHash = await manifest.GetHashAsync().ConfigureAwait(false);

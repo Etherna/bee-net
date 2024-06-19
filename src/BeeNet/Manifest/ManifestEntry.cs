@@ -21,6 +21,7 @@ namespace Etherna.BeeNet.Manifest
     {
         // Consts.
         public const string ContentTypeKey = "Content-Type";
+        public const string CompactedChunksKey = "CompactedChunks";
         public const string FilenameKey = "Filename";
         public const string WebsiteErrorDocPathKey = "website-error-document";
         public const string WebsiteIndexDocPathKey = "website-index-document";
