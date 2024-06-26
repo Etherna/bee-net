@@ -42,7 +42,11 @@ namespace Etherna.BeeNet.Hasher.Postage
         /// </summary>
         public uint MaxBucketCount { get; }
 
+        long TotalChunks { get; }
+
         // Methods.
         StampBucketIndex IncrementBucketCount(SwarmHash hash);
+        
+        ulong GetCollisions(uint bucketId);
     }
 }

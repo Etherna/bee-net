@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Epoche;
+using Etherna.BeeNet.Models;
 using Nethereum.Merkle;
 using Nethereum.Merkle.StrategyOptions.PairingConcat;
 using Nethereum.Util.ByteArrayConvertors;
@@ -65,7 +66,7 @@ namespace Etherna.BeeNet.Hasher.Bmt
         { }
         
         // Static methods.
-        public static byte[] ComputeHash(byte[] data) => hashProvider.ComputeHash(data);
+        public static SwarmHash ComputeHash(byte[] data) => hashProvider.ComputeHash(data);
         
         // Protected override methods.
         protected override MerkleTreeNode CreateMerkleTreeNode(byte[] item) =>

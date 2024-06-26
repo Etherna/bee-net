@@ -75,6 +75,41 @@ namespace Etherna.BeeNet.Manifest
             IsDecoded = true;
         }
 
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        {
+            ArgumentNullException.ThrowIfNull(path, nameof(path));
+
+            // If the path is empty
+            if (path.Length == 0)
+            {
+                //try to lookup for index document suffix
+                if (!_forks.TryGetValue('/', out var rootFork) ||
+                    rootFork.Prefix != "/")
+                    throw new KeyNotFoundException($"Final path {path} can't be found");
+                
+                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))
+                    throw new KeyNotFoundException($"Index document can't be found");
+
+                path += suffix;
+            }
+
+            // Find the child fork.
+            if (!_forks.TryGetValue(path[0], out var fork) ||
+                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+                throw new KeyNotFoundException($"Final path {path} can't be found");
+            
+            // If the child node is the one we are looking for, return metadata.
+            var childSubPath = path[fork.Prefix.Length..];
+            if (childSubPath.Length == 0)
+                return fork.Node._metadata;
+            
+            // Else, proceed into it.
+            if (!fork.Node.IsDecoded)
+                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
+
+            return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
+        }
+
         public async Task<SwarmHash> ResolveResourceHashAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
@@ -97,7 +132,7 @@ namespace Etherna.BeeNet.Manifest
                 path += suffix;
             }
             
-            // Else, find the child fork.
+            // Find the child fork.
             if (!_forks.TryGetValue(path[0], out var fork) ||
                 !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
                 throw new KeyNotFoundException($"Final path {path} can't be found");

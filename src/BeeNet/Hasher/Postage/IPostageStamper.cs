@@ -12,12 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Etherna.BeeNet.Hasher.Signer;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 
 namespace Etherna.BeeNet.Hasher.Postage
 {
     internal interface IPostageStamper
     {
+        // Properties.
+        ISigner Signer { get; }
+        IPostageStampIssuer StampIssuer { get; }
+        IStampStore StampStore { get; }
+        
+        // Methods.
         PostageStamp Stamp(SwarmHash hash);
     }
 }
