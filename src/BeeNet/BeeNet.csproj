@@ -20,7 +20,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>COPYING</PackageLicenseFile>
-    <PackageLicenseFile>COPYING.LESSER</PackageLicenseFile>
+    <PackageLicenseFile>COPYING-LESSER</PackageLicenseFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
@@ -45,7 +45,7 @@
     <None Include="..\..\COPYING">
       <Pack>True</Pack>
     </None>
-    <None Include="..\..\COPYING.LESSER">
+    <None Include="..\..\COPYING-LESSER">
       <Pack>True</Pack>
     </None>
   </ItemGroup>
