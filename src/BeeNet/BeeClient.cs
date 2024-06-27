@@ -461,7 +461,7 @@ namespace Etherna.BeeNet
             string welcomeMessage,
             CancellationToken cancellationToken = default) =>
             generatedClient.WelcomeMessagePostAsync(
-                new Body5
+                new Body4
                 {
                     WelcomeMessage = welcomeMessage
                 },
@@ -526,7 +526,7 @@ namespace Etherna.BeeNet
             generatedClient.TagsPatchAsync(
                 uid,
                 hash.HasValue ?
-                    new Body4 { Address = hash.Value.ToString() } :
+                    new Body3 { Address = hash.Value.ToString() } :
                     null,
                 cancellationToken);
 
@@ -624,7 +624,7 @@ namespace Etherna.BeeNet
             (await generatedClient.WalletWithdrawAsync(
                 amount.ToPlurString(),
                 address,
-                coin,
+                coin.ToWeiString(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequeBookAsync(

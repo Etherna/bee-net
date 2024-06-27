@@ -700,17 +700,6 @@ paths:
         uploaded as part of the tag and will push them out to the network once a
         done split is called on the Tag. This happens internally if you use the
         `Swarm-Deferred-Upload` header.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                address:
-                  type: string
-                  pattern: ^[A-Fa-f0-9]{64}$
-                  example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
       responses:
         "201":
           description: New Tag Info
@@ -2633,6 +2622,7 @@ paths:
         - in: path
           name: amount
           schema:
+            &a64
             description: Numeric string that represents integer which might exceeds
               `Number.MAX_SAFE_INTEGER` limit (2^53-1)
             type: string
@@ -3031,12 +3021,15 @@ paths:
         - in: query
           name: amount
           required: true
+          schema: *a64
         - in: query
           name: address
           required: true
+          schema: *a29
         - in: path
           name: coin
           required: true
+          schema: *a22
       responses:
         "200":
           content:
@@ -3133,7 +3126,7 @@ paths:
           content:
             application/json:
               schema:
-                &a64
+                &a65
                 type: object
                 properties:
                   tree:
@@ -3172,7 +3165,7 @@ paths:
         - in: path
           name: exp
           schema:
-            &a65
+            &a66
             type: string
             description: Base 64 encoded regular expression or subsystem string.
             pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
@@ -3187,7 +3180,7 @@ paths:
             expression, also represented in short form in a tree.
           content:
             application/json:
-              schema: *a64
+              schema: *a65
         "400": *a3
         default:
           description: Default response
@@ -3196,7 +3189,7 @@ paths:
       parameters:
         - in: path
           name: exp
-          schema: *a65
+          schema: *a66
           required: true
           description: Regular expression or a subsystem that matches the logger(s).
       tags:
