@@ -1,18 +1,19 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
@@ -22,14 +23,17 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     internal sealed class ChunkStoreWriterPipelineStage : IHasherPipelineStage
     {
         // Fields.
+        private readonly IChunkStore chunkStore;
         private readonly IHasherPipelineStage? nextStage;
         private readonly IPostageStamper postageStamper;
 
         // Constructor.
         public ChunkStoreWriterPipelineStage(
+            IChunkStore chunkStore,
             IPostageStamper postageStamper,
             IHasherPipelineStage? nextStage)
         {
+            this.chunkStore = chunkStore;
             this.nextStage = nextStage;
             this.postageStamper = postageStamper;
         }
@@ -44,19 +48,21 @@ namespace Etherna.BeeNet.Hasher.Pipeline
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
-            if (args.Address is null) throw new InvalidOperationException();
+            if (args.Hash is null) throw new InvalidOperationException();
 
             // Stamp chunk and store stamp.
-            postageStamper.Stamp(args.Address.Value);
+            var stamp = postageStamper.Stamp(args.Hash.Value);
             
             // Store chunk.
-            //not implemented...
+            var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
+            chunk.PostageStamp = stamp;
+            await chunkStore.AddAsync(chunk).ConfigureAwait(false);
 
             if (nextStage is not null)
                 await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
         
-        public Task<SwarmAddress> SumAsync() =>
+        public Task<SwarmHash> SumAsync() =>
             nextStage?.SumAsync() ?? throw new InvalidOperationException();
     }
 }

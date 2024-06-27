@@ -1,16 +1,16 @@
-﻿//   Copyright 2021-present Etherna SA
+﻿// Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//       http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet;
 using Etherna.BeeNet.Models;
@@ -33,7 +33,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
                 1633);
         }
 
-        protected async Task<SwarmAddress> UploadBZZFileAndGetReferenceAsync(string filePath = null)
+        protected async Task<SwarmHash> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
@@ -49,7 +49,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
             return result;
         }
 
-        protected async Task<SwarmAddress> UploadChunkFileAndGetReferenceAsync()
+        protected async Task<SwarmHash> UploadChunkFileAndGetReferenceAsync()
         {
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
@@ -57,7 +57,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 
 
             // Act 
-            var reference = await beeNodeClient.UploadChunkAsync(batch, null, body: fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.UploadChunkAsync(batch, fs, swarmDeferredUpload: false);
 
             return reference;
         }

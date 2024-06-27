@@ -1,16 +1,16 @@
-﻿//   Copyright 2021-present Etherna SA
+﻿// Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//       http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Epoche;
 using Etherna.BeeNet.Extensions;
@@ -38,8 +38,8 @@ namespace Etherna.BeeNet.Models
         public SwarmFeedChunk(
             FeedIndexBase index,
             byte[] data,
-            SwarmAddress address) :
-            base(address, data)
+            SwarmHash hash) :
+            base(hash, data)
         {
             if (data.Length < MinDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be shorter than {TimeStampSize} bytes");
@@ -66,14 +66,14 @@ namespace Etherna.BeeNet.Models
             if (ReferenceEquals(this, obj)) return true;
             if (obj is not SwarmFeedChunk objFeedChunk) return false;
             return GetType() == obj.GetType() &&
-                Address.Equals(objFeedChunk.Address) &&
+                Hash.Equals(objFeedChunk.Hash) &&
                 Data.Span.SequenceEqual(objFeedChunk.Data.Span) &&
                 Index.Equals(objFeedChunk.Index) &&
                 Span.Span.SequenceEqual(objFeedChunk.Span.Span);
         }
         
         public override int GetHashCode() =>
-            Address.GetHashCode() ^
+            Hash.GetHashCode() ^
             _data.GetHashCode() ^
             Index.GetHashCode() ^
             _span.GetHashCode();
@@ -95,6 +95,33 @@ namespace Etherna.BeeNet.Models
             return chunkData;
         }
 
+        public static SwarmHash BuildHash(string account, byte[] topic, FeedIndexBase index) =>
+            BuildHash(account, BuildIdentifier(topic, index));
+
+        public static SwarmHash BuildHash(byte[] account, byte[] topic, FeedIndexBase index) =>
+            BuildHash(account, BuildIdentifier(topic, index));
+
+        public static SwarmHash BuildHash(string account, byte[] identifier)
+        {
+            if (!account.IsValidEthereumAddressHexFormat())
+                throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
+
+            return BuildHash(account.HexToByteArray(), identifier);
+        }
+
+        public static SwarmHash BuildHash(byte[] account, byte[] identifier)
+        {
+            ArgumentNullException.ThrowIfNull(account, nameof(account));
+            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
+
+            if (account.Length != AccountSize)
+                throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
+            if (identifier.Length != IdentifierSize)
+                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
+
+            return Keccak256.ComputeHash(identifier.Concat(account).ToArray());
+        }
+
         public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index)
         {
             ArgumentNullException.ThrowIfNull(topic, nameof(topic));
@@ -108,33 +135,6 @@ namespace Etherna.BeeNet.Models
             index.MarshalBinary.CopyTo(newArray, topic.Length);
 
             return Keccak256.ComputeHash(newArray);
-        }
-
-        public static SwarmAddress BuildReferenceHash(string account, byte[] topic, FeedIndexBase index) =>
-            BuildReferenceHash(account, BuildIdentifier(topic, index));
-
-        public static SwarmAddress BuildReferenceHash(byte[] account, byte[] topic, FeedIndexBase index) =>
-            BuildReferenceHash(account, BuildIdentifier(topic, index));
-
-        public static SwarmAddress BuildReferenceHash(string account, byte[] identifier)
-        {
-            if (!account.IsValidEthereumAddressHexFormat())
-                throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
-
-            return BuildReferenceHash(account.HexToByteArray(), identifier);
-        }
-
-        public static SwarmAddress BuildReferenceHash(byte[] account, byte[] identifier)
-        {
-            ArgumentNullException.ThrowIfNull(account, nameof(account));
-            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
-
-            if (account.Length != AccountSize)
-                throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
-            if (identifier.Length != IdentifierSize)
-                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
-
-            return Keccak256.ComputeHash(identifier.Concat(account).ToArray());
         }
     }
 }

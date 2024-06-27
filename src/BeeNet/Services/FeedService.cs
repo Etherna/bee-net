@@ -1,16 +1,16 @@
-﻿//   Copyright 2021-present Etherna SA
+﻿// Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//       http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Feeds;
@@ -65,9 +65,9 @@ namespace Etherna.BeeNet.Services
 
             // Create new chunk.
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkReferenceHash = SwarmFeedChunk.BuildReferenceHash(account, topic, nextEpochIndex);
+            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex);
 
-            return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkReferenceHash);
+            return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }
 
         public Task<SwarmFeedChunk?> TryFindEpochFeedAsync(
@@ -160,16 +160,16 @@ namespace Etherna.BeeNet.Services
             TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
 
         public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
-            TryGetFeedChunkAsync(SwarmFeedChunk.BuildReferenceHash(account, topic, index), index);
+            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index), index);
 
-        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmAddress chunkAddress, FeedIndexBase index)
+        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmHash hash, FeedIndexBase index)
         {
             try
             {
-                using var chunkStream = await gatewayClient.GetChunkStreamAsync(chunkAddress).ConfigureAwait(false);
+                using var chunkStream = await gatewayClient.GetChunkStreamAsync(hash).ConfigureAwait(false);
                 using var chunkMemoryStream = new MemoryStream();
                 await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
-                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), chunkAddress);
+                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), hash);
             }
             catch (BeeNetApiException)
             {

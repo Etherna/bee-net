@@ -46,14 +46,14 @@ namespace Etherna.BeeNet.Hasher.Redundancy
             var errs = new ConcurrentBag<Exception>();
             try
             {
-                postageStamper.Stamp(chunk.Address);
+                postageStamper.Stamp(chunk.Hash);
             }
             catch (Exception e)
             {
                 errs.Add(e);
             }
 
-            var rr = new Replicator(chunk.Address, redundancyLevel);
+            var rr = new Replicator(chunk.Hash, redundancyLevel);
 
             var tasks = rr.C.Select(r =>
             {

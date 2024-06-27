@@ -1,19 +1,21 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hasher.Postage;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -30,6 +32,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             byte[] data,
@@ -37,7 +40,8 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null);
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null);
         
         /// <summary>
         /// Evaluate the result of upload a file
@@ -48,6 +52,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             Stream stream,
@@ -55,6 +60,27 @@ namespace Etherna.BeeNet.Services
             string? fileName,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null);
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null);
+
+        /// <summary>
+        /// Get resource metadata from a directory of chunks and the resource address
+        /// </summary>
+        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <param name="address">Resource address</param>
+        /// <returns>Resource metadata</returns>
+        Task<IReadOnlyDictionary<string, string>> GetResourceMetadataFromChunksAsync(
+            string chunkStoreDirectory,
+            SwarmAddress address);
+        
+        /// <summary>
+        /// Get resource stream from a directory of chunks and the resource address
+        /// </summary>
+        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <param name="address">Resource address</param>
+        /// <returns>Resource stream</returns>
+        Task<Stream> GetResourceStreamFromChunksAsync(
+            string chunkStoreDirectory,
+            SwarmAddress address);
     }
 }

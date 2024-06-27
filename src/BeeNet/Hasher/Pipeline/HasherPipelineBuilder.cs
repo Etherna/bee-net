@@ -1,19 +1,20 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Hasher.Redundancy;
+using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -25,6 +26,18 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     {
         // Static builders.
         public static IHasherPipeline BuildNewHasherPipeline(
+            IPostageStamper postageStamper,
+            RedundancyLevel redundancyLevel,
+            bool isEncrypted,
+            string? chunkStoreDirectory) =>
+            BuildNewHasherPipeline(
+                chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
+                postageStamper,
+                redundancyLevel,
+                isEncrypted);
+        
+        public static IHasherPipeline BuildNewHasherPipeline(
+            IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted)
@@ -40,7 +53,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             else
             {
                 //build stages
-                var shortPipelineStage = BuildNewShortHasherPipeline(postageStamper);
+                var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper);
                 
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     new RedundancyParams(redundancyLevel, false, shortPipelineStage),
@@ -49,19 +62,21 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     {
                         var args = new HasherPipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
-                        return args.Address!.Value;
+                        return args.Hash!.Value;
                     }
                 );
-                var storeWriterStage = new ChunkStoreWriterPipelineStage(postageStamper, chunkAggregatorStage);
+                var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
                 bmtStage = new ChunkBmtPipelineStage(storeWriterStage);
             }
             
             return new ChunkFeederPipelineStage(bmtStage);
         }
         
-        public static IHasherPipelineStage BuildNewShortHasherPipeline(IPostageStamper postageStamper)
+        public static IHasherPipelineStage BuildNewShortHasherPipeline(
+            IChunkStore chunkStore,
+            IPostageStamper postageStamper)
         {
-            var storeWriter = new ChunkStoreWriterPipelineStage(postageStamper, null);
+            var storeWriter = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
             return new ChunkBmtPipelineStage(storeWriter);
         }
     }

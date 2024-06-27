@@ -1,16 +1,16 @@
-﻿//   Copyright 2021-present Etherna SA
+﻿// Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//       http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.Feeds
             public VerifyConstructorArgumentsTestElement(
                 FeedIndexBase index,
                 byte[] payload,
-                SwarmAddress referenceHash,
+                SwarmHash referenceHash,
                 Type expectedExceptionType)
             {
                 ExpectedExceptionType = expectedExceptionType;
@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Feeds
             public Type ExpectedExceptionType { get; }
             public FeedIndexBase Index { get; }
             public byte[] Payload { get; }
-            public SwarmAddress ReferenceHash { get; }
+            public SwarmHash ReferenceHash { get; }
         }
 
         // Data.
@@ -156,32 +156,32 @@ namespace Etherna.BeeNet.Feeds
         }
 
         [Fact]
-        public void BuildReferenceHashVerifyAccount()
+        public void BuildHashVerifyAccount()
         {
             var account = new byte[] { 0, 1, 2, 3 };
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildReferenceHash(account, identifier));
+                SwarmFeedChunk.BuildHash(account, identifier));
         }
 
         [Fact]
-        public void BuildReferenceHashVerifyIdentifier()
+        public void BuildHashVerifyIdentifier()
         {
             var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
             var identifier = new byte[] { 0, 1, 2, 3 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildReferenceHash(account, identifier));
+                SwarmFeedChunk.BuildHash(account, identifier));
         }
 
         [Fact]
-        public void BuildReferenceHash()
+        public void BuildHash()
         {
             var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
-            var result = SwarmFeedChunk.BuildReferenceHash(account, identifier);
+            var result = SwarmFeedChunk.BuildHash(account, identifier);
 
             Assert.Equal(
                 "854f1dd0c708a544e282b25b9f9c1d353dca28e352656993ab3c2c17b384a86f",

@@ -1,17 +1,18 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hasher.Bmt;
 using Etherna.BeeNet.Hasher.Postage;
 using Etherna.BeeNet.Hasher.Redundancy;
 using Etherna.BeeNet.Models;
@@ -23,14 +24,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hasher.Pipeline
 {
-    internal delegate Task<SwarmAddress> HashChunkDelegateAsync(byte[] span, byte[] data);
+    internal delegate Task<SwarmHash> HashChunkDelegateAsync(byte[] span, byte[] data);
     
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
-        private class ChunkHeader(SwarmAddress address, ReadOnlyMemory<byte> span, bool isParityChunk, byte[]? key)
+        private class ChunkHeader(SwarmHash hash, ReadOnlyMemory<byte> span, bool isParityChunk, byte[]? key)
         {
-            public SwarmAddress Address { get; } = address;
+            public SwarmHash Hash { get; } = hash;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
             public byte[] Key { get; } = key ?? [];
@@ -95,7 +96,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                     await AddChunkToLevelAsync(
                         1,
                         new ChunkHeader(
-                            processingChunk.Address!.Value,
+                            processingChunk.Hash!.Value,
                             processingChunk.Span,
                             false,
                             processingChunk.EncryptionKey)).ConfigureAwait(false);
@@ -113,7 +114,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             }
         }
 
-        public async Task<SwarmAddress> SumAsync()
+        public async Task<SwarmHash> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -152,10 +153,10 @@ namespace Etherna.BeeNet.Hasher.Pipeline
             if (redundancyParams.Level != RedundancyLevel.None)
             {
                 var rootData = redundancyParams.GetRootData();
-                replicaPutter.Put(SwarmChunk.BuildFromSpanAndData(rootChunk.Address, rootData));
+                replicaPutter.Put(SwarmChunk.BuildFromSpanAndData(rootChunk.Hash, rootData));
             }
 
-            return rootChunk.Address;
+            return rootChunk.Hash;
         }
 
         // Helpers.
@@ -195,9 +196,9 @@ namespace Etherna.BeeNet.Hasher.Pipeline
                 totalSpan[SwarmChunk.SpanSize - 1] = (byte)((int)redundancyParams.Level | (1 << 7)); // p + 128
             }
             
-            // Build total data from total span, and all the addresses in level.
+            // Build total data from total span, and all the hashes in level.
             var totalData = totalSpan.Concat(
-                levelChunks.SelectMany(c => c.Address.ToByteArray()))
+                levelChunks.SelectMany(c => c.Hash.ToByteArray()))
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.

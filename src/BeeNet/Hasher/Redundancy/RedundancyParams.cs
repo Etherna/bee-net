@@ -164,7 +164,7 @@ namespace Etherna.BeeNet.Hasher.Redundancy
                     span: span);
                 await pipeLine.FeedAsync(args).ConfigureAwait(false);
 
-                await callback(chunkLevel + 1, span, args.Address!.Value.ToByteArray()).ConfigureAwait(false);
+                await callback(chunkLevel + 1, span, args.Hash!.Value.ToByteArray()).ConfigureAwait(false);
             }
             bufferCursor[chunkLevel] = 0;
         }

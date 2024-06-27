@@ -1,16 +1,16 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Epoche;
 using Etherna.BeeNet.Extensions;
@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Hasher.Postage
     internal class PostageStamper(
         ISigner signer,
         IPostageStampIssuer stampIssuer,
-        IStore store)
+        IStampStore stampStore)
         : IPostageStamper
     {
         // Constructor.
@@ -33,29 +33,29 @@ namespace Etherna.BeeNet.Hasher.Postage
         // Properties.
         public ISigner Signer { get; } = signer;
         public IPostageStampIssuer StampIssuer { get; } = stampIssuer;
-        public IStore Store { get; } = store;
+        public IStampStore StampStore { get; } = stampStore;
 
         // Methods.
-        public PostageStamp Stamp(SwarmAddress address)
+        public PostageStamp Stamp(SwarmHash hash)
         {
-            StoreItemBase item = new StampStoreItem(
+            var item = new StampStoreItem(
                 StampIssuer.PostageBatch.Id,
-                address);
+                hash);
 
-            if (Store.TryGet(item.StoreKey, out var storedItem))
+            if (StampStore.TryGet(item.StoreKey, out var storedItem))
                 item = storedItem;
             else
-                item.StampBucketIndex = StampIssuer.IncrementBucketCount(address);
+                item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
 
             if (item.StampBucketIndex is null)
                 throw new InvalidOperationException();
 
             item.BucketTimestamp = DateTimeOffset.UtcNow;
             
-            Store.Put(item);
+            StampStore.Put(item);
 
             var toSignDigest = ToSignDigest(
-                address,
+                hash,
                 StampIssuer.PostageBatch.Id,
                 item.StampBucketIndex!,
                 item.BucketTimestamp.Value);
@@ -73,14 +73,14 @@ namespace Etherna.BeeNet.Hasher.Postage
         /// <summary>
         /// Creates a digest to represent the stamp which is to be signed by the owner
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="hash"></param>
         /// <param name="batchId"></param>
-        /// <param name="index"></param>
+        /// <param name="stampBucketIndex"></param>
         /// <param name="timeStamp"></param>
         /// <returns></returns>
-        private static byte[] ToSignDigest(SwarmAddress address, PostageBatchId batchId, StampBucketIndex stampBucketIndex, DateTimeOffset timeStamp) =>
+        private static byte[] ToSignDigest(SwarmHash hash, PostageBatchId batchId, StampBucketIndex stampBucketIndex, DateTimeOffset timeStamp) =>
             Keccak256.ComputeHash(
-                address.ToByteArray()
+                hash.ToByteArray()
                     .Concat(batchId.ToByteArray())
                     .Concat(stampBucketIndex.ToByteArray())
                     .Concat(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray()).ToArray());

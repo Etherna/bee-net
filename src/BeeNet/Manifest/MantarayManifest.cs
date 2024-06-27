@@ -1,16 +1,16 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
@@ -19,18 +19,35 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayManifest(
-        Func<IHasherPipeline> hasherBuilder,
-        bool isEncrypted)
+    public class MantarayManifest : IReadOnlyMantarayManifest
     {
         // Consts.
         public const string RootPath = "/";
         
         // Fields.
-        private readonly MantarayNode rootNode = new(
-            isEncrypted ?
-                null : //auto-generate random on address building
-                XorEncryptKey.Empty);
+        private readonly Func<IHasherPipeline> hasherBuilder;
+        private readonly MantarayNode _rootNode;
+
+        // Constructors.
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            bool isEncrypted)
+            : this(hasherBuilder,
+                new MantarayNode(isEncrypted
+                    ? null //auto-generate random on hash building
+                    : XorEncryptKey.Empty))
+        { }
+
+        public MantarayManifest(
+            Func<IHasherPipeline> hasherBuilder,
+            MantarayNode rootNode)
+        {
+            this.hasherBuilder = hasherBuilder;
+            _rootNode = rootNode;
+        }
+        
+        // Properties.
+        public IReadOnlyMantarayNode RootNode => _rootNode;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -38,13 +55,13 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
-            rootNode.Add(path, entry);
+            _rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmAddress> GetAddressAsync()
+        public async Task<SwarmHash> GetHashAsync()
         {
-            await rootNode.ComputeAddressAsync(hasherBuilder).ConfigureAwait(false);
-            return rootNode.Address;
+            await _rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
+            return _rootNode.Hash;
         }
     }
 }

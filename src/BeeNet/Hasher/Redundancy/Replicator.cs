@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Hasher.Redundancy
         // Constructor.
         public Replicator(SwarmAddress address, RedundancyLevel redundancyLevel)
         {
-            addr = address.ToByteArray();
+            addr = address.Hash.ToByteArray();
             rLevel = redundancyLevel;
             Replicas();
         }

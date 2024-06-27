@@ -1,18 +1,19 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hasher.Bmt;
+using Etherna.BeeNet.Hasher.Postage;
 using System;
 using System.Buffers.Binary;
 
@@ -30,31 +31,31 @@ namespace Etherna.BeeNet.Models
         public const int SpanSize = 8;
         
         // Constructors.
-        public SwarmChunk(SwarmAddress address, byte[] data)
+        public SwarmChunk(SwarmHash hash, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (data.Length > DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
-            Address = address;
+            Hash = hash;
             _span = LengthToSpan((ulong)data.Length);
             _data = data;
         }
 
-        internal SwarmChunk(SwarmAddress address, byte[] span, byte[] data)
+        public SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
-            Address = address;
+            Hash = hash;
             _span = span;
             _data = data;
         }
         
         // Static builders.
-        internal static SwarmChunk BuildFromSpanAndData(SwarmAddress address, byte[] spanAndData)
+        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlySpan<byte> spanAndData)
         {
             if (spanAndData.Length > SpanAndDataSize)
                 throw new ArgumentOutOfRangeException(nameof(spanAndData),
@@ -63,13 +64,23 @@ namespace Etherna.BeeNet.Models
             var spanSlice = spanAndData[..SpanSize];
             var dataSlice = spanAndData[SpanSize..];
 
-            return new SwarmChunk(address, spanSlice, dataSlice);
+            return new SwarmChunk(hash, spanSlice.ToArray(), dataSlice.ToArray());
         }
 
         // Properties.
-        public SwarmAddress Address { get; }
+        public SwarmHash Hash { get; }
         public ReadOnlyMemory<byte> Data => _data;
+        public PostageStamp? PostageStamp { get; set; }
         public ReadOnlyMemory<byte> Span => _span;
+        
+        // Methods.
+        public byte[] GetSpanAndData()
+        {
+            var spanAndData = new byte[SpanSize + _data.Length];
+            Span.CopyTo(spanAndData.AsMemory()[..SpanSize]);
+            Data.CopyTo(spanAndData.AsMemory()[SpanSize..]);
+            return spanAndData;
+        }
         
         // Static methods.
         public static byte[] LengthToSpan(ulong length)

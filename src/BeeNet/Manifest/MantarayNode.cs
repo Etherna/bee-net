@@ -1,16 +1,16 @@
 // Copyright 2021-present Etherna SA
+// This file is part of Bee.Net.
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
-//     http://www.apache.org/licenses/LICENSE-2.0
+// Bee.Net is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
 // 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
+// If not, see <https://www.gnu.org/licenses/>.
 
 using Epoche;
 using Etherna.BeeNet.Extensions;
@@ -23,30 +23,30 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayNode
+    public class MantarayNode : IReadOnlyMantarayNode
     {
         // Consts.
-        private const int NodeHeaderSize = VersionHashSize + NodeRefBytesSize;
-        private const int NodeRefBytesSize = 1;
-        private const char PathSeparator = '/';
-        private static readonly byte[] Version02Hash =
+        public const int ForksIndexSize = 32;
+        public const char PathSeparator = '/';
+        public static readonly byte[] Version02Hash =
             Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
-        private const int VersionHashSize = 31;
+        public const int VersionHashSize = 31;
         
         // Fields.
-        private SwarmAddress? _address;
-        private readonly Dictionary<char, MantarayNodeFork> forks = new();
-        private bool skipWriteEntryAddress;
+        private SwarmHash? _hash;
+        private readonly Dictionary<char, MantarayNodeFork> _forks = new();
+        private bool skipWriteEntryHash;
 
-        public MantarayNode(XorEncryptKey? obfuscationKey)
+        public MantarayNode(XorEncryptKey? obfuscationKey = null)
         {
             ObfuscationKey = obfuscationKey;
-            skipWriteEntryAddress = true;
+            skipWriteEntryHash = true;
         }
 
         // Properties.
-        public SwarmAddress Address => _address ?? throw new InvalidOperationException("Address not computed");
-        public SwarmAddress? EntryAddress { get; private set; }
+        public SwarmHash? EntryHash { get; private set; }
+        public IReadOnlyDictionary<char, MantarayNodeFork> Forks => _forks;
+        public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
         public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
         public NodeType NodeTypeFlags { get; private set; }
         public XorEncryptKey? ObfuscationKey { get; private set; }
@@ -59,19 +59,19 @@ namespace Etherna.BeeNet.Manifest
             if (path.Any(c => c >= byte.MaxValue))
                 throw new ArgumentException("path only support ASCII chars", nameof(path));
 
-            if (_address is not null)
-                throw new InvalidOperationException("Address already calculated, the node is immutable now");
+            if (_hash is not null)
+                throw new InvalidOperationException("Hash already calculated, the node is immutable now");
 
-            // Determine if the last entry is not a directory. In that case, force writing entry address.
+            // Determine if the last entry is not a directory. In that case, force writing entry hash.
             if (!entry.IsDirectory)
-                skipWriteEntryAddress = false;
+                skipWriteEntryHash = false;
 
             // If the new entry doesn't have a path, this become a value node and directly takes entry.
             if (path.Length == 0)
             {
                 SetNodeTypeFlag(NodeType.Value);
                 
-                EntryAddress = entry.Address;
+                EntryHash = entry.Hash;
                 if (entry.Metadata.Count > 0)
                 {
                     Metadata = entry.Metadata;
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.Manifest
             else
             {
                 // If already exists a fork that contains the path.
-                if (forks.TryGetValue(path[0], out var fork))
+                if (_forks.TryGetValue(path[0], out var fork))
                 {
                     var commonPrefix = fork.Prefix.FindCommonPrefix(path);
                     
@@ -98,8 +98,8 @@ namespace Etherna.BeeNet.Manifest
                         //parentPrefix = commonPrefix
                         var parentNode = new MantarayNode(ObfuscationKey)
                         {
-                            forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
-                            skipWriteEntryAddress = skipWriteEntryAddress
+                            _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
+                            skipWriteEntryHash = skipWriteEntryHash
                         };
 
                         //if parent node has same prefix of path, parent node is value type
@@ -111,7 +111,7 @@ namespace Etherna.BeeNet.Manifest
                         parentNode.Add(path[commonPrefix.Length..], entry);
                         
                         // Replace fork with the new one.
-                        forks[path[0]] = new MantarayNodeFork(commonPrefix, parentNode);
+                        _forks[path[0]] = new MantarayNodeFork(commonPrefix, parentNode);
                     }
                     else // Else, reuse the same fork node.
                     {
@@ -131,36 +131,36 @@ namespace Etherna.BeeNet.Manifest
                     
                     var newNode = new MantarayNode(ObfuscationKey)
                     {
-                        skipWriteEntryAddress = skipWriteEntryAddress
+                        skipWriteEntryHash = skipWriteEntryHash
                     };
 
                     newNode.Add(prefixRest, entry);
                     newNode.UpdateFlagIsWithPathSeparator(prefix);
 
-                    forks[path[0]] = new MantarayNodeFork(prefix, newNode);
+                    _forks[path[0]] = new MantarayNodeFork(prefix, newNode);
                 }
 
                 SetNodeTypeFlag(NodeType.Edge);
             }
         }
 
-        public async Task ComputeAddressAsync(Func<IHasherPipeline> hasherPipelineBuilder)
+        public async Task ComputeHashAsync(Func<IHasherPipeline> hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
-            if (_address != null)
+            if (_hash != null)
                 return;
 
-            // Recursively compute address for each fork nodes.
-            foreach (var fork in forks.Values)
-                await fork.Node.ComputeAddressAsync(hasherPipelineBuilder).ConfigureAwait(false);
+            // Recursively compute hash for each fork nodes.
+            foreach (var fork in _forks.Values)
+                await fork.Node.ComputeHashAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
-            // Marshal current node, and set address as its hash.
+            // Marshal current node, and set its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            _address = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            _hash = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
             
             // Clean forks.
-            forks.Clear();
+            _forks.Clear();
         }
 
         // Helpers.
@@ -173,31 +173,33 @@ namespace Etherna.BeeNet.Manifest
             List<byte> bytes = [];
             
             //index
-            var index = new byte[32];
-            foreach (var k in forks.Keys)
+            var index = new byte[ForksIndexSize];
+            foreach (var k in _forks.Keys)
                 index[(byte)k / 8] |= (byte)(1 << (k % 8));
             
             bytes.AddRange(index);
 
             //forks
-            foreach (var fork in forks.OrderBy(f => f.Key))
+            foreach (var fork in _forks.OrderBy(f => f.Key))
                 bytes.AddRange(fork.Value.ToByteArray());
 
             return bytes.ToArray();
         }
 
-        private byte[] HeaderToByteArray()
-        {
-            var headerBytes = new byte[NodeHeaderSize];
-            
-            Version02Hash.CopyTo(headerBytes.AsMemory()[..VersionHashSize]);
-            headerBytes[VersionHashSize] = (byte)(skipWriteEntryAddress ? 0 : SwarmAddress.HashSize);
-            
-            return headerBytes;
-        }
-
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
+
+        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
+
+        public Task<SwarmHash> ResolveResourceHashAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
 
         private void SetNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags |= flag;
@@ -210,12 +212,13 @@ namespace Etherna.BeeNet.Manifest
             ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
             bytes.AddRange(ObfuscationKey.Bytes.ToArray());
             
-            // Write header.
-            bytes.AddRange(HeaderToByteArray());
+            // Write version.
+            bytes.AddRange(Version02Hash);
 
-            // Write last entry address.
-            if (!skipWriteEntryAddress)
-                bytes.AddRange((EntryAddress ?? SwarmAddress.Zero).ToByteArray());
+            // Write last entry hash.
+            bytes.Add((byte)(skipWriteEntryHash ? 0 : SwarmHash.HashSize));
+            if (!skipWriteEntryHash)
+                bytes.AddRange((EntryHash ?? SwarmHash.Zero).ToByteArray());
 
             // Write forks.
             bytes.AddRange(ForksToByteArray());
