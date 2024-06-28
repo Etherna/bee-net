@@ -26,6 +26,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
 
+#if NET7_0_OR_GREATER
+using System.Formats.Tar;
+#endif
+
 namespace Etherna.BeeNet
 {
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
@@ -568,15 +572,54 @@ namespace Etherna.BeeNet
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
+#if NET7_0_OR_GREATER
+        public async Task<SwarmHash> UploadDirectoryAsync(
+            PostageBatchId batchId,
+            string directoryPath,
+            int? swarmTag = null,
+            bool? swarmPin = null,
+            bool? swarmEncrypt = null,
+            string? swarmIndexDocument = null,
+            string? swarmErrorDocument = null,
+            bool? swarmDeferredUpload = null,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
+            CancellationToken cancellationToken = default)
+        {
+            // Create tar file.
+            using var memoryStream = new MemoryStream();
+            await TarFile.CreateFromDirectoryAsync(directoryPath, memoryStream, false, cancellationToken).ConfigureAwait(false);
+            memoryStream.Position = 0;
+            
+            // Try set index document.
+            if (swarmIndexDocument is null &&
+                File.Exists(Path.Combine(directoryPath, "index.html")))
+                swarmIndexDocument = "index.html";
+
+            // Upload directory.
+            return (await generatedClient.BzzPostAsync(
+                new FileParameter(memoryStream, null, "application/x-tar"),
+                swarm_tag: swarmTag,
+                swarm_pin: swarmPin,
+                swarm_encrypt: swarmEncrypt,
+                swarm_collection: true,
+                swarm_index_document: swarmIndexDocument,
+                swarm_error_document: swarmErrorDocument,
+                swarm_postage_batch_id: batchId.ToString(),
+                swarm_deferred_upload: swarmDeferredUpload,
+                swarm_redundancy_level: (SwarmRedundancyLevel)swarmRedundancyLevel,
+                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+        }
+#endif
+
         public async Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,
             Stream content,
             string? name = null,
             string? contentType = null,
+            bool isFileCollection = false,
             int? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
-            bool? swarmCollection = null,
             string? swarmIndexDocument = null,
             string? swarmErrorDocument = null,
             bool? swarmDeferredUpload = null,
@@ -584,13 +627,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             return (await generatedClient.BzzPostAsync(
-                body: content,
-                name: name,
-                content_Type: contentType,
+                new FileParameter(content, name, contentType),
                 swarm_tag: swarmTag,
                 swarm_pin: swarmPin,
                 swarm_encrypt: swarmEncrypt,
-                swarm_collection: swarmCollection,
+                swarm_collection: isFileCollection,
                 swarm_index_document: swarmIndexDocument,
                 swarm_error_document: swarmErrorDocument,
                 swarm_postage_batch_id: batchId.ToString(),
