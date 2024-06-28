@@ -44,7 +44,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
                 content: File.OpenRead(filePath ?? pathTestFileForUpload),
                 name: Path.GetFileName(filePath) ?? Path.GetFileName(pathTestFileForUpload),
                 contentType: "text/plain",
-                swarmCollection: false);
+                isFileCollection: false);
 
             return result;
         }
