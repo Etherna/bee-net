@@ -12,8 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Epoche;
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hasher;
 using Etherna.BeeNet.Hasher.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
@@ -28,8 +28,8 @@ namespace Etherna.BeeNet.Manifest
         // Consts.
         public const int ForksIndexSize = 32;
         public const char PathSeparator = '/';
-        public static readonly byte[] Version02Hash =
-            Keccak256.ComputeHash("mantaray:0.2").Take(VersionHashSize).ToArray();
+        public static readonly byte[] Version02Hash = new HashProvider().ComputeHash(
+            "mantaray:0.2"u8.ToArray()).Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
         
         // Fields.

@@ -39,11 +39,12 @@ namespace Etherna.BeeNet.Hasher.Bmt
             }
             
             // Build the merkle tree.
-            var bmt = new SwarmChunkBmt();
+            var hashProvider = new HashProvider();
+            var bmt = new SwarmChunkBmt(hashProvider);
             bmt.BuildTree(segments);
             var result = bmt.Root.Hash;
             
-            return SwarmChunkBmt.ComputeHash(span.Concat(result).ToArray());
+            return hashProvider.ComputeHash(span.Concat(result).ToArray());
         }
     }
 }

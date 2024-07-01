@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Epoche;
 using Etherna.BeeNet.Models;
 using Nethereum.Merkle;
 using Nethereum.Merkle.StrategyOptions.PairingConcat;
@@ -46,27 +45,19 @@ namespace Etherna.BeeNet.Hasher.Bmt
                 return data;
             }
         }
-        private class HashProvider : IHashProvider
-        {
-            public byte[] ComputeHash(byte[] data) => Keccak256.ComputeHash(data);
-        }
         
         // Consts.
         public const int MaxDataSize = SegmentsCount * SegmentSize;
         public const int SegmentsCount = 128;
-        public const int SegmentSize = 32; //Keccak hash size
+        public const int SegmentSize = SwarmHash.HashSize;
         
         // Static fields.
         private static readonly ChunkBmtByteArrayConvertor byteArrayConvertor = new();
-        private static readonly HashProvider hashProvider = new();
         
         // Constructor.
-        public SwarmChunkBmt()
+        public SwarmChunkBmt(IHashProvider hashProvider)
             : base(hashProvider, byteArrayConvertor, PairingConcatType.Normal)
         { }
-        
-        // Static methods.
-        public static SwarmHash ComputeHash(byte[] data) => hashProvider.ComputeHash(data);
         
         // Protected override methods.
         protected override MerkleTreeNode CreateMerkleTreeNode(byte[] item) =>

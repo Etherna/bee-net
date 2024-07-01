@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,19 +12,24 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
+using Etherna.BeeNet.Models;
+using Nethereum.Util.HashProviders;
+using Org.BouncyCastle.Crypto.Digests;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Hasher
 {
-    public abstract class FeedIndexBase
+    public class HashProvider : IHashProvider
     {
-        // Properties.
-        public abstract Memory<byte> MarshalBinary { get; }
-
+        // Fields.
+        private readonly KeccakDigest hasher = new(256);
+        
         // Methods.
-        public FeedIndexBase GetNext(DateTimeOffset at) =>
-            GetNext((ulong)at.ToUnixTimeSeconds());
-
-        public abstract FeedIndexBase GetNext(ulong at);
+        public byte[] ComputeHash(byte[] data)
+        {
+            var result = new byte[SwarmHash.HashSize];
+            hasher.BlockUpdate(data);
+            hasher.DoFinal(result);
+            return result;
+        }
     }
 }

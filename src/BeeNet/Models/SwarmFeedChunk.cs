@@ -12,9 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Feeds;
+using Etherna.BeeNet.Hasher;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
@@ -118,8 +118,8 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
             if (identifier.Length != IdentifierSize)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
-
-            return Keccak256.ComputeHash(identifier.Concat(account).ToArray());
+            
+            return new HashProvider().ComputeHash(identifier.Concat(account).ToArray());
         }
 
         public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index)
@@ -132,9 +132,9 @@ namespace Etherna.BeeNet.Models
 
             var newArray = new byte[TopicSize + IndexSize];
             topic.CopyTo(newArray, 0);
-            index.MarshalBinary.CopyTo(newArray, topic.Length);
+            index.MarshalBinary.CopyTo(newArray.AsMemory()[topic.Length..]);
 
-            return Keccak256.ComputeHash(newArray);
+            return new HashProvider().ComputeHash(newArray);
         }
     }
 }

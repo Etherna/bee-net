@@ -12,10 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Epoche;
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hasher;
 using System;
-using System.Collections.ObjectModel;
 
 namespace Etherna.BeeNet.Feeds
 {
@@ -82,9 +81,9 @@ namespace Etherna.BeeNet.Feeds
         public byte Level { get; }
 
         /// <summary>
-        /// Index represenentation as keccak256 hash
+        /// Index representation as keccak256 hash
         /// </summary>
-        public override ReadOnlyCollection<byte> MarshalBinary
+        public override Memory<byte> MarshalBinary
         {
             get
             {
@@ -93,7 +92,7 @@ namespace Etherna.BeeNet.Feeds
                 epochBytes.CopyTo(newArray, 0);
                 newArray[epochBytes.Length] = Level;
 
-                return new ReadOnlyCollection<byte>(Keccak256.ComputeHash(newArray));
+                return new HashProvider().ComputeHash(newArray);
             }
         }
 
