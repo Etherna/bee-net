@@ -24,7 +24,27 @@ namespace Etherna.BeeNet.Services
     public interface ICalculatorService
     {
         /// <summary>
-        /// Evaluate the result of upload a file
+        /// Evaluate the result uploading a directory
+        /// </summary>
+        /// <param name="directoryPath">The directory to upload</param>
+        /// <param name="indexFilename">The index default file</param>
+        /// <param name="errorFilename">The error default file</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+            string directoryPath,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null);
+        
+        /// <summary>
+        /// Evaluate the result uploading a file
         /// </summary>
         /// <param name="data">The file data in byte array</param>
         /// <param name="fileContentType">The file content type</param>
@@ -44,7 +64,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null);
         
         /// <summary>
-        /// Evaluate the result of upload a file
+        /// Evaluate the result uploading a file
         /// </summary>
         /// <param name="stream">The file stream</param>
         /// <param name="fileContentType">The file content type</param>
