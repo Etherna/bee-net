@@ -18,6 +18,7 @@ using Etherna.BeeNet.Hasher.Signer;
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,97 @@ namespace Etherna.BeeNet.Services
 {
     public class CalculatorService : ICalculatorService
     {
+        public async Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+            string directoryPath,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null)
+        {
+            // Checks.
+            if (indexFilename?.Contains('/', StringComparison.InvariantCulture) == true)
+                throw new ArgumentException(
+                    "Index document suffix must not include slash character",
+                    nameof(indexFilename));
+            
+            // Init.
+            chunkStore ??= new FakeChunkStore();
+            
+            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
+            var postageStamper = new PostageStamper(
+                new FakeSigner(),
+                postageStampIssuer,
+                new MemoryStampStore());
+            
+            // Try set index document.
+            if (indexFilename is null &&
+                File.Exists(Path.Combine(directoryPath, "index.html")))
+                indexFilename = "index.html";
+            
+            // Create manifest.
+            var dirManifest = new MantarayManifest(
+                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                    chunkStore,
+                    postageStamper,
+                    redundancyLevel,
+                    encrypt),
+                encrypt);
+
+            // Iterate through the files in the supplied directory.
+            var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
+            if (files.Length == 0)
+                throw new ArgumentException("No files in root directory", nameof(directoryPath));
+            
+            foreach (var file in files)
+            {
+                using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                    chunkStore,
+                    postageStamper,
+                    redundancyLevel,
+                    encrypt);
+                
+                var fileContentType = FileContentTypeProvider.GetContentType(file);
+                var fileName = Path.GetFileName(file);
+                using var fileStream = File.OpenRead(file);
+
+                var fileHash = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                
+                // Add file entry to dir manifest.
+                dirManifest.Add(
+                    Path.GetRelativePath(directoryPath, file),
+                    ManifestEntry.NewFile(fileHash, new Dictionary<string, string>
+                    {
+                        [ManifestEntry.ContentTypeKey] = fileContentType,
+                        [ManifestEntry.FilenameKey] = fileName
+                    }));
+            }
+            
+            // Store website information.
+            if (!string.IsNullOrEmpty(indexFilename) ||
+                !string.IsNullOrEmpty(errorFilename))
+            {
+                var metadata = new Dictionary<string, string>();
+                
+                if (!string.IsNullOrEmpty(indexFilename))
+                    metadata[ManifestEntry.WebsiteIndexDocPathKey] = indexFilename;
+                if (!string.IsNullOrEmpty(errorFilename))
+                    metadata[ManifestEntry.WebsiteErrorDocPathKey] = errorFilename;
+
+                var rootManifestEntry = ManifestEntry.NewDirectory(metadata);
+                dirManifest.Add(MantarayManifest.RootPath, rootManifestEntry);
+            }
+
+            // Get manifest hash.
+            var manifestHash = await dirManifest.GetHashAsync().ConfigureAwait(false);
+            
+            // Return result.
+            return new UploadEvaluationResult(
+                manifestHash,
+                postageStampIssuer);
+        }
+
         public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
             byte[] data,
             string fileContentType,
@@ -100,11 +192,11 @@ namespace Etherna.BeeNet.Services
                         [ManifestEntry.FilenameKey] = fileName
                     }));
 
-            var finalHash = await manifest.GetHashAsync().ConfigureAwait(false);
+            var manifestHash = await manifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
-                finalHash,
+                manifestHash,
                 postageStampIssuer);
         }
 

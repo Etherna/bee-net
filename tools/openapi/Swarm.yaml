@@ -293,10 +293,10 @@ paths:
             schema:
               type: string
               format: binary
-#          application/x-tar:
-#            schema:
-#              type: string
-#              format: binary
+          application/x-tar:
+            schema:
+              type: string
+              format: binary
       responses:
         "201":
           description: Ok

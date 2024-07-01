@@ -709,12 +709,11 @@ namespace Etherna.BeeNet
             bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default);
-
-        /// <summary>Upload file or a collection of files</summary>
+        
+#if NET7_0_OR_GREATER
+        /// <summary>Upload a directory</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="content">Input file content</param>
-        /// <param name="name">Filename when uploading single file</param>
-        /// <param name="contentType">The specified content-type is preserved for download of the asset</param>
+        /// <param name="directoryPath">The directory path</param>
         /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
@@ -727,15 +726,46 @@ namespace Etherna.BeeNet
         /// <param name="swarmRedundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<SwarmHash> UploadDirectoryAsync(
+            PostageBatchId batchId,
+            string directoryPath,
+            int? swarmTag = null,
+            bool? swarmPin = null,
+            bool? swarmEncrypt = null,
+            string? swarmIndexDocument = null,
+            string? swarmErrorDocument = null,
+            bool? swarmDeferredUpload = null,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
+            CancellationToken cancellationToken = default);
+#endif
+
+        /// <summary>Upload a file</summary>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="content">Input file content</param>
+        /// <param name="name">Filename when uploading single file</param>
+        /// <param name="contentType">The specified content-type is preserved for download of the asset</param>
+        /// <param name="isFileCollection">Upload file/files as a collection</param>
+        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
+        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <param name="swarmEncrypt">Represents the encrypting state of the file
+        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <param name="swarmIndexDocument">Default file to be referenced on path, if exists under that path</param>
+        /// <param name="swarmErrorDocument">Configure custom error document to be returned when a specified path can not be found in collection</param>
+        /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="swarmRedundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Reference hash</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,
             Stream content,
             string? name = null,
             string? contentType = null,
+            bool isFileCollection = false,
             int? swarmTag = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
-            bool? swarmCollection = null,
             string? swarmIndexDocument = null,
             string? swarmErrorDocument = null,
             bool? swarmDeferredUpload = null,

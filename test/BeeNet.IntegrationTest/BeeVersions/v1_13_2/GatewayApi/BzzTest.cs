@@ -34,7 +34,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
                 content: File.OpenRead("Data/TestFileForUpload_Gateway.txt"),
                 name: "TestFileForUpload_Gateway.txt",
                 contentType: "text/plain", 
-                swarmCollection: false);
+                isFileCollection: false);
 
             // Assert 
             var result = await beeNodeClient.GetFileAsync(reference);
@@ -55,7 +55,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
                 content: File.OpenRead("Data/BzzFIleForUpload.tar"),
                 name: "BzzFIleForUpload.tar",
                 contentType: "application/x-tar",
-                swarmCollection: false);
+                isFileCollection: false);
 
             // Assert 
             var result = await beeNodeClient.GetFileAsync(reference);
