@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.0.0
+  version: 4.1.2
   title: Bee Debug API
   description: "A list of the currently provided debug interfaces to interact with the bee node"
 
@@ -34,6 +34,23 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Addresses"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+
+  "/accounting":
+    get:
+      summary: Get all accounting associated values with all known peers
+      tags:
+        - Balance
+      responses:
+        "200":
+          description: Own accounting associated values with all known peers
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/PeerAccountingData"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -75,8 +92,8 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Balance"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -135,8 +152,8 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Balance"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -175,30 +192,6 @@ paths:
   "/chunks/{address}":
     get:
       summary: Check if chunk at address exists locally
-      tags:
-        - Chunk
-      parameters:
-        - in: path
-          name: address
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
-          required: true
-          description: Swarm address of chunk
-      responses:
-        "200":
-          description: Chunk exists
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Response"
-        "400":
-          $ref: "SwarmCommon.yaml#/components/responses/400"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
-        default:
-          description: Default response
-    delete:
-      summary: Delete a chunk from local storage
       tags:
         - Chunk
       parameters:
@@ -294,21 +287,6 @@ paths:
         default:
           description: Default response
 
-  "/health":
-    get:
-      summary: Get health of node
-      tags:
-        - Status
-      responses:
-        "200":
-          description: Health State of node
-          content:
-            application/json:
-              schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
-        default:
-          description: Default response
-
   "/peers":
     get:
       summary: Get a list of peers
@@ -350,14 +328,14 @@ paths:
         default:
           description: Default response
 
-  "/pingpong/{peer-id}":
+  "/pingpong/{address}":
     post:
       summary: Try connection to node
       tags:
         - Connectivity
       parameters:
         - in: path
-          name: peer-id
+          name: address
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
           required: true
@@ -378,18 +356,37 @@ paths:
         default:
           description: Default response
 
-  "/readiness":
+  "/health":
     get:
-      summary: Get readiness state of node
+      summary: Get node overall health Status
+      description: |
+        Health Status will indicate node healthiness.
+
+        If node is unhealthy please check node logs for errors.
       tags:
         - Status
       responses:
         "200":
-          description: Health State of node
+          description: Health Status of node
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
+        default:
+          description: Default response
+
+  "/readiness":
+    get:
+      summary: Readiness endpoint indicates if node is ready to start accepting traffic
+      tags:
+        - Status
+      responses:
+        "200":
+          description: Indicates that node is ready
+          $ref: "SwarmCommon.yaml#/components/responses/200"
+        "400":
+          description: Indicates that node is not ready
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
           description: Default response
 
@@ -412,8 +409,8 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/Settlement"
-        "404":
-          $ref: "SwarmCommon.yaml#/components/responses/404"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -497,7 +494,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/Status"
+                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "500":
@@ -660,27 +657,71 @@ paths:
         default:
           description: Default response
 
-  "/tags/{uid}":
+  "/redistributionstate":
     get:
-      summary: "Get Tag information using Uid"
+      summary: Get current status of node in redistribution game
       tags:
-        - Tag
-      parameters:
-        - in: path
-          name: uid
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/Uid"
-          required: true
-          description: Uid
+        - RedistributionState
       responses:
         "200":
-          description: Tag info
+          description: Redistribution status info
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/NewTagDebugResponse"
+                $ref: "SwarmCommon.yaml#/components/schemas/RedistributionStatusResponse"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+  "/wallet":
+    get:
+      summary: Get wallet balance for BZZ and xDai
+      tags:
+        - Wallet
+      responses:
+        "200":
+          description: Wallet balance info
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/WalletResponse"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+  "/wallet/withdraw/{coin}":
+    post:
+      summary: Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
+      tags:
+        - Wallet
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        schema:
+          $ref: "SwarmCommon.yaml#/components/schemas/BigInt"
+      - in: query
+        name: address
+        required: true
+        schema:
+          $ref: "SwarmCommon.yaml#/components/schemas/EthereumAddress"
+      - in: path
+        name: coin
+        required: true
+        schema:
+          $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: 'SwarmCommon.yaml#/components/schemas/WalletTxResponse'
+          description: OK
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+          description: Amount greater than ballance or coin is other than BZZ/xDAI
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
         default:
@@ -780,24 +821,26 @@ paths:
 
   "/stamps":
     get:
-      summary: Get all available stamps for this node
+      summary: Get stamps for this node
       tags:
         - Postage Stamps
       responses:
         "200":
-          description: Returns an array of all available postage batches.
+          description: Returns an array of postage batches.
           content:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/DebugPostageBatchesResponse"
+        "404":
+          $ref: "SwarmCommon.yaml#/components/responses/404"
 
         default:
           description: Default response
 
-  "/stamps/{id}":
+  "/stamps/{batch_id}":
     parameters:
       - in: path
-        name: id
+        name: batch_id
         schema:
           $ref: "SwarmCommon.yaml#/components/schemas/BatchID"
         required: true
@@ -813,15 +856,17 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/DebugPostageBatch"
+        "404":
+          $ref: "SwarmCommon.yaml#/components/responses/404"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
           description: Default response
 
-  "/stamps/{id}/buckets":
+  "/stamps/{batch_id}/buckets":
     parameters:
       - in: path
-        name: id
+        name: batch_id
         schema:
           $ref: "SwarmCommon.yaml#/components/schemas/BatchID"
         required: true
@@ -837,6 +882,8 @@ paths:
             application/json:
               schema:
                 $ref: "SwarmCommon.yaml#/components/schemas/PostageStampBuckets"
+        "404":
+          $ref: "SwarmCommon.yaml#/components/responses/404"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
@@ -872,7 +919,6 @@ paths:
           schema:
             type: boolean
           required: false
-        - $ref: "SwarmCommon.yaml#/components/parameters/GasPriceParameter"
       responses:
         "201":
           description: Returns the newly created postage batch ID
@@ -889,7 +935,7 @@ paths:
         default:
           description: Default response
 
-  "/stamps/topup/{id}/{amount}":
+  "/stamps/topup/{batch_id}/{amount}":
     patch:
       summary: Top up an existing postage batch.
       description: Be aware, this endpoint creates on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance!
@@ -897,7 +943,7 @@ paths:
         - Postage Stamps
       parameters:
         - in: path
-          name: id
+          name: batch_id
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/BatchID"
           required: true
@@ -927,7 +973,7 @@ paths:
         default:
           description: Default response
 
-  "/stamps/dilute/{id}/{depth}":
+  "/stamps/dilute/{batch_id}/{depth}":
     patch:
       summary: Dilute an existing postage batch.
       description: Be aware, this endpoint creates on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance!
@@ -935,7 +981,7 @@ paths:
         - Postage Stamps
       parameters:
         - in: path
-          name: id
+          name: batch_id
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/BatchID"
           required: true
@@ -977,3 +1023,151 @@ paths:
 
         default:
           description: Default response
+
+  "/stake/{amount}":
+    post:
+      summary: Deposit some amount for staking.
+      description: Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+      tags:
+        - Staking
+      parameters:
+        - in: path
+          name: amount
+          schema:
+            type: string
+          description: Amount of BZZ added that will be deposited for staking.
+        - $ref: "SwarmCommon.yaml#/components/parameters/GasPriceParameter"
+        - $ref: "SwarmCommon.yaml#/components/parameters/GasLimitParameter"
+      responses:
+        "200":
+          $ref: "SwarmCommon.yaml#/components/schemas/StakeDepositResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+
+  "/stake":
+    get:
+      summary: Get the staked amount.
+      description: This endpoint fetches the staked amount from the blockchain.
+      tags:
+        - Staking
+      responses:
+        "200":
+          $ref: "SwarmCommon.yaml#/components/schemas/GetStakeResponse"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+    delete:
+      summary: Withdraw all staked amount.
+      description: Be aware, this endpoint creates an on-chain transactions and transfers BZZ from the node's Ethereum account and hence directly manipulates the wallet balance.
+      tags:
+        - Staking
+      parameters:
+        - $ref: "SwarmCommon.yaml#/components/parameters/GasPriceParameter"
+        - $ref: "SwarmCommon.yaml#/components/parameters/GasLimitParameter"
+      responses:
+        "200":
+          $ref: "SwarmCommon.yaml#/components/schemas/WithdrawAllStakeResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        "500":
+          $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+
+  "/loggers":
+    get:
+      summary: Get all available loggers.
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: Returns an array of all available loggers, also represented in short form in a tree.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/LoggerResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response
+
+  "/loggers/{exp}":
+    get:
+      summary: Get all available loggers that match the specified expression.
+      parameters:
+        - in: path
+          name: exp
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/LoggerExp"
+          required: true
+          description: Regular expression or a subsystem that matches the logger(s).
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: Returns an array of all available loggers that matches given expression, also represented in short form in a tree.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/LoggerResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response
+    put:
+      summary: Set logger(s) verbosity level.
+      parameters:
+        - in: path
+          name: exp
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/LoggerExp"
+          required: true
+          description: Regular expression or a subsystem that matches the logger(s).
+      tags:
+        - Logging
+      responses:
+        "200":
+          description: The verbosity was changed successfully.
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response
+
+  "/status":
+    get:
+      summary: Get the current status snapshot of this node.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the current node status snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/StatusSnapshotResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response.
+
+  "/status/peers":
+    get:
+      summary: Get the current status snapshot of this node connected peers.
+      tags:
+        - Node Status
+      responses:
+        "200":
+          description: Returns the status snapshot of this node connected peers
+          content:
+            application/json:
+              schema:
+                $ref: "SwarmCommon.yaml#/components/schemas/StatusResponse"
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        default:
+          description: Default response.

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BeeNet.IntegrationTest": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

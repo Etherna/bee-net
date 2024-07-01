@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.0.0
+  version: 3.2.8
   title: Common Data Types
   description: |
     \*****bzzz*****
@@ -44,22 +44,50 @@ components:
       properties:
         radius:
           type: integer
-        available:
+        storageRadius:
           type: integer
-        outer:
-          $ref: "#/components/schemas/BigInt"
-        inner:
-          $ref: "#/components/schemas/BigInt"
+        commitment:
+          type: integer
+          format: int64
 
     ChainState:
       type: object
       properties:
+        chainTip:
+          type: integer
         block:
           type: integer
+          format: int64
         totalAmount:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
         currentPrice:
-          type: integer
+          $ref: "#/components/schemas/BigInt"
+
+    PeerAccountingData:
+      type: object
+      properties:
+        peerData:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/AccountingInfo"
+
+    AccountingInfo:
+      type: object
+      properties:
+        balance:
+          $ref: "#/components/schemas/BigInt"
+        thresholdReceived:
+          $ref: "#/components/schemas/BigInt"
+        thresholdGiven:
+          $ref: "#/components/schemas/BigInt"
+        surplusBalance:
+          $ref: "#/components/schemas/BigInt"
+        reservedBalance:
+          $ref: "#/components/schemas/BigInt"
+        shadowReservedBalance:
+          $ref: "#/components/schemas/BigInt"
+        ghostBalance:
+          $ref: "#/components/schemas/BigInt"
 
     Balance:
       type: object
@@ -92,6 +120,18 @@ components:
           type: integer
         depth:
           type: integer
+        reachability:
+          type: string
+          enum:
+            - "Unknown"
+            - "Public"
+            - "Private"
+        networkAvailability:
+          type: string
+          enum:
+            - "Unknown"
+            - "Available"
+            - "Unavailable"
         bins:
           type: object
           additionalProperties:
@@ -123,6 +163,7 @@ components:
 
     Cheque:
       type: object
+      nullable: true
       properties:
         beneficiary:
           $ref: "#/components/schemas/EthereumAddress"
@@ -184,12 +225,14 @@ components:
       type: string
 
     GasLimit:
+      description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
       type: integer
       format: int64
       minimum: 0
       maximum: 18446744073709551615
 
     GasPrice:
+      description: Gas price refers to the amount you’re willing to pay for every unit of gas.
       type: integer
       format: int64
 
@@ -220,34 +263,21 @@ components:
           $ref: "#/components/schemas/Uid"
         startedAt:
           $ref: "#/components/schemas/DateTime"
-        total:
-          type: integer
-        processed:
-          type: integer
-        synced:
-          type: integer
-
-    NewTagDebugResponse:
-      type: object
-      properties:
-        total:
-          type: integer
         split:
           type: integer
+          description: Number of chunks created by the splitter.
         seen:
           type: integer
+          description: Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
         stored:
           type: integer
+          description: Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
         sent:
           type: integer
+          description: Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
         synced:
           type: integer
-        uid:
-          $ref: "#/components/schemas/Uid"
-        address:
-          $ref: "#/components/schemas/SwarmAddress"
-        startedAt:
-          $ref: "#/components/schemas/DateTime"
+          description: Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
 
     TagsList:
       type: object
@@ -283,6 +313,10 @@ components:
         latencyEWMA:
           type: integer
           nullable: false
+        reachability:
+          type: string
+        healthy:
+          type: boolean
 
     Peers:
       type: object
@@ -292,6 +326,20 @@ components:
           nullable: false
           items:
             $ref: "#/components/schemas/Address"
+
+    BlockListedPeers:
+      type: array
+      items:
+        type: object
+        properties:
+          address:
+            $ref: "#/components/schemas/Address"
+          fullNode:
+            type: boolean
+          reason:
+            type: string
+          duration:
+            type: integer
 
     PssRecipient:
       type: string
@@ -307,10 +355,16 @@ components:
     ProblemDetails:
       type: object
       properties:
-        message:
-          type: string
         code:
           type: integer
+        message:
+          type: string
+        reasons:
+          type: array
+          nullable: true
+          description: List of reasons for the error message.
+          items:
+            type: string
 
     ReferenceResponse:
       type: object
@@ -341,6 +395,8 @@ components:
       properties:
         batchID:
           $ref: "#/components/schemas/BatchID"
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
 
     Response:
       type: object
@@ -367,18 +423,21 @@ components:
             * `light` - light node; does not participate in forwarding or storing chunks
             * `full` - full node
             * `dev` - development mode; Bee client for development purposes, blockchain operations are mocked
-        gatewayMode:
-          type: boolean
         chequebookEnabled:
           type: boolean
         swapEnabled:
           type: boolean
 
-    Status:
+    HealthStatus:
       type: object
       properties:
         status:
           type: string
+          enum: [ok, nok]
+          description: >
+            Indicates health state of node
+            * `ok` - node is healthy
+            * `nok` - node is not healthy
         version:
           type: string
         apiVersion:
@@ -416,6 +475,7 @@ components:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
 
     PostageBatchNoIssuer:
       type: object
@@ -426,26 +486,30 @@ components:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
 
     PostageBatchShort:
       type: object
       properties:
         batchID:
           $ref: "#/components/schemas/BatchID"
-        depth:
-          type: integer
         value:
           $ref: "#/components/schemas/BigInt"
-        bucketDepth:
+        start:
           type: integer
-        blockNumber:
+        depth:
+          type: integer
+        bucketDepth:
           type: integer
         immutableFlag:
           type: boolean
         batchTTL:
           type: integer
+          format: int64
         owner:
           $ref: "#/components/schemas/EthereumAddress"
+        storageRadius:
+          type: integer
 
     DebugPostageBatch:
       anyOf:
@@ -481,17 +545,17 @@ components:
         peer:
           $ref: "#/components/schemas/SwarmAddress"
         received:
-          type: integer
+          type: string
         sent:
-          type: integer
+          type: string
 
     Settlements:
       type: object
       properties:
         totalReceived:
-          type: integer
+          type: string
         totalSent:
-          type: integer
+          type: string
         settlements:
           type: array
           nullable: false
@@ -523,15 +587,51 @@ components:
       pattern: "^[A-Fa-f0-9]{64}$"
       example: "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
 
+    GetStakeResponse:
+      type: object
+      properties:
+        stakedAmount:
+          $ref: "#/components/schemas/BigInt"
+
+    StakeDepositResponse:
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
+
+    WithdrawAllStakeResponse:
+      type: object
+      properties:
+        txHash:
+          $ref: "#/components/schemas/TransactionHash"
+
     SwarmOnlyReference:
       oneOf:
         - $ref: "#/components/schemas/SwarmAddress"
         - $ref: "#/components/schemas/SwarmEncryptedReference"
 
+    SwarmOnlyReferenceResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
+
+    PinCheckResponse:
+      type: object
+      properties:
+        reference:
+          $ref: "#/components/schemas/SwarmOnlyReference"
+        total:
+          type: integer
+        missing:
+          type: integer
+        invalid:
+          type: integer
+
     SwarmOnlyReferencesList:
       type: object
       properties:
-        references:
+        reference:
           type: array
           nullable: false
           items:
@@ -594,7 +694,12 @@ components:
           $ref: "#/components/schemas/BigInt"
         gasLimit:
           type: integer
-          format: int64
+        gasTipCap:
+          $ref: "#/components/schemas/BigInt"
+        gasTipBoost:
+          type: integer
+        gasFeeCap:
+          $ref: "#/components/schemas/BigInt"
         data:
           type: string
         created:
@@ -602,6 +707,54 @@ components:
         description:
           type: string
         value:
+          $ref: "#/components/schemas/BigInt"
+
+    WalletResponse:
+      type: object
+      properties:
+        bzzBalance:
+          $ref: "#/components/schemas/BigInt"
+        nativeTokenBalance:
+          $ref: "#/components/schemas/BigInt"
+        chainID:
+          type: integer
+        chequebookContractAddress:
+          $ref: "#/components/schemas/EthereumAddress"
+        walletAddress:
+          $ref: "#/components/schemas/EthereumAddress"
+
+    RedistributionStatusResponse:
+      type: object
+      properties:
+        minimumGasFunds:
+          $ref: "#/components/schemas/BigInt"
+        hasSufficientFunds:
+          type: boolean
+        isFrozen:
+          type: boolean
+        isFullySynced:
+          type: boolean
+        isHealthy:
+          type: boolean
+        phase:
+          type: string
+        round:
+          type: integer
+        lastWonRound:
+          type: integer
+        lastPlayedRound:
+          type: integer
+        lastFrozenRound:
+          type: integer
+        lastSelectedRound:
+          type: integer
+        lastSampleDuration:
+          $ref: "#/components/schemas/Duration"
+        block:
+          type: integer
+        reward:
+          $ref: "#/components/schemas/BigInt"
+        fees:
           $ref: "#/components/schemas/BigInt"
 
     PendingTransactionsResponse:
@@ -615,6 +768,7 @@ components:
 
     Uid:
       type: integer
+      format: int64
 
     WelcomeMessage:
       type: object
@@ -650,6 +804,178 @@ components:
           type: string
           nullable: false
 
+    LoggerExp:
+      type: string
+      description: Base 64 encoded regular expression or subsystem string.
+      pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+      example: "b25lL25hbWU="
+
+    LoggerTreeData:
+      type: object
+      nullable: true
+      properties:
+### commented because of https://github.com/ethersphere/bee/issues/3433
+#        /:
+#          $ref: "#/components/schemas/LoggerTreeNode"
+        +:
+          type: array
+          items:
+            type: string
+          description: The combination of the logger verbosity and its subsystem separated by |.
+          example: "warning|one/name[0][]>>824634860360"
+
+    LoggerTreeNode:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/LoggerTreeData"
+
+    Logger:
+      type: object
+      properties:
+        logger:
+          type: string
+        verbosity:
+          type: string
+        subsystem:
+          type: string
+        id:
+          type: string
+
+    LoggerResponse:
+      type: object
+      properties:
+        tree:
+          $ref: "#/components/schemas/LoggerTreeNode"
+        loggers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Logger"
+
+    StatusSnapshotResponse:
+      type: object
+      properties:
+        peer:
+          $ref: "#/components/schemas/SwarmAddress"
+        beeMode:
+          type: string
+          enum:
+            - "light"
+            - "full"
+            - "ultra-light"
+            - "unknown"
+        proximity:
+          type: integer
+        reserveSize:
+          type: integer
+        reserveSizeWithinRadius:
+          type: interger
+        pullsyncRate:
+          type: number
+        storageRadius:
+          type: integer
+        connectedPeers:
+          type: integer
+        neighborhoodSize:
+          type: integer
+        requestFailed:
+          nullable: true
+          type: boolean
+        BatchCommitment:
+          type: integer
+        isReachable:
+          type: boolean
+
+    StatusResponse:
+      type: object
+      properties:
+        stamps:
+          type: array
+          nullable: false
+          items:
+            $ref: "#/components/schemas/StatusSnapshotResponse"
+
+    ApiChunkInclusionProof:
+      type: object
+      properties:
+        chunkSpan:
+          minimum: 0
+          type: integer
+        postageProof:
+          $ref: '#/components/schemas/ApiPostageProof'
+        proofSegments:
+          items:
+            type: string
+          nullable: true
+          type: array
+        proofSegments2:
+          items:
+            type: string
+          nullable: true
+          type: array
+        proofSegments3:
+          items:
+            type: string
+          nullable: true
+          type: array
+        proveSegment:
+          type: string
+        proveSegment2:
+          type: string
+        socProof:
+          items:
+            $ref: '#/components/schemas/ApiSOCProof'
+          nullable: true
+          type: array
+
+    ApiChunkInclusionProofs:
+      type: object
+      properties:
+        proof1:
+          $ref: '#/components/schemas/ApiChunkInclusionProof'
+        proof2:
+          $ref: '#/components/schemas/ApiChunkInclusionProof'
+        proofLast:
+          $ref: '#/components/schemas/ApiChunkInclusionProof'
+
+    ApiPostageProof:
+      type: object
+      properties:
+        index:
+          type: string
+        postageId:
+          type: string
+        signature:
+          type: string
+        timeStamp:
+          type: string
+
+    ApiRCHashResponse:
+      type: object
+      properties:
+        duration:
+          type: integer
+        hash:
+          $ref: '#/components/schemas/SwarmAddress'
+        proofs:
+          $ref: '#/components/schemas/ApiChunkInclusionProofs'
+
+    ApiSOCProof:
+      type: object
+      properties:
+        chunkAddr:
+          type: string
+        identifier:
+          type: string
+        signature:
+          type: string
+        signer:
+          type: string
+
+    WalletTxResponse:
+      type: object
+      properties:
+        transactionHash:
+          $ref: "#/components/schemas/TransactionHash"
   headers:
     SwarmTag:
       description: "Tag UID"
@@ -665,11 +991,6 @@ components:
       description: "The index of the next possible update"
       schema:
         $ref: "#/components/schemas/HexString"
-
-    SwarmRecoveryTargets:
-      description: "The targets provided for recovery"
-      schema:
-        type: string
 
     ETag:
       description: |
@@ -699,20 +1020,11 @@ components:
       required: false
       description: "Gas limit for transaction"
 
-    SwarmRecoveryTargetsParameter:
-      in: query
-      name: targets
-      schema:
-        type: string
-      required: false
-      description: Global pinning targets prefix
-
     SwarmTagParameter:
       in: header
       name: swarm-tag
       schema:
         $ref: "SwarmCommon.yaml#/components/schemas/Uid"
-      required: false
       description: Associate upload with an existing Tag UID
 
     SwarmPinParameter:
@@ -720,22 +1032,61 @@ components:
       name: swarm-pin
       schema:
         type: boolean
-      required: false
       description: >
         Represents if the uploaded data should be also locally pinned on the node.
-
-        Warning! Not available for nodes that run in Gateway mode!
 
     SwarmEncryptParameter:
       in: header
       name: swarm-encrypt
       schema:
         type: boolean
-      required: false
       description: >
         Represents the encrypting state of the file
 
-        Warning! Not available for nodes that run in Gateway mode!
+    SwarmRedundancyLevelParameter:
+      in: header
+      name: swarm-redundancy-level
+      schema:
+        type: integer
+        enum: [0, 1, 2, 3, 4]
+      description: >
+        Add redundancy to the data being uploaded so that downloaders can download it with better UX.
+        0 value is default and does not add any redundancy to the file.
+
+    SwarmRedundancyStrategyParameter:
+      in: header
+      name: swarm-redundancy-strategy
+      schema:
+        type: integer
+        enum: [0, 1, 2, 3]
+      required: false
+      description: >
+        Specify the retrieve strategy on redundant data.
+        The numbers stand for NONE, DATA, PROX and RACE, respectively.
+        Strategy NONE means no prefetching takes place.
+        Strategy DATA means only data chunks are prefetched.
+        Strategy PROX means only chunks that are close to the node are prefetched.
+        Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file.
+        Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true.
+        The default strategy is NONE, DATA, falling back to PROX, falling back to RACE
+
+    SwarmRedundancyFallbackModeParameter:
+      in: header
+      name: swarm-redundancy-fallback-mode
+      schema:
+        type: boolean
+      required: false
+      description: >
+        Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.
+
+    SwarmChunkRetrievalTimeoutParameter:
+      in: header
+      name: swarm-chunk-retrieval-timeout
+      schema:
+        $ref: "#/components/schemas/Duration"
+      required: false
+      description: >
+        Specify the timeout for chunk retrieval. The default is 30 seconds.
 
     ContentTypePreserved:
       in: header
@@ -774,7 +1125,6 @@ components:
       in: header
       name: swarm-postage-batch-id
       description: "ID of Postage Batch that is used to upload data with"
-      required: true
       schema:
         $ref: "#/components/schemas/SwarmAddress"
 
@@ -783,12 +1133,21 @@ components:
       name: swarm-deferred-upload
       schema:
         type: boolean
-        default: "true"
-      required: false
+        default: "false"
       description: >
-        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.
+        Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be direct.
+
+    SwarmCache:
+      in: header
+      name: swarm-cache
+      schema:
+        type: boolean
+        default: "true"
+      description: "Determines if the download data should be cached on the node. By default the download will be cached"
 
   responses:
+    "200":
+      description: OK.
     "204":
       description: The resource was deleted successfully.
     "400":
@@ -823,13 +1182,6 @@ components:
             $ref: "#/components/schemas/ProblemDetails"
     "500":
       description: Internal Server Error
-      content:
-        application/problem+json:
-          schema:
-            $ref: "#/components/schemas/ProblemDetails"
-
-    "GatewayForbidden":
-      description: "Endpoint or header (pinning or encryption headers) forbidden in Gateway mode"
       content:
         application/problem+json:
           schema:
