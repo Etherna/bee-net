@@ -37,6 +37,13 @@ namespace Etherna.BeeNet.Services
             IPostageStampIssuer? postageStampIssuer = null,
             IChunkStore? chunkStore = null)
         {
+            // Checks.
+            if (indexFilename?.Contains('/', StringComparison.InvariantCulture) == true)
+                throw new ArgumentException(
+                    "Index document suffix must not include slash character",
+                    nameof(indexFilename));
+            
+            // Init.
             chunkStore ??= new FakeChunkStore();
             
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
@@ -44,6 +51,11 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 postageStampIssuer,
                 new MemoryStampStore());
+            
+            // Try set index document.
+            if (indexFilename is null &&
+                File.Exists(Path.Combine(directoryPath, "index.html")))
+                indexFilename = "index.html";
             
             // Create manifest.
             var dirManifest = new MantarayManifest(
@@ -53,11 +65,6 @@ namespace Etherna.BeeNet.Services
                     redundancyLevel,
                     encrypt),
                 encrypt);
-            
-            if (indexFilename?.Contains('/', StringComparison.InvariantCulture) == true)
-                throw new ArgumentException(
-                    "Index document suffix must not include slash character",
-                    nameof(indexFilename));
 
             // Iterate through the files in the supplied directory.
             var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
