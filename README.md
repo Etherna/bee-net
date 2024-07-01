@@ -6,7 +6,7 @@ Bee.Net is a .Net client for the [Bee Swarm](https://github.com/ethersphere/bee)
 
 With this client you can consume public and debug api of any Bee node exposing them.
 
-Current release is compatible with Bee node `1.9.0`. Other versions could have issues.
+This includes also some useful to calculate data chunking, and postage batch usage.
 
 ## Package repositories
 
