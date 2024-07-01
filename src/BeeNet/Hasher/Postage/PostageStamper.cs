@@ -12,13 +12,12 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Epoche;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hasher.Signer;
 using Etherna.BeeNet.Hasher.Store;
 using Etherna.BeeNet.Models;
+using Org.BouncyCastle.Crypto.Digests;
 using System;
-using System.Linq;
 
 namespace Etherna.BeeNet.Hasher.Postage
 {
@@ -28,6 +27,9 @@ namespace Etherna.BeeNet.Hasher.Postage
         IStampStore stampStore)
         : IPostageStamper
     {
+        // Fields.
+        private readonly KeccakDigest hasher = new(256);
+        
         // Properties.
         public ISigner Signer { get; } = signer;
         public IPostageStampIssuer StampIssuer { get; } = stampIssuer;
@@ -76,11 +78,24 @@ namespace Etherna.BeeNet.Hasher.Postage
         /// <param name="stampBucketIndex"></param>
         /// <param name="timeStamp"></param>
         /// <returns></returns>
-        private static byte[] ToSignDigest(SwarmHash hash, PostageBatchId batchId, StampBucketIndex stampBucketIndex, DateTimeOffset timeStamp) =>
-            Keccak256.ComputeHash(
-                hash.ToByteArray()
-                    .Concat(batchId.ToByteArray())
-                    .Concat(stampBucketIndex.ToByteArray())
-                    .Concat(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray()).ToArray());
+        private byte[] ToSignDigest(
+            SwarmHash hash,
+            PostageBatchId batchId,
+            StampBucketIndex stampBucketIndex,
+            DateTimeOffset timeStamp)
+        {
+            var result = new byte[SwarmHash.HashSize];
+
+            lock (hasher)
+            {
+                hasher.BlockUpdate(hash.ToByteArray());
+                hasher.BlockUpdate(batchId.ToByteArray());
+                hasher.BlockUpdate(stampBucketIndex.ToByteArray());
+                hasher.BlockUpdate(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray());
+                hasher.DoFinal(result);
+            }
+
+            return result;
+        }
     }
 }
