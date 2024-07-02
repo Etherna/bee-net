@@ -25,11 +25,11 @@ namespace Etherna.BeeNet.Hasher.Postage
         // Constructor.
         public PostageStampIssuer(
             PostageBatch postageBatch,
-            uint[]? initialBuckets = null)
+            PostageBuckets? buckets = null)
         {
             ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
 
-            _buckets = new PostageBuckets(initialBuckets);
+            _buckets = buckets ?? new PostageBuckets();
             BucketUpperBound = (uint)1 << (postageBatch.Depth - PostageBatch.BucketDepth);
             PostageBatch = postageBatch;
         }
