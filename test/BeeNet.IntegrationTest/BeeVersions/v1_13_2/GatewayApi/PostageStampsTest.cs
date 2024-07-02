@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -114,16 +115,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetAllValidPostageBatchesFromAllNodesAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var batchId = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-
-
+            
             // Act 
             var results = await beeNodeClient.GetAllValidPostageBatchesFromAllNodesAsync();
 
-
             // Assert
-            Assert.Contains(results, i => i.BatchId == batch);
+            Assert.Contains(results, i => i.Value.Any(b => b.Id == batchId));
         }
     }
 }

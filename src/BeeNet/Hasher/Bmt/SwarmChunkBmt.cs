@@ -47,8 +47,7 @@ namespace Etherna.BeeNet.Hasher.Bmt
         }
         
         // Consts.
-        public const int MaxDataSize = SegmentsCount * SegmentSize;
-        public const int SegmentsCount = 128;
+        public const int SegmentsCount = SwarmChunk.DataSize / SegmentSize;
         public const int SegmentSize = SwarmHash.HashSize;
         
         // Static fields.

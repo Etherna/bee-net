@@ -26,14 +26,9 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         {
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
-
-
+            
             // Act 
-            var result = await beeNodeClient.CreatePinAsync(reference);
-
-
-            // Assert 
-            Assert.True(result.Code == 200 || result.Code == 201);
+            await beeNodeClient.CreatePinAsync(reference);
         }
 
         [Fact]
@@ -42,14 +37,9 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
             await beeNodeClient.CreatePinAsync(reference);
-
-
+            
             // Act 
-            var result = await beeNodeClient.DeletePinAsync(reference);
-
-
-            // Assert 
-            Assert.Equal(200, result.Code);
+            await beeNodeClient.DeletePinAsync(reference);
         }
 
         [Fact]

@@ -13,8 +13,9 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Feeds;
+using Etherna.BeeNet.Hasher;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Models.Feeds;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.IO;
@@ -22,17 +23,9 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public class FeedService : IFeedService
+    public class FeedService(IBeeClient gatewayClient)
+        : IFeedService
     {
-        // Fields.
-        private readonly IBeeClient gatewayClient;
-
-        // Constructor.
-        public FeedService(IBeeClient gatewayClient)
-        {
-            this.gatewayClient = gatewayClient;
-        }
-
         // Methods.
         public Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
             string account,
@@ -65,7 +58,7 @@ namespace Etherna.BeeNet.Services
 
             // Create new chunk.
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex);
+            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex, new HashProvider());
 
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }
@@ -160,7 +153,7 @@ namespace Etherna.BeeNet.Services
             TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
 
         public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
-            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index), index);
+            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index, new HashProvider()), index);
 
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmHash hash, FeedIndexBase index)
         {

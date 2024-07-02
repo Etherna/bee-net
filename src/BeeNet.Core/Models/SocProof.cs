@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,25 +12,18 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace Etherna.BeeNet.Models
 {
-    public class WalletTest : BaseTest_Gateway_v5_0_0
+    public sealed class SocProof(
+        SwarmHash chunkHash,
+        string identifier,
+        string signature,
+        string signer)
     {
-
-        [Fact]
-        public async Task GetWalletBalance()
-        {
-            // Act.
-            var wallet = await beeNodeClient.GetWalletBalance();
-
-            // Assert.
-            Assert.NotEqual(new BzzBalance(0), wallet.BzzBalance);
-            Assert.NotEqual(new XDaiBalance(0), wallet.XDaiBalance);
-        }
-
+        // Properties.
+        public SwarmHash ChunkHash { get; } = chunkHash;
+        public string Identifier { get; } = identifier;
+        public string Signature { get; } = signature;
+        public string Signer { get; } = signer;
     }
 }

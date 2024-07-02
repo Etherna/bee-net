@@ -12,25 +12,25 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace Etherna.BeeNet.Models
 {
-    public class WalletTest : BaseTest_Gateway_v5_0_0
+    public sealed class FileResponse(
+        IReadOnlyDictionary<string, IEnumerable<string>> headers,
+        Stream stream)
+        : IDisposable, IAsyncDisposable
     {
+        // Dispose.
+        public void Dispose() => Stream.Dispose();
+        public ValueTask DisposeAsync() => Stream.DisposeAsync();
 
-        [Fact]
-        public async Task GetWalletBalance()
-        {
-            // Act.
-            var wallet = await beeNodeClient.GetWalletBalance();
-
-            // Assert.
-            Assert.NotEqual(new BzzBalance(0), wallet.BzzBalance);
-            Assert.NotEqual(new XDaiBalance(0), wallet.XDaiBalance);
-        }
-
+        // Properties.
+        public bool IsFeed => Headers.ContainsKey("Swarm-Feed-Index");
+        public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; } = headers;
+        public Stream Stream { get; } = stream;
     }
 }

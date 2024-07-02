@@ -43,9 +43,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Act.
             var balance = await beeNodeClient.GetBalanceWithPeerAsync(peerId);
-
-            // Assert.
-            Assert.Equal(peerId, balance.Peer);
         }
 
 
@@ -59,10 +56,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Act 
             var balance = await beeNodeClient.GetConsumedBalanceWithPeerAsync(peerId);
-
-
-            // Assert
-            Assert.Equal(peerId, balance.Peer);
         }
     }
 }

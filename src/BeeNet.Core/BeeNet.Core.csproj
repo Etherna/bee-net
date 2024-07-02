@@ -4,17 +4,17 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Etherna.BeeNet</RootNamespace>
-    
+
     <Authors>Etherna SA</Authors>
     <Description>A .Net client for Swarm Bee</Description>
-    
+
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 
-    <PackageId>Bee.Net</PackageId>
+    <PackageId>Bee.Net.Core</PackageId>
     <RepositoryUrl>https://github.com/Etherna/bee-net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -28,7 +28,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -37,20 +36,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nethereum.Merkle" Version="4.21.2" />
-    <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="Nethereum.Util" Version="4.21.2" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\COPYING" Pack="true" PackagePath="\" />
     <None Include="..\..\COPYING-LESSER" Pack="true" PackagePath="\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BeeNet.Core\BeeNet.Core.csproj" />
   </ItemGroup>
 
 </Project>

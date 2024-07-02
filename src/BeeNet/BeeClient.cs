@@ -18,6 +18,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -25,6 +26,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
+using Loggers = Etherna.BeeNet.Models.Loggers;
 
 #if NET7_0_OR_GREATER
 using System.Formats.Tar;
@@ -88,15 +90,24 @@ namespace Etherna.BeeNet
         // Methods.
         public async Task<Dictionary<string, Account>> AccountingAsync(
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(i => i.Key, i => new Account(i.Value));
+            (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(
+                i => i.Key,
+                i => new Account(
+                    balance: BzzBalance.FromPlurString(i.Value.Balance),
+                    thresholdReceived: BzzBalance.FromPlurString(i.Value.ThresholdReceived),
+                    thresholdGiven: BzzBalance.FromPlurString(i.Value.ThresholdGiven),
+                    surplusBalance: BzzBalance.FromPlurString(i.Value.SurplusBalance),
+                    reservedBalance: BzzBalance.FromPlurString(i.Value.ReservedBalance),
+                    shadowReservedBalance: BzzBalance.FromPlurString(i.Value.ShadowReservedBalance),
+                    ghostBalance: BzzBalance.FromPlurString(i.Value.GhostBalance)));
 
-        public async Task<Auth> AuthenticateAsync(string role, int expiry) =>
-            new(await generatedClient.AuthAsync(
+        public async Task<string> AuthenticateAsync(string role, int expiry) =>
+            (await generatedClient.AuthAsync(
                 new Body
                 {
                     Role = role,
                     Expiry = expiry
-                }).ConfigureAwait(false));
+                }).ConfigureAwait(false)).Key;
         
         public async Task<PostageBatchId> BuyPostageBatchAsync(
             BzzBalance amount,
@@ -141,15 +152,19 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<StewardshipGet> CheckIsContentAvailableAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StewardshipGetAsync((string)hash, cancellationToken).ConfigureAwait(false));
-
         public async Task<CheckPinsResult> CheckPinsAsync(
             SwarmHash? hash,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsCheckAsync(hash?.ToString(), cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.PinsCheckAsync(
+                    hash?.ToString(),
+                    cancellationToken).ConfigureAwait(false);
+            return new CheckPinsResult(
+                hash: response.Reference,
+                invalid: response.Invalid,
+                missing: response.Missing,
+                total: response.Total);
+        }
 
         public async Task<string> ConnectToPeerAsync(
             string peerAddress,
@@ -165,24 +180,34 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.FeedsPostAsync(owner, topic, type, swarmPin, batchId.ToString(), cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<MessageResponse> CreatePinAsync(
+        public Task CreatePinAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsPostAsync((string)hash, cancellationToken).ConfigureAwait(false));
+            generatedClient.PinsPostAsync((string)hash, cancellationToken);
 
         public async Task<TagInfo> CreateTagAsync(
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false);
+            return new TagInfo(
+                uid: response.Uid,
+                startedAt: response.StartedAt,
+                split: response.Split,
+                seen: response.Seen,
+                stored: response.Stored,
+                sent: response.Sent,
+                synced: response.Synced);
+        }
 
-        public async Task<MessageResponse> DeletePeerAsync(
+        public Task DeletePeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PeersDeleteAsync(peerAddress, cancellationToken).ConfigureAwait(false));
+            generatedClient.PeersDeleteAsync(peerAddress, cancellationToken);
 
-        public async Task<MessageResponse> DeletePinAsync(
+        public Task DeletePinAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.PinsDeleteAsync((string)hash, cancellationToken).ConfigureAwait(false));
+            generatedClient.PinsDeleteAsync((string)hash, cancellationToken);
 
         public Task DeleteTagAsync(
             long uid,
@@ -198,7 +223,7 @@ namespace Etherna.BeeNet
                 gasPrice?.ToWeiLong(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<string> DepositIntoChequeBookAsync(
+        public async Task<string> DepositIntoChequebookAsync(
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>
@@ -220,17 +245,51 @@ namespace Etherna.BeeNet
                 gasLimit,
                 cancellationToken).ConfigureAwait(false)).BatchID;
 
-        public async Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false);
+            return new AddressDetail(
+                underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
+                overlay: response.Overlay,
+                ethereum: response.Ethereum,
+                publicKey: response.PublicKey,
+                pssPublicKey: response.PssPublicKey);
+        }
 
-        public async Task<IEnumerable<PeerBalance>> GetAllBalancesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.BalancesGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new PeerBalance(i));
+        public async Task<IDictionary<string, BzzBalance>> GetAllBalancesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.BalancesGetAsync(cancellationToken).ConfigureAwait(false);
+            return response.Balances.ToDictionary(
+                b => b.Peer,
+                b => BzzBalance.FromPlurString(b.Balance));
+        }
 
-        public async Task<IEnumerable<ChequebookChequeGet>> GetAllChequeBookChequesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false)).Lastcheques.Select(i => new ChequebookChequeGet(i));
+        public async Task<IEnumerable<ChequebookCheque>> GetAllChequebookChequesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false);
+            return response.Lastcheques.Select(c =>
+                new ChequebookCheque(
+                    peer: c.Peer,
+                lastReceived: c.Lastreceived is not null ? new ChequePayment(
+                    beneficiary: c.Lastreceived.Beneficiary,
+                    chequebook: c.Lastreceived.Chequebook,
+                    payout: BzzBalance.FromPlurString(c.Lastreceived.Payout)) : null,
+                lastSent: c.Lastsent is not null ? new ChequePayment(
+                    beneficiary: c.Lastsent.Beneficiary,
+                    chequebook: c.Lastsent.Chequebook,
+                    payout: BzzBalance.FromPlurString(c.Lastsent.Payout)) : null));
+        }
 
-        public async Task<IEnumerable<PeerBalance>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.ConsumedGetAsync(cancellationToken).ConfigureAwait(false)).Balances.Select(i => new PeerBalance(i));
+        public async Task<IDictionary<string, BzzBalance>> GetAllConsumedBalancesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ConsumedGetAsync(cancellationToken).ConfigureAwait(false);
+            return response.Balances.ToDictionary(
+                b => b.Peer,
+                b => BzzBalance.FromPlurString(b.Balance));
+        }
 
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
@@ -239,19 +298,58 @@ namespace Etherna.BeeNet
             (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference
             .Select(h => new SwarmHash(h));
 
-        public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false);
+            return new Settlement(
+                totalReceived: BzzBalance.FromPlurString(response.TotalReceived),
+                totalSent: BzzBalance.FromPlurString(response.TotalSent),
+                settlements: response.Settlements
+                    .Select(s => new SettlementData(
+                        peer: s.Peer,
+                        received: BzzBalance.FromPlurString(s.Received),
+                        sent: BzzBalance.FromPlurString(s.Sent))));
+        }
 
-        public async Task<Settlement> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TimesettlementsAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<Settlement> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TimesettlementsAsync(cancellationToken).ConfigureAwait(false);
+            return new Settlement(
+                totalReceived: BzzBalance.FromPlurString(response.TotalReceived),
+                totalSent: BzzBalance.FromPlurString(response.TotalSent),
+                settlements: response.Settlements
+                    .Select(s => new SettlementData(
+                        peer: s.Peer,
+                        received: BzzBalance.FromPlurString(s.Received),
+                        sent: BzzBalance.FromPlurString(s.Sent))));
+        }
 
-        public async Task<IEnumerable<PostageBatchShort>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false)).Batches.Select(i => new PostageBatchShort(i));
+        public async Task<IDictionary<string, IEnumerable<PostageBatch>>> GetAllValidPostageBatchesFromAllNodesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
+            return response.Batches.GroupBy(b => b.Owner)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(batch => new PostageBatch(
+                        id: batch.BatchID,
+                        amount: BzzBalance.FromPlurString(batch.Value),
+                        blockNumber: batch.Start,
+                        depth: batch.Depth,
+                        exists: true,
+                        isImmutable: batch.ImmutableFlag,
+                        isUsable: true,
+                        label: null,
+                        storageRadius: batch.StorageRadius,
+                        ttl: TimeSpan.FromSeconds(batch.BatchTTL),
+                        utilization: null)));
+        }
 
-        public async Task<PeerBalance> GetBalanceWithPeerAsync(
+        public async Task<BzzBalance> GetBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
+            BzzBalance.FromPlurString(
+                (await generatedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
         public async Task<Stream> GetBytesAsync(
             SwarmHash hash,
@@ -274,24 +372,66 @@ namespace Etherna.BeeNet
         public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1);
 
-        public async Task<ChainState> GetChainStateAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ChainstateAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<ChainState> GetChainStateAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ChainstateAsync(cancellationToken).ConfigureAwait(false);
+            return new ChainState(
+                block: response.Block,
+                chainTip: response.ChainTip,
+                currentPrice: BzzBalance.FromPlurString(response.CurrentPrice),
+                totalAmount: BzzBalance.FromPlurString(response.TotalAmount));
+        }
 
-        public async Task<string> GetChequeBookAddressAsync(CancellationToken cancellationToken = default) =>
+        public async Task<string> GetChequebookAddressAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress;
 
-        public async Task<ChequebookBalance> GetChequeBookBalanceAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<ChequebookBalance> GetChequebookBalanceAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false);
+            return new ChequebookBalance(
+                totalBalance: BzzBalance.FromPlurString(response.TotalBalance),
+                availableBalance: BzzBalance.FromPlurString(response.AvailableBalance));
+        }
 
-        public async Task<ChequebookCashoutGet> GetChequeBookCashoutForPeerAsync(
+        public async Task<ChequebookCashout> GetChequebookCashoutForPeerAsync(
             string peerAddress,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ChequebookCashoutGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ChequebookCashoutGetAsync(
+                peerAddress,
+                cancellationToken).ConfigureAwait(false);
+            return new ChequebookCashout(
+                peer: response.Peer,
+                lastCashedCheque: response.LastCashedCheque is not null
+                    ? new ChequePayment(
+                        response.LastCashedCheque.Beneficiary,
+                        response.LastCashedCheque.Chequebook,
+                        BzzBalance.FromPlurString(response.LastCashedCheque.Payout))
+                    : null,
+                transactionHash: response.TransactionHash,
+                result: new ResultChequebook(
+                    recipient: response.Result.Recipient,
+                    lastPayout: BzzBalance.FromPlurString(response.Result.LastPayout),
+                    bounced: response.Result.Bounced),
+                uncashedAmount: BzzBalance.FromPlurString(response.UncashedAmount));
+        }
 
-        public async Task<ChequebookChequeGet> GetChequeBookChequeForPeerAsync(
+        public async Task<ChequebookCheque> GetChequebookChequeForPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ChequebookChequeGetAsync(peerId, cancellationToken).ConfigureAwait(false);
+            return new ChequebookCheque(
+                peer: response.Peer,
+                lastReceived: response.Lastreceived is not null ? new ChequePayment(
+                    beneficiary: response.Lastreceived.Beneficiary,
+                    chequebook: response.Lastreceived.Chequebook,
+                    payout: BzzBalance.FromPlurString(response.Lastreceived.Payout)) : null,
+                lastSent: response.Lastsent is not null ? new ChequePayment(
+                    beneficiary: response.Lastsent.Beneficiary,
+                    chequebook: response.Lastsent.Chequebook,
+                    payout: BzzBalance.FromPlurString(response.Lastsent.Payout)) : null);
+        }
 
         public async Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
@@ -311,10 +451,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
-        public async Task<PeerBalance> GetConsumedBalanceWithPeerAsync(
+        public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
+            BzzBalance.FromPlurString(
+                (await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
         public async Task<SwarmHash> GetFeedAsync(
             string owner,
@@ -335,37 +476,101 @@ namespace Etherna.BeeNet
         {
             ArgumentNullException.ThrowIfNull(address, nameof(address));
 
-            return address.RelativePath is null
-                ? new(await generatedClient.BzzGetAsync(
+            if (address.RelativePath is null)
+            {
+                var response = await generatedClient.BzzGetAsync(
                     address.Hash.ToString(),
                     swarmCache,
                     (SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
                     swarmRedundancyFallbackMode,
                     swarmChunkRetrievalTimeout,
-                    cancellationToken).ConfigureAwait(false))
-                : new(await generatedClient.BzzGetAsync(
+                    cancellationToken).ConfigureAwait(false);
+                return new FileResponse(
+                    response.Headers,
+                    response.Stream);
+            }
+            else
+            {
+                var response = await generatedClient.BzzGetAsync(
                     address.Hash.ToString(),
                     address.RelativePath.ToString(),
                     (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
                     swarmRedundancyFallbackMode,
                     swarmChunkRetrievalTimeout,
-                    cancellationToken).ConfigureAwait(false));
+                    cancellationToken).ConfigureAwait(false);
+                return new FileResponse(
+                    response.Headers,
+                    response.Stream);
+            }
         }
 
         public Task GetFileHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             generatedClient.BzzHeadAsync((string)hash, cancellationToken);
 
-        public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.HealthAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.HealthAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                isStatusOk: response.Status switch
+                {
+                    Response21Status.Ok => true,
+                    Response21Status.Nok => false,
+                    _ => throw new InvalidOperationException()
+                },
+                version: response.Version,
+                apiVersion: response.ApiVersion,
+                debugApiVersion: response.DebugApiVersion);
+        }
 
-        public async Task<NodeInfo> GetNodeInfoAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.NodeAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<NodeInfo> GetNodeInfoAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.NodeAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                beeMode: response.BeeMode switch
+                {
+                    Response31BeeMode.Dev => InfoBeeMode.Dev,
+                    Response31BeeMode.Full => InfoBeeMode.Full,
+                    Response31BeeMode.Light => InfoBeeMode.Light,
+                    _ => throw new InvalidOperationException()
+                },
+                chequebookEnabled: response.ChequebookEnabled,
+                swapEnabled: response.SwapEnabled);
+        }
 
-        public async Task<IEnumerable<PostageBatch>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(i => new PostageBatch(i));
+        public async Task<IEnumerable<PostageBatch>> GetOwnedPostageBatchesByNodeAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
+            return response.Stamps.Select(b =>
+                new PostageBatch(
+                    amount: BzzBalance.FromPlurString(b.Amount),
+                    depth: b.Depth,
+                    blockNumber: b.BlockNumber,
+                    exists: b.Exists,
+                    id: b.BatchID,
+                    isImmutable: b.ImmutableFlag,
+                    label: b.Label,
+                    ttl: TimeSpan.FromSeconds(b.BatchTTL),
+                    isUsable: b.Usable,
+                    utilization: b.Utilization,
+                    storageRadius: null));
+        }
 
-        public async Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false)).PendingTransactions.Select(i => new TxInfo(i));
+        public async Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
+            return response.PendingTransactions.Select(tx => new TxInfo(
+                transactionHash: tx.TransactionHash,
+                to: tx.To,
+                nonce: tx.Nonce,
+                gasPrice: XDaiBalance.FromWeiString(tx.GasPrice),
+                gasLimit: tx.GasLimit,
+                data: tx.Data,
+                created: tx.Created,
+                description: tx.Description,
+                value: XDaiBalance.FromWeiString(tx.Value)));
+        }
 
         public async Task<string> GetPinStatusAsync(
             SwarmHash hash,
@@ -374,56 +579,267 @@ namespace Etherna.BeeNet
 
         public async Task<PostageBatch> GetPostageBatchAsync(
             PostageBatchId batchId,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StampsGetAsync(batchId.ToString(), cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StampsGetAsync(
+                batchId.ToString(),
+                cancellationToken).ConfigureAwait(false);
+            return new PostageBatch(
+                amount: BzzBalance.FromPlurString(response.Amount),
+                depth: response.Depth,
+                blockNumber: response.BlockNumber,
+                exists: response.Exists,
+                id: response.BatchID,
+                isImmutable: response.ImmutableFlag,
+                label: response.Label,
+                ttl: TimeSpan.FromSeconds(response.BatchTTL),
+                isUsable: response.Usable,
+                utilization: response.Utilization,
+                storageRadius: null);
+        }
 
         public async Task<ReserveCommitment> GetReserveCommitmentAsync(int depth, string anchor1, string anchor2,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.RchashAsync(depth, anchor1, anchor2, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.RchashAsync(depth, anchor1, anchor2, cancellationToken).ConfigureAwait(false);
+            return new(
+                duration: response.Duration,
+                hash: response.Hash,
+                proof1: new ReserveCommitmentProof(
+                    chunkSpan: response.Proofs.Proof1.ChunkSpan,
+                    postageProof: new Models.PostageProof(
+                        index: response.Proofs.Proof1.PostageProof.Index,
+                        postageId: response.Proofs.Proof1.PostageProof.PostageId,
+                        signature: response.Proofs.Proof1.PostageProof.Signature,
+                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
+                            long.Parse(response.Proofs.Proof1.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
+                    proofSegments: response.Proofs.Proof1.ProofSegments ?? Array.Empty<string>(),
+                    proofSegments2: response.Proofs.Proof1.ProofSegments2 ?? Array.Empty<string>(),
+                    proofSegments3: response.Proofs.Proof1.ProofSegments3 ?? Array.Empty<string>(),
+                    proveSegment: response.Proofs.Proof1.ProveSegment,
+                    proveSegment2: response.Proofs.Proof1.ProveSegment2,
+                    socProof: (response.Proofs.Proof1.SocProof ?? Array.Empty<Clients.SocProof>()).Select(
+                        p => new Models.SocProof(
+                            chunkHash: p.ChunkAddr,
+                            identifier: p.Identifier,
+                            signature: p.Signature,
+                            signer: p.Signer))),
+                proof2: new ReserveCommitmentProof(
+                    chunkSpan: response.Proofs.Proof2.ChunkSpan,
+                    postageProof: new Models.PostageProof(
+                        index: response.Proofs.Proof2.PostageProof.Index,
+                        postageId: response.Proofs.Proof2.PostageProof.PostageId,
+                        signature: response.Proofs.Proof2.PostageProof.Signature,
+                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
+                            long.Parse(response.Proofs.Proof2.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
+                    proofSegments: response.Proofs.Proof2.ProofSegments ?? Array.Empty<string>(),
+                    proofSegments2: response.Proofs.Proof2.ProofSegments2 ?? Array.Empty<string>(),
+                    proofSegments3: response.Proofs.Proof2.ProofSegments3 ?? Array.Empty<string>(),
+                    proveSegment: response.Proofs.Proof2.ProveSegment,
+                    proveSegment2: response.Proofs.Proof2.ProveSegment2,
+                    socProof: (response.Proofs.Proof2.SocProof ?? Array.Empty<SocProof2>()).Select(
+                        p => new Models.SocProof(
+                            chunkHash: p.ChunkAddr,
+                            identifier: p.Identifier,
+                            signature: p.Signature,
+                            signer: p.Signer))),
+                proofLast: new ReserveCommitmentProof(
+                    chunkSpan: response.Proofs.ProofLast.ChunkSpan,
+                    postageProof: new Models.PostageProof(
+                        index: response.Proofs.ProofLast.PostageProof.Index,
+                        postageId: response.Proofs.ProofLast.PostageProof.PostageId,
+                        signature: response.Proofs.ProofLast.PostageProof.Signature,
+                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
+                            long.Parse(response.Proofs.ProofLast.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
+                    proofSegments: response.Proofs.ProofLast.ProofSegments ?? Array.Empty<string>(),
+                    proofSegments2: response.Proofs.ProofLast.ProofSegments2 ?? Array.Empty<string>(),
+                    proofSegments3: response.Proofs.ProofLast.ProofSegments3 ?? Array.Empty<string>(),
+                    proveSegment: response.Proofs.ProofLast.ProveSegment,
+                    proveSegment2: response.Proofs.ProofLast.ProveSegment2,
+                    socProof: (response.Proofs.ProofLast.SocProof ?? Array.Empty<SocProof3>()).Select(
+                        p => new Models.SocProof(
+                            chunkHash: p.ChunkAddr,
+                            identifier: p.Identifier,
+                            signature: p.Signature,
+                            signer: p.Signer))));
+        }
 
-        public async Task<ReserveState> GetReserveStateAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.ReservestateAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<ReserveState> GetReserveStateAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.ReservestateAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                commitment: response.Commitment,
+                radius: response.Radius,
+                storageRadius: response.StorageRadius);
+        }
 
         public async Task<SettlementData> GetSettlementsWithPeerAsync(
             string peerAddress,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
+            return new SettlementData(
+                peer: response.Peer,
+                received: BzzBalance.FromPlurString(response.Received),
+                sent: BzzBalance.FromPlurString(response.Sent));
+        }
 
         public async Task<StampsBuckets> GetStampsBucketsForBatchAsync(
             PostageBatchId batchId,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StampsBucketsAsync(batchId.ToString(), cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StampsBucketsAsync(
+                batchId.ToString(),
+                cancellationToken).ConfigureAwait(false);
+            return new(
+                depth: response.Depth,
+                bucketDepth: response.BucketDepth,
+                bucketUpperBound: response.BucketUpperBound,
+                collisions: response.Buckets.Select(b => b.Collisions));
+        }
 
-        public async Task<Topology> GetSwarmTopologyAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TopologyAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<Topology> GetSwarmTopologyAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TopologyAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                baseAddr: response.BaseAddr,
+                bins: response.Bins.ToDictionary(
+                    i => i.Key,
+                    i => new PeersAggregate(
+                        population: i.Value.Population,
+                        connected: i.Value.Connected,
+                        disconnectedPeers: i.Value.DisconnectedPeers.Select(
+                            peer => new Peer(
+                                address: peer.Address,
+                                lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
+                                sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
+                                connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
+                                sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
+                                sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
+                                latencyEwma: peer.Metrics.LatencyEWMA)),
+                        connectedPeers: i.Value.ConnectedPeers.Select(
+                            peer => new Peer(
+                                address: peer.Address,
+                                lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
+                                sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
+                                connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
+                                sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
+                                sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
+                                latencyEwma: peer.Metrics.LatencyEWMA)))),
+                connected: response.Connected,
+                depth: response.Depth,
+                networkAvailability: response.NetworkAvailability switch
+                {
+                    Response38NetworkAvailability.Unknown => NetworkAvailability.Unknown,
+                    Response38NetworkAvailability.Available => NetworkAvailability.Available,
+                    Response38NetworkAvailability.Unavailable => NetworkAvailability.Unavailable,
+                    _ => throw new InvalidOperationException(),
+                },
+                nnLowWatermark: response.NnLowWatermark,
+                population: response.Population,
+                reachability: response.Reachability switch
+                {
+                    Response38Reachability.Unknown => Reachability.Unknown,
+                    Response38Reachability.Public => Reachability.Public,
+                    Response38Reachability.Private => Reachability.Private,
+                    _ => throw new InvalidOperationException(),
+                },
+                timestamp: DateTimeOffset.FromUnixTimeSeconds(
+                    long.Parse(response.Timestamp, CultureInfo.InvariantCulture)));
+        }
 
         public async Task<TagInfo> GetTagInfoAsync(
             long uid,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false);
+            return new TagInfo(
+                uid: response.Uid,
+                startedAt: response.StartedAt,
+                split: response.Split,
+                seen: response.Seen,
+                stored: response.Stored,
+                sent: response.Sent,
+                synced: response.Synced);
+        }
 
         public async Task<IEnumerable<TagInfo>> GetTagsListAsync(
             int? offset = null,
             int? limit = null,
-            CancellationToken cancellationToken = default) =>
-            ((await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ?? Array.Empty<Tags>()).Select(i => new TagInfo(i));
+            CancellationToken cancellationToken = default)
+        {
+            var tags =
+                (await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
+                Array.Empty<Tags>();
+            return tags.Select(t => new TagInfo(
+                uid: t.Uid,
+                startedAt: t.StartedAt,
+                split: t.Split,
+                seen: t.Seen,
+                stored: t.Stored,
+                sent: t.Sent,
+                synced: t.Synced));
+        }
 
         public async Task<TxInfo> GetTransactionInfoAsync(
             string txHash,
-            CancellationToken cancellationToken = default) =>
-            new(await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false));
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false);
+            return new TxInfo(
+                transactionHash: response.TransactionHash,
+                to: response.To,
+                nonce: response.Nonce,
+                gasPrice: XDaiBalance.FromWeiString(response.GasPrice),
+                gasLimit: response.GasLimit,
+                data: response.Data,
+                created: response.Created,
+                description: response.Description,
+                value: XDaiBalance.FromWeiString(response.Value));
+        }
 
-        public async Task<Wallet> GetWalletBalance(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<WalletBalances> GetWalletBalance(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                bzzBalance: BzzBalance.FromPlurString(response.BzzBalance),
+                xDaiBalance: XDaiBalance.FromWeiString(response.NativeTokenBalance));
+        }
 
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage;
 
-        public async Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<bool> IsContentRetrievableAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.StewardshipGetAsync((string)hash, cancellationToken).ConfigureAwait(false))
+            .IsRetrievable;
 
-        public async Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default) =>
-            new(await generatedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false));
+        public async Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                loggers: response.Loggers.Select(
+                    i => new Loggers(
+                        id: i.Id,
+                        logger: i.Logger,
+                        subsystem: i.Subsystem,
+                        verbosity: i.Verbosity)).ToList(),
+                tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+        }
+
+        public async Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false);
+            return new(
+                loggers: response.Loggers.Select(
+                    i => new Loggers(
+                        id: i.Id,
+                        logger: i.Logger,
+                        subsystem: i.Subsystem,
+                        verbosity: i.Verbosity)).ToList(),
+                tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+        }
 
         public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
             await generatedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
@@ -433,8 +849,21 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                isFrozen: response.IsFrozen,
+                isFullySynced: response.IsFullySynced,
+                isHealthy: response.IsHealthy,
+                round: response.Round,
+                lastWonRound: response.LastWonRound,
+                lastPlayedRound: response.LastPlayedRound,
+                lastFrozenRound: response.LastFrozenRound,
+                block: response.Block,
+                reward: BzzBalance.FromPlurString(response.Reward),
+                fees: XDaiBalance.FromWeiString(response.Fees));
+        }
 
         public async Task<string> RefreshAuthAsync(
             string role,
@@ -494,11 +923,54 @@ namespace Etherna.BeeNet
                 gasLimit,
                 cancellationToken).ConfigureAwait(false);
 
-        public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default) =>
-            new(await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false));
+        public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StatusAsync(cancellationToken).ConfigureAwait(false);
+            return new(
+                beeMode: response.BeeMode switch
+                {
+                    Response65BeeMode.Light => StatusBeeMode.Light,
+                    Response65BeeMode.Full => StatusBeeMode.Full,
+                    Response65BeeMode.UltraLight => StatusBeeMode.UltraLight,
+                    Response65BeeMode.Unknown => StatusBeeMode.Unknown,
+                    _ => throw new InvalidOperationException()
+                },
+                batchCommitment: response.BatchCommitment,
+                connectedPeers: response.ConnectedPeers,
+                neighborhoodSize: response.NeighborhoodSize,
+                peer: response.Peer,
+                proximity: response.Proximity,
+                pullsyncRate: response.PullsyncRate,
+                reserveSize: response.ReserveSize,
+                reserveSizeWithinRadius: (int)response.ReserveSizeWithinRadius,
+                requestFailed: response.RequestFailed,
+                storageRadius: response.StorageRadius);
+        }
 
-        public async Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false)).Stamps.Select(p => new StatusNode(p));
+        public async Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false);
+            return response.Stamps.Select(
+                s => new StatusNode(
+                    beeMode: s.BeeMode switch
+                    {
+                        StampsBeeMode.Light => StatusBeeMode.Light,
+                        StampsBeeMode.Full => StatusBeeMode.Full,
+                        StampsBeeMode.UltraLight => StatusBeeMode.UltraLight,
+                        StampsBeeMode.Unknown => StatusBeeMode.Unknown,
+                        _ => throw new InvalidOperationException()
+                    },
+                    batchCommitment: s.BatchCommitment,
+                    connectedPeers: s.ConnectedPeers,
+                    neighborhoodSize: s.NeighborhoodSize,
+                    peer: s.Peer,
+                    proximity: s.Proximity,
+                    pullsyncRate: s.PullsyncRate,
+                    reserveSize: s.ReserveSize,
+                    reserveSizeWithinRadius: (int)s.ReserveSizeWithinRadius,
+                    requestFailed: s.RequestFailed,
+                    storageRadius: s.StorageRadius));
+        }
 
         public Task SubscribeToPssAsync(
             string topic,
@@ -668,7 +1140,7 @@ namespace Etherna.BeeNet
                 coin.ToWeiString(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<string> WithdrawFromChequeBookAsync(
+        public async Task<string> WithdrawFromChequebookAsync(
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>

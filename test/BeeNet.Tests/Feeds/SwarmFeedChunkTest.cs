@@ -13,7 +13,9 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hasher;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Models.Feeds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,7 +141,7 @@ namespace Etherna.BeeNet.Feeds
             var index = new EpochFeedIndex(0, 0);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildIdentifier(topic, index));
+                SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider()));
         }
 
         [Fact]
@@ -148,7 +150,7 @@ namespace Etherna.BeeNet.Feeds
             var topic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
             var index = new EpochFeedIndex(2, 1);
 
-            var result = SwarmFeedChunk.BuildIdentifier(topic, index);
+            var result = SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider());
 
             Assert.Equal(
                 new byte[] { 229, 116, 252, 141, 32, 73, 147, 48, 181, 92, 124, 96, 74, 217, 20, 163, 90, 16, 124, 66, 174, 221, 76, 184, 135, 58, 193, 210, 235, 104, 138, 215 },
@@ -162,7 +164,7 @@ namespace Etherna.BeeNet.Feeds
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier));
+                SwarmFeedChunk.BuildHash(account, identifier, new HashProvider()));
         }
 
         [Fact]
@@ -172,7 +174,7 @@ namespace Etherna.BeeNet.Feeds
             var identifier = new byte[] { 0, 1, 2, 3 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier));
+                SwarmFeedChunk.BuildHash(account, identifier, new HashProvider()));
         }
 
         [Fact]
@@ -181,7 +183,7 @@ namespace Etherna.BeeNet.Feeds
             var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
-            var result = SwarmFeedChunk.BuildHash(account, identifier);
+            var result = SwarmFeedChunk.BuildHash(account, identifier, new HashProvider());
 
             Assert.Equal(
                 "854f1dd0c708a544e282b25b9f9c1d353dca28e352656993ab3c2c17b384a86f",

@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet.IntegrationTest", "t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet.Tests", "test\BeeNet.Tests\BeeNet.Tests.csproj", "{549BB2F5-D48E-4785-AF14-EF116A79AD00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core", "src\BeeNet.Core\BeeNet.Core.csproj", "{0C681EE6-7290-4548-9502-4C9B6B061F12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{549BB2F5-D48E-4785-AF14-EF116A79AD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{549BB2F5-D48E-4785-AF14-EF116A79AD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{549BB2F5-D48E-4785-AF14-EF116A79AD00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{F6289FE6-5CC0-4225-98BC-2DCFE85C767F} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
 		{F0C776C9-4856-4031-B4CE-18E53FEF9E55} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
 		{549BB2F5-D48E-4785-AF14-EF116A79AD00} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
+		{0C681EE6-7290-4548-9502-4C9B6B061F12} = {7932D52A-3D44-4723-9E77-1711F7486417}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BC8368EB-8E3B-4FBB-B657-D1C9375AFAFC}

@@ -12,25 +12,20 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Threading.Tasks;
-using Xunit;
+using Nethereum.Util.HashProviders;
+using System;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace Etherna.BeeNet.Models.Feeds
 {
-    public class WalletTest : BaseTest_Gateway_v5_0_0
+    public abstract class FeedIndexBase
     {
+        // Properties.
+        public abstract Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider);
 
-        [Fact]
-        public async Task GetWalletBalance()
-        {
-            // Act.
-            var wallet = await beeNodeClient.GetWalletBalance();
+        // Methods.
+        public FeedIndexBase GetNext(DateTimeOffset at) =>
+            GetNext((ulong)at.ToUnixTimeSeconds());
 
-            // Assert.
-            Assert.NotEqual(new BzzBalance(0), wallet.BzzBalance);
-            Assert.NotEqual(new XDaiBalance(0), wallet.XDaiBalance);
-        }
-
+        public abstract FeedIndexBase GetNext(ulong at);
     }
 }

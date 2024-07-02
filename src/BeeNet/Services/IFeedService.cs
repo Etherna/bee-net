@@ -12,8 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Feeds;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Models.Feeds;
 using System;
 using System.Threading.Tasks;
 

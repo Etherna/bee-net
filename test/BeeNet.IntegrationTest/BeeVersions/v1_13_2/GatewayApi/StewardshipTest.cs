@@ -20,7 +20,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class StewardshipTest : BaseTest_Gateway_v5_0_0
     {
-        
         [Fact]
         public async Task CheckIsContentAvailableAsync()
         {
@@ -29,11 +28,10 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             await Task.Delay(180000);
 
             // Act 
-            var result = await beeNodeClient.CheckIsContentAvailableAsync(reference);
-
+            var result = await beeNodeClient.IsContentRetrievableAsync(reference);
 
             // Assert 
-            Assert.True(result.IsRetrievable);
+            Assert.True(result);
         }
 
         [Fact]
@@ -42,10 +40,8 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var reference = await UploadBZZFileAndGetReferenceAsync();
 
-
             // Act 
             await beeNodeClient.ReuploadContentAsync(reference);
         }
-
     }
 }

@@ -12,6 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hasher;
+using Etherna.BeeNet.Models.Feeds;
 using System;
 using Xunit;
 
@@ -124,7 +126,7 @@ namespace Etherna.BeeNet.Feeds
         public void MarshalBinary(ulong start, byte level, byte[] expected)
         {
             var index = new EpochFeedIndex(start, level);
-            Assert.Equal(expected, index.MarshalBinary);
+            Assert.Equal(expected, index.GetMarshalBinaryHash(new HashProvider()));
         }
 
         [Theory]

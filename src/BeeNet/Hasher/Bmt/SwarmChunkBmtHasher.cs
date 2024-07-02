@@ -27,8 +27,8 @@ namespace Etherna.BeeNet.Hasher.Bmt
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
-            if (data.Length > SwarmChunkBmt.MaxDataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunkBmt.MaxDataSize} bytes");
+            if (data.Length > SwarmChunk.DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
             
             // Split input data into leaf segments.
             var segments = new List<byte[]>();

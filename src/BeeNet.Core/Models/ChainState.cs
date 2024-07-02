@@ -12,25 +12,18 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace Etherna.BeeNet.Models
 {
-    public class WalletTest : BaseTest_Gateway_v5_0_0
+    public sealed class ChainState(
+        long block,
+        int chainTip,
+        BzzBalance currentPrice,
+        BzzBalance totalAmount)
     {
-
-        [Fact]
-        public async Task GetWalletBalance()
-        {
-            // Act.
-            var wallet = await beeNodeClient.GetWalletBalance();
-
-            // Assert.
-            Assert.NotEqual(new BzzBalance(0), wallet.BzzBalance);
-            Assert.NotEqual(new XDaiBalance(0), wallet.XDaiBalance);
-        }
-
+        // Properties.
+        public long Block { get; } = block;
+        public int ChainTip { get; } = chainTip;
+        public BzzBalance CurrentPrice { get; } = currentPrice;
+        public BzzBalance TotalAmount { get; } = totalAmount;
     }
 }
