@@ -13,16 +13,13 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
-using Etherna.BeeNet.Hasher;
-using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Models.Feeds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Xunit;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Models.Feeds
 {
     public class SwarmFeedChunkTest
     {

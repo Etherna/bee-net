@@ -21,7 +21,7 @@ using System;
 
 namespace Etherna.BeeNet.Hasher.Postage
 {
-    internal class PostageStamper(
+    internal sealed class PostageStamper(
         ISigner signer,
         IPostageStampIssuer stampIssuer,
         IStampStore stampStore)

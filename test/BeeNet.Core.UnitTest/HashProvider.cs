@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,11 +12,24 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+using Etherna.BeeNet.Models;
+using Nethereum.Util.HashProviders;
+using Org.BouncyCastle.Crypto.Digests;
 
-using System.Diagnostics.CodeAnalysis;
-
-[assembly: SuppressMessage("Usage", "CA1707:Remove the underscores from namespace name", Justification = "Version number should containt underscores", Scope = "namespaceanddescendants", Target = "~N:Etherna.BeeNet.Clients")]
+namespace Etherna.BeeNet
+{
+    public class HashProvider : IHashProvider
+    {
+        // Fields.
+        private readonly KeccakDigest hasher = new(256);
+        
+        // Methods.
+        public byte[] ComputeHash(byte[] data)
+        {
+            var result = new byte[SwarmHash.HashSize];
+            hasher.BlockUpdate(data);
+            hasher.DoFinal(result);
+            return result;
+        }
+    }
+}

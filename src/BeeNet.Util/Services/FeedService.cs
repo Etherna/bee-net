@@ -237,7 +237,7 @@ namespace Etherna.BeeNet.Services
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
         internal async Task<SwarmFeedChunk?> TryFindStartingEpochChunkOnlineAsync(byte[] account, byte[] topic, ulong at, EpochFeedIndex epochIndex)
         {
-            // Try get chunk payload on network.
+            // Try to get chunk payload on network.
             var chunk = await TryGetFeedChunkAsync(account, topic, epochIndex).ConfigureAwait(false);
 
             // If chunk exists and date is prior.

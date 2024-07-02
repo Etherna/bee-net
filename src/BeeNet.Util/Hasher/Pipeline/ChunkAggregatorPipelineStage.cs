@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Hasher.Pipeline
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
-        private class ChunkHeader(SwarmHash hash, ReadOnlyMemory<byte> span, bool isParityChunk)
+        private sealed class ChunkHeader(SwarmHash hash, ReadOnlyMemory<byte> span, bool isParityChunk)
         {
             public SwarmHash Hash { get; } = hash;
             public ReadOnlyMemory<byte> Span { get; } = span;

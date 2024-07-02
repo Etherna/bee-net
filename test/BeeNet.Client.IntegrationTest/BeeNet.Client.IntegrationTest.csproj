@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BeeNet\BeeNet.csproj" />
+    <ProjectReference Include="..\..\src\BeeNet.Client\BeeNet.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

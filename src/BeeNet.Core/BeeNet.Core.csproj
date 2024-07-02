@@ -6,7 +6,7 @@
     <RootNamespace>Etherna.BeeNet</RootNamespace>
 
     <Authors>Etherna SA</Authors>
-    <Description>A .Net client for Swarm Bee</Description>
+    <Description>Core models to work with Ethereum Swarm in .Net</Description>
 
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>

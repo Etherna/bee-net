@@ -22,10 +22,10 @@ using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Hasher.Bmt
 {
-    internal class SwarmChunkBmt : MerkleTree<byte[]>
+    internal sealed class SwarmChunkBmt : MerkleTree<byte[]>
     {
         // Classes.
-        private class ChunkBmtByteArrayConvertor : IByteArrayConvertor<byte[]>
+        private sealed class ChunkBmtByteArrayConvertor : IByteArrayConvertor<byte[]>
         {
             /// <summary>
             /// Verify that chunk segment data has right size

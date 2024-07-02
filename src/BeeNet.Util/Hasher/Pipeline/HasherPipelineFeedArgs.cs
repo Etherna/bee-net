@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Hasher.Pipeline
 {
-    internal class HasherPipelineFeedArgs
+    internal sealed class HasherPipelineFeedArgs
     {
         // Fields.
         private readonly byte[] _data;

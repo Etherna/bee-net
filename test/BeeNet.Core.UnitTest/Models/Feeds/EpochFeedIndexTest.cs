@@ -12,12 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hasher;
-using Etherna.BeeNet.Models.Feeds;
 using System;
 using Xunit;
 
-namespace Etherna.BeeNet.Feeds
+namespace Etherna.BeeNet.Models.Feeds
 {
     public class EpochFeedIndexTest
     {

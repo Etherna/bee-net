@@ -12,8 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Runtime.CompilerServices;
 
-[assembly: CLSCompliant(false)]
-[assembly: InternalsVisibleTo("BeeNet.Tests")]
+[assembly: InternalsVisibleTo("BeeNet.Util.UnitTest")]
