@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Models;
 using Nethereum.Util.HashProviders;
 using Org.BouncyCastle.Crypto.Digests;
+using System;
 
 namespace Etherna.BeeNet.Hasher
 {
@@ -24,12 +25,20 @@ namespace Etherna.BeeNet.Hasher
         private readonly KeccakDigest hasher = new(256);
         
         // Methods.
+        public void ComputeHash(byte[] data, Span<byte> output)
+        {
+            hasher.BlockUpdate(data);
+            hasher.DoFinal(output);
+        }
+        
         public byte[] ComputeHash(byte[] data)
         {
             var result = new byte[SwarmHash.HashSize];
-            hasher.BlockUpdate(data);
-            hasher.DoFinal(result);
+            ComputeHash(data, result);
             return result;
         }
+
+        public byte[] ComputeHash(string data) =>
+            ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
     }
 }
