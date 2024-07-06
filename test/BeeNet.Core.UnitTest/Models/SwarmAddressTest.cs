@@ -81,49 +81,49 @@ namespace Etherna.BeeNet.Models
                 tests.Add(new(
                     "0000000000000000000000000000000000000000000000000000000000000000",
                     SwarmHash.Zero,
-                    null));
+                    "/"));
                 
                 // Only hash with ending slash.
                 tests.Add(new(
                     "0000000000000000000000000000000000000000000000000000000000000000/",
                     SwarmHash.Zero,
-                    null));
+                    "/"));
                 
                 // With initial root.
                 tests.Add(new(
                     "/0000000000000000000000000000000000000000000000000000000000000000",
                     SwarmHash.Zero,
-                    null));
+                    "/"));
                 
                 // With initial root and ending slash.
                 tests.Add(new(
                     "/0000000000000000000000000000000000000000000000000000000000000000/",
                     SwarmHash.Zero,
-                    null));
+                    "/"));
                 
                 // With path.
                 tests.Add(new(
                     "0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
                     SwarmHash.Zero,
-                    "Im/a/path"));
+                    "/Im/a/path"));
                 
                 // With initial root and path.
                 tests.Add(new(
                     "/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
                     SwarmHash.Zero,
-                    "Im/a/path"));
+                    "/Im/a/path"));
                 
                 // With final slash.
                 tests.Add(new(
                     "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
                     SwarmHash.Zero,
-                    "I/have/final/slash/"));
+                    "/I/have/final/slash/"));
                 
                 // With special chars.
                 tests.Add(new(
                     "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
                     SwarmHash.Zero,
-                    "I have a % of special\\chars!"));
+                    "/I have a % of special\\chars!"));
 
                 return tests.Select(t => new object[] { t });
             }

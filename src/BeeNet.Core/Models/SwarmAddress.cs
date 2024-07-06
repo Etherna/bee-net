@@ -23,29 +23,28 @@ namespace Etherna.BeeNet.Models
         public SwarmAddress(SwarmHash hash, string? path = null)
         {
             Hash = hash;
-            Path = path;
+            Path = NormalizePath(path);
         }
         public SwarmAddress(string address)
         {
             ArgumentNullException.ThrowIfNull(address, nameof(address));
             
-            // Trim initial and final slash.
+            // Trim initial slash.
             address = address.TrimStart('/');
 
             // Extract hash root.
             var slashIndex = address.IndexOf('/', StringComparison.InvariantCulture);
-            var root = slashIndex > 0 ? address[..slashIndex] : address;
-            var path = slashIndex > 0 ? address[(slashIndex + 1)..] : null;
+            var hash = slashIndex > 0 ? address[..slashIndex] : address;
+            var path = slashIndex > 0 ? address[slashIndex..] : "/";
             
             // Set hash and path.
-            Hash = new SwarmHash(root);
-            if (!string.IsNullOrEmpty(path))
-                Path = path;
+            Hash = new SwarmHash(hash);
+            Path = NormalizePath(path);
         }
         
         // Properties.
         public SwarmHash Hash { get; }
-        public string? Path { get; }
+        public string Path { get; }
         
         // Methods.
         public bool Equals(SwarmAddress other) =>
@@ -54,30 +53,25 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
                                              (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
-        public override string ToString()
-        {
-            if (Path is null)
-                return Hash + "/";
-            
-            if (System.IO.Path.IsPathRooted(Path))
-                return Hash + Path;
-
-            return Hash + "/" + Path;
-        }
+        public override string ToString() => Hash + Path;
         
         // Static methods.
-        public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
         public static SwarmAddress FromString(string value) => new(value);
+        public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
         
         // Operator methods.
         public static bool operator ==(SwarmAddress left, SwarmAddress right) => left.Equals(right);
         public static bool operator !=(SwarmAddress left, SwarmAddress right) => !(left == right);
         
         // Implicit conversion operator methods.
-        public static implicit operator SwarmAddress(SwarmHash value) => new(value);
         public static implicit operator SwarmAddress(string value) => new(value);
+        public static implicit operator SwarmAddress(SwarmHash value) => new(value);
         
         // Explicit conversion operator methods.
         public static explicit operator string(SwarmAddress value) => value.ToString();
+        
+        // Helpers.
+        internal static string NormalizePath(string? path) =>
+            '/' + (path ?? "").TrimStart('/');
     }
 }
