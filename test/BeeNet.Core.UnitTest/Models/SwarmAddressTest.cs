@@ -32,11 +32,11 @@ namespace Etherna.BeeNet.Models
         public class StringToAddressTestElement(
             string inputString,
             SwarmHash expectedHash,
-            string? expectedRelativePath)
+            string expectedRelativePath)
         {
             public string InputString { get; } = inputString;
             public SwarmHash ExpectedHash { get; } = expectedHash;
-            public string? ExpectedRelativePath { get; } = expectedRelativePath;
+            public string ExpectedRelativePath { get; } = expectedRelativePath;
         }
 
         // Data.
@@ -75,55 +75,48 @@ namespace Etherna.BeeNet.Models
         {
             get
             {
-                var tests = new List<StringToAddressTestElement>();
-                
-                // Only hash without ending slash.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000",
-                    SwarmHash.Zero,
-                    "/"));
-                
-                // Only hash with ending slash.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/",
-                    SwarmHash.Zero,
-                    "/"));
-                
-                // With initial root.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000",
-                    SwarmHash.Zero,
-                    "/"));
-                
-                // With initial root and ending slash.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000/",
-                    SwarmHash.Zero,
-                    "/"));
-                
-                // With path.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                    SwarmHash.Zero,
-                    "/Im/a/path"));
-                
-                // With initial root and path.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                    SwarmHash.Zero,
-                    "/Im/a/path"));
-                
-                // With final slash.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
-                    SwarmHash.Zero,
-                    "/I/have/final/slash/"));
-                
-                // With special chars.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
-                    SwarmHash.Zero,
-                    "/I have a % of special\\chars!"));
+                var tests = new List<StringToAddressTestElement>
+                {
+                    // Only hash without ending slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // Only hash with ending slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With initial root.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With initial root and ending slash.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000/",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With path.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
+                        SwarmHash.Zero,
+                        "/Im/a/path"),
+                    
+                    // With initial root and path.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
+                        SwarmHash.Zero,
+                        "/Im/a/path"),
+                    
+                    // With final slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
+                        SwarmHash.Zero,
+                        "/I/have/final/slash/"),
+                    
+                    // With special chars.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
+                        SwarmHash.Zero,
+                        "/I have a % of special\\chars!")
+                };
 
                 return tests.Select(t => new object[] { t });
             }
