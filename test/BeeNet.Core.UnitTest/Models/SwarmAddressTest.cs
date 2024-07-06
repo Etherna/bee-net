@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -45,27 +44,28 @@ namespace Etherna.BeeNet.Models
         {
             get
             {
-                var tests = new List<AddressToStringTestElement>();
-                
-                // Only hash.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero),
-                    "0000000000000000000000000000000000000000000000000000000000000000/"));
-                
-                // With path without root.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, "Im/a/relative/path"),
-                    "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"));
-                
-                // With path with root.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, "/I/have/a/root"),
-                    "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"));
-                
-                // With special chars.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, "I have a % of special\\chars!"),
-                    "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!"));
+                var tests = new List<AddressToStringTestElement>
+                {
+                    // Only hash.
+                    new(new SwarmAddress(SwarmHash.Zero),
+                        "0000000000000000000000000000000000000000000000000000000000000000/"),
+                    
+                    // With path without root.
+                    new(new SwarmAddress(SwarmHash.Zero, "Im/a/relative/path"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"),
+                    
+                    // With path with root.
+                    new(new SwarmAddress(SwarmHash.Zero, "/I/have/a/root"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"),
+                    
+                    // With path with root.
+                    new(new SwarmAddress(SwarmHash.Zero, "I/have/final/slash/"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/"),
+                    
+                    // With special chars.
+                    new(new SwarmAddress(SwarmHash.Zero, "I have a % of special\\chars!"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!")
+                };
 
                 return tests.Select(t => new object[] { t });
             }
@@ -112,6 +112,12 @@ namespace Etherna.BeeNet.Models
                     "/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
                     SwarmHash.Zero,
                     "Im/a/path"));
+                
+                // With final slash.
+                tests.Add(new(
+                    "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
+                    SwarmHash.Zero,
+                    "I/have/final/slash/"));
                 
                 // With special chars.
                 tests.Add(new(

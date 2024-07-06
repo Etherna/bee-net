@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(address, nameof(address));
             
             // Trim initial and final slash.
-            address = address.Trim('/');
+            address = address.TrimStart('/');
 
             // Extract hash root.
             var slashIndex = address.IndexOf('/', StringComparison.InvariantCulture);
