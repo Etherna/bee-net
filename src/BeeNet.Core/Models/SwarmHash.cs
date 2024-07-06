@@ -40,11 +40,18 @@ namespace Etherna.BeeNet.Models
         public SwarmHash(string hash)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
-            
-            byteHash = hash.HexToByteArray();
+
+            try
+            {
+                byteHash = hash.HexToByteArray();
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentException("Invalid hash", nameof(hash));
+            }
             
             if (byteHash.Length != HashSize)
-                throw new ArgumentOutOfRangeException(nameof(hash));
+                throw new ArgumentException("Invalid hash", nameof(hash));
         }
         
         // Static properties.

@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -33,11 +32,11 @@ namespace Etherna.BeeNet.Models
         public class StringToAddressTestElement(
             string inputString,
             SwarmHash expectedHash,
-            Uri? expectedRelativePath)
+            string expectedRelativePath)
         {
             public string InputString { get; } = inputString;
             public SwarmHash ExpectedHash { get; } = expectedHash;
-            public Uri? ExpectedRelativePath { get; } = expectedRelativePath;
+            public string ExpectedRelativePath { get; } = expectedRelativePath;
         }
 
         // Data.
@@ -45,27 +44,28 @@ namespace Etherna.BeeNet.Models
         {
             get
             {
-                var tests = new List<AddressToStringTestElement>();
-                
-                // Only hash.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero),
-                    "0000000000000000000000000000000000000000000000000000000000000000/"));
-                
-                // With path without root.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, new Uri("Im/a/relative/path", UriKind.Relative)),
-                    "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"));
-                
-                // With path with root.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, new Uri("/I/have/a/root", UriKind.Relative)),
-                    "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"));
-                
-                // With special chars.
-                tests.Add(new(
-                    new SwarmAddress(SwarmHash.Zero, new Uri("I have a % of special\\chars!", UriKind.Relative)),
-                    "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!"));
+                var tests = new List<AddressToStringTestElement>
+                {
+                    // Only hash.
+                    new(new SwarmAddress(SwarmHash.Zero),
+                        "0000000000000000000000000000000000000000000000000000000000000000/"),
+                    
+                    // With path without root.
+                    new(new SwarmAddress(SwarmHash.Zero, "Im/a/relative/path"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"),
+                    
+                    // With path with root.
+                    new(new SwarmAddress(SwarmHash.Zero, "/I/have/a/root"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"),
+                    
+                    // With path with root.
+                    new(new SwarmAddress(SwarmHash.Zero, "I/have/final/slash/"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/"),
+                    
+                    // With special chars.
+                    new(new SwarmAddress(SwarmHash.Zero, "I have a % of special\\chars!"),
+                        "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!")
+                };
 
                 return tests.Select(t => new object[] { t });
             }
@@ -75,49 +75,48 @@ namespace Etherna.BeeNet.Models
         {
             get
             {
-                var tests = new List<StringToAddressTestElement>();
-                
-                // Only hash without ending slash.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000",
-                    SwarmHash.Zero,
-                    null));
-                
-                // Only hash with ending slash.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/",
-                    SwarmHash.Zero,
-                    null));
-                
-                // With initial root.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000",
-                    SwarmHash.Zero,
-                    null));
-                
-                // With initial root and ending slash.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000/",
-                    SwarmHash.Zero,
-                    null));
-                
-                // With path.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                    SwarmHash.Zero,
-                    new Uri("Im/a/path", UriKind.Relative)));
-                
-                // With initial root and path.
-                tests.Add(new(
-                    "/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                    SwarmHash.Zero,
-                    new Uri("Im/a/path", UriKind.Relative)));
-                
-                // With special chars.
-                tests.Add(new(
-                    "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
-                    SwarmHash.Zero,
-                    new Uri("I have a % of special\\chars!", UriKind.Relative)));
+                var tests = new List<StringToAddressTestElement>
+                {
+                    // Only hash without ending slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // Only hash with ending slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With initial root.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With initial root and ending slash.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000/",
+                        SwarmHash.Zero,
+                        "/"),
+                    
+                    // With path.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
+                        SwarmHash.Zero,
+                        "/Im/a/path"),
+                    
+                    // With initial root and path.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
+                        SwarmHash.Zero,
+                        "/Im/a/path"),
+                    
+                    // With final slash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
+                        SwarmHash.Zero,
+                        "/I/have/final/slash/"),
+                    
+                    // With special chars.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
+                        SwarmHash.Zero,
+                        "/I have a % of special\\chars!")
+                };
 
                 return tests.Select(t => new object[] { t });
             }
@@ -138,17 +137,7 @@ namespace Etherna.BeeNet.Models
             var result = new SwarmAddress(test.InputString);
             
             Assert.Equal(test.ExpectedHash, result.Hash);
-            Assert.Equal(test.ExpectedRelativePath, result.RelativePath);
-        }
-
-        [Fact]
-        public void ExceptWithAbsoluteUri()
-        {
-            Assert.Throws<ArgumentException>(() =>
-            {
-                var absolutePath = new Uri("https://etherna.io/", UriKind.Absolute);
-                return new SwarmAddress(SwarmHash.Zero, absolutePath);
-            });
+            Assert.Equal(test.ExpectedRelativePath, result.Path);
         }
     }
 }
