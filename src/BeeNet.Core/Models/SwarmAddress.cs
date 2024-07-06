@@ -14,21 +14,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Etherna.BeeNet.Models
 {
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Constructor.
-        public SwarmAddress(SwarmHash hash, Uri? relativePath = null)
+        public SwarmAddress(SwarmHash hash, string? path = null)
         {
-            if (relativePath is not null &&
-                relativePath.IsAbsoluteUri)
-                throw new ArgumentException("Path needs to be relative", nameof(relativePath));
-                
             Hash = hash;
-            RelativePath = relativePath;
+            Path = path;
         }
         public SwarmAddress(string address)
         {
@@ -45,30 +40,29 @@ namespace Etherna.BeeNet.Models
             // Set hash and path.
             Hash = new SwarmHash(root);
             if (!string.IsNullOrEmpty(path))
-                RelativePath = new Uri(path, UriKind.Relative);
+                Path = path;
         }
         
         // Properties.
         public SwarmHash Hash { get; }
-        public Uri? RelativePath { get; }
+        public string? Path { get; }
         
         // Methods.
         public bool Equals(SwarmAddress other) =>
             Hash.Equals(other.Hash) &&
-            EqualityComparer<Uri>.Default.Equals(RelativePath, other.RelativePath);
+            EqualityComparer<string>.Default.Equals(Path, other.Path);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
-                                             (RelativePath?.GetHashCode() ?? 0);
+                                             (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
         public override string ToString()
         {
-            if (RelativePath is null)
+            if (Path is null)
                 return Hash + "/";
             
-            var pathString = RelativePath.ToString();
-            if (Path.IsPathRooted(pathString))
-                return Hash + pathString;
+            if (System.IO.Path.IsPathRooted(Path))
+                return Hash + Path;
 
-            return Hash + "/" + pathString;
+            return Hash + "/" + Path;
         }
         
         // Static methods.
