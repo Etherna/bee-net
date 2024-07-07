@@ -31,11 +31,15 @@ namespace Etherna.BeeNet.Models
             Hash = hash;
             Path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
         }
-        public SwarmUri(string uri, bool isAbsolute)
+        public SwarmUri(string uri, UriKind uriKind)
         {
             ArgumentNullException.ThrowIfNull(uri, nameof(uri));
             
-            if (isAbsolute)
+            // Determine uri kind.
+            if (uriKind == UriKind.RelativeOrAbsolute)
+                uriKind = SwarmHash.IsValidHash(uri.Split('/')[0]) ? UriKind.Absolute : UriKind.Relative;
+            
+            if (uriKind == UriKind.Absolute)
             {
                 var address = new SwarmAddress(uri);
                 Hash = address.Hash;
@@ -49,9 +53,9 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public SwarmHash? Hash { get; }
-        public bool IsAbsolute => Hash.HasValue;
-        public bool IsRooted => IsAbsolute || System.IO.Path.IsPathRooted(Path);
+        public bool IsRooted => UriKind == UriKind.Absolute || System.IO.Path.IsPathRooted(Path);
         public string Path { get; }
+        public UriKind UriKind => Hash.HasValue ? UriKind.Absolute : UriKind.Relative;
         
         // Methods.
         public bool Equals(SwarmUri other) =>
@@ -64,7 +68,7 @@ namespace Etherna.BeeNet.Models
                                              (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
         
         public override string ToString() =>
-            IsAbsolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;
+            UriKind == UriKind.Absolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;
         
         public SwarmAddress ToSwarmAddress(SwarmAddress prefix)
         {
@@ -96,7 +100,7 @@ namespace Etherna.BeeNet.Models
             var combined = uris[0];
             foreach (var uri in uris.Skip(1))
             {
-                if (uri.IsAbsolute)
+                if (uri.UriKind == UriKind.Absolute)
                     combined = uri;
                 else if (uri.IsRooted)
                     combined = new SwarmUri(combined.Hash, uri.Path);

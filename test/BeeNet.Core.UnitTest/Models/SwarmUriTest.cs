@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Models
             Type? expectedExceptionType,
             SwarmHash? expectedHash,
             string expectedPath,
-            bool expectedIsAbsolute,
+            UriKind expectedUriKind,
             bool expectedIsRooted)
         {
             public SwarmHash? InputHash { get; } = inputHash;
@@ -36,26 +36,26 @@ namespace Etherna.BeeNet.Models
             public Type? ExpectedExceptionType { get; } = expectedExceptionType;
             public SwarmHash? ExpectedHash { get; } = expectedHash;
             public string ExpectedPath { get; } = expectedPath;
-            public bool ExpectedIsAbsolute { get; } = expectedIsAbsolute;
             public bool ExpectedIsRooted { get; } = expectedIsRooted;
+            public UriKind ExpectedUriKind { get; } = expectedUriKind;
         }
 
         public class StringToUriTestElement(
             string inputString,
-            bool inputIsAbsolute,
+            UriKind inputUriKind,
             Type? expectedExceptionType,
             SwarmHash? expectedHash,
             string expectedPath,
-            bool expectedIsAbsolute,
+            UriKind expectedUriKind,
             bool expectedIsRooted)
         {
             public string InputString { get; } = inputString;
-            public bool InputIsAbsolute { get; } = inputIsAbsolute;
+            public UriKind InputUriKind { get; } = inputUriKind;
             public Type? ExpectedExceptionType { get; } = expectedExceptionType;
             public SwarmHash? ExpectedHash { get; } = expectedHash;
             public string ExpectedPath { get; } = expectedPath;
-            public bool ExpectedIsAbsolute { get; } = expectedIsAbsolute;
             public bool ExpectedIsRooted { get; } = expectedIsRooted;
+            public UriKind ExpectedUriKind { get; } = expectedUriKind;
         }
 
         public class UriToStringTestElement(
@@ -79,7 +79,7 @@ namespace Etherna.BeeNet.Models
                         typeof(ArgumentException),
                         null,
                         "",
-                        false,
+                        UriKind.RelativeOrAbsolute,
                         false),
                     
                     // Only hash.
@@ -88,7 +88,7 @@ namespace Etherna.BeeNet.Models
                         null,
                         SwarmHash.Zero,
                         "/",
-                        true,
+                        UriKind.Absolute,
                         true),
                     
                     // No hash and not rooted path.
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Models
                         null,
                         null,
                         "not/rooted/path",
-                        false,
+                        UriKind.Relative,
                         false),
                     
                     // No hash and rooted path.
@@ -106,7 +106,7 @@ namespace Etherna.BeeNet.Models
                         null,
                         null,
                         "/rooted/path",
-                        false,
+                        UriKind.Relative,
                         true),
                     
                     // Hash and not rooted path.
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Models
                         null,
                         SwarmHash.Zero,
                         "/not/rooted/path",
-                        true,
+                        UriKind.Absolute,
                         true),
                     
                     // Hash and rooted path.
@@ -124,7 +124,7 @@ namespace Etherna.BeeNet.Models
                         null,
                         SwarmHash.Zero,
                         "/rooted/path",
-                        true,
+                        UriKind.Absolute,
                         true),
                 };
 
@@ -138,58 +138,103 @@ namespace Etherna.BeeNet.Models
             {
                 var tests = new List<StringToUriTestElement>
                 {
+                    // RelativeOrAbsolute, not rooted, not starting with hash.
+                    new("not/rooted/path",
+                        UriKind.RelativeOrAbsolute,
+                        null,
+                        null,
+                        "not/rooted/path",
+                        UriKind.Relative,
+                        false),
+                    
+                    // RelativeOrAbsolute, rooted, not starting with hash.
+                    new("/rooted/path",
+                        UriKind.RelativeOrAbsolute,
+                        null,
+                        null,
+                        "/rooted/path",
+                        UriKind.Relative,
+                        true),
+                    
+                    // RelativeOrAbsolute, only hash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000",
+                        UriKind.RelativeOrAbsolute,
+                        null,
+                        SwarmHash.Zero,
+                        "/",
+                        UriKind.Absolute,
+                        true),
+                    
+                    // RelativeOrAbsolute, not rooted, starting with hash.
+                    new("0000000000000000000000000000000000000000000000000000000000000000/not/rooted/path",
+                        UriKind.RelativeOrAbsolute,
+                        null,
+                        SwarmHash.Zero,
+                        "/not/rooted/path",
+                        UriKind.Absolute,
+                        true),
+                    
+                    // RelativeOrAbsolute, rooted, starting with hash.
+                    new("/0000000000000000000000000000000000000000000000000000000000000000/rooted/path",
+                        UriKind.RelativeOrAbsolute,
+                        null,
+                        null,
+                        "/0000000000000000000000000000000000000000000000000000000000000000/rooted/path",
+                        UriKind.Relative,
+                        true),
+                    
                     // Relative not rooted path.
                     new("relative/not/rooted/path",
-                        false,
+                        UriKind.Relative,
                         null,
                         null,
                         "relative/not/rooted/path",
-                        false,
+                        UriKind.Relative,
                         false),
                     
                     // Relative rooted path.
                     new("/relative/rooted/path",
-                        false,
+                        UriKind.Relative,
                         null,
                         null,
                         "/relative/rooted/path",
-                        false,
+                        UriKind.Relative,
                         true),
                     
                     // Absolute with only hash (without slashes).
                     new("0000000000000000000000000000000000000000000000000000000000000000",
-                        true,
+                        UriKind.Absolute,
                         null,
                         SwarmHash.Zero,
                         "/",
-                        true,
+                        UriKind.Absolute,
                         true),
                     
                     // Absolute with only hash (with slashes).
                     new("/0000000000000000000000000000000000000000000000000000000000000000/",
-                        true,
+                        UriKind.Absolute,
                         null,
                         SwarmHash.Zero,
                         "/",
-                        true,
+                        UriKind.Absolute,
                         true),
                     
                     // Absolute with hash and path.
                     new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                        true,
+                        UriKind.Absolute,
                         null,
                         SwarmHash.Zero,
                         "/Im/a/path",
-                        true,
+                        UriKind.Absolute,
                         true),
                     
                     // Absolute with invalid initial hash (throws).
                     new("not/An/Hash",
-                        true,
+                        UriKind.Absolute,
                         typeof(ArgumentException),
                         null,
                         "",
-                        false,
+                        UriKind.RelativeOrAbsolute,
                         false)
                 };
 
@@ -240,7 +285,7 @@ namespace Etherna.BeeNet.Models
         
                 Assert.Equal(test.ExpectedHash, result.Hash);
                 Assert.Equal(test.ExpectedPath, result.Path);
-                Assert.Equal(test.ExpectedIsAbsolute, result.IsAbsolute);
+                Assert.Equal(test.ExpectedUriKind, result.UriKind);
                 Assert.Equal(test.ExpectedIsRooted, result.IsRooted);
             }
         }
@@ -252,15 +297,15 @@ namespace Etherna.BeeNet.Models
             {
                 Assert.Throws(
                     test.ExpectedExceptionType,
-                    () => new SwarmUri(test.InputString, test.InputIsAbsolute));
+                    () => new SwarmUri(test.InputString, test.InputUriKind));
             }
             else
             {
-                var result = new SwarmUri(test.InputString, test.InputIsAbsolute);
+                var result = new SwarmUri(test.InputString, test.InputUriKind);
 
                 Assert.Equal(test.ExpectedHash, result.Hash);
                 Assert.Equal(test.ExpectedPath, result.Path);
-                Assert.Equal(test.ExpectedIsAbsolute, result.IsAbsolute);
+                Assert.Equal(test.ExpectedUriKind, result.UriKind);
                 Assert.Equal(test.ExpectedIsRooted, result.IsRooted);
             }
         }

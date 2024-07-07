@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Models
         public SwarmHash(byte[] hash)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
-            if (hash.Length != HashSize)
+            if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
             
             byteHash = hash;
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Models
         public SwarmHash(string hash)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
-
+            
             try
             {
                 byteHash = hash.HexToByteArray();
@@ -50,8 +50,8 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentException("Invalid hash", nameof(hash));
             }
             
-            if (byteHash.Length != HashSize)
-                throw new ArgumentException("Invalid hash", nameof(hash));
+            if (!IsValidHash(byteHash))
+                throw new ArgumentOutOfRangeException(nameof(hash));
         }
         
         // Static properties.
@@ -70,6 +70,22 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static SwarmHash FromByteArray(byte[] value) => new(value);
         public static SwarmHash FromString(string value) => new(value);
+        public static bool IsValidHash(byte[] value)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            return value.Length == HashSize;
+        }
+        public static bool IsValidHash(string value)
+        {
+            try
+            {
+                return IsValidHash(value.HexToByteArray());
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
         
         // Operator methods.
         public static bool operator ==(SwarmHash left, SwarmHash right) => left.Equals(right);
