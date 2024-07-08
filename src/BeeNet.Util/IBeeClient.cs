@@ -536,6 +536,8 @@ namespace Etherna.BeeNet
             int expiry,
             CancellationToken cancellationToken = default);
 
+        Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address);
+
         /// <summary>Reupload a root hash to the network</summary>
         /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Ok</returns>

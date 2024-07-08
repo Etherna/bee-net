@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Manifest
     public class ReferencedMantarayNode : IReadOnlyMantarayNode
     {
         // Fields.
-        private readonly IChunkStore chunkStore;
+        private readonly IReadOnlyChunkStore chunkStore;
         private SwarmHash? _entryHash;
         private readonly Dictionary<char, ReferencedMantarayNodeFork> _forks = new();
         private readonly Dictionary<string, string> _metadata;
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Manifest
 
         // Constructor.
         public ReferencedMantarayNode(
-            IChunkStore chunkStore,
+            IReadOnlyChunkStore chunkStore,
             SwarmHash chunkHash,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags)

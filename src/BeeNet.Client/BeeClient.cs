@@ -14,6 +14,8 @@
 
 using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Hasher.Store;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -876,6 +878,17 @@ namespace Etherna.BeeNet
                     Expiry = expiry
                 },
                 cancellationToken).ConfigureAwait(false)).Key;
+
+        public async Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
+        {
+            var chunkStore = new BeeClientChunkStore(this);
+            
+            var rootManifest = new ReferencedMantarayManifest(
+                chunkStore,
+                address.Hash);
+            
+            return await rootManifest.ResolveResourceHashAsync(address).ConfigureAwait(false);
+        }
 
         public Task ReuploadContentAsync(
             SwarmHash hash,
