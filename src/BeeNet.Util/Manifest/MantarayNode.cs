@@ -27,7 +27,6 @@ namespace Etherna.BeeNet.Manifest
     {
         // Consts.
         public const int ForksIndexSize = 32;
-        public const char PathSeparator = '/';
         public static readonly byte[] Version02Hash = new HashProvider().ComputeHash(
             "mantaray:0.2"u8.ToArray()).Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
@@ -231,7 +230,7 @@ namespace Etherna.BeeNet.Manifest
 
         private void UpdateFlagIsWithPathSeparator(string path)
         {
-            if (path.IndexOf(PathSeparator, StringComparison.InvariantCulture) > 0)
+            if (path.IndexOf(SwarmAddress.Separator, StringComparison.InvariantCulture) > 0)
                 SetNodeTypeFlag(NodeType.WithPathSeparator);
             else
                 RemoveNodeTypeFlag(NodeType.WithPathSeparator);

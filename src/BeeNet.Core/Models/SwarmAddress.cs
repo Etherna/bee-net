@@ -19,6 +19,9 @@ namespace Etherna.BeeNet.Models
 {
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
+        // Consts.
+        public const char Separator = '/';
+        
         // Constructor.
         public SwarmAddress(SwarmHash hash, string? path = null)
         {
@@ -30,12 +33,12 @@ namespace Etherna.BeeNet.Models
             ArgumentNullException.ThrowIfNull(address, nameof(address));
             
             // Trim initial slash.
-            address = address.TrimStart('/');
+            address = address.TrimStart(Separator);
 
             // Extract hash root.
-            var slashIndex = address.IndexOf('/', StringComparison.InvariantCulture);
+            var slashIndex = address.IndexOf(Separator, StringComparison.InvariantCulture);
             var hash = slashIndex > 0 ? address[..slashIndex] : address;
-            var path = slashIndex > 0 ? address[slashIndex..] : "/";
+            var path = slashIndex > 0 ? address[slashIndex..] : Separator.ToString();
             
             // Set hash and path.
             Hash = new SwarmHash(hash);
@@ -72,6 +75,6 @@ namespace Etherna.BeeNet.Models
         
         // Helpers.
         internal static string NormalizePath(string? path) =>
-            '/' + (path ?? "").TrimStart('/');
+            Separator + (path ?? "").TrimStart(Separator);
     }
 }

@@ -97,8 +97,8 @@ namespace Etherna.BeeNet.Manifest
             if (path.Length == 0)
             {
                 //try to lookup for index document suffix
-                if (!_forks.TryGetValue('/', out var rootFork) ||
-                    rootFork.Prefix != "/")
+                if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
+                    rootFork.Prefix != SwarmAddress.Separator.ToString())
                     throw new KeyNotFoundException($"Final path {path} can't be found");
                 
                 if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))
@@ -136,8 +136,8 @@ namespace Etherna.BeeNet.Manifest
                     return EntryHash.Value;
                 
                 //try to lookup for index document suffix
-                if (!_forks.TryGetValue('/', out var rootFork) ||
-                    rootFork.Prefix != "/")
+                if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
+                    rootFork.Prefix != SwarmAddress.Separator.ToString())
                     throw new KeyNotFoundException($"Final path {path} can't be found");
                 
                 if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))

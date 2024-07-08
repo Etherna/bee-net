@@ -22,6 +22,14 @@ namespace Etherna.BeeNet.Models
     public class SwarmUriTest
     {
         // Internal classes.
+        public class CombineSwarmUrisTestElement(
+            SwarmUri[] inputUris,
+            SwarmUri expectedUri)
+        {
+            public SwarmUri[] InputUris { get; } = inputUris;
+            public SwarmUri ExpectedUri { get; } = expectedUri;
+        }
+
         public class HashAndPathToUriTestElement(
             SwarmHash? inputHash,
             string? inputPath,
@@ -38,6 +46,16 @@ namespace Etherna.BeeNet.Models
             public string ExpectedPath { get; } = expectedPath;
             public bool ExpectedIsRooted { get; } = expectedIsRooted;
             public UriKind ExpectedUriKind { get; } = expectedUriKind;
+        }
+
+        public class TryGetRelativeToUriTestElement(
+            SwarmUri originUri,
+            SwarmUri relativeToUri,
+            SwarmUri? expectedUri)
+        {
+            public SwarmUri OriginUri { get; } = originUri;
+            public SwarmUri RelativeToUri { get; } = relativeToUri;
+            public SwarmUri? ExpectedUri { get; } = expectedUri;
         }
 
         public class StringToUriTestElement(
@@ -67,6 +85,38 @@ namespace Etherna.BeeNet.Models
         }
 
         // Data.
+        public static IEnumerable<object[]> CombineSwarmUrisTests
+        {
+            get
+            {
+                var tests = new List<CombineSwarmUrisTestElement>
+                {
+                    // Only relative not rooted paths.
+                    new(["Im", "a/simple/", "path"],
+                        new SwarmUri("Im/a/simple/path", UriKind.Relative)),
+                    
+                    // Relative with rooted paths.
+                    new(["Im", "a", "/rooted", "path"],
+                        new SwarmUri("/rooted/path", UriKind.Relative)),
+                    
+                    // Relative and absolute paths.
+                    new(["Im", "a", "relative", new SwarmUri(SwarmHash.Zero, "absolute"), "path"],
+                        new SwarmUri("0000000000000000000000000000000000000000000000000000000000000000/absolute/path", UriKind.Absolute)),
+                    
+                    // Multi absolute paths.
+                    new([
+                            new SwarmUri(new SwarmHash("0000000000000000000000000000000000000000000000000000000000000000"), null),
+                            new SwarmUri(null, "zeros"),
+                            new SwarmUri(new SwarmHash("1111111111111111111111111111111111111111111111111111111111111111"), null),
+                            new SwarmUri(null, "ones")
+                        ],
+                        new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111/ones", UriKind.Absolute)),
+                };
+                
+                return tests.Select(t => new object[] { t });
+            }
+        }
+        
         public static IEnumerable<object[]> HashAndPathToUriTests
         {
             get
@@ -241,6 +291,82 @@ namespace Etherna.BeeNet.Models
                 return tests.Select(t => new object[] { t });
             }
         }
+
+        public static IEnumerable<object[]> TryGetRelativeToUriTests
+        {
+            get
+            {
+                var tests = new List<TryGetRelativeToUriTestElement>
+                {
+                    // Hash and not hash.
+                    new (SwarmHash.Zero,
+                        "not/an/hash",
+                        null),
+                    
+                    // Different hashes.
+                    new (SwarmHash.Zero,
+                        new SwarmHash("1111111111111111111111111111111111111111111111111111111111111111"),
+                        null),
+                    
+                    // Different paths
+                    new ("we/are",
+                        "different",
+                        null),
+                    
+                    // Different paths with equal root
+                    new ("we/start/equally",
+                        "we/continue/differently",
+                        null),
+                    
+                    // Origin contains relativeTo path, but different dirs count
+                    new ("we/arent/equal",
+                        "we/are",
+                        null),
+                    
+                    // Different dir names
+                    new ("we/arent/equal",
+                        "we/are/similar",
+                        null),
+                    
+                    // One is rooted, the other no
+                    new ("we/are/similar",
+                        "/we/are/similar",
+                        null),
+                    
+                    // One is rooted, the other no
+                    new ("/we/are/similar",
+                        "we/are/similar",
+                        null),
+                    
+                    // RelativeTo contains origin path
+                    new ("Im/very/similar",
+                        "Im",
+                        "very/similar"),
+                    
+                    // RelativeTo contains origin path (relativeTo slash ended)
+                    new ("Im/very/similar",
+                        "Im/",
+                        "very/similar"),
+                    
+                    // Paths are equal
+                    new ("Im/very/equal",
+                        "Im/very/equal",
+                        ""),
+                    
+                    // Paths are equal (relativeTo slash ended)
+                    new ("Im/very/equal",
+                        "Im/very/equal/",
+                        ""),
+                    
+                    // Paths are equal (origin slash ended)
+                    new ("Im/very/equal/",
+                        "Im/very/equal",
+                        ""),
+                };
+
+                return tests.Select(t => new object[] { t });
+            }
+        }
         
         public static IEnumerable<object[]> UriToStringTests
         {
@@ -270,6 +396,15 @@ namespace Etherna.BeeNet.Models
         }
         
         // Tests.
+        [Theory, MemberData(nameof(CombineSwarmUrisTests))]
+        public void CombineSwarmUris(CombineSwarmUrisTestElement test)
+        {
+            var result = SwarmUri.Combine(test.InputUris);
+            
+            Assert.Equal(test.ExpectedUri.Hash, result.Hash);
+            Assert.Equal(test.ExpectedUri.Path, result.Path);
+        }
+        
         [Theory, MemberData(nameof(HashAndPathToUriTests))]
         public void HashAndPathToUri(HashAndPathToUriTestElement test)
         {
@@ -287,6 +422,23 @@ namespace Etherna.BeeNet.Models
                 Assert.Equal(test.ExpectedPath, result.Path);
                 Assert.Equal(test.ExpectedUriKind, result.UriKind);
                 Assert.Equal(test.ExpectedIsRooted, result.IsRooted);
+            }
+        }
+
+        [Theory, MemberData(nameof(TryGetRelativeToUriTests))]
+        public void TryGetRelativeToUri(TryGetRelativeToUriTestElement test)
+        {
+            var success = test.OriginUri.TryGetRelativeTo(
+                test.RelativeToUri,
+                out var result);
+
+            if (test.ExpectedUri is null)
+                Assert.False(success);
+            else
+            {
+                Assert.True(success);
+                Assert.Equal(test.ExpectedUri.Value.Hash, result.Hash);
+                Assert.Equal(test.ExpectedUri.Value.Path, result.Path);
             }
         }
         
