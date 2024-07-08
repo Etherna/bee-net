@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Manifest
 
         // Constructors.
         public ReferencedMantarayManifest(
-            IChunkStore chunkStore,
+            IReadOnlyChunkStore chunkStore,
             SwarmHash rootHash)
         {
             _rootNode = new ReferencedMantarayNode(chunkStore, rootHash, null, NodeType.Edge);

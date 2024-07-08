@@ -13,19 +13,12 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    public interface IChunkStore
+    public interface IChunkStore : IReadOnlyChunkStore
     {
-        public Task<IEnumerable<SwarmHash>> GetAllHashesAsync();
-        
-        public Task<SwarmChunk> GetAsync(SwarmHash hash);
-        
-        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash);
-
         /// <summary>
         /// Add a chunk in the store
         /// </summary>

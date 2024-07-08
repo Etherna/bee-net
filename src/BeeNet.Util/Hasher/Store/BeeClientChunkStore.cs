@@ -12,33 +12,28 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hasher.Store
 {
-    public class ChunkJoiner(
-        IReadOnlyChunkStore chunkStore)
+    public class BeeClientChunkStore(IBeeClient beeClient)
+        : IReadOnlyChunkStore
     {
-        // Methods.
-        public async Task<IEnumerable<byte>> GetJoinedChunkDataAsync(SwarmHash hash)
+        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
+            beeClient.GetChunkAsync(hash);
+
+        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
         {
-            var chunk = await chunkStore.GetAsync(hash).ConfigureAwait(false);
-            var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
-            
-            if (totalDataLength <= SwarmChunk.DataSize)
-                return chunk.Data.ToArray();
-            
-            var joinedData = new List<byte>();
-                
-            for (int i = 0; i < chunk.Data.Length; i += SwarmHash.HashSize)
+            try
             {
-                var childHash = new SwarmHash(chunk.Data[i..(i + SwarmHash.HashSize)].ToArray());
-                joinedData.AddRange(await GetJoinedChunkDataAsync(childHash).ConfigureAwait(false));
+                return await beeClient.GetChunkAsync(hash).ConfigureAwait(false);
             }
-            
-            return joinedData;
+            catch (BeeNetApiException)
+            {
+                return null;
+            }
         }
     }
 }
