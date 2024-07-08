@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null)
         {
             // Checks.
-            if (indexFilename?.Contains('/', StringComparison.InvariantCulture) == true)
+            if (indexFilename?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
                 throw new ArgumentException(
                     "Index document suffix must not include slash character",
                     nameof(indexFilename));

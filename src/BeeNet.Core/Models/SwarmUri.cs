@@ -31,11 +31,17 @@ namespace Etherna.BeeNet.Models
             Hash = hash;
             Path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
         }
-        public SwarmUri(string uri, bool isAbsolute)
+        public SwarmUri(string uri, UriKind uriKind)
         {
             ArgumentNullException.ThrowIfNull(uri, nameof(uri));
             
-            if (isAbsolute)
+            // Determine uri kind.
+            if (uriKind == UriKind.RelativeOrAbsolute)
+                uriKind = SwarmHash.IsValidHash(uri.Split(SwarmAddress.Separator)[0])
+                    ? UriKind.Absolute
+                    : UriKind.Relative;
+            
+            if (uriKind == UriKind.Absolute)
             {
                 var address = new SwarmAddress(uri);
                 Hash = address.Hash;
@@ -49,9 +55,9 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public SwarmHash? Hash { get; }
-        public bool IsAbsolute => Hash.HasValue;
-        public bool IsRooted => IsAbsolute || System.IO.Path.IsPathRooted(Path);
+        public bool IsRooted => UriKind == UriKind.Absolute || System.IO.Path.IsPathRooted(Path);
         public string Path { get; }
+        public UriKind UriKind => Hash.HasValue ? UriKind.Absolute : UriKind.Relative;
         
         // Methods.
         public bool Equals(SwarmUri other) =>
@@ -64,7 +70,7 @@ namespace Etherna.BeeNet.Models
                                              (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
         
         public override string ToString() =>
-            IsAbsolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;
+            UriKind == UriKind.Absolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;
         
         public SwarmAddress ToSwarmAddress(SwarmAddress prefix)
         {
@@ -79,10 +85,13 @@ namespace Etherna.BeeNet.Models
             if (relativeTo.Hash != Hash)
                 return false;
 
-            if (!Path.StartsWith(relativeTo.Path, StringComparison.InvariantCulture))
+            var dirs = Path.Split(SwarmAddress.Separator);
+            var relativeToDirs = relativeTo.Path.TrimEnd(SwarmAddress.Separator).Split(SwarmAddress.Separator);
+            if (dirs.Length < relativeToDirs.Length ||
+                !dirs[..relativeToDirs.Length].SequenceEqual(relativeToDirs))
                 return false;
 
-            output = new SwarmUri(null, Path[relativeTo.Path.Length..].TrimStart('/'));
+            output = new SwarmUri(null, string.Join(SwarmAddress.Separator, dirs[relativeToDirs.Length..]));
             return true;
         }
         
@@ -96,16 +105,19 @@ namespace Etherna.BeeNet.Models
             var combined = uris[0];
             foreach (var uri in uris.Skip(1))
             {
-                if (uri.IsAbsolute)
+                if (uri.UriKind == UriKind.Absolute)
                     combined = uri;
                 else if (uri.IsRooted)
                     combined = new SwarmUri(combined.Hash, uri.Path);
                 else
-                    combined = new SwarmUri(combined.Hash, string.Concat(combined.Path ?? "", uri.Path!));
+                    combined = new SwarmUri(
+                        combined.Hash,
+                        (combined.Path ?? "").TrimEnd(SwarmAddress.Separator) + SwarmAddress.Separator + uri.Path);
             }
 
             return combined;
         }
+        public static SwarmUri FromString(string value) => new(value, UriKind.RelativeOrAbsolute);
         public static SwarmUri FromSwarmAddress(SwarmAddress value) => new(value.Hash, value.Path);
         public static SwarmUri FromSwarmHash(SwarmHash value) => new(value, null);
         
@@ -114,6 +126,7 @@ namespace Etherna.BeeNet.Models
         public static bool operator !=(SwarmUri left, SwarmUri right) => !(left == right);
         
         // Implicit conversion operator methods.
+        public static implicit operator SwarmUri(string value) => new(value, UriKind.RelativeOrAbsolute);
         public static implicit operator SwarmUri(SwarmAddress value) => new(value.Hash, value.Path);
         public static implicit operator SwarmUri(SwarmHash value) => new(value, null);
         

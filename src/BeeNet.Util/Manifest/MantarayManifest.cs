@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Manifest
     public class MantarayManifest : IReadOnlyMantarayManifest
     {
         // Consts.
-        public const string RootPath = "/";
+        public static readonly string RootPath = SwarmAddress.Separator.ToString();
         
         // Fields.
         private readonly Func<IHasherPipeline> hasherBuilder;
