@@ -425,6 +425,18 @@ namespace Etherna.BeeNet.Models
             }
         }
 
+        [Fact]
+        public void ToSwarmAddressConversion()
+        {
+            var originalUri = new SwarmUri(null, "Im/path");
+            var prefixAddress = new SwarmAddress(SwarmHash.Zero, "Im/prefix");
+
+            var result = originalUri.ToSwarmAddress(prefixAddress);
+            
+            Assert.Equal(SwarmHash.Zero, result.Hash);
+            Assert.Equal("/Im/prefix/Im/path", result.Path);
+        }
+
         [Theory, MemberData(nameof(TryGetRelativeToUriTests))]
         public void TryGetRelativeToUri(TryGetRelativeToUriTestElement test)
         {
