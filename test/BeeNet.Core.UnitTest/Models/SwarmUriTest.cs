@@ -48,6 +48,18 @@ namespace Etherna.BeeNet.Models
             public UriKind ExpectedUriKind { get; } = expectedUriKind;
         }
 
+        public class ToSwarmAddressConversionTestElement(
+            SwarmUri originUri,
+            SwarmAddress? prefixAddress,
+            SwarmAddress? expectedAddress,
+            Type? expectedExceptionType)
+        {
+            public SwarmAddress? ExpectedAddress { get; } = expectedAddress;
+            public Type? ExpectedExceptionType { get; } = expectedExceptionType;
+            public SwarmUri OriginUri { get; } = originUri;
+            public SwarmAddress? PrefixAddress { get; } = prefixAddress;
+        }
+
         public class TryGetRelativeToUriTestElement(
             SwarmUri originUri,
             SwarmUri relativeToUri,
@@ -292,6 +304,41 @@ namespace Etherna.BeeNet.Models
             }
         }
 
+        public static IEnumerable<object[]> ToSwarmAddressConversionTests
+        {
+            get
+            {
+                var tests = new List<ToSwarmAddressConversionTestElement>
+                {
+                    // Relative uri with prefix address.
+                    new(new SwarmUri(null, "Im/path"),
+                        new SwarmAddress(SwarmHash.Zero, "Im/prefix"),
+                        new SwarmAddress(SwarmHash.Zero, "/Im/prefix/Im/path"),
+                        null),
+                    
+                    // relative uri without prefix address.
+                    new(new SwarmUri(null, "Im/path"),
+                        null,
+                        null,
+                        typeof(InvalidOperationException)),
+                    
+                    // Absolute uri with prefix address.
+                    new(new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
+                        new SwarmAddress(SwarmHash.Zero, "Im/prefix"),
+                        new SwarmAddress("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
+                        null),
+                    
+                    // Absolute uri without prefix address.
+                    new(new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
+                        null,
+                        new SwarmAddress("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
+                        null),
+                };
+
+                return tests.Select(t => new object[] { t });
+            }
+        }
+
         public static IEnumerable<object[]> TryGetRelativeToUriTests
         {
             get
@@ -425,16 +472,22 @@ namespace Etherna.BeeNet.Models
             }
         }
 
-        [Fact]
-        public void ToSwarmAddressConversion()
+        [Theory, MemberData(nameof(ToSwarmAddressConversionTests))]
+        public void ToSwarmAddressConversion(ToSwarmAddressConversionTestElement test)
         {
-            var originalUri = new SwarmUri(null, "Im/path");
-            var prefixAddress = new SwarmAddress(SwarmHash.Zero, "Im/prefix");
-
-            var result = originalUri.ToSwarmAddress(prefixAddress);
-            
-            Assert.Equal(SwarmHash.Zero, result.Hash);
-            Assert.Equal("/Im/prefix/Im/path", result.Path);
+            if (test.ExpectedExceptionType is not null)
+            {
+                Assert.Throws(
+                    test.ExpectedExceptionType,
+                    () => test.OriginUri.ToSwarmAddress(test.PrefixAddress));
+            }
+            else
+            {
+                var result = test.OriginUri.ToSwarmAddress(test.PrefixAddress);
+        
+                Assert.Equal(test.ExpectedAddress!.Value.Hash, result.Hash);
+                Assert.Equal(test.ExpectedAddress!.Value.Path, result.Path);
+            }
         }
 
         [Theory, MemberData(nameof(TryGetRelativeToUriTests))]

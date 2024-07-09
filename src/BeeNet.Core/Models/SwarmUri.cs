@@ -72,9 +72,22 @@ namespace Etherna.BeeNet.Models
         public override string ToString() =>
             UriKind == UriKind.Absolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;
         
-        public SwarmAddress ToSwarmAddress(SwarmAddress prefix)
+        /// <summary>
+        /// Convert a URI to an Address. If URI is relative, a prefix Address must be provided
+        /// </summary>
+        /// <param name="prefix">Optional prefix address</param>
+        /// <returns>The absolute URI as an Address</returns>
+        public SwarmAddress ToSwarmAddress(SwarmAddress? prefix)
         {
-            var combined = Combine(prefix, this);
+            if (prefix is null)
+            {
+                if (UriKind != UriKind.Absolute)
+                    throw new InvalidOperationException("Url is not absolute, and a prefix address is required");
+                
+                return new SwarmAddress(Hash!.Value, Path);
+            }
+            
+            var combined = Combine(prefix.Value, this);
             return new(combined.Hash!.Value, combined.Path);
         }
 
