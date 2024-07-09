@@ -77,7 +77,7 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="prefix">Optional prefix address</param>
         /// <returns>The absolute URI as an Address</returns>
-        public SwarmAddress ToSwarmAddress(SwarmAddress? prefix)
+        public SwarmAddress ToSwarmAddress(SwarmAddress? prefix = null)
         {
             if (prefix is null)
             {

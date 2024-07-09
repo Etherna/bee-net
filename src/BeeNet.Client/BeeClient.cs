@@ -879,7 +879,7 @@ namespace Etherna.BeeNet
                 },
                 cancellationToken).ConfigureAwait(false)).Key;
 
-        public async Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
+        public async Task<SwarmHash> ResolveSwarmAddressToHashAsync(SwarmAddress address)
         {
             var chunkStore = new BeeClientChunkStore(this);
             
