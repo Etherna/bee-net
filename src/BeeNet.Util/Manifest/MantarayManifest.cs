@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;

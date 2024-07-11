@@ -12,10 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hasher.Pipeline;
-using Etherna.BeeNet.Hasher.Postage;
-using Etherna.BeeNet.Hasher.Signer;
-using Etherna.BeeNet.Hasher.Store;
+using Etherna.BeeNet.Hashing.Pipeline;
+using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Hashing.Signer;
+using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;

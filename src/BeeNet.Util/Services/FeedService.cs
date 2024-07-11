@@ -13,7 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Hasher;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Models.Feeds;
 using Nethereum.Hex.HexConvertors.Extensions;
@@ -58,7 +58,7 @@ namespace Etherna.BeeNet.Services
 
             // Create new chunk.
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex, new HashProvider());
+            var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex, new Hasher());
 
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }
@@ -153,7 +153,7 @@ namespace Etherna.BeeNet.Services
             TryGetFeedChunkAsync(account.HexToByteArray(), topic, index);
 
         public Task<SwarmFeedChunk?> TryGetFeedChunkAsync(byte[] account, byte[] topic, FeedIndexBase index) =>
-            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index, new HashProvider()), index);
+            TryGetFeedChunkAsync(SwarmFeedChunk.BuildHash(account, topic, index, new Hasher()), index);
 
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmHash hash, FeedIndexBase index)
         {

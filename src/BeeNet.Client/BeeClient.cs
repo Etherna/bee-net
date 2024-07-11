@@ -14,7 +14,7 @@
 
 using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Hasher.Store;
+using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;

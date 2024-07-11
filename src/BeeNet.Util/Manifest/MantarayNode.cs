@@ -13,8 +13,8 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
-using Etherna.BeeNet.Hasher;
-using Etherna.BeeNet.Hasher.Pipeline;
+using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Manifest
     {
         // Consts.
         public const int ForksIndexSize = 32;
-        public static readonly byte[] Version02Hash = new HashProvider().ComputeHash(
+        public static readonly byte[] Version02Hash = new Hasher().ComputeHash(
             "mantaray:0.2"u8.ToArray()).Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
         
