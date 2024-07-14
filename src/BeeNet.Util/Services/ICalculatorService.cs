@@ -89,7 +89,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <param name="address">Resource address</param>
         /// <returns>Resource metadata</returns>
-        Task<IReadOnlyDictionary<string, string>> GetResourceMetadataFromChunksAsync(
+        Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address);
         
@@ -99,8 +99,40 @@ namespace Etherna.BeeNet.Services
         /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <param name="address">Resource address</param>
         /// <returns>Resource stream</returns>
-        Task<Stream> GetResourceStreamFromChunksAsync(
+        Task<Stream> GetFileStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address);
+        
+        /// <summary>
+        /// Write data chunks on a local directory, without any manifest
+        /// </summary>
+        /// <param name="data">The data byte array input</param>
+        /// <param name="outputDirectory">The output directory path</param>
+        /// <param name="createDirectory">If true, create if directory doesn't exist</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <returns>The data root hash</returns>
+        Task<SwarmHash> WriteDataChunksAsync(
+            byte[] data,
+            string outputDirectory,
+            bool createDirectory = true,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None);
+        
+        /// <summary>
+        /// Write data chunks on a local directory, without any manifest
+        /// </summary>
+        /// <param name="stream">The data stream input</param>
+        /// <param name="outputDirectory">The output directory path</param>
+        /// <param name="createDirectory">If true, create if directory doesn't exist</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <returns>The data root hash</returns>
+        Task<SwarmHash> WriteDataChunksAsync(
+            Stream stream,
+            string outputDirectory,
+            bool createDirectory = true,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None);
     }
 }

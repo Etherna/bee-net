@@ -200,7 +200,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer);
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataFromChunksAsync(
+        public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address)
         {
@@ -213,7 +213,7 @@ namespace Etherna.BeeNet.Services
             return await rootManifest.GetResourceMetadataAsync(address).ConfigureAwait(false);
         }
 
-        public async Task<Stream> GetResourceStreamFromChunksAsync(
+        public async Task<Stream> GetFileStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address)
         {
@@ -232,6 +232,43 @@ namespace Etherna.BeeNet.Services
             memoryStream.Position = 0;
             
             return memoryStream;
+        }
+
+        public Task<SwarmHash> WriteDataChunksAsync(
+            byte[] data,
+            string outputDirectory,
+            bool createDirectory = true,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None)
+        {
+            using var stream = new MemoryStream(data);
+            return WriteDataChunksAsync(
+                stream,
+                outputDirectory,
+                createDirectory,
+                encrypt,
+                redundancyLevel);
+        }
+
+        public async Task<SwarmHash> WriteDataChunksAsync(
+            Stream stream,
+            string outputDirectory,
+            bool createDirectory = true,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None)
+        {
+            var chunkStore = new LocalDirectoryChunkStore(outputDirectory, createDirectory);
+            
+            // Create chunks and get file hash.
+            using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                chunkStore,
+                new FakePostageStamper(),
+                redundancyLevel,
+                encrypt);
+            var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            
+            // Return file hash.
+            return fileHash;
         }
     }
 }
