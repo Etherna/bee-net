@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal sealed class HasherPipelineFeedArgs
+    public sealed class HasherPipelineFeedArgs
     {
         // Fields.
         private readonly byte[] _data;
@@ -29,6 +29,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             byte[]? span = null,
             long numberId = 0)
         {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            
             if (span is not null)
             {
                 if (data.Length < SwarmChunk.SpanSize)

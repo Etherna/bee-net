@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal interface IHasherPipelineStage : IDisposable
+    public interface IHasherPipelineStage : IDisposable
     {
         Task FeedAsync(HasherPipelineFeedArgs args);
         Task<SwarmHash> SumAsync();

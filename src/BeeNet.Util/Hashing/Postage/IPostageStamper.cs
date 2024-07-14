@@ -18,7 +18,7 @@ using Etherna.BeeNet.Models;
 
 namespace Etherna.BeeNet.Hashing.Postage
 {
-    internal interface IPostageStamper
+    public interface IPostageStamper
     {
         // Properties.
         ISigner Signer { get; }

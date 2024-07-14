@@ -21,7 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
-    internal static class HasherPipelineBuilder
+    public static class HasherPipelineBuilder
     {
         // Static builders.
         public static IHasherPipeline BuildNewHasherPipeline(
