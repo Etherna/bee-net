@@ -14,8 +14,10 @@
 
 using Etherna.BeeNet.Hashing.Bmt;
 using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
+using System.Buffers.Binary;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
@@ -86,7 +88,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  * The chunk key is calculate from the plain chunk hash, replacing the last 4 bytes
                  * with the attempt counter (int), and then hashing again.
                  * 
-                 *     chunkKey = Keccack(plainChunkHash[..-4] + attempt)
+                 *     chunkKey = Keccack(plainChunkHash[..^4] + attempt)
                  *
                  * The encrypted chunk is calculated encrypting data with the chunk key.
                  *
@@ -100,6 +102,40 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  * best chunk could use and already calculated chunkKey (can't say what), or could be still to
                  * be calculated.
                  */
+                XorEncryptKey? bestChunkKey = null;
+
+                var encryptedData = new byte[args.Data.Length - SwarmChunk.SpanSize];
+                var plainChunkHashArray = plainChunkHash.ToByteArray();
+                var spanArray = args.Data[..SwarmChunk.SpanSize].ToArray();
+                
+                // Search best chunk key.
+                for (int i = 0; i < compactionLevel; i++)
+                {
+                    // Create key.
+                    BinaryPrimitives.WriteInt32BigEndian(plainChunkHashArray.AsSpan()[..^4], i);
+                    var chunkKey = new XorEncryptKey(plainChunkHashArray);
+                    
+                    // Encrypt data.
+                    args.Data[SwarmChunk.SpanSize..].CopyTo(encryptedData);
+                    chunkKey.EncryptDecrypt(encryptedData);
+                    
+                    // Calculate hash and bucket id.
+                    var encryptedHash = SwarmChunkBmtHasher.Hash(spanArray, encryptedData);
+                    var bucketId = encryptedHash.ToBucketId();
+
+                    // Check key collisions.
+                    var collisions = stampIssuer.Buckets.GetCollisions(bucketId);
+                    if (collisions == stampIssuer.Buckets.MinBucketCollisions) //it's an optimal bucket
+                    {
+                        bestChunkKey = chunkKey;
+                        break;
+                    }
+                    
+                    //TODO
+                }
+                
+                // Perform optimistic waiting.
+                    
                 //TODO
             }
 
