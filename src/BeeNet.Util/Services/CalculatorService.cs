@@ -32,6 +32,7 @@ namespace Etherna.BeeNet.Services
             string directoryPath,
             string? indexFilename = null,
             string? errorFilename = null,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -63,7 +64,8 @@ namespace Etherna.BeeNet.Services
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
-                    encrypt),
+                    encrypt,
+                    compactionLevel),
                 encrypt);
 
             // Iterate through the files in the supplied directory.
@@ -77,7 +79,8 @@ namespace Etherna.BeeNet.Services
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
-                    encrypt);
+                    encrypt,
+                    compactionLevel);
                 
                 var fileContentType = FileContentTypeProvider.GetContentType(file);
                 var fileName = Path.GetFileName(file);
@@ -123,6 +126,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -133,6 +137,7 @@ namespace Etherna.BeeNet.Services
                 stream,
                 fileContentType,
                 fileName,
+                compactionLevel,
                 encrypt,
                 redundancyLevel,
                 postageStampIssuer,
@@ -143,6 +148,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -161,7 +167,8 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 postageStamper,
                 redundancyLevel,
-                encrypt);
+                encrypt,
+                compactionLevel);
             var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             fileName ??= fileHash.ToString(); //if missing, set file name with its address
             
@@ -171,7 +178,8 @@ namespace Etherna.BeeNet.Services
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
-                    encrypt),
+                    encrypt,
+                    compactionLevel),
                 encrypt);
 
             manifest.Add(
@@ -238,6 +246,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string outputDirectory,
             bool createDirectory = true,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None)
         {
@@ -246,6 +255,7 @@ namespace Etherna.BeeNet.Services
                 stream,
                 outputDirectory,
                 createDirectory,
+                compactionLevel,
                 encrypt,
                 redundancyLevel);
         }
@@ -254,6 +264,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string outputDirectory,
             bool createDirectory = true,
+            int compactionLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None)
         {
@@ -264,7 +275,8 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 new FakePostageStamper(),
                 redundancyLevel,
-                encrypt);
+                encrypt,
+                compactionLevel);
             var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Return file hash.

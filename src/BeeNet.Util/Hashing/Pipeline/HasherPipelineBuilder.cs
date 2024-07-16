@@ -28,19 +28,24 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
-            string? chunkStoreDirectory) =>
+            string? chunkStoreDirectory,
+            int compactionLevel) =>
             BuildNewHasherPipeline(
                 chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
                 postageStamper,
                 redundancyLevel,
-                isEncrypted);
+                isEncrypted,
+                compactionLevel);
         
         public static IHasherPipeline BuildNewHasherPipeline(
             IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
-            bool isEncrypted)
+            bool isEncrypted,
+            int compactionLevel)
         {
+            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
+            
             if (redundancyLevel != RedundancyLevel.None)
                 throw new NotImplementedException();
 
@@ -52,7 +57,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             else
             {
                 //build stages
-                var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper);
+                var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper, compactionLevel);
                 
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     async (span, data) =>
@@ -63,7 +68,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     }
                 );
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
-                bmtStage = new ChunkBmtPipelineStage(storeWriterStage);
+                bmtStage = new ChunkBmtPipelineStage(compactionLevel, storeWriterStage, postageStamper.StampIssuer);
             }
             
             return new ChunkFeederPipelineStage(bmtStage);
@@ -71,10 +76,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         public static IHasherPipelineStage BuildNewShortHasherPipeline(
             IChunkStore chunkStore,
-            IPostageStamper postageStamper)
+            IPostageStamper postageStamper,
+            int compactionLevel)
         {
+            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
+            
             var storeWriter = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
-            return new ChunkBmtPipelineStage(storeWriter);
+            return new ChunkBmtPipelineStage(compactionLevel, storeWriter, postageStamper.StampIssuer);
         }
     }
 }
