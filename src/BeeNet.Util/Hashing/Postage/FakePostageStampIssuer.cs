@@ -13,22 +13,18 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System;
 
 namespace Etherna.BeeNet.Hashing.Postage
 {
     public class FakePostageStampIssuer : IPostageStampIssuer
     {
-        public ReadOnlySpan<uint> Buckets => Array.Empty<uint>();
+        public IReadOnlyPostageBuckets Buckets { get; } = new PostageBuckets();
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; }
         public PostageBatch PostageBatch => PostageBatch.MaxDepthInstance;
-        public uint MaxBucketCount { get; }
+        public uint MaxBucketCollisions { get; }
         public long TotalChunks { get; }
 
-        public StampBucketIndex IncrementBucketCount(SwarmHash hash) =>
-            new StampBucketIndex(0, 0);
-
-        public ulong GetCollisions(uint bucketId) => 0;
+        public StampBucketIndex IncrementBucketCount(SwarmHash hash) => new(0, 0);
     }
 }

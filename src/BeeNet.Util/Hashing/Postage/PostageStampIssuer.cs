@@ -35,16 +35,12 @@ namespace Etherna.BeeNet.Hashing.Postage
         }
 
         // Properties.
-        public ReadOnlySpan<uint> Buckets => _buckets.Buckets;
+        public IReadOnlyPostageBuckets Buckets => _buckets;
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; private set; }
         public PostageBatch PostageBatch { get; }
-        public uint MaxBucketCount => _buckets.MaxBucketCount;
-        public long TotalChunks => _buckets.TotalChunks;
 
         // Methods.
-        public ulong GetCollisions(uint bucketId) => _buckets.GetCollisions(bucketId);
-        
         public StampBucketIndex IncrementBucketCount(SwarmHash hash)
         {
             var bucketId = hash.ToBucketId();

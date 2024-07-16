@@ -12,28 +12,37 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 
-namespace Etherna.BeeNet.Hashing.Postage
+namespace Etherna.BeeNet.Models
 {
-    public interface IPostageStampIssuer
+    public interface IReadOnlyPostageBuckets
     {
         // Properties.
-        IReadOnlyPostageBuckets Buckets { get; }
-        
-        uint BucketUpperBound { get; }
+        /// <summary>
+        /// The higher level of collisions for a bucket
+        /// </summary>
+        uint MaxBucketCollisions { get; }
         
         /// <summary>
-        /// True if batch is mutable and BucketUpperBound has been it
+        /// The lower level of collisions for a bucket
         /// </summary>
-        bool HasSaturated { get; }
-
+        uint MinBucketCollisions { get; }
+        
         /// <summary>
-        /// The batch stamps are issued from
+        /// Total added chunks in buckets
         /// </summary>
-        PostageBatch PostageBatch { get; }
-
+        long TotalChunks { get; }
+        
         // Methods.
-        StampBucketIndex IncrementBucketCount(SwarmHash hash);
+        /// <summary>
+        /// Get a copy of all buckets
+        /// </summary>
+        /// <returns>All the buckets</returns>
+        uint[] GetBuckets();
+
+        IEnumerable<uint> GetBucketsByCollisions(uint collisions);
+
+        uint GetCollisions(uint bucketId);
     }
 }

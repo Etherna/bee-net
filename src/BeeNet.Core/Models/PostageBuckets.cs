@@ -13,7 +13,8 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Etherna.BeeNet.Models
@@ -21,13 +22,15 @@ namespace Etherna.BeeNet.Models
     /// <summary>
     /// A thread safe implementation of postage buckets array
     /// </summary>
-    public class PostageBuckets
+    [SuppressMessage("Reliability", "CA2002:Do not lock on objects with weak identity")]
+    public class PostageBuckets : IReadOnlyPostageBuckets
     {
         // Consts.
         public const int BucketsSize = 1 << PostageBatch.BucketDepth;
         
         // Fields.
-        private readonly ConcurrentDictionary<uint, uint> _buckets; //<index, collisions>
+        private readonly uint[] _buckets; //number of collisions. MUST be private to permit locks on it
+        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions; //<collisions, bucketId[]>
         
         // Constructor.
         public PostageBuckets(
@@ -38,56 +41,103 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(initialBuckets),
                     $"Initial buckets must have length {BucketsSize}, or be null");
             
-            _buckets = ArrayToDictionary(initialBuckets ?? []);
+            //init "buckets" and reverse index "bucketsByCollisions"
+            _buckets = initialBuckets ?? new uint[BucketsSize];
+            bucketsByCollisions = new Dictionary<uint, HashSet<uint>> { [0] = [] };
+            for (uint i = 0; i < BucketsSize; i++)
+                bucketsByCollisions[0].Add(i);
+
+            //init counters
+            MaxBucketCollisions = 0;
+            MinBucketCollisions = 0;
+            TotalChunks = 0;
         }
 
         // Properties.
-        public ReadOnlySpan<uint> Buckets => DictionaryToArray(_buckets);
-        public uint MaxBucketCount { get; private set; }
+        public uint MaxBucketCollisions { get; private set; }
+        public uint MinBucketCollisions { get; private set; }
         public long TotalChunks { get; private set; }
         
         // Methods.
+        public uint[] GetBuckets()
+        {
+            lock (_buckets)
+            {
+                return _buckets.ToArray();
+            }
+        }
+
+        public IEnumerable<uint> GetBucketsByCollisions(uint collisions)
+        {
+            lock (_buckets)
+            {
+                return bucketsByCollisions.TryGetValue(collisions, out var bucketsSet)
+                    ? bucketsSet
+                    : Array.Empty<uint>();
+            }
+        }
+        
         public uint GetCollisions(uint bucketId)
         {
-            _buckets.TryGetValue(bucketId, out var collisions);
-            return collisions;
+            lock (_buckets)
+            {
+                return _buckets[bucketId];
+            }
         }
 
         public void IncrementCollisions(uint bucketId)
         {
-            _buckets.AddOrUpdate(
-                bucketId,
-                _ =>
-                {
-                    TotalChunks++;
-                    if (1 > MaxBucketCount)
-                        MaxBucketCount = 1;
-                    return 1;
-                },
-                (_, c) =>
-                {
-                    TotalChunks++;
-                    if (c + 1 > MaxBucketCount)
-                        MaxBucketCount = c + 1;
-                    return c + 1;
-                });
+            /*
+             * We need to lock on the full _buckets because we need atomic operations also with bucketsByCollisions.
+             * ConcurrentDictionary would have better locking on single values, but doesn't support atomic
+             * operations involving third objects, like counters and "bucketsByCollisions".
+             * 
+             * By itself, "bucketsByCollisions" would require a full lock to perform atomic buckets moving,
+             * and this lock would expand also to counters modification, making the full operation inside the
+             * ConcurrentDictionary blocked by a global lock on "bucketsByCollisions", making the ConcurrentDictionary
+             * useless.
+             * 
+             * Because of this, simply lock on "_buckets".
+             */
+            lock (_buckets)
+            {
+                // Update collections.
+                _buckets[bucketId]++;
+                
+                bucketsByCollisions.TryAdd(_buckets[bucketId], []);
+                bucketsByCollisions[_buckets[bucketId] - 1].Remove(bucketId);
+                bucketsByCollisions[_buckets[bucketId]].Add(bucketId);
+                
+                // Update counters.
+                if (_buckets[bucketId] > MaxBucketCollisions)
+                    MaxBucketCollisions = _buckets[bucketId];
+                    
+                MinBucketCollisions = bucketsByCollisions.OrderBy(p => p.Key)
+                    .First(p => p.Value.Count > 0)
+                    .Key;
+                    
+                TotalChunks++;
+            }
         }
 
-        public void ResetBucketCollisions(uint bucketId) =>
-            _buckets.AddOrUpdate(bucketId, _ => 0, (_, _) => 0);
-        
-        // Helpers.
-        private static ConcurrentDictionary<uint, uint> ArrayToDictionary(uint[] buckets) =>
-            new(buckets.Select((c, i) => (c, (uint)i))
-                .ToDictionary<(uint value, uint index), uint, uint>(pair => pair.index, pair => pair.value));
-
-        private static uint[] DictionaryToArray(ConcurrentDictionary<uint, uint> dictionary)
+        public void ResetBucketCollisions(uint bucketId)
         {
-            var outArray = new uint[BucketsSize];
-            for (uint i = 0; i < BucketsSize; i++)
-                if (dictionary.TryGetValue(i, out var value))
-                    outArray[i] = value;
-            return outArray;
+            lock (_buckets)
+            {
+                // Update collections.
+                var oldCollisions = _buckets[bucketId];
+                _buckets[bucketId] = 0;
+                
+                bucketsByCollisions[oldCollisions].Remove(bucketId);
+                bucketsByCollisions[0].Add(bucketId);
+            
+                // Update counters.
+                MaxBucketCollisions = bucketsByCollisions.OrderByDescending(p => p.Key)
+                    .First(p => p.Value.Count > 0)
+                    .Key;
+                
+                MinBucketCollisions = 0;
+            }
         }
     }
 }
