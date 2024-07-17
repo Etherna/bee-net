@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="directoryPath">The directory to upload</param>
         /// <param name="indexFilename">The index default file</param>
         /// <param name="errorFilename">The error default file</param>
-        /// <param name="compactionLevel">Chunk compaction level</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Services
             string directoryPath,
             string? indexFilename = null,
             string? errorFilename = null,
-            int compactionLevel = 0,
+            ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -51,7 +51,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="data">The file data in byte array</param>
         /// <param name="fileContentType">The file content type</param>
         /// <param name="fileName">The file name</param>
-        /// <param name="compactionLevel">Chunk compaction level</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
-            int compactionLevel = 0,
+            ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="stream">The file stream</param>
         /// <param name="fileContentType">The file content type</param>
         /// <param name="fileName">The file name</param>
-        /// <param name="compactionLevel">Chunk compaction level</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
-            int compactionLevel = 0,
+            ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="data">The data byte array input</param>
         /// <param name="outputDirectory">The output directory path</param>
         /// <param name="createDirectory">If true, create if directory doesn't exist</param>
-        /// <param name="compactionLevel">Chunk compaction level</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <returns>The data root hash</returns>
@@ -123,7 +123,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string outputDirectory,
             bool createDirectory = true,
-            int compactionLevel = 0,
+            ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None);
         
@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="stream">The data stream input</param>
         /// <param name="outputDirectory">The output directory path</param>
         /// <param name="createDirectory">If true, create if directory doesn't exist</param>
-        /// <param name="compactionLevel">Chunk compaction level</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <returns>The data root hash</returns>
@@ -141,7 +141,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string outputDirectory,
             bool createDirectory = true,
-            int compactionLevel = 0,
+            ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None);
     }

@@ -18,6 +18,7 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
@@ -25,33 +26,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// <summary>
     /// Calculate hash of each chunk
     /// </summary>
-    internal sealed class ChunkBmtPipelineStage : IHasherPipelineStage
+    internal sealed class ChunkBmtPipelineStage(
+        ushort compactLevel,
+        IHasherPipelineStage nextStage,
+        IPostageStampIssuer stampIssuer)
+        : IHasherPipelineStage
     {
-        // Consts.
-        public const int MinCompactionLevel = 0;
-        
-        // Fields.
-        private readonly int compactionLevel;
-        private readonly IHasherPipelineStage nextStage;
-        private readonly IPostageStampIssuer stampIssuer;
-
-        // Constructor.
-        public ChunkBmtPipelineStage(
-            int compactionLevel,
-            IHasherPipelineStage nextStage,
-            IPostageStampIssuer stampIssuer)
-        {
-#pragma warning disable CA1512
-            //disable warning because "ThrowIfLessThan()" is only supported since .Net8
-            if (compactionLevel < MinCompactionLevel)
-                throw new ArgumentOutOfRangeException(nameof(compactionLevel));
-#pragma warning restore CA1512
-
-            this.compactionLevel = compactionLevel;
-            this.nextStage = nextStage;
-            this.stampIssuer = stampIssuer;
-        }
-
         // Dispose.
         public void Dispose()
         {
@@ -69,7 +49,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             var plainChunkHash = SwarmChunkBmtHasher.Hash(
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
                 args.Data[SwarmChunk.SpanSize..].ToArray());
-            if (compactionLevel == 0)
+            if (compactLevel == 0)
             {
                 /* If no chunk compaction is involved, simply calculate the chunk hash and proceed. */
                 args.Hash = plainChunkHash;
@@ -88,7 +68,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  * The chunk key is calculate from the plain chunk hash, replacing the last 4 bytes
                  * with the attempt counter (int), and then hashing again.
                  * 
-                 *     chunkKey = Keccack(plainChunkHash[..^4] + attempt)
+                 *     chunkKey = Keccack(plainChunkHash[..^2] + attempt)
                  *
                  * The encrypted chunk is calculated encrypting data with the chunk key.
                  *
@@ -101,39 +81,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  * simply search again the best chunk. At this point we can't do any assumption, and the new first
                  * best chunk could use and already calculated chunkKey (can't say what), or could be still to
                  * be calculated.
+                 *
+                 * Use a cache on generated chunkKey and relative bucketId for each attempt. This permits to not
+                 * repeat the hash calculation in case that we need to repeat the search.
                  */
-                XorEncryptKey? bestChunkKey = null;
-
-                var encryptedData = new byte[args.Data.Length - SwarmChunk.SpanSize];
-                var plainChunkHashArray = plainChunkHash.ToByteArray();
-                var spanArray = args.Data[..SwarmChunk.SpanSize].ToArray();
                 
                 // Search best chunk key.
-                for (int i = 0; i < compactionLevel; i++)
-                {
-                    // Create key.
-                    BinaryPrimitives.WriteInt32BigEndian(plainChunkHashArray.AsSpan()[..^4], i);
-                    var chunkKey = new XorEncryptKey(plainChunkHashArray);
-                    
-                    // Encrypt data.
-                    args.Data[SwarmChunk.SpanSize..].CopyTo(encryptedData);
-                    chunkKey.EncryptDecrypt(encryptedData);
-                    
-                    // Calculate hash and bucket id.
-                    var encryptedHash = SwarmChunkBmtHasher.Hash(spanArray, encryptedData);
-                    var bucketId = encryptedHash.ToBucketId();
+                var encryptionCache = new Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, uint BucketId)>();
+                var (chunkKey, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
 
-                    // Check key collisions.
-                    var collisions = stampIssuer.Buckets.GetCollisions(bucketId);
-                    if (collisions == stampIssuer.Buckets.MinBucketCollisions) //it's an optimal bucket
-                    {
-                        bestChunkKey = chunkKey;
-                        break;
-                    }
-                    
-                    //TODO
-                }
-                
                 // Perform optimistic waiting.
                     
                 //TODO
@@ -141,7 +97,74 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
             await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
-
+        
         public Task<SwarmHash> SumAsync() => nextStage.SumAsync();
+        
+        // Helpers.
+        private (XorEncryptKey ChunkKey, uint ExpectedCollisions) TrySearchFirstBestChunkKey(
+            HasherPipelineFeedArgs args,
+            Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, uint BucketId)> encryptionCache,
+            SwarmHash plainChunkHash)
+        {
+            // Init.
+            XorEncryptKey? bestChunkKey = default;
+            uint bestCollisions = 0;
+            
+            var encryptedData = new byte[args.Data.Length - SwarmChunk.SpanSize];
+            var hasher = new Hasher();
+            var plainChunkHashArray = plainChunkHash.ToByteArray();
+            var spanArray = args.Data[..SwarmChunk.SpanSize].ToArray();
+                
+            // Search best chunk key.
+            for (ushort i = 0; i < compactLevel; i++)
+            {
+                XorEncryptKey chunkKey;
+                uint collisions;
+                
+                if (encryptionCache.TryGetValue(i, out var cachedValues))
+                {
+                    chunkKey = cachedValues.ChunkKey;
+                    collisions = stampIssuer.Buckets.GetCollisions(cachedValues.BucketId);
+                }
+                else
+                {
+                    // Create key.
+                    BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[..^2], i);
+                    chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
+                    
+                    // Encrypt data.
+                    args.Data[SwarmChunk.SpanSize..].CopyTo(encryptedData);
+                    chunkKey.EncryptDecrypt(encryptedData);
+                    
+                    // Calculate hash, bucket id, and save in cache.
+                    var encryptedHash = SwarmChunkBmtHasher.Hash(spanArray, encryptedData);
+                    var bucketId = encryptedHash.ToBucketId();
+                    encryptionCache[i] = (chunkKey, bucketId);
+
+                    // Check key collisions.
+                    collisions = stampIssuer.Buckets.GetCollisions(bucketId);
+                }
+                
+                // First attempt is always the best one.
+                if (bestChunkKey is null)
+                {
+                    bestChunkKey = chunkKey;
+                    bestCollisions = collisions;
+                }
+                
+                // Check if collisions are optimal.
+                if (collisions == stampIssuer.Buckets.MinBucketCollisions)
+                    return (chunkKey, collisions);
+                
+                // Else, if this reach better collisions, but not the best.
+                if (collisions < bestCollisions)
+                {
+                    bestChunkKey = chunkKey;
+                    bestCollisions = collisions;
+                }
+            }
+
+            return (bestChunkKey!, bestCollisions);
+        }
     }
 }
