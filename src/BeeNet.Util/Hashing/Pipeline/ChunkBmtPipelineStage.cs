@@ -18,6 +18,7 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,6 +33,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         IPostageStampIssuer stampIssuer)
         : IHasherPipelineStage
     {
+        // Fields.
+        private readonly ConcurrentDictionary<long, object> lockObjectsDictionary = new(); //<chunkNumber, lockObj>
+        
         // Dispose.
         public void Dispose()
         {
@@ -90,9 +94,39 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 var encryptionCache = new Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, uint BucketId)>();
                 var (chunkKey, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
 
-                // Perform optimistic waiting.
-                    
-                //TODO
+                // Coordinate tasks execution in order.
+                var lockObj = new object();
+                lock (lockObj)
+                {
+                    //add current lockObj in dictionary, in order can be found by next task
+                    lockObjectsDictionary.TryAdd(args.NumberId, lockObj);
+
+                    //if it's not the first task, try to lock on previous chunk's lockObj
+                    if (args.NumberId > 0)
+                    {
+                        //get lockObj from previous chunk, and remove from dictionary to clean up.
+                        //at this point, it must be already locked by prev task, and maybe be released.
+                        object prevLockObj;
+                        while (!lockObjectsDictionary.TryRemove(args.NumberId - 1, out prevLockObj!))
+                            Task.Delay(1);
+                        
+                        //wait until it is released from prev task
+                        lock (prevLockObj)
+                        {
+                            // Check the optimistic result, and if it has been invalidated, do it again.
+                            
+                            //TODO
+                        }
+                    }
+                    else
+                    {
+                        // Because this is the first chunk, we don't need to wait any previous chunk to complete.
+                        // Moreover, any result with optimistic calculation must be valid, because no previous chunks
+                        // can have invalidated the result. So we can simply proceed.
+                        
+                        //TODO
+                    }
+                }
             }
 
             await nextStage.FeedAsync(args).ConfigureAwait(false);
