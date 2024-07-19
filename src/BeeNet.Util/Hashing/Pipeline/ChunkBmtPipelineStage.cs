@@ -41,6 +41,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             nextStage.Dispose();
         }
+        
+        // Properties.
+        public long OptimisticRetriesCounter { get; private set; }
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -91,8 +94,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  */
                 
                 // Search best chunk key.
-                var encryptionCache = new Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, uint BucketId)>();
-                var (chunkKey, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
+                var encryptionCache = new Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, byte[] EncryptedData, uint BucketId)>();
+                var (bestKeyAttempt, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
 
                 // Coordinate tasks execution in order.
                 var lockObj = new object();
@@ -114,8 +117,26 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         lock (prevLockObj)
                         {
                             // Check the optimistic result, and if it has been invalidated, do it again.
-                            
-                            //TODO
+
+                            var bestBucketId = encryptionCache[bestKeyAttempt].BucketId;
+                            var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
+
+                            if (actualCollisions == expectedCollisions)
+                            {
+                                //if optimism succeeded
+                                args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
+                                args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
+                            }
+                            else
+                            {
+                                //if optimism failed, recalculate
+                                OptimisticRetriesCounter++;
+                                
+                                var (newBestKeyAttempt, _) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
+                                
+                                args.ChunkKey = encryptionCache[newBestKeyAttempt].ChunkKey;
+                                args.Data = encryptionCache[newBestKeyAttempt].EncryptedData;
+                            }
                         }
                     }
                     else
@@ -123,8 +144,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         // Because this is the first chunk, we don't need to wait any previous chunk to complete.
                         // Moreover, any result with optimistic calculation must be valid, because no previous chunks
                         // can have invalidated the result. So we can simply proceed.
-                        
-                        //TODO
+
+                        args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
+                        args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
                     }
                 }
             }
@@ -135,70 +157,75 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public Task<SwarmHash> SumAsync() => nextStage.SumAsync();
         
         // Helpers.
-        private (XorEncryptKey ChunkKey, uint ExpectedCollisions) TrySearchFirstBestChunkKey(
+        private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, byte[] data)
+        {
+            // Don't encrypt span, otherwise knowing the chunk length, we could reconstruct the key.
+            chunkKey.EncryptDecrypt(data.AsSpan()[SwarmChunk.SpanSize..]);
+        }
+        
+        private (ushort BestKeyAttempt, uint ExpectedCollisions) TrySearchFirstBestChunkKey(
             HasherPipelineFeedArgs args,
-            Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, uint BucketId)> encryptionCache,
+            Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, byte[] EncryptedData, uint BucketId)> encryptionCache,
             SwarmHash plainChunkHash)
         {
             // Init.
-            XorEncryptKey? bestChunkKey = default;
+            ushort? bestKeyAttempt = null;
             uint bestCollisions = 0;
             
-            var encryptedData = new byte[args.Data.Length - SwarmChunk.SpanSize];
+            var encryptedData = new byte[args.Data.Length];
             var hasher = new Hasher();
             var plainChunkHashArray = plainChunkHash.ToByteArray();
-            var spanArray = args.Data[..SwarmChunk.SpanSize].ToArray();
                 
             // Search best chunk key.
             for (ushort i = 0; i < compactLevel; i++)
             {
-                XorEncryptKey chunkKey;
                 uint collisions;
                 
                 if (encryptionCache.TryGetValue(i, out var cachedValues))
                 {
-                    chunkKey = cachedValues.ChunkKey;
                     collisions = stampIssuer.Buckets.GetCollisions(cachedValues.BucketId);
                 }
                 else
                 {
                     // Create key.
                     BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[..^2], i);
-                    chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
+                    var chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
-                    args.Data[SwarmChunk.SpanSize..].CopyTo(encryptedData);
-                    chunkKey.EncryptDecrypt(encryptedData);
+                    args.Data.CopyTo(encryptedData);
+                    EncryptDecryptChunkData(chunkKey, encryptedData);
                     
                     // Calculate hash, bucket id, and save in cache.
-                    var encryptedHash = SwarmChunkBmtHasher.Hash(spanArray, encryptedData);
+                    var encryptedHash = SwarmChunkBmtHasher.Hash(
+                        encryptedData[..SwarmChunk.SpanSize],
+                        encryptedData[SwarmChunk.SpanSize..]);
                     var bucketId = encryptedHash.ToBucketId();
-                    encryptionCache[i] = (chunkKey, bucketId);
+                    encryptionCache[i] = (chunkKey, encryptedData, bucketId);
 
                     // Check key collisions.
                     collisions = stampIssuer.Buckets.GetCollisions(bucketId);
                 }
                 
                 // First attempt is always the best one.
-                if (bestChunkKey is null)
+                if (bestKeyAttempt is null)
                 {
-                    bestChunkKey = chunkKey;
+                    bestKeyAttempt = i;
                     bestCollisions = collisions;
                 }
                 
                 // Check if collisions are optimal.
                 if (collisions == stampIssuer.Buckets.MinBucketCollisions)
-                    return (chunkKey, collisions);
+                    return (i, collisions);
                 
                 // Else, if this reach better collisions, but not the best.
                 if (collisions < bestCollisions)
                 {
-                    bestChunkKey = chunkKey;
+                    bestKeyAttempt = i;
                     bestCollisions = collisions;
                 }
             }
 
-            return (bestChunkKey!, bestCollisions);
+            return (bestKeyAttempt!.Value, bestCollisions);
         }
     }
 }
