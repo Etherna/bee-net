@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Bmt;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -22,19 +23,25 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal delegate Task<SwarmHash> HashChunkDelegateAsync(byte[] span, byte[] data);
+    internal delegate Task<ChunkHashingResult> HashChunkDelegateAsync(byte[] span, byte[] data);
     
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
-        private sealed class ChunkHeader(SwarmHash hash, ReadOnlyMemory<byte> span, bool isParityChunk)
+        private sealed class ChunkHeader(
+            SwarmHash hash,
+            ReadOnlyMemory<byte> span,
+            XorEncryptKey? chunkKey,
+            bool isParityChunk)
         {
+            public XorEncryptKey? ChunkKey { get; } = chunkKey;
             public SwarmHash Hash { get; } = hash;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
         }
         
         // Fields.
+        private readonly bool compactChunks;
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
@@ -45,11 +52,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
         // Constructor.
         public ChunkAggregatorPipelineStage(
-            HashChunkDelegateAsync hashChunkDelegate)
+            HashChunkDelegateAsync hashChunkDelegate,
+            bool compactChunks)
         {
             chunkLevels = [];
             this.hashChunkDelegate = hashChunkDelegate;
-            maxChildrenChunks = SwarmChunkBmt.SegmentsCount;
+            this.compactChunks = compactChunks;
+            maxChildrenChunks = (byte)(this.compactChunks
+                ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
+                : SwarmChunkBmt.SegmentsCount);
         }
         
         // Dispose.
@@ -83,6 +94,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         new ChunkHeader(
                             processingChunk.Hash!.Value,
                             processingChunk.Span,
+                            processingChunk.ChunkKey,
                             false)).ConfigureAwait(false);
                 }
             }
@@ -92,7 +104,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmHash> SumAsync()
+        public async Task<ChunkHashingResult> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -118,7 +130,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
 
-            return rootChunk.Hash;
+            return new(rootChunk.Hash, rootChunk.ChunkKey);
         }
 
         // Helpers.
@@ -151,16 +163,21 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             
             // Build total data from total span, and all the hashes in level.
+            // If chunks are compacted, append the encryption key after the chunk hash.
             var totalData = totalSpan.Concat(
-                levelChunks.SelectMany(c => c.Hash.ToByteArray()))
+                levelChunks.SelectMany(c => compactChunks
+                    ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Bytes.ToArray())
+                    : c.Hash.ToByteArray()))
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.
+            var hashingResult = await hashChunkDelegate(totalSpan, totalData).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
-                    await hashChunkDelegate(totalSpan, totalData).ConfigureAwait(false),
+                    hashingResult.Hash,
                     totalSpan,
+                    hashingResult.EncryptionKey,
                     false)).ConfigureAwait(false);
             
             levelChunks.Clear();

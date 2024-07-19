@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public bool IsUsable { get; private set; } = true;
 
         // Methods.
-        public async Task<SwarmHash> HashDataAsync(byte[] data)
+        public async Task<ChunkHashingResult> HashDataAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
@@ -60,7 +60,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             return await HashDataAsync(memoryStream).ConfigureAwait(false);
         }
         
-        public async Task<SwarmHash> HashDataAsync(Stream dataStream)
+        public async Task<ChunkHashingResult> HashDataAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
 

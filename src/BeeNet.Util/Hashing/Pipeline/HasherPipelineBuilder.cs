@@ -64,11 +64,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     {
                         var args = new HasherPipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
-                        return args.Hash!.Value;
-                    }
-                );
+                        return new(args.Hash!.Value, args.ChunkKey);
+                    },
+                    compactLevel > 0);
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
-                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
+                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer, true);
             }
             
             return new ChunkFeederPipelineStage(bmtStage);
@@ -81,8 +81,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
             
-            var storeWriter = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
-            return new ChunkBmtPipelineStage(compactLevel, storeWriter, postageStamper.StampIssuer);
+            var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
+            return new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer, false);
         }
     }
 }

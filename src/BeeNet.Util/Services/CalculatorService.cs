@@ -86,12 +86,12 @@ namespace Etherna.BeeNet.Services
                 var fileName = Path.GetFileName(file);
                 using var fileStream = File.OpenRead(file);
 
-                var fileHash = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
                 
                 // Add file entry to dir manifest.
                 dirManifest.Add(
                     Path.GetRelativePath(directoryPath, file),
-                    ManifestEntry.NewFile(fileHash, new Dictionary<string, string>
+                    ManifestEntry.NewFile(fileHashingResult.Hash, new Dictionary<string, string>
                     {
                         [ManifestEntry.ContentTypeKey] = fileContentType,
                         [ManifestEntry.FilenameKey] = fileName
@@ -169,8 +169,8 @@ namespace Etherna.BeeNet.Services
                 redundancyLevel,
                 encrypt,
                 compactLevel);
-            var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            fileName ??= fileHash.ToString(); //if missing, set file name with its address
+            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            fileName ??= fileHashingResult.Hash.ToString(); //if missing, set file name with its address
             
             // Create manifest.
             var manifest = new MantarayManifest(
@@ -193,7 +193,7 @@ namespace Etherna.BeeNet.Services
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileHash,
+                    fileHashingResult.Hash,
                     new Dictionary<string, string>
                     {
                         [ManifestEntry.ContentTypeKey] = fileContentType,
@@ -277,10 +277,10 @@ namespace Etherna.BeeNet.Services
                 redundancyLevel,
                 encrypt,
                 compactLevel);
-            var fileHash = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Return file hash.
-            return fileHash;
+            return fileHashingResult.Hash;
         }
     }
 }

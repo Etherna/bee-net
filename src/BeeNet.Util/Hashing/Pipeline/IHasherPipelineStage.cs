@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -21,6 +20,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     public interface IHasherPipelineStage : IDisposable
     {
         Task FeedAsync(HasherPipelineFeedArgs args);
-        Task<SwarmHash> SumAsync();
+        Task<ChunkHashingResult> SumAsync();
     }
 }

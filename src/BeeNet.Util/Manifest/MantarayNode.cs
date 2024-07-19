@@ -156,7 +156,8 @@ namespace Etherna.BeeNet.Manifest
 
             // Marshal current node, and set its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            _hash = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            var hashingResult = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            _hash = hashingResult.Hash;
             
             // Clean forks.
             _forks.Clear();

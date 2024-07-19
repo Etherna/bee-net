@@ -34,18 +34,22 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private readonly ushort compactLevel;
         private readonly IHasherPipelineStage nextStage;
         private readonly IPostageStampIssuer stampIssuer;
+        private readonly bool useWithDataChunks; //can run with parallelization only with data chunks
 
         // Constructor.
         /// <summary>
         /// Calculate hash of each chunk
         /// </summary>
-        public ChunkBmtPipelineStage(ushort compactLevel,
+        public ChunkBmtPipelineStage(
+            ushort compactLevel,
             IHasherPipelineStage nextStage,
-            IPostageStampIssuer stampIssuer)
+            IPostageStampIssuer stampIssuer,
+            bool useWithDataChunks)
         {
             this.compactLevel = compactLevel;
             this.nextStage = nextStage;
             this.stampIssuer = stampIssuer;
+            this.useWithDataChunks = useWithDataChunks;
         }
 
         // Dispose.
@@ -80,7 +84,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             else
             {
                 /*
-                 * If chunk compaction is involved, use optimistic chunk calculation.
+                 * If chunk compaction is involved, and we are processing data chunks, use optimistic calculation.
+                 *
+                 * If instead this step is invoked with the short pipeline, and so isn't related to data chunk hashing,
+                 * the optimistic algorithm is not required. In fact, in this case, calculation is already synchronous.
+                 * 
                  * Calculate an encryption key, and try to find an optimal bucket collision.
                  * Before to proceed with the chunk and its key, wait optimistically until
                  * the previous chunk has been stored. Then verify if the same bucket has received
@@ -110,70 +118,19 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  */
                 
                 // Search best chunk key.
-                var encryptionCache = new Dictionary<ushort /*attempt*/, ChunkBmtPipelineOptimisticAttemptResult>();
-                var (bestKeyAttempt, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
-
-                // Coordinate tasks execution in order.
-                var lockObj = new object();
-                lock (lockObj)
-                {
-                    //add current lockObj in dictionary, in order can be found by next task
-                    lockObjectsDictionary.TryAdd(args.NumberId, lockObj);
-
-                    //if it's not the first chunk, try to lock on previous chunk's lockObj
-                    if (args.NumberId > 0)
-                    {
-                        //get lockObj from previous chunk, and remove from dictionary to clean up.
-                        //at this point, it must be already locked by prev task, and maybe be released.
-                        object prevLockObj;
-                        while (!lockObjectsDictionary.TryRemove(args.NumberId - 1, out prevLockObj!))
-                            Task.Delay(1);
-                        
-                        //wait until it is released from prev task
-                        lock (prevLockObj)
-                        {
-                            // Check the optimistic result, and if it has been invalidated, do it again.
-
-                            var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
-                            var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
-
-                            if (actualCollisions == expectedCollisions)
-                            {
-                                //if optimism succeeded
-                                args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
-                                args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
-                                args.Hash = encryptionCache[bestKeyAttempt].Hash;
-                            }
-                            else
-                            {
-                                //if optimism failed, recalculate
-                                OptimisticRetriesCounter++;
-                                
-                                var (newBestKeyAttempt, _) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
-                                
-                                args.ChunkKey = encryptionCache[newBestKeyAttempt].ChunkKey;
-                                args.Data = encryptionCache[newBestKeyAttempt].EncryptedData;
-                                args.Hash = encryptionCache[newBestKeyAttempt].Hash;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Because this is the first chunk, we don't need to wait any previous chunk to complete.
-                        // Moreover, any result with optimistic calculation must be valid, because no previous chunks
-                        // can have invalidated the result. So we can simply proceed.
-
-                        args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
-                        args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
-                        args.Hash = encryptionCache[bestKeyAttempt].Hash;
-                    }
-                }
+                var bestChunkResult = useWithDataChunks
+                    ? GetBestChunkOptimistically(args, plainChunkHash, hasher)
+                    : GetBestChunkSynchronously(args, plainChunkHash, hasher);
+                
+                args.ChunkKey = bestChunkResult.ChunkKey;
+                args.Data = bestChunkResult.EncryptedData;
+                args.Hash = bestChunkResult.Hash;
             }
 
             await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
-        
-        public Task<SwarmHash> SumAsync() => nextStage.SumAsync();
+
+        public Task<ChunkHashingResult> SumAsync() => nextStage.SumAsync();
         
         // Helpers.
         private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, byte[] data)
@@ -182,9 +139,69 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             chunkKey.EncryptDecrypt(data.AsSpan()[SwarmChunk.SpanSize..]);
         }
         
-        private (ushort BestKeyAttempt, uint ExpectedCollisions) TrySearchFirstBestChunkKey(
+        private CompactedChunkAttemptResult GetBestChunkOptimistically(
             HasherPipelineFeedArgs args,
-            Dictionary<ushort /*attempt*/, ChunkBmtPipelineOptimisticAttemptResult> optimisticCache,
+            SwarmHash plainChunkHash,
+            Hasher hasher)
+        {
+            var encryptionCache = new Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult>();
+            var (bestKeyAttempt, expectedCollisions) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+
+            // Coordinate tasks execution in order.
+            var lockObj = new object();
+            lock (lockObj)
+            {
+                //add current lockObj in dictionary, in order can be found by next task
+                lockObjectsDictionary.TryAdd(args.NumberId, lockObj);
+
+                //if it's the first chunk
+                if (args.NumberId == 0)
+                {
+                    // Because this is the first chunk, we don't need to wait any previous chunk to complete.
+                    // Moreover, any result with optimistic calculation must be valid, because no previous chunks
+                    // can have invalidated the result. So we can simply proceed.
+                    return encryptionCache[bestKeyAttempt];
+                }
+                
+                //if it's not the first chunk, try to lock on previous chunk's lockObj, and remove it from dictionary.
+                //at this point, it must be already locked by prev task, and maybe be released.
+                object prevLockObj;
+                while (!lockObjectsDictionary.TryRemove(args.NumberId - 1, out prevLockObj!))
+                    Task.Delay(1);
+                        
+                //wait until it is released from prev task
+                lock (prevLockObj)
+                {
+                    // Check the optimistic result, and if it has been invalidated, do it again.
+                    var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
+                    var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
+
+                    //if optimism succeeded
+                    if (actualCollisions == expectedCollisions)
+                        return encryptionCache[bestKeyAttempt];
+
+                    //if optimism failed, recalculate
+                    OptimisticRetriesCounter++;
+                        
+                    var (newBestKeyAttempt, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+                    return encryptionCache[newBestKeyAttempt];
+                }
+            }
+        }
+        
+        private CompactedChunkAttemptResult GetBestChunkSynchronously(
+            HasherPipelineFeedArgs args,
+            SwarmHash plainChunkHash,
+            Hasher hasher)
+        {
+            var encryptionCache = new Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult>();
+            var (bestKeyAttempt, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+            return encryptionCache[bestKeyAttempt];
+        }
+        
+        private (ushort BestKeyAttempt, uint ExpectedCollisions) SearchFirstBestChunkKey(
+            HasherPipelineFeedArgs args,
+            Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult> optimisticCache,
             SwarmHash plainChunkHash,
             Hasher hasher)
         {
@@ -219,7 +236,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         encryptedData[..SwarmChunk.SpanSize],
                         encryptedData[SwarmChunk.SpanSize..],
                         hasher);
-                    optimisticCache[i] = new(i, chunkKey, encryptedData, encryptedHash);
+                    optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
 
                     // Check key collisions.
                     collisions = stampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
