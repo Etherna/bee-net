@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.Services
                     postageStamper,
                     redundancyLevel,
                     encrypt,
-                    compactLevel),
+                    0),
                 encrypt);
 
             // Iterate through the files in the supplied directory.
@@ -89,13 +89,19 @@ namespace Etherna.BeeNet.Services
                 var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
                 
                 // Add file entry to dir manifest.
+                var fileEntryMetadata = new Dictionary<string, string>
+                {
+                    [ManifestEntry.ContentTypeKey] = fileContentType,
+                    [ManifestEntry.FilenameKey] = fileName
+                };
+                if (fileHashingResult.EncryptionKey != null)
+                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+                
                 dirManifest.Add(
                     Path.GetRelativePath(directoryPath, file),
-                    ManifestEntry.NewFile(fileHashingResult.Hash, new Dictionary<string, string>
-                    {
-                        [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
-                    }));
+                    ManifestEntry.NewFile(
+                        fileHashingResult.Hash,
+                        fileEntryMetadata));
             }
             
             // Store website information.
@@ -114,11 +120,11 @@ namespace Etherna.BeeNet.Services
             }
 
             // Get manifest hash.
-            var manifestHash = await dirManifest.GetHashAsync().ConfigureAwait(false);
+            var chunkHashingResult = await dirManifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
-                manifestHash,
+                chunkHashingResult.Hash,
                 postageStampIssuer);
         }
 
@@ -179,7 +185,7 @@ namespace Etherna.BeeNet.Services
                     postageStamper,
                     redundancyLevel,
                     encrypt,
-                    compactLevel),
+                    0),
                 encrypt);
 
             manifest.Add(
@@ -189,22 +195,26 @@ namespace Etherna.BeeNet.Services
                     {
                         [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
                     }));
+
+            var fileEntryMetadata = new Dictionary<string, string>
+            {
+                [ManifestEntry.ContentTypeKey] = fileContentType,
+                [ManifestEntry.FilenameKey] = fileName
+            };
+            if (fileHashingResult.EncryptionKey != null)
+                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
             
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
                     fileHashingResult.Hash,
-                    new Dictionary<string, string>
-                    {
-                        [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
-                    }));
+                    fileEntryMetadata));
 
-            var manifestHash = await manifest.GetHashAsync().ConfigureAwait(false);
+            var chunkHashingResult = await manifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
-                manifestHash,
+                chunkHashingResult.Hash,
                 postageStampIssuer);
         }
 

@@ -12,10 +12,11 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Security.Cryptography;
 
-namespace Etherna.BeeNet.Manifest
+namespace Etherna.BeeNet.Models
 {
     public class XorEncryptKey
     {
@@ -33,6 +34,23 @@ namespace Etherna.BeeNet.Manifest
                 throw new ArgumentOutOfRangeException(nameof(bytes));
             
             this.bytes = bytes;
+        }
+        
+        public XorEncryptKey(string key)
+        {
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            
+            try
+            {
+                bytes = key.HexToByteArray();
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentException("Invalid hash", nameof(key));
+            }
+            
+            if (!IsValidKey(bytes))
+                throw new ArgumentOutOfRangeException(nameof(key));
         }
 
         // Builders.
@@ -60,6 +78,15 @@ namespace Etherna.BeeNet.Manifest
         {
             for (var i = 0; i < data.Length; i++)
                 data[i] = (byte)(data[i] ^ bytes[i % bytes.Length]);
+        }
+        
+        public override string ToString() => bytes.ToHex();
+        
+        // Static methods.
+        public static bool IsValidKey(byte[] value)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            return value.Length == KeySize;
         }
     }
 }

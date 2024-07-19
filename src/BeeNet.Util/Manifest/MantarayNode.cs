@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -143,7 +142,7 @@ namespace Etherna.BeeNet.Manifest
             }
         }
 
-        public async Task ComputeHashAsync(Func<IHasherPipeline> hasherPipelineBuilder)
+        public async Task ComputeHashAsync(BuildHasherPipeline hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
