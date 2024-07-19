@@ -27,15 +27,27 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// <summary>
     /// Calculate hash of each chunk
     /// </summary>
-    internal sealed class ChunkBmtPipelineStage(
-        ushort compactLevel,
-        IHasherPipelineStage nextStage,
-        IPostageStampIssuer stampIssuer)
-        : IHasherPipelineStage
+    internal sealed class ChunkBmtPipelineStage : IHasherPipelineStage
     {
         // Fields.
         private readonly ConcurrentDictionary<long, object> lockObjectsDictionary = new(); //<chunkNumber, lockObj>
-        
+        private readonly ushort compactLevel;
+        private readonly IHasherPipelineStage nextStage;
+        private readonly IPostageStampIssuer stampIssuer;
+
+        // Constructor.
+        /// <summary>
+        /// Calculate hash of each chunk
+        /// </summary>
+        public ChunkBmtPipelineStage(ushort compactLevel,
+            IHasherPipelineStage nextStage,
+            IPostageStampIssuer stampIssuer)
+        {
+            this.compactLevel = compactLevel;
+            this.nextStage = nextStage;
+            this.stampIssuer = stampIssuer;
+        }
+
         // Dispose.
         public void Dispose()
         {
@@ -52,10 +64,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 throw new InvalidOperationException("Data can't be shorter than span size here");
             if (args.Data.Length > SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
+            
+            // Create an instance for this specific task. Hasher is not thread safe.
+            var hasher = new Hasher();
 
             var plainChunkHash = SwarmChunkBmtHasher.Hash(
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
-                args.Data[SwarmChunk.SpanSize..].ToArray());
+                args.Data[SwarmChunk.SpanSize..].ToArray(),
+                hasher);
             if (compactLevel == 0)
             {
                 /* If no chunk compaction is involved, simply calculate the chunk hash and proceed. */
@@ -75,7 +91,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  * The chunk key is calculate from the plain chunk hash, replacing the last 4 bytes
                  * with the attempt counter (int), and then hashing again.
                  * 
-                 *     chunkKey = Keccack(plainChunkHash[..^2] + attempt)
+                 *     chunkKey = Keccack(plainChunkHash[^2..] + attempt)
                  *
                  * The encrypted chunk is calculated encrypting data with the chunk key.
                  *
@@ -94,8 +110,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                  */
                 
                 // Search best chunk key.
-                var encryptionCache = new Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, byte[] EncryptedData, uint BucketId)>();
-                var (bestKeyAttempt, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
+                var encryptionCache = new Dictionary<ushort /*attempt*/, ChunkBmtPipelineOptimisticAttemptResult>();
+                var (bestKeyAttempt, expectedCollisions) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
 
                 // Coordinate tasks execution in order.
                 var lockObj = new object();
@@ -104,7 +120,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     //add current lockObj in dictionary, in order can be found by next task
                     lockObjectsDictionary.TryAdd(args.NumberId, lockObj);
 
-                    //if it's not the first task, try to lock on previous chunk's lockObj
+                    //if it's not the first chunk, try to lock on previous chunk's lockObj
                     if (args.NumberId > 0)
                     {
                         //get lockObj from previous chunk, and remove from dictionary to clean up.
@@ -118,7 +134,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         {
                             // Check the optimistic result, and if it has been invalidated, do it again.
 
-                            var bestBucketId = encryptionCache[bestKeyAttempt].BucketId;
+                            var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
                             var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
 
                             if (actualCollisions == expectedCollisions)
@@ -126,16 +142,18 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                                 //if optimism succeeded
                                 args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
                                 args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
+                                args.Hash = encryptionCache[bestKeyAttempt].Hash;
                             }
                             else
                             {
                                 //if optimism failed, recalculate
                                 OptimisticRetriesCounter++;
                                 
-                                var (newBestKeyAttempt, _) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
+                                var (newBestKeyAttempt, _) = TrySearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
                                 
                                 args.ChunkKey = encryptionCache[newBestKeyAttempt].ChunkKey;
                                 args.Data = encryptionCache[newBestKeyAttempt].EncryptedData;
+                                args.Hash = encryptionCache[newBestKeyAttempt].Hash;
                             }
                         }
                     }
@@ -147,6 +165,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
                         args.ChunkKey = encryptionCache[bestKeyAttempt].ChunkKey;
                         args.Data = encryptionCache[bestKeyAttempt].EncryptedData;
+                        args.Hash = encryptionCache[bestKeyAttempt].Hash;
                     }
                 }
             }
@@ -165,15 +184,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         private (ushort BestKeyAttempt, uint ExpectedCollisions) TrySearchFirstBestChunkKey(
             HasherPipelineFeedArgs args,
-            Dictionary<ushort /*attempt*/, (XorEncryptKey ChunkKey, byte[] EncryptedData, uint BucketId)> encryptionCache,
-            SwarmHash plainChunkHash)
+            Dictionary<ushort /*attempt*/, ChunkBmtPipelineOptimisticAttemptResult> optimisticCache,
+            SwarmHash plainChunkHash,
+            Hasher hasher)
         {
             // Init.
-            ushort? bestKeyAttempt = null;
+            ushort bestAttempt = 0;
             uint bestCollisions = 0;
             
             var encryptedData = new byte[args.Data.Length];
-            var hasher = new Hasher();
             var plainChunkHashArray = plainChunkHash.ToByteArray();
                 
             // Search best chunk key.
@@ -181,14 +200,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             {
                 uint collisions;
                 
-                if (encryptionCache.TryGetValue(i, out var cachedValues))
+                if (optimisticCache.TryGetValue(i, out var cachedValues))
                 {
-                    collisions = stampIssuer.Buckets.GetCollisions(cachedValues.BucketId);
+                    collisions = stampIssuer.Buckets.GetCollisions(cachedValues.Hash.ToBucketId());
                 }
                 else
                 {
                     // Create key.
-                    BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[..^2], i);
+                    BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
                     var chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
@@ -198,20 +217,17 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = SwarmChunkBmtHasher.Hash(
                         encryptedData[..SwarmChunk.SpanSize],
-                        encryptedData[SwarmChunk.SpanSize..]);
-                    var bucketId = encryptedHash.ToBucketId();
-                    encryptionCache[i] = (chunkKey, encryptedData, bucketId);
+                        encryptedData[SwarmChunk.SpanSize..],
+                        hasher);
+                    optimisticCache[i] = new(i, chunkKey, encryptedData, encryptedHash);
 
                     // Check key collisions.
-                    collisions = stampIssuer.Buckets.GetCollisions(bucketId);
+                    collisions = stampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
                 }
                 
                 // First attempt is always the best one.
-                if (bestKeyAttempt is null)
-                {
-                    bestKeyAttempt = i;
+                if (i == 0)
                     bestCollisions = collisions;
-                }
                 
                 // Check if collisions are optimal.
                 if (collisions == stampIssuer.Buckets.MinBucketCollisions)
@@ -220,12 +236,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 // Else, if this reach better collisions, but not the best.
                 if (collisions < bestCollisions)
                 {
-                    bestKeyAttempt = i;
+                    bestAttempt = i;
                     bestCollisions = collisions;
                 }
             }
 
-            return (bestKeyAttempt!.Value, bestCollisions);
+            return (bestAttempt, bestCollisions);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Hashing.Bmt
     internal static class SwarmChunkBmtHasher
     {
         // Static methods.
-        public static SwarmHash Hash(byte[] span, byte[] data)
+        public static SwarmHash Hash(byte[] span, byte[] data, IHasher? hasher = null)
         {
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Hashing.Bmt
             }
             
             // Build the merkle tree.
-            var hasher = new Hasher();
+            hasher ??= new Hasher();
             var bmt = new SwarmChunkBmt(hasher);
             bmt.BuildTree(segments);
             var result = bmt.Root.Hash;
