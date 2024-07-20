@@ -102,17 +102,17 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
             // If the path is empty
-            if (path.Length == 0)
+            if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
             {
                 //try to lookup for index document suffix
                 if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
                     rootFork.Prefix != SwarmAddress.Separator.ToString())
                     throw new KeyNotFoundException($"Final path {path} can't be found");
                 
-                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))
+                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
                     throw new KeyNotFoundException($"Index document can't be found");
 
-                path += suffix;
+                path = indexDocPat;
             }
 
             // Find the child fork.
