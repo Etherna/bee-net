@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,20 +23,40 @@ namespace Etherna.BeeNet.Hashing.Store
         IReadOnlyChunkStore chunkStore)
     {
         // Methods.
-        public async Task<IEnumerable<byte>> GetJoinedChunkDataAsync(SwarmHash hash)
+        public async Task<IEnumerable<byte>> GetJoinedChunkDataAsync(SwarmChunkReference chunkReference)
         {
-            var chunk = await chunkStore.GetAsync(hash).ConfigureAwait(false);
-            var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
+            ArgumentNullException.ThrowIfNull(chunkReference, nameof(chunkReference));
             
+            var chunk = await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
+            
+            var dataArray = chunk.Data.ToArray();
+            chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
+            
+            var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
             if (totalDataLength <= SwarmChunk.DataSize)
-                return chunk.Data.ToArray();
+                return dataArray;
             
             var joinedData = new List<byte>();
-                
-            for (int i = 0; i < chunk.Data.Length; i += SwarmHash.HashSize)
+            for (int i = 0; i < dataArray.Length;)
             {
-                var childHash = new SwarmHash(chunk.Data[i..(i + SwarmHash.HashSize)].ToArray());
-                joinedData.AddRange(await GetJoinedChunkDataAsync(childHash).ConfigureAwait(false));
+                //read hash
+                var childHash = new SwarmHash(dataArray[i..(i + SwarmHash.HashSize)]);
+                i += SwarmHash.HashSize;
+                
+                //read encryption key
+                XorEncryptKey? childEncryptionKey = null;
+                if (chunkReference.UseRecursiveEncryption)
+                {
+                    childEncryptionKey = new XorEncryptKey(dataArray[i..(i + XorEncryptKey.KeySize)]);
+                    i += XorEncryptKey.KeySize;
+                }
+                
+                //add joined data recursively
+                joinedData.AddRange(await GetJoinedChunkDataAsync(
+                    new SwarmChunkReference(
+                        childHash,
+                        childEncryptionKey,
+                        chunkReference.UseRecursiveEncryption)).ConfigureAwait(false));
             }
             
             return joinedData;

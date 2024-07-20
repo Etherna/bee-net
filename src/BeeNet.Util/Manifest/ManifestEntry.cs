@@ -25,6 +25,7 @@ namespace Etherna.BeeNet.Manifest
         public const string FilenameKey = "Filename";
         public const string WebsiteErrorDocPathKey = "website-error-document";
         public const string WebsiteIndexDocPathKey = "website-index-document";
+        public const string UseRecursiveEncryptionKey = "recursiveEncrypt";
         
         // Constructor.
         private ManifestEntry(

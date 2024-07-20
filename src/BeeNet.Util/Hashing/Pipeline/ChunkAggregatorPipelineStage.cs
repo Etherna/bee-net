@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal delegate Task<ChunkHashingResult> HashChunkDelegateAsync(byte[] span, byte[] data);
+    internal delegate Task<SwarmChunkReference> HashChunkDelegateAsync(byte[] span, byte[] data);
     
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
@@ -41,26 +41,26 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
         
         // Fields.
-        private readonly bool compactChunks;
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
         private readonly HashChunkDelegateAsync hashChunkDelegate;
         private readonly byte maxChildrenChunks;
+        private readonly bool useRecursiveEncryption;
         
         private long feededChunkNumberId;
 
         // Constructor.
         public ChunkAggregatorPipelineStage(
             HashChunkDelegateAsync hashChunkDelegate,
-            bool compactChunks)
+            bool useRecursiveEncryption)
         {
             chunkLevels = [];
             this.hashChunkDelegate = hashChunkDelegate;
-            this.compactChunks = compactChunks;
-            maxChildrenChunks = (byte)(this.compactChunks
+            maxChildrenChunks = (byte)(useRecursiveEncryption
                 ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
                 : SwarmChunkBmt.SegmentsCount);
+            this.useRecursiveEncryption = useRecursiveEncryption;
         }
         
         // Dispose.
@@ -104,7 +104,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<ChunkHashingResult> SumAsync()
+        public async Task<SwarmChunkReference> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -130,7 +130,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
 
-            return new(rootChunk.Hash, rootChunk.ChunkKey);
+            return new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption);
         }
 
         // Helpers.
@@ -165,7 +165,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
             var totalData = totalSpan.Concat(
-                levelChunks.SelectMany(c => compactChunks
+                levelChunks.SelectMany(c => useRecursiveEncryption
                     ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Bytes.ToArray())
                     : c.Hash.ToByteArray()))
                 .ToArray();

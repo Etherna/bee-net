@@ -124,7 +124,7 @@ namespace Etherna.BeeNet.Manifest
             return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
         }
 
-        public async Task<SwarmHash> ResolveResourceHashAsync(string path)
+        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
@@ -154,7 +154,7 @@ namespace Etherna.BeeNet.Manifest
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await fork.Node.ResolveResourceHashAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
+            return await fork.Node.ResolveChunkReferenceAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
         }
         
         // Helpers.

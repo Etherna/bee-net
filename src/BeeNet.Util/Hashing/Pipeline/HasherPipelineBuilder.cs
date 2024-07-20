@@ -58,15 +58,16 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             {
                 //build stages
                 var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper, compactLevel);
-                
+
+                var useRecursiveEncryption = compactLevel > 0;
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     async (span, data) =>
                     {
                         var args = new HasherPipelineFeedArgs(span: span, data: data);
                         await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
-                        return new(args.Hash!.Value, args.ChunkKey);
+                        return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
                     },
-                    compactLevel > 0);
+                    useRecursiveEncryption);
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
                 bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer, true);
             }

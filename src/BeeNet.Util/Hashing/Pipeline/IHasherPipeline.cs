@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,13 +28,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<ChunkHashingResult> HashDataAsync(byte[] data);
+        Task<SwarmChunkReference> HashDataAsync(byte[] data);
 
         /// <summary>
         /// Consume a stream slicing it in chunk size parts, and returns a Swarm hash as result
         /// </summary>
         /// <param name="dataStream">Input data stream</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<ChunkHashingResult> HashDataAsync(Stream dataStream);
+        Task<SwarmChunkReference> HashDataAsync(Stream dataStream);
     }
 }

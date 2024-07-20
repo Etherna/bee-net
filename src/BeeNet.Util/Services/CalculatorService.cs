@@ -96,6 +96,8 @@ namespace Etherna.BeeNet.Services
                 };
                 if (fileHashingResult.EncryptionKey != null)
                     fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+                if (compactLevel > 0)
+                    fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
                 
                 dirManifest.Add(
                     Path.GetRelativePath(directoryPath, file),
@@ -203,6 +205,8 @@ namespace Etherna.BeeNet.Services
             };
             if (fileHashingResult.EncryptionKey != null)
                 fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+            if (compactLevel > 0)
+                fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             
             manifest.Add(
                 fileName,
@@ -242,10 +246,10 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 address.Hash);
             
-            var resourceHash = await rootManifest.ResolveResourceHashAsync(address).ConfigureAwait(false);
+            var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address).ConfigureAwait(false);
             
             var memoryStream = new MemoryStream();
-            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(resourceHash).ConfigureAwait(false);
+            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(chunkReference).ConfigureAwait(false);
             memoryStream.Write(resourceData.ToArray());
             memoryStream.Position = 0;
             
