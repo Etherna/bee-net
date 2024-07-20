@@ -12,9 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
+using System.Threading;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
@@ -28,7 +28,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public HasherPipelineFeedArgs(
             byte[] data,
             byte[]? span = null,
-            long numberId = 0)
+            long numberId = 0,
+            SemaphoreSlim? prevChunkSemaphore = null)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
@@ -43,6 +44,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             _data = data;
             _span = span;
             NumberId = numberId;
+            PrevChunkSemaphore = prevChunkSemaphore;
         }
         
         // Properties.
@@ -71,8 +73,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public ReadOnlyMemory<byte> Span => _span;
         
         /// <summary>
-        /// Ordered Id, from 0 to n with the last chunk
+        /// Ordered id, from 0 to n with the last chunk
         /// </summary>
         public long NumberId { get; }
+
+        /// <summary>
+        /// Previous chunk semaphore. Occuped resource until chunk is processing.
+        /// </summary>
+        public SemaphoreSlim? PrevChunkSemaphore { get; }
     }
 }

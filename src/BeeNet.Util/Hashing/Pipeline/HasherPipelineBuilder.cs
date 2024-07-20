@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     },
                     useRecursiveEncryption);
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
-                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer, true);
+                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
             }
             
             return new ChunkFeederPipelineStage(bmtStage);
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
             
             var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
-            return new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer, false);
+            return new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
         }
     }
 }
