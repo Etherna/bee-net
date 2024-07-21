@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 
 namespace Etherna.BeeNet.Models
 {
@@ -23,7 +24,7 @@ namespace Etherna.BeeNet.Models
     /// A thread safe implementation of postage buckets array
     /// </summary>
     [SuppressMessage("Reliability", "CA2002:Do not lock on objects with weak identity")]
-    public class PostageBuckets : IReadOnlyPostageBuckets
+    public class PostageBuckets : IReadOnlyPostageBuckets, IDisposable
     {
         // Consts.
         public const int BucketsSize = 1 << PostageBatch.BucketDepth;
@@ -31,6 +32,8 @@ namespace Etherna.BeeNet.Models
         // Fields.
         private readonly uint[] _buckets; //number of collisions. MUST be private to permit locks on it
         private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions; //<collisions, bucketId[]>
+        private readonly ReaderWriterLockSlim bucketsLock = new(LockRecursionPolicy.NoRecursion);
+        private bool disposed;
         
         // Constructor.
         public PostageBuckets(
@@ -53,6 +56,24 @@ namespace Etherna.BeeNet.Models
             TotalChunks = 0;
         }
 
+        // Dispose.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            // Dispose managed resources.
+            if (disposing)
+                bucketsLock.Dispose();
+
+            disposed = true;
+        }
+
         // Properties.
         public uint MaxBucketCollisions { get; private set; }
         public uint MinBucketCollisions { get; private set; }
@@ -61,27 +82,42 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public uint[] GetBuckets()
         {
-            lock (_buckets)
+            bucketsLock.EnterReadLock();
+            try
             {
                 return _buckets.ToArray();
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
             }
         }
 
         public IEnumerable<uint> GetBucketsByCollisions(uint collisions)
         {
-            lock (_buckets)
+            bucketsLock.EnterReadLock();
+            try
             {
                 return bucketsByCollisions.TryGetValue(collisions, out var bucketsSet)
                     ? bucketsSet
                     : Array.Empty<uint>();
             }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
         }
         
         public uint GetCollisions(uint bucketId)
         {
-            lock (_buckets)
+            bucketsLock.EnterReadLock();
+            try
             {
                 return _buckets[bucketId];
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
             }
         }
 
@@ -91,15 +127,9 @@ namespace Etherna.BeeNet.Models
              * We need to lock on the full _buckets because we need atomic operations also with bucketsByCollisions.
              * ConcurrentDictionary would have better locking on single values, but doesn't support atomic
              * operations involving third objects, like counters and "bucketsByCollisions".
-             * 
-             * By itself, "bucketsByCollisions" would require a full lock to perform atomic buckets moving,
-             * and this lock would expand also to counters modification, making the full operation inside the
-             * ConcurrentDictionary blocked by a global lock on "bucketsByCollisions", making the ConcurrentDictionary
-             * useless.
-             * 
-             * Because of this, simply lock on "_buckets".
              */
-            lock (_buckets)
+            bucketsLock.EnterWriteLock();
+            try
             {
                 // Update collections.
                 _buckets[bucketId]++;
@@ -118,11 +148,16 @@ namespace Etherna.BeeNet.Models
                     
                 TotalChunks++;
             }
+            finally
+            {
+                bucketsLock.ExitWriteLock();
+            }
         }
 
         public void ResetBucketCollisions(uint bucketId)
         {
-            lock (_buckets)
+            bucketsLock.EnterWriteLock();
+            try
             {
                 // Update collections.
                 var oldCollisions = _buckets[bucketId];
@@ -137,6 +172,10 @@ namespace Etherna.BeeNet.Models
                     .Key;
                 
                 MinBucketCollisions = 0;
+            }
+            finally
+            {
+                bucketsLock.ExitWriteLock();
             }
         }
     }
