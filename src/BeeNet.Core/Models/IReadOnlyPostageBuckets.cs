@@ -36,6 +36,12 @@ namespace Etherna.BeeNet.Models
         
         // Methods.
         /// <summary>
+        /// Amount of buckets, grouped by collisions
+        /// </summary>
+        /// <returns>Array with collisions as index, and buckets amount as values</returns>
+        int[] CountBucketsByCollisions();
+        
+        /// <summary>
         /// Get a copy of all buckets
         /// </summary>
         /// <returns>All the buckets</returns>

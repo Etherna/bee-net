@@ -80,6 +80,19 @@ namespace Etherna.BeeNet.Models
         public long TotalChunks { get; private set; }
         
         // Methods.
+        public int[] CountBucketsByCollisions()
+        {
+            bucketsLock.EnterReadLock();
+            try
+            {
+                return bucketsByCollisions.Select(pair => pair.Value.Count).ToArray();
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
+        }
+        
         public uint[] GetBuckets()
         {
             bucketsLock.EnterReadLock();
