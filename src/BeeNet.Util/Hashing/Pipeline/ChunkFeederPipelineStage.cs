@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
             var chunkBuffer = new byte[SwarmChunk.DataSize];
             int chunkReadSize;
-            SemaphoreSlim? prevChunkHashedSemaphore = null;
+            SemaphoreSlim? prevChunkSemaphore = null;
             do
             {
                 chunkReadSize = await dataStream.ReadAsync(chunkBuffer).ConfigureAwait(false);
@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
                         numberId: passedBytes / SwarmChunk.DataSize,
-                        prevChunkSemaphore: prevChunkHashedSemaphore);
+                        prevChunkSemaphore: prevChunkSemaphore);
                     
                     //run task
                     nextStageTasks.Add(
@@ -141,7 +141,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             }
                             finally
                             {
-                                //release and restore chunk hashed semaphore in pool
+                                //release and restore chunk semaphore in pool
                                 chunkSemaphore.Release();
                                 chunkSemaphorePool.Enqueue(chunkSemaphore);
                                 
@@ -150,8 +150,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             }
                         }));
                     
-                    //set current chunk hashed semaphore as prev for next chunk
-                    prevChunkHashedSemaphore = chunkSemaphore;
+                    //set current chunk semaphore as prev for next chunk
+                    prevChunkSemaphore = chunkSemaphore;
                     
                     passedBytes += chunkReadSize;
                 }
