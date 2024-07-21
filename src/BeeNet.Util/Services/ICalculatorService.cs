@@ -33,6 +33,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
@@ -43,6 +44,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null,
             IChunkStore? chunkStore = null);
         
         /// <summary>
@@ -55,6 +57,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
@@ -65,6 +68,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null,
             IChunkStore? chunkStore = null);
         
         /// <summary>
@@ -77,6 +81,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateFileUploadAsync(
@@ -87,6 +92,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null,
             IChunkStore? chunkStore = null);
 
         /// <summary>
@@ -118,6 +124,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <returns>The data root hash</returns>
         Task<SwarmHash> WriteDataChunksAsync(
             byte[] data,
@@ -125,7 +132,8 @@ namespace Etherna.BeeNet.Services
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None);
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int? chunkCuncorrency = null);
         
         /// <summary>
         /// Write data chunks on a local directory, without any manifest
@@ -136,6 +144,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <returns>The data root hash</returns>
         Task<SwarmHash> WriteDataChunksAsync(
             Stream stream,
@@ -143,6 +152,7 @@ namespace Etherna.BeeNet.Services
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None);
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int? chunkCuncorrency = null);
     }
 }

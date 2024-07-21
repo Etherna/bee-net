@@ -36,6 +36,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
             // Checks.
@@ -65,7 +66,8 @@ namespace Etherna.BeeNet.Services
                     postageStamper,
                     redundancyLevel,
                     encrypt,
-                    0),
+                    0,
+                    chunkCuncorrency),
                 encrypt);
 
             // Iterate through the files in the supplied directory.
@@ -80,7 +82,8 @@ namespace Etherna.BeeNet.Services
                     postageStamper,
                     redundancyLevel,
                     encrypt,
-                    compactLevel);
+                    compactLevel,
+                    chunkCuncorrency);
                 
                 var fileContentType = FileContentTypeProvider.GetContentType(file);
                 var fileName = Path.GetFileName(file);
@@ -138,6 +141,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
@@ -149,6 +153,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 redundancyLevel,
                 postageStampIssuer,
+                chunkCuncorrency,
                 chunkStore).ConfigureAwait(false);
         }
 
@@ -160,6 +165,7 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
             chunkStore ??= new FakeChunkStore();
@@ -176,7 +182,8 @@ namespace Etherna.BeeNet.Services
                 postageStamper,
                 redundancyLevel,
                 encrypt,
-                compactLevel);
+                compactLevel,
+                chunkCuncorrency);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             fileName ??= fileHashingResult.Hash.ToString(); //if missing, set file name with its address
             
@@ -187,7 +194,8 @@ namespace Etherna.BeeNet.Services
                     postageStamper,
                     redundancyLevel,
                     encrypt,
-                    0),
+                    0,
+                    chunkCuncorrency),
                 encrypt);
 
             manifest.Add(
@@ -262,7 +270,8 @@ namespace Etherna.BeeNet.Services
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None)
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int? chunkCuncorrency = null)
         {
             using var stream = new MemoryStream(data);
             return WriteDataChunksAsync(
@@ -271,7 +280,8 @@ namespace Etherna.BeeNet.Services
                 createDirectory,
                 compactLevel,
                 encrypt,
-                redundancyLevel);
+                redundancyLevel,
+                chunkCuncorrency);
         }
 
         public async Task<SwarmHash> WriteDataChunksAsync(
@@ -280,7 +290,8 @@ namespace Etherna.BeeNet.Services
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None)
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int? chunkCuncorrency = null)
         {
             var chunkStore = new LocalDirectoryChunkStore(outputDirectory, createDirectory);
             
@@ -290,7 +301,8 @@ namespace Etherna.BeeNet.Services
                 new FakePostageStamper(),
                 redundancyLevel,
                 encrypt,
-                compactLevel);
+                compactLevel,
+                chunkCuncorrency);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Return file hash.

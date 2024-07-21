@@ -29,20 +29,23 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
             string? chunkStoreDirectory,
-            ushort compactLevel) =>
+            ushort compactLevel,
+            int? chunkConcurrency) =>
             BuildNewHasherPipeline(
                 chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
                 postageStamper,
                 redundancyLevel,
                 isEncrypted,
-                compactLevel);
+                compactLevel,
+                chunkConcurrency);
         
         public static IHasherPipeline BuildNewHasherPipeline(
             IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
-            ushort compactLevel)
+            ushort compactLevel,
+            int? chunkConcurrency)
         {
             ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
             
@@ -72,7 +75,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
             }
             
-            return new ChunkFeederPipelineStage(bmtStage);
+            return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);
         }
         
         public static IHasherPipelineStage BuildNewShortHasherPipeline(

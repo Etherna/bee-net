@@ -38,21 +38,19 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private long passedBytes;
 
         // Constructors.
-        public ChunkFeederPipelineStage(IHasherPipelineStage nextStage)
-            : this(nextStage, Environment.ProcessorCount)
-        { }
-
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public ChunkFeederPipelineStage(
             IHasherPipelineStage nextStage,
-            int chunkConcurrency)
+            int? chunkConcurrency = default)
         {
+            chunkConcurrency ??= Environment.ProcessorCount;
+            
             this.nextStage = nextStage;
-            chunkConcurrencySemaphore = new(chunkConcurrency, chunkConcurrency);
+            chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
             chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
             
             //init semaphore pool
-            for (int i = 0; i < chunkConcurrency + 1; i++)
+            for (int i = 0; i < chunkConcurrency + 1; i++) //add one more to avoid circular dependencies
                 chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
         }
 
