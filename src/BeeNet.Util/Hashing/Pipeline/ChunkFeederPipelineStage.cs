@@ -50,7 +50,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
             
             //init semaphore pool
-            for (int i = 0; i < chunkConcurrency + 1; i++) //add one more to avoid circular dependencies
+            /*
+             * Duplicate number of semaphore respect to level of concurrency.
+             * This avoids the possible race condition where a chunk starts to wait a prev chunk,
+             * after that the prev chunk's semaphore is already been assigned to a new next chunk.
+             *
+             * In this way, because semaphores are distributed with a queue, the queue will never reassign
+             * a semaphore before the chunk windows has shifted, and prev chunk linking it has completed.
+             */
+            for (int i = 0; i < chunkConcurrency * 2; i++)
                 chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
         }
 
