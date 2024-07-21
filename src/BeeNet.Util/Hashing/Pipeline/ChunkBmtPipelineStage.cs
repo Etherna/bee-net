@@ -163,7 +163,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             ushort bestAttempt = 0;
             uint bestCollisions = 0;
             
-            var encryptedData = new byte[args.Data.Length];
             var plainChunkHashArray = plainChunkHash.ToByteArray();
                 
             // Search best chunk key.
@@ -182,7 +181,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     var chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
-                    args.Data.CopyTo(encryptedData);
+                    var encryptedData = args.Data.ToArray();
                     EncryptDecryptChunkData(chunkKey, encryptedData);
                     
                     // Calculate hash, bucket id, and save in cache.
