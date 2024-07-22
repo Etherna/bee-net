@@ -30,6 +30,11 @@ namespace Etherna.BeeNet.Models
         uint MinBucketCollisions { get; }
         
         /// <summary>
+        /// Minimum required postage batch depth
+        /// </summary>
+        int RequiredPostageBatchDepth { get; }
+        
+        /// <summary>
         /// Total added chunks in buckets
         /// </summary>
         long TotalChunks { get; }

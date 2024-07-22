@@ -77,6 +77,7 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public uint MaxBucketCollisions { get; private set; }
         public uint MinBucketCollisions { get; private set; }
+        public int RequiredPostageBatchDepth => RequiredPostageBatchDepthFromCollisions(MaxBucketCollisions);
         public long TotalChunks { get; private set; }
         
         // Methods.
@@ -190,6 +191,26 @@ namespace Etherna.BeeNet.Models
             {
                 bucketsLock.ExitWriteLock();
             }
+        }
+        
+        // Static methods.
+        public static uint PostageBatchDepthToMaxCollisions(int postageBatchDepth)
+        {
+#pragma warning disable CA1512 //only supported from .net 8
+            if (postageBatchDepth < PostageBatch.MinDepth)
+                throw new ArgumentOutOfRangeException(nameof(postageBatchDepth));
+#pragma warning restore CA1512
+
+            return (uint)Math.Pow(2, postageBatchDepth - PostageBatch.BucketDepth);
+        }
+
+        public static int RequiredPostageBatchDepthFromCollisions(uint maxBucketCollisions)
+        {
+            if (maxBucketCollisions == 0)
+                return PostageBatch.MinDepth;
+            return Math.Max(
+                (int)Math.Ceiling(Math.Log2(maxBucketCollisions)) + PostageBatch.BucketDepth,
+                PostageBatch.MinDepth);
         }
     }
 }

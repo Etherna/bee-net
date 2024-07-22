@@ -53,19 +53,11 @@ namespace Etherna.BeeNet.Services
         /// Available postage batch space after the upload, with minimum batch depth
         /// </summary>
         public long RemainingPostageBatchSize => RequiredPostageBatchByteSize - ConsumedSize;
-
-        /// <summary>
-        /// Minimum required postage batch depth to handle the upload
-        /// </summary>
-        public int RequiredPostageBatchDepth =>
-            Math.Max(
-                (int)Math.Ceiling(Math.Log2(PostageStampIssuer.Buckets.MaxBucketCollisions)) + PostageBatch.BucketDepth,
-                PostageBatch.MinDepth);
         
         /// <summary>
         /// Minimum required postage batch byte size
         /// </summary>
         public long RequiredPostageBatchByteSize =>
-            (long)(Math.Pow(2, RequiredPostageBatchDepth) * SwarmChunk.DataSize);
+            (long)(Math.Pow(2, PostageStampIssuer.Buckets.RequiredPostageBatchDepth) * SwarmChunk.DataSize);
     }
 }
