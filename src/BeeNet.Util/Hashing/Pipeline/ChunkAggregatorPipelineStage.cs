@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Bmt;
-using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -23,8 +22,6 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal delegate Task<SwarmChunkReference> HashChunkDelegateAsync(byte[] span, byte[] data);
-    
     internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
     {
         // Private classes.
@@ -44,22 +41,22 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
-        private readonly HashChunkDelegateAsync hashChunkDelegate;
         private readonly byte maxChildrenChunks;
+        private readonly ChunkBmtPipelineStage shortBmtPipelineStage;
         private readonly bool useRecursiveEncryption;
         
         private long feededChunkNumberId;
 
         // Constructor.
         public ChunkAggregatorPipelineStage(
-            HashChunkDelegateAsync hashChunkDelegate,
+            ChunkBmtPipelineStage shortBmtPipelineStage,
             bool useRecursiveEncryption)
         {
             chunkLevels = [];
-            this.hashChunkDelegate = hashChunkDelegate;
             maxChildrenChunks = (byte)(useRecursiveEncryption
                 ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
                 : SwarmChunkBmt.SegmentsCount);
+            this.shortBmtPipelineStage = shortBmtPipelineStage;
             this.useRecursiveEncryption = useRecursiveEncryption;
         }
         
@@ -68,6 +65,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             feedChunkMutex.Dispose();
         }
+        
+        // Properties.
+        public long MissedOptimisticHashing => shortBmtPipelineStage.MissedOptimisticHashing;
         
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -171,7 +171,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.
-            var hashingResult = await hashChunkDelegate(totalSpan, totalData).ConfigureAwait(false);
+            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalData).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
@@ -181,6 +181,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     false)).ConfigureAwait(false);
             
             levelChunks.Clear();
+        }
+        
+        // Helpers.
+        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(byte[] span, byte[] data)
+        {
+            var args = new HasherPipelineFeedArgs(span: span, data: data);
+            await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
+            return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
         }
     }
 }

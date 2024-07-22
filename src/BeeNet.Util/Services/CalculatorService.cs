@@ -53,6 +53,8 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 postageStampIssuer,
                 new MemoryStampStore());
+
+            long totalMissedOptimisticHashing = 0;
             
             // Try set index document.
             if (indexFilename is null &&
@@ -90,6 +92,7 @@ namespace Etherna.BeeNet.Services
                 using var fileStream = File.OpenRead(file);
 
                 var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
                 
                 // Add file entry to dir manifest.
                 var fileEntryMetadata = new Dictionary<string, string>
@@ -130,6 +133,7 @@ namespace Etherna.BeeNet.Services
             // Return result.
             return new UploadEvaluationResult(
                 chunkHashingResult.Hash,
+                totalMissedOptimisticHashing,
                 postageStampIssuer);
         }
 
@@ -227,6 +231,7 @@ namespace Etherna.BeeNet.Services
             // Return result.
             return new UploadEvaluationResult(
                 chunkHashingResult.Hash,
+                fileHasherPipeline.MissedOptimisticHashing,
                 postageStampIssuer);
         }
 

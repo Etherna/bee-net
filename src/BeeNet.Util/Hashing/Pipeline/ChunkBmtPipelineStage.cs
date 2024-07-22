@@ -32,6 +32,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private readonly IHasherPipelineStage nextStage;
         private readonly IPostageStampIssuer stampIssuer;
 
+        private long _missedOptimisticHashing;
+
         // Constructor.
         /// <summary>
         /// Calculate hash of each chunk
@@ -51,6 +53,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             nextStage.Dispose();
         }
+        
+        // Properties.
+        public long MissedOptimisticHashing =>
+            _missedOptimisticHashing + nextStage.MissedOptimisticHashing;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -135,14 +141,18 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             {
                 // Otherwise wait until prev chunk has been processed.
                 await args.PrevChunkSemaphore.WaitAsync().ConfigureAwait(false);
+                
+                // ** Here chunks can enter only once per time, and in order. **
             
-                // Check the optimistic result, and if it has been invalidated, do it again.
+                // Check the optimistic result, and keep if valid.
                 var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
                 var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
             
                 if (actualCollisions == expectedCollisions)
                     return encryptionCache[bestKeyAttempt];
-                    
+
+                // If it has been invalidated, do it again.
+                _missedOptimisticHashing++;
                 var (newBestKeyAttempt, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
                 return encryptionCache[newBestKeyAttempt];
             }

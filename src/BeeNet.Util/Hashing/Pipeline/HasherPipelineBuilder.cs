@@ -60,33 +60,19 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             else
             {
                 //build stages
-                var shortPipelineStage = BuildNewShortHasherPipeline(chunkStore, postageStamper, compactLevel);
-
-                var useRecursiveEncryption = compactLevel > 0;
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
-                    async (span, data) =>
-                    {
-                        var args = new HasherPipelineFeedArgs(span: span, data: data);
-                        await shortPipelineStage.FeedAsync(args).ConfigureAwait(false);
-                        return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
-                    },
-                    useRecursiveEncryption);
+                    new ChunkBmtPipelineStage(
+                        compactLevel,
+                        new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null),
+                        postageStamper.StampIssuer),
+                    compactLevel > 0);
+                
                 var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
+                
                 bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
             }
             
             return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);
-        }
-        
-        public static IHasherPipelineStage BuildNewShortHasherPipeline(
-            IChunkStore chunkStore,
-            IPostageStamper postageStamper,
-            ushort compactLevel)
-        {
-            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
-            
-            var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null);
-            return new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
         }
     }
 }

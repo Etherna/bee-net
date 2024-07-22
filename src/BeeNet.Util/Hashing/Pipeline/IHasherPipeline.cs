@@ -21,8 +21,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 {
     public interface IHasherPipeline : IDisposable
     {
+        // Properties.
         bool IsUsable { get; }
         
+        long MissedOptimisticHashing { get; }
+        
+        // Methods.
         /// <summary>
         /// Consume a byte array and returns a Swarm hash as result
         /// </summary>

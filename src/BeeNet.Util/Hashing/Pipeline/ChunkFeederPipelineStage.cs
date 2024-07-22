@@ -74,6 +74,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Properties.
         public bool IsUsable { get; private set; } = true;
 
+        public long MissedOptimisticHashing => nextStage.MissedOptimisticHashing;
+
         // Methods.
         public async Task<SwarmChunkReference> HashDataAsync(byte[] data)
         {

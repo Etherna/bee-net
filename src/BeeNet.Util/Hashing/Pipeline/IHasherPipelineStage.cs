@@ -20,6 +20,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 {
     public interface IHasherPipelineStage : IDisposable
     {
+        // Properties.
+        long MissedOptimisticHashing { get; }
+        
+        // Methods.
         Task FeedAsync(HasherPipelineFeedArgs args);
         Task<SwarmChunkReference> SumAsync();
     }

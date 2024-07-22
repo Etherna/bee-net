@@ -31,6 +31,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             nextStage?.Dispose();
         }
+        
+        // Properties.
+        public long MissedOptimisticHashing => nextStage?.MissedOptimisticHashing ?? 0;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
