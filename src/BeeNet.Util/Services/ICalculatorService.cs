@@ -17,6 +17,7 @@ using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -110,10 +111,14 @@ namespace Etherna.BeeNet.Services
         /// </summary>
         /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <param name="address">Resource address</param>
+        /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
+        /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetFileStreamFromChunksAsync(
             string chunkStoreDirectory,
-            SwarmAddress address);
+            SwarmAddress address,
+            string? fileCachePath = null,
+            CancellationToken? cancellationToken = default);
         
         /// <summary>
         /// Write data chunks on a local directory, without any manifest

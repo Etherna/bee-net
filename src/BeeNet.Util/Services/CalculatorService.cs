@@ -21,7 +21,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -250,7 +250,9 @@ namespace Etherna.BeeNet.Services
 
         public async Task<Stream> GetFileStreamFromChunksAsync(
             string chunkStoreDirectory,
-            SwarmAddress address)
+            SwarmAddress address,
+            string? fileCachePath = null,
+            CancellationToken? cancellationToken = default)
         {
             var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
             var chunkJoiner = new ChunkJoiner(chunkStore);
@@ -261,12 +263,10 @@ namespace Etherna.BeeNet.Services
             
             var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address).ConfigureAwait(false);
             
-            var memoryStream = new MemoryStream();
-            var resourceData = await chunkJoiner.GetJoinedChunkDataAsync(chunkReference).ConfigureAwait(false);
-            memoryStream.Write(resourceData.ToArray());
-            memoryStream.Position = 0;
-            
-            return memoryStream;
+            return await chunkJoiner.GetJoinedChunkDataAsync(
+                chunkReference,
+                fileCachePath,
+                cancellationToken).ConfigureAwait(false);
         }
 
         public Task<SwarmHash> WriteDataChunksAsync(
