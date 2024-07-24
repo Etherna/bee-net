@@ -43,12 +43,20 @@ namespace Etherna.BeeNet.Manifest
             Hash = chunkHash;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
+
+            // Read metadata.
+            if (_metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr))
+                EntryEncryptionKey = new XorEncryptKey(encryptKeyStr);
+            if (_metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr))
+                EntryUseRecursiveEncryption = bool.Parse(useRecursiveEncrypStr);
         }
         
         // Properties.
+        public XorEncryptKey? EntryEncryptionKey { get; }
         public SwarmHash? EntryHash => IsDecoded
             ? _entryHash
             : throw new InvalidOperationException("Node is not decoded from chunk");
+        public bool EntryUseRecursiveEncryption { get; }
         public IReadOnlyDictionary<char, ReferencedMantarayNodeFork> Forks => IsDecoded
             ? _forks
             : throw new InvalidOperationException("Node is not decoded from chunk");
@@ -94,17 +102,17 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
             // If the path is empty
-            if (path.Length == 0)
+            if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
             {
                 //try to lookup for index document suffix
                 if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
                     rootFork.Prefix != SwarmAddress.Separator.ToString())
                     throw new KeyNotFoundException($"Final path {path} can't be found");
                 
-                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))
+                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
                     throw new KeyNotFoundException($"Index document can't be found");
 
-                path += suffix;
+                path = indexDocPat;
             }
 
             // Find the child fork.
@@ -124,26 +132,29 @@ namespace Etherna.BeeNet.Manifest
             return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
         }
 
-        public async Task<SwarmHash> ResolveResourceHashAsync(string path)
+        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
             // If the path is empty
-            if (path.Length == 0)
+            if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
             {
                 //if entry is not null, return it
                 if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
-                    return EntryHash.Value;
+                    return new SwarmChunkReference(
+                        EntryHash.Value,
+                        EntryEncryptionKey,
+                        EntryUseRecursiveEncryption);
                 
                 //try to lookup for index document suffix
                 if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
                     rootFork.Prefix != SwarmAddress.Separator.ToString())
                     throw new KeyNotFoundException($"Final path {path} can't be found");
                 
-                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var suffix))
+                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
                     throw new KeyNotFoundException($"Index document can't be found");
 
-                path += suffix;
+                path = indexDocPat;
             }
             
             // Find the child fork.
@@ -154,7 +165,7 @@ namespace Etherna.BeeNet.Manifest
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await fork.Node.ResolveResourceHashAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
+            return await fork.Node.ResolveChunkReferenceAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
         }
         
         // Helpers.

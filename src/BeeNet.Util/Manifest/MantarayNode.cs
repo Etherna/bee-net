@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -143,7 +142,7 @@ namespace Etherna.BeeNet.Manifest
             }
         }
 
-        public async Task ComputeHashAsync(Func<IHasherPipeline> hasherPipelineBuilder)
+        public async Task ComputeHashAsync(BuildHasherPipeline hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
@@ -156,7 +155,8 @@ namespace Etherna.BeeNet.Manifest
 
             // Marshal current node, and set its hash.
             using var hasherPipeline = hasherPipelineBuilder();
-            _hash = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            var hashingResult = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            _hash = hashingResult.Hash;
             
             // Clean forks.
             _forks.Clear();
@@ -194,7 +194,7 @@ namespace Etherna.BeeNet.Manifest
             throw new NotImplementedException();
         }
 
-        public Task<SwarmHash> ResolveResourceHashAsync(string path)
+        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();

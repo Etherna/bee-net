@@ -21,20 +21,24 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 {
     public interface IHasherPipeline : IDisposable
     {
+        // Properties.
         bool IsUsable { get; }
         
+        long MissedOptimisticHashing { get; }
+        
+        // Methods.
         /// <summary>
         /// Consume a byte array and returns a Swarm hash as result
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<SwarmHash> HashDataAsync(byte[] data);
+        Task<SwarmChunkReference> HashDataAsync(byte[] data);
 
         /// <summary>
         /// Consume a stream slicing it in chunk size parts, and returns a Swarm hash as result
         /// </summary>
         /// <param name="dataStream">Input data stream</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<SwarmHash> HashDataAsync(Stream dataStream);
+        Task<SwarmChunkReference> HashDataAsync(Stream dataStream);
     }
 }

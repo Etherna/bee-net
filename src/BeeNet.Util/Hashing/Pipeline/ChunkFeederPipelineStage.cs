@@ -14,7 +14,9 @@
 
 using Etherna.BeeNet.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,34 +27,54 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// Produce chunked data with span prefix for successive stages.
     /// Also controls the parallelism on chunk elaboration
     /// </summary>
-    internal sealed class ChunkFeederPipelineStage(
-        IHasherPipelineStage nextStage,
-        int chunkConcurrency)
-        : IHasherPipeline
+    internal sealed class ChunkFeederPipelineStage : IHasherPipeline
     {
         // Fields.
+        private readonly SemaphoreSlim chunkConcurrencySemaphore;
+        private readonly ConcurrentQueue<SemaphoreSlim> chunkSemaphorePool;
+        private readonly IHasherPipelineStage nextStage;
         private readonly List<Task> nextStageTasks = new();
-        private readonly SemaphoreSlim semaphore = new(chunkConcurrency, chunkConcurrency);
         
         private long passedBytes;
-        
-        // Constructor.
-        public ChunkFeederPipelineStage(IHasherPipelineStage nextStage)
-            : this(nextStage, Environment.ProcessorCount)
-        { }
+
+        // Constructors.
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+        public ChunkFeederPipelineStage(
+            IHasherPipelineStage nextStage,
+            int? chunkConcurrency = default)
+        {
+            chunkConcurrency ??= Environment.ProcessorCount;
+            
+            this.nextStage = nextStage;
+            chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
+            chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
+            
+            //init semaphore pool
+            /*
+             * Double semaphores compared to current chunk concurrency.
+             * This avoids the race condition when: a chunk complete its hashing, it's semaphore is assigned and
+             * locked by another one, and only after this the direct child of the first one tries to wait its parent.
+             */
+            for (int i = 0; i < chunkConcurrency * 2; i++)
+                chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
+        }
 
         // Dispose.
         public void Dispose()
         {
             nextStage.Dispose();
-            semaphore.Dispose();
+            chunkConcurrencySemaphore.Dispose();
+            while (chunkSemaphorePool.TryDequeue(out var semaphore))
+                semaphore.Dispose();
         }
         
         // Properties.
         public bool IsUsable { get; private set; } = true;
 
+        public long MissedOptimisticHashing => nextStage.MissedOptimisticHashing;
+
         // Methods.
-        public async Task<SwarmHash> HashDataAsync(byte[] data)
+        public async Task<SwarmChunkReference> HashDataAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
@@ -60,7 +82,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             return await HashDataAsync(memoryStream).ConfigureAwait(false);
         }
         
-        public async Task<SwarmHash> HashDataAsync(Stream dataStream)
+        public async Task<SwarmChunkReference> HashDataAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
 
@@ -73,6 +95,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
             var chunkBuffer = new byte[SwarmChunk.DataSize];
             int chunkReadSize;
+            SemaphoreSlim? prevChunkSemaphore = null;
             do
             {
                 chunkReadSize = await dataStream.ReadAsync(chunkBuffer).ConfigureAwait(false);
@@ -90,11 +113,24 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         (ulong)chunkReadSize);
                 
                     // Invoke next stage with parallelism on chunks.
-                    await semaphore.WaitAsync().ConfigureAwait(false);
+                    //control concurrency
+                    await chunkConcurrencySemaphore.WaitAsync().ConfigureAwait(false);
+                    
+                    //initialize chunk semaphore, receiving from semaphore pool
+#pragma warning disable CA2000
+                    if (!chunkSemaphorePool.TryDequeue(out var chunkSemaphore))
+                        throw new InvalidOperationException("Semaphore pool exhausted");
+#pragma warning restore CA2000
+                    await chunkSemaphore.WaitAsync().ConfigureAwait(false);
+                    
+                    //build args
                     var feedArgs = new HasherPipelineFeedArgs(
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
-                        numberId: passedBytes / SwarmChunk.DataSize);
+                        numberId: passedBytes / SwarmChunk.DataSize,
+                        prevChunkSemaphore: prevChunkSemaphore);
+                    
+                    //run task
                     nextStageTasks.Add(
                         Task.Run(async () =>
                         {
@@ -104,9 +140,17 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             }
                             finally
                             {
-                                semaphore.Release();
+                                //release and restore chunk semaphore in pool
+                                chunkSemaphore.Release();
+                                chunkSemaphorePool.Enqueue(chunkSemaphore);
+                                
+                                //release task for next chunk
+                                chunkConcurrencySemaphore.Release();
                             }
                         }));
+                    
+                    //set current chunk semaphore as prev for next chunk
+                    prevChunkSemaphore = chunkSemaphore;
                     
                     passedBytes += chunkReadSize;
                 }

@@ -43,17 +43,15 @@ namespace Etherna.BeeNet.Manifest
             if (!_rootNode.IsDecoded)
                 await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await RootNode.GetResourceMetadataAsync(
-                address.Path?.ToString() ?? "").ConfigureAwait(false);
+            return await RootNode.GetResourceMetadataAsync(address.Path).ConfigureAwait(false);
         }
 
-        public async Task<SwarmHash> ResolveResourceHashAsync(SwarmAddress address)
+        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(SwarmAddress address)
         {
             if (!_rootNode.IsDecoded)
                 await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await RootNode.ResolveResourceHashAsync(
-                address.Path?.ToString() ?? "").ConfigureAwait(false);
+            return await RootNode.ResolveChunkReferenceAsync(address.Path).ConfigureAwait(false);
         }
     }
 }

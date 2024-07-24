@@ -19,18 +19,20 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
+    public delegate IHasherPipeline BuildHasherPipeline();
+    
     public class MantarayManifest : IReadOnlyMantarayManifest
     {
         // Consts.
         public static readonly string RootPath = SwarmAddress.Separator.ToString();
         
         // Fields.
-        private readonly Func<IHasherPipeline> hasherBuilder;
+        private readonly BuildHasherPipeline hasherBuilder;
         private readonly MantarayNode _rootNode;
 
         // Constructors.
         public MantarayManifest(
-            Func<IHasherPipeline> hasherBuilder,
+            BuildHasherPipeline hasherBuilder,
             bool isEncrypted)
             : this(hasherBuilder,
                 new MantarayNode(isEncrypted
@@ -39,7 +41,7 @@ namespace Etherna.BeeNet.Manifest
         { }
 
         public MantarayManifest(
-            Func<IHasherPipeline> hasherBuilder,
+            BuildHasherPipeline hasherBuilder,
             MantarayNode rootNode)
         {
             this.hasherBuilder = hasherBuilder;
@@ -58,10 +60,10 @@ namespace Etherna.BeeNet.Manifest
             _rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmHash> GetHashAsync()
+        public async Task<SwarmChunkReference> GetHashAsync()
         {
             await _rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
-            return _rootNode.Hash;
+            return new SwarmChunkReference(_rootNode.Hash, null, false);
         }
     }
 }

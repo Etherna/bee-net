@@ -13,40 +13,27 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System;
 
 namespace Etherna.BeeNet.Hashing.Postage
 {
     public interface IPostageStampIssuer
     {
         // Properties.
-        /// <summary>
-        /// Collision Buckets: counts per neighbourhoods
-        /// </summary>
-        public ReadOnlySpan<uint> Buckets { get; }
-
-        public uint BucketUpperBound { get; }
+        IReadOnlyPostageBuckets Buckets { get; }
+        
+        uint BucketUpperBound { get; }
         
         /// <summary>
         /// True if batch is mutable and BucketUpperBound has been it
         /// </summary>
-        public bool HasSaturated { get; }
+        bool HasSaturated { get; }
 
         /// <summary>
         /// The batch stamps are issued from
         /// </summary>
-        public PostageBatch PostageBatch { get; }
-        
-        /// <summary>
-        /// The count of the fullest bucket
-        /// </summary>
-        public uint MaxBucketCount { get; }
-
-        long TotalChunks { get; }
+        PostageBatch PostageBatch { get; }
 
         // Methods.
         StampBucketIndex IncrementBucketCount(SwarmHash hash);
-        
-        ulong GetCollisions(uint bucketId);
     }
 }

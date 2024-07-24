@@ -31,6 +31,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             nextStage?.Dispose();
         }
+        
+        // Properties.
+        public long MissedOptimisticHashing => nextStage?.MissedOptimisticHashing ?? 0;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -50,7 +53,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
         
-        public Task<SwarmHash> SumAsync() =>
+        public Task<SwarmChunkReference> SumAsync() =>
             nextStage?.SumAsync() ?? throw new InvalidOperationException();
     }
 }

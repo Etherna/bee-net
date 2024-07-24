@@ -20,10 +20,12 @@ namespace Etherna.BeeNet.Manifest
     public class ManifestEntry
     {
         // Consts.
+        public const string ChunkEncryptKeyKey = "ChunkEncryptKey";
         public const string ContentTypeKey = "Content-Type";
         public const string FilenameKey = "Filename";
         public const string WebsiteErrorDocPathKey = "website-error-document";
         public const string WebsiteIndexDocPathKey = "website-index-document";
+        public const string UseRecursiveEncryptionKey = "recursiveEncrypt";
         
         // Constructor.
         private ManifestEntry(

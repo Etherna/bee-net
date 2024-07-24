@@ -23,9 +23,11 @@ namespace Etherna.BeeNet.Services
         // Constructor.
         internal UploadEvaluationResult(
             SwarmHash hash,
+            long missedOptimisticHashing,
             IPostageStampIssuer postageStampIssuer)
         {
             Hash = hash;
+            MissedOptimisticHashing = missedOptimisticHashing;
             PostageStampIssuer = postageStampIssuer;
         }
 
@@ -34,6 +36,8 @@ namespace Etherna.BeeNet.Services
         /// The upload resulting hash
         /// </summary>
         public SwarmHash Hash { get; }
+        
+        public long MissedOptimisticHashing { get; }
 
         public IPostageStampIssuer PostageStampIssuer { get; }
 
@@ -41,7 +45,7 @@ namespace Etherna.BeeNet.Services
         /// Total batch space consumed in bytes
         /// </summary>
         public long ConsumedSize =>
-            PostageStampIssuer.MaxBucketCount *
+            PostageStampIssuer.Buckets.MaxBucketCollisions *
             (long)Math.Pow(2, PostageBatch.BucketDepth) *
             SwarmChunk.DataSize;
         
@@ -49,19 +53,11 @@ namespace Etherna.BeeNet.Services
         /// Available postage batch space after the upload, with minimum batch depth
         /// </summary>
         public long RemainingPostageBatchSize => RequiredPostageBatchByteSize - ConsumedSize;
-
-        /// <summary>
-        /// Minimum required postage batch depth to handle the upload
-        /// </summary>
-        public int RequiredPostageBatchDepth =>
-            Math.Max(
-                (int)Math.Ceiling(Math.Log2(PostageStampIssuer.MaxBucketCount)) + PostageBatch.BucketDepth,
-                PostageBatch.MinDepth);
         
         /// <summary>
         /// Minimum required postage batch byte size
         /// </summary>
         public long RequiredPostageBatchByteSize =>
-            (long)(Math.Pow(2, RequiredPostageBatchDepth) * SwarmChunk.DataSize);
+            (long)(Math.Pow(2, PostageStampIssuer.Buckets.RequiredPostageBatchDepth) * SwarmChunk.DataSize);
     }
 }

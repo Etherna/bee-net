@@ -13,21 +13,27 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 
 namespace Etherna.BeeNet.Models
 {
     /// <summary>
     /// A thread safe implementation of postage buckets array
     /// </summary>
-    public class PostageBuckets
+    [SuppressMessage("Reliability", "CA2002:Do not lock on objects with weak identity")]
+    public class PostageBuckets : IReadOnlyPostageBuckets, IDisposable
     {
         // Consts.
         public const int BucketsSize = 1 << PostageBatch.BucketDepth;
         
         // Fields.
-        private readonly ConcurrentDictionary<uint, uint> _buckets; //<index, collisions>
+        private readonly uint[] _buckets;
+        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions; //<collisions, bucketId[]>
+        private readonly ReaderWriterLockSlim bucketsLock = new(LockRecursionPolicy.NoRecursion);
+        private bool disposed;
         
         // Constructor.
         public PostageBuckets(
@@ -38,56 +44,173 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(initialBuckets),
                     $"Initial buckets must have length {BucketsSize}, or be null");
             
-            _buckets = ArrayToDictionary(initialBuckets ?? []);
+            //init "buckets" and reverse index "bucketsByCollisions"
+            _buckets = initialBuckets ?? new uint[BucketsSize];
+            bucketsByCollisions = new Dictionary<uint, HashSet<uint>> { [0] = [] };
+            for (uint i = 0; i < BucketsSize; i++)
+                bucketsByCollisions[0].Add(i);
+
+            //init counters
+            MaxBucketCollisions = 0;
+            MinBucketCollisions = 0;
+            TotalChunks = 0;
+        }
+
+        // Dispose.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            // Dispose managed resources.
+            if (disposing)
+                bucketsLock.Dispose();
+
+            disposed = true;
         }
 
         // Properties.
-        public ReadOnlySpan<uint> Buckets => DictionaryToArray(_buckets);
-        public uint MaxBucketCount { get; private set; }
+        public uint MaxBucketCollisions { get; private set; }
+        public uint MinBucketCollisions { get; private set; }
+        public int RequiredPostageBatchDepth => CollisionsToRequiredPostageBatchDepth(MaxBucketCollisions);
         public long TotalChunks { get; private set; }
         
         // Methods.
+        public int[] CountBucketsByCollisions()
+        {
+            bucketsLock.EnterReadLock();
+            try
+            {
+                return bucketsByCollisions.Select(pair => pair.Value.Count).ToArray();
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
+        }
+        
+        public uint[] GetBuckets()
+        {
+            bucketsLock.EnterReadLock();
+            try
+            {
+                return _buckets.ToArray();
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
+        }
+
+        public IEnumerable<uint> GetBucketsByCollisions(uint collisions)
+        {
+            bucketsLock.EnterReadLock();
+            try
+            {
+                return bucketsByCollisions.TryGetValue(collisions, out var bucketsSet)
+                    ? bucketsSet
+                    : Array.Empty<uint>();
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
+        }
+        
         public uint GetCollisions(uint bucketId)
         {
-            _buckets.TryGetValue(bucketId, out var collisions);
-            return collisions;
+            bucketsLock.EnterReadLock();
+            try
+            {
+                return _buckets[bucketId];
+            }
+            finally
+            {
+                bucketsLock.ExitReadLock();
+            }
         }
 
         public void IncrementCollisions(uint bucketId)
         {
-            _buckets.AddOrUpdate(
-                bucketId,
-                _ =>
-                {
-                    TotalChunks++;
-                    if (1 > MaxBucketCount)
-                        MaxBucketCount = 1;
-                    return 1;
-                },
-                (_, c) =>
-                {
-                    TotalChunks++;
-                    if (c + 1 > MaxBucketCount)
-                        MaxBucketCount = c + 1;
-                    return c + 1;
-                });
+            /*
+             * We have to lock on _buckets because we need atomic operations also with bucketsByCollisions
+             * and counters. ConcurrentDictionary would have better locking on single values, but doesn't
+             * support atomic operations involving third objects, like counters and "bucketsByCollisions".
+             */
+            bucketsLock.EnterWriteLock();
+            try
+            {
+                // Update collections.
+                _buckets[bucketId]++;
+                
+                bucketsByCollisions.TryAdd(_buckets[bucketId], []);
+                bucketsByCollisions[_buckets[bucketId] - 1].Remove(bucketId);
+                bucketsByCollisions[_buckets[bucketId]].Add(bucketId);
+                
+                // Update counters.
+                if (_buckets[bucketId] > MaxBucketCollisions)
+                    MaxBucketCollisions = _buckets[bucketId];
+                    
+                MinBucketCollisions = bucketsByCollisions.OrderBy(p => p.Key)
+                    .First(p => p.Value.Count > 0)
+                    .Key;
+                    
+                TotalChunks++;
+            }
+            finally
+            {
+                bucketsLock.ExitWriteLock();
+            }
         }
 
-        public void ResetBucketCollisions(uint bucketId) =>
-            _buckets.AddOrUpdate(bucketId, _ => 0, (_, _) => 0);
-        
-        // Helpers.
-        private static ConcurrentDictionary<uint, uint> ArrayToDictionary(uint[] buckets) =>
-            new(buckets.Select((c, i) => (c, (uint)i))
-                .ToDictionary<(uint value, uint index), uint, uint>(pair => pair.index, pair => pair.value));
-
-        private static uint[] DictionaryToArray(ConcurrentDictionary<uint, uint> dictionary)
+        public void ResetBucketCollisions(uint bucketId)
         {
-            var outArray = new uint[BucketsSize];
-            for (uint i = 0; i < BucketsSize; i++)
-                if (dictionary.TryGetValue(i, out var value))
-                    outArray[i] = value;
-            return outArray;
+            bucketsLock.EnterWriteLock();
+            try
+            {
+                // Update collections.
+                var oldCollisions = _buckets[bucketId];
+                _buckets[bucketId] = 0;
+                
+                bucketsByCollisions[oldCollisions].Remove(bucketId);
+                bucketsByCollisions[0].Add(bucketId);
+            
+                // Update counters.
+                MaxBucketCollisions = bucketsByCollisions.OrderByDescending(p => p.Key)
+                    .First(p => p.Value.Count > 0)
+                    .Key;
+                
+                MinBucketCollisions = 0;
+            }
+            finally
+            {
+                bucketsLock.ExitWriteLock();
+            }
+        }
+        
+        // Static methods.
+        public static int CollisionsToRequiredPostageBatchDepth(uint collisions)
+        {
+            if (collisions == 0)
+                return PostageBatch.MinDepth;
+            return Math.Max(
+                (int)Math.Ceiling(Math.Log2(collisions)) + PostageBatch.BucketDepth,
+                PostageBatch.MinDepth);
+        }
+        
+        public static uint PostageBatchDepthToMaxCollisions(int postageBatchDepth)
+        {
+#pragma warning disable CA1512 //only supported from .net 8
+            if (postageBatchDepth < PostageBatch.MinDepth)
+                throw new ArgumentOutOfRangeException(nameof(postageBatchDepth));
+#pragma warning restore CA1512
+
+            return (uint)Math.Pow(2, postageBatchDepth - PostageBatch.BucketDepth);
         }
     }
 }

@@ -29,6 +29,6 @@ namespace Etherna.BeeNet.Manifest
         
         // Methods.
         Task<IReadOnlyDictionary<string,string>> GetResourceMetadataAsync(string path);
-        Task<SwarmHash> ResolveResourceHashAsync(string path);
+        Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path);
     }
 }
