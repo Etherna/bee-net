@@ -54,6 +54,18 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * Double semaphores compared to current chunk concurrency.
              * This avoids the race condition when: a chunk complete its hashing, it's semaphore is assigned and
              * locked by another one, and only after this the direct child of the first one tries to wait its parent.
+             *
+             * This is possible because the returning order of semaphores in queue is not guaranteed.
+             *
+             * Explanation:
+             * While the task of chunk A is still waiting to lock on its prev A-1, all the prev chunks have ended tasks.
+             * Anyway, prevs didn't end in order, and for some reason semaphore that was of chunk A-1 comes in order
+             * before than next "Concurrency -1" (only active task is with A). Because of this, it can be allocated
+             * with any next task from A+1. If this happens before A locks on semaphore of A-1, we are in deadlock.
+             *
+             * Instead, doubling semaphores we guarantee that queue never goes under level of concurrency
+             * with contained elements, so a prev chunk's semaphore can't be reused until it's direct next
+             * has completed and released concurrency.
              */
             for (int i = 0; i < chunkConcurrency * 2; i++)
                 chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
@@ -103,6 +115,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 if (chunkReadSize > 0 || //write only chunks with data
                     passedBytes == 0)    //or if the first and only one is empty
                 {
+                    var chunkNumberId = passedBytes / SwarmChunk.DataSize;
+                    
                     // Copy read data from buffer to a new chunk data byte[]. Include also span
                     var chunkData = new byte[SwarmChunk.SpanSize + chunkReadSize];
                     chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize));
@@ -127,7 +141,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     var feedArgs = new HasherPipelineFeedArgs(
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
-                        numberId: passedBytes / SwarmChunk.DataSize,
+                        numberId: chunkNumberId,
                         prevChunkSemaphore: prevChunkSemaphore);
                     
                     //run task
