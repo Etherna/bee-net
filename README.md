@@ -8,6 +8,20 @@ With this client you can consume public and debug api of any Bee node exposing t
 
 This includes also some useful to calculate data chunking, and postage batch usage.
 
+## Packages
+
+There are several NuGet packages available for Bee.Net. Here's a brief description of each:
+
+1. **Bee.Net.Client**: This package contains a client that is designed to connect to and work with Bee Swarm. It
+   simplifies the interaction with Bee nodes by providing high-level methods and classes.
+
+2. **Bee.Net.Core**: This package contains the base models for working with Swarm. These models represent the core
+   entities in the Swarm world and provide a foundation for interacting with the Bee Swarm.
+
+3. **Bee.Net.Util**: This package contains a series of useful tools. These tools include utilities for data chunking,
+   calculating postage batch usage, and other helpful operations that enhance your experience when working with
+   Swarm.
+
 ## Package repositories
 
 You can get latest public releases from Nuget.org feed. Here you can see our [published packages](https://www.nuget.org/profiles/etherna).
