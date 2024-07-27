@@ -17,13 +17,15 @@ public partial class BeeNetWasmUtil
     internal static async Task<string> GetHashStringAsync(
         byte[] data,
         string fileContentType,
-        string fileName)
+        string fileName,
+        int compactLevel)
     {
         var calculatorService = new CalculatorService();
         var result = await calculatorService.EvaluateFileUploadAsync(
             data,
             fileContentType,
-            fileName).ConfigureAwait(false);
+            fileName,
+            compactLevel: (ushort)compactLevel).ConfigureAwait(false);
         return result.Hash.ToString();
     }
 }

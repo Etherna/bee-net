@@ -25,7 +25,8 @@ let array = utf8Encode.encode("Bzz over the world!");
 const hash = await exports.BeeNetWasmUtil.GetHashStringAsync(
     array,
     "text/plain",
-    "hello.txt"
+    "hello.txt",
+    10
 );
 console.log(hash);
 
