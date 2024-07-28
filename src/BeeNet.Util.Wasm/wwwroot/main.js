@@ -27,7 +27,7 @@ const hash = await exports.BeeNetWasmUtil.GetHashStringAsync(
     "text/plain",
     "hello.txt",
     10, //compact level
-    4 //concurrency
+    1 //concurrency
 );
 console.log(hash);
 
