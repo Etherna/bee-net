@@ -37,6 +37,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Nethereum.Util" Version="4.21.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" /> <!-- Not required, but remove vulnerability warnings -->
   </ItemGroup>
 
   <ItemGroup>
