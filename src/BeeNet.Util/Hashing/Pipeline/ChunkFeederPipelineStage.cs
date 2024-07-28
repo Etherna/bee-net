@@ -30,6 +30,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     internal sealed class ChunkFeederPipelineStage : IHasherPipeline
     {
         // Fields.
+        private readonly int chunkConcurrency;
         private readonly SemaphoreSlim chunkConcurrencySemaphore;
         private readonly ConcurrentQueue<SemaphoreSlim> chunkSemaphorePool;
         private readonly IHasherPipelineStage nextStage;
@@ -44,40 +45,54 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             int? chunkConcurrency = default)
         {
             chunkConcurrency ??= Environment.ProcessorCount;
-            
+
+            this.chunkConcurrency = chunkConcurrency.Value;
             this.nextStage = nextStage;
-            chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
-            chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
-            
-            //init semaphore pool
-            /*
-             * Double semaphores compared to current chunk concurrency.
-             * This avoids the race condition when: a chunk complete its hashing, it's semaphore is assigned and
-             * locked by another one, and only after this the direct child of the first one tries to wait its parent.
-             *
-             * This is possible because the returning order of semaphores in queue is not guaranteed.
-             *
-             * Explanation:
-             * While the task of chunk A is still waiting to lock on its prev A-1, all the prev chunks have ended tasks.
-             * Anyway, prevs didn't end in order, and for some reason semaphore that was of chunk A-1 comes in order
-             * before than next "Concurrency -1" (only active task is with A). Because of this, it can be allocated
-             * with any next task from A+1. If this happens before A locks on semaphore of A-1, we are in deadlock.
-             *
-             * Instead, doubling semaphores we guarantee that queue never goes under level of concurrency
-             * with contained elements, so a prev chunk's semaphore can't be reused until it's direct next
-             * has completed and released concurrency.
-             */
-            for (int i = 0; i < chunkConcurrency * 2; i++)
-                chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
+
+            if (chunkConcurrency > 1) //workaround, see https://etherna.atlassian.net/browse/BNET-115
+            {
+                chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
+                chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
+
+                //init semaphore pool
+                /*
+                 * Double semaphores compared to current chunk concurrency.
+                 * This avoids the race condition when: a chunk complete its hashing, it's semaphore is assigned and
+                 * locked by another one, and only after this the direct child of the first one tries to wait its parent.
+                 *
+                 * This is possible because the returning order of semaphores in queue is not guaranteed.
+                 *
+                 * Explanation:
+                 * While the task of chunk A is still waiting to lock on its prev A-1, all the prev chunks have ended tasks.
+                 * Anyway, prevs didn't end in order, and for some reason semaphore that was of chunk A-1 comes in order
+                 * before than next "Concurrency -1" (only active task is with A). Because of this, it can be allocated
+                 * with any next task from A+1. If this happens before A locks on semaphore of A-1, we are in deadlock.
+                 *
+                 * Instead, doubling semaphores we guarantee that queue never goes under level of concurrency
+                 * with contained elements, so a prev chunk's semaphore can't be reused until it's direct next
+                 * has completed and released concurrency.
+                 */
+                for (int i = 0; i < chunkConcurrency * 2; i++)
+                    chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
+            }
+            else
+            {
+                chunkConcurrencySemaphore = default!;
+                chunkSemaphorePool = default!;
+            }
         }
 
         // Dispose.
         public void Dispose()
         {
             nextStage.Dispose();
-            chunkConcurrencySemaphore.Dispose();
-            while (chunkSemaphorePool.TryDequeue(out var semaphore))
-                semaphore.Dispose();
+            
+            if (chunkConcurrency > 1) //workaround, see https://etherna.atlassian.net/browse/BNET-115
+            {
+                chunkConcurrencySemaphore.Dispose();
+                while (chunkSemaphorePool.TryDequeue(out var semaphore))
+                    semaphore.Dispose();
+            }
         }
         
         // Properties.
@@ -128,15 +143,19 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 
                     // Invoke next stage with parallelism on chunks.
                     //control concurrency
-                    await chunkConcurrencySemaphore.WaitAsync().ConfigureAwait(false);
-                    
-                    //initialize chunk semaphore, receiving from semaphore pool
+                    SemaphoreSlim? chunkSemaphore = null;
+                    if (chunkConcurrency > 1) //workaround, see https://etherna.atlassian.net/browse/BNET-115
+                    {
+                        await chunkConcurrencySemaphore.WaitAsync().ConfigureAwait(false);
+
+                        //initialize chunk semaphore, receiving from semaphore pool
 #pragma warning disable CA2000
-                    if (!chunkSemaphorePool.TryDequeue(out var chunkSemaphore))
-                        throw new InvalidOperationException("Semaphore pool exhausted");
+                        if (!chunkSemaphorePool.TryDequeue(out chunkSemaphore))
+                            throw new InvalidOperationException("Semaphore pool exhausted");
 #pragma warning restore CA2000
-                    await chunkSemaphore.WaitAsync().ConfigureAwait(false);
-                    
+                        await chunkSemaphore.WaitAsync().ConfigureAwait(false);
+                    }
+
                     //build args
                     var feedArgs = new HasherPipelineFeedArgs(
                         span: chunkData[..SwarmChunk.SpanSize],
@@ -145,24 +164,28 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         prevChunkSemaphore: prevChunkSemaphore);
                     
                     //run task
-                    nextStageTasks.Add(
-                        Task.Run(async () =>
-                        {
-                            try
+                    if (chunkConcurrency > 1) //workaround, see https://etherna.atlassian.net/browse/BNET-115
+                    {
+                        nextStageTasks.Add(
+                            Task.Run(async () =>
                             {
-                                await nextStage.FeedAsync(feedArgs).ConfigureAwait(false);
-                            }
-                            finally
-                            {
-                                //release and restore chunk semaphore in pool
-                                chunkSemaphore.Release();
-                                chunkSemaphorePool.Enqueue(chunkSemaphore);
-                                
-                                //release task for next chunk
-                                chunkConcurrencySemaphore.Release();
-                            }
-                        }));
-                    
+                                try
+                                {
+                                    await nextStage.FeedAsync(feedArgs).ConfigureAwait(false);
+                                }
+                                finally
+                                {
+                                    //release and restore chunk semaphore in pool
+                                    chunkSemaphore!.Release();
+                                    chunkSemaphorePool.Enqueue(chunkSemaphore);
+
+                                    //release task for next chunk
+                                    chunkConcurrencySemaphore.Release();
+                                }
+                            }));
+                    }
+                    else await nextStage.FeedAsync(feedArgs).ConfigureAwait(false);
+
                     //set current chunk semaphore as prev for next chunk
                     prevChunkSemaphore = chunkSemaphore;
                     
@@ -170,8 +193,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 }
             } while (chunkReadSize == SwarmChunk.DataSize);
 
-            // Wait the end of all chunk computation.
-            await Task.WhenAll(nextStageTasks).ConfigureAwait(false);
+            if (chunkConcurrency > 1) //workaround, see https://etherna.atlassian.net/browse/BNET-115
+            {
+                // Wait the end of all chunk computation.
+                await Task.WhenAll(nextStageTasks).ConfigureAwait(false);
+            }
 
             return await nextStage.SumAsync().ConfigureAwait(false);
         }
