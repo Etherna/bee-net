@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public interface ICalculatorService
+    public interface IChunkService
     {
         /// <summary>
         /// Evaluate the result uploading a directory
@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null);
         
         /// <summary>
-        /// Evaluate the result uploading a file
+        /// Evaluate the result uploading a single file
         /// </summary>
         /// <param name="data">The file data in byte array</param>
         /// <param name="fileContentType">The file content type</param>
@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+        Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
             byte[] data,
             string fileContentType,
             string? fileName,
@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null);
         
         /// <summary>
-        /// Evaluate the result uploading a file
+        /// Evaluate the result uploading a single file
         /// </summary>
         /// <param name="stream">The file stream</param>
         /// <param name="fileContentType">The file content type</param>
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <param name="chunkStore">Optional custom chunk store</param>
         /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+        Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
             Stream stream,
             string fileContentType,
             string? fileName,
@@ -125,6 +125,7 @@ namespace Etherna.BeeNet.Services
         /// </summary>
         /// <param name="data">The data byte array input</param>
         /// <param name="outputDirectory">The output directory path</param>
+        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
         /// <param name="createDirectory">If true, create if directory doesn't exist</param>
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
@@ -134,6 +135,7 @@ namespace Etherna.BeeNet.Services
         Task<SwarmHash> WriteDataChunksAsync(
             byte[] data,
             string outputDirectory,
+            IPostageStampIssuer? postageStampIssuer = null,
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
@@ -145,6 +147,7 @@ namespace Etherna.BeeNet.Services
         /// </summary>
         /// <param name="stream">The data stream input</param>
         /// <param name="outputDirectory">The output directory path</param>
+        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
         /// <param name="createDirectory">If true, create if directory doesn't exist</param>
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
@@ -154,6 +157,7 @@ namespace Etherna.BeeNet.Services
         Task<SwarmHash> WriteDataChunksAsync(
             Stream stream,
             string outputDirectory,
+            IPostageStampIssuer? postageStampIssuer = null,
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,

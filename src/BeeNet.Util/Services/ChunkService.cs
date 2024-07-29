@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public class CalculatorService : ICalculatorService
+    public class ChunkService : IChunkService
     {
         public async Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
             string directoryPath,
@@ -137,7 +137,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer);
         }
 
-        public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+        public async Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
             byte[] data,
             string fileContentType,
             string? fileName,
@@ -149,7 +149,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
-            return await EvaluateFileUploadAsync(
+            return await EvaluateSingleFileUploadAsync(
                 stream,
                 fileContentType,
                 fileName,
@@ -161,7 +161,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore).ConfigureAwait(false);
         }
 
-        public async Task<UploadEvaluationResult> EvaluateFileUploadAsync(
+        public async Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
             Stream stream,
             string fileContentType,
             string? fileName,
@@ -272,6 +272,7 @@ namespace Etherna.BeeNet.Services
         public Task<SwarmHash> WriteDataChunksAsync(
             byte[] data,
             string outputDirectory,
+            IPostageStampIssuer? postageStampIssuer = null,
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
@@ -282,6 +283,7 @@ namespace Etherna.BeeNet.Services
             return WriteDataChunksAsync(
                 stream,
                 outputDirectory,
+                postageStampIssuer,
                 createDirectory,
                 compactLevel,
                 encrypt,
@@ -292,6 +294,7 @@ namespace Etherna.BeeNet.Services
         public async Task<SwarmHash> WriteDataChunksAsync(
             Stream stream,
             string outputDirectory,
+            IPostageStampIssuer? postageStampIssuer = null,
             bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
@@ -300,10 +303,16 @@ namespace Etherna.BeeNet.Services
         {
             var chunkStore = new LocalDirectoryChunkStore(outputDirectory, createDirectory);
             
+            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
+            var postageStamper = new PostageStamper(
+                new FakeSigner(),
+                postageStampIssuer,
+                new MemoryStampStore());
+            
             // Create chunks and get file hash.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                new FakePostageStamper(),
+                postageStamper,
                 redundancyLevel,
                 encrypt,
                 compactLevel,
