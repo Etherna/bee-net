@@ -235,7 +235,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer);
         }
 
-        public IEnumerable<string> GetAllChunkFilesInDirectory(string chunkStoreDirectory) =>
+        public string[] GetAllChunkFilesInDirectory(string chunkStoreDirectory) =>
             Directory.GetFiles(chunkStoreDirectory, '*' + LocalDirectoryChunkStore.ChunkFileExtension);
 
         public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(

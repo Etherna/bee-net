@@ -101,7 +101,7 @@ namespace Etherna.BeeNet.Services
         /// </summary>
         /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <returns>List of chunk files</returns>
-        IEnumerable<string> GetAllChunkFilesInDirectory(
+        string[] GetAllChunkFilesInDirectory(
             string chunkStoreDirectory);
 
         /// <summary>
