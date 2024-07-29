@@ -97,6 +97,14 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null);
 
         /// <summary>
+        /// Get list of all chunk files in directory
+        /// </summary>
+        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <returns>List of chunk files</returns>
+        IEnumerable<string> GetAllChunkFilesInDirectory(
+            string chunkStoreDirectory);
+
+        /// <summary>
         /// Get resource metadata from a directory of chunks and the resource address
         /// </summary>
         /// <param name="chunkStoreDirectory">The chunk directory</param>

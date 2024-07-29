@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Hashing.Store
     public class LocalDirectoryChunkStore : IChunkStore
     {
         // Consts.
-        const string ChunkFileExtension = ".chunk";
+        public const string ChunkFileExtension = ".chunk";
         
         // Constructor.
         public LocalDirectoryChunkStore(string directoryPath, bool createDirectory = false)
