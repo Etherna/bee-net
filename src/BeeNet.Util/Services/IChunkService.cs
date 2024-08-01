@@ -107,12 +107,12 @@ namespace Etherna.BeeNet.Services
         /// <summary>
         /// Get resource metadata from a directory of chunks and the resource address
         /// </summary>
-        /// <param name="chunkStoreDirectory">The chunk directory</param>
         /// <param name="address">Resource address</param>
+        /// <param name="chunkStore">The chunk reading store</param>
         /// <returns>Resource metadata</returns>
         Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
-            string chunkStoreDirectory,
-            SwarmAddress address);
+            SwarmAddress address,
+            IReadOnlyChunkStore chunkStore);
         
         /// <summary>
         /// Get resource stream from a directory of chunks and the resource address

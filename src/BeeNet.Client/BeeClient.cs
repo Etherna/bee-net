@@ -17,6 +17,7 @@ using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -1023,6 +1024,17 @@ namespace Etherna.BeeNet
                 await generatedClient.BzzHeadAsync(
                     address.Hash.ToString(),
                     cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<string?> TryGetFileNameAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default)
+        {
+            var chunkService = new ChunkService();
+            var metadata = await chunkService.GetFileMetadataFromChunksAsync(
+                address,
+                new BeeClientChunkStore(this)).ConfigureAwait(false);
+            return metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }
 
         public async Task<long?> TryGetFileSizeAsync(

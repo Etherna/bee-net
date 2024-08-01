@@ -239,11 +239,9 @@ namespace Etherna.BeeNet.Services
             Directory.GetFiles(chunkStoreDirectory, '*' + LocalDirectoryChunkStore.ChunkFileExtension);
 
         public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
-            string chunkStoreDirectory,
-            SwarmAddress address)
+            SwarmAddress address,
+            IReadOnlyChunkStore chunkStore)
         {
-            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
-            
             var rootManifest = new ReferencedMantarayManifest(
                 chunkStore,
                 address.Hash);

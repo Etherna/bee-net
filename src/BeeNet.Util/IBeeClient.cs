@@ -651,6 +651,16 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Try to get a file name
+        /// </summary>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The file name if found</returns>
+        Task<string?> TryGetFileNameAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Try to get the byte length of a file
         /// </summary>
         /// <param name="address">Swarm address of chunk</param>
