@@ -478,7 +478,7 @@ namespace Etherna.BeeNet
         {
             ArgumentNullException.ThrowIfNull(address, nameof(address));
 
-            if (address.Path is null)
+            if (!address.HasPath)
             {
                 var response = await generatedClient.BzzGetAsync(
                     address.Hash.ToString(),
@@ -495,7 +495,7 @@ namespace Etherna.BeeNet
             {
                 var response = await generatedClient.BzzGetAsync(
                     address.Hash.ToString(),
-                    address.Path.ToString(),
+                    address.Path,
                     (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
                     swarmRedundancyFallbackMode,
                     swarmChunkRetrievalTimeout,

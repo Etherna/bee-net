@@ -47,6 +47,7 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public SwarmHash Hash { get; }
+        public bool HasPath => Path != Separator.ToString();
         public string Path { get; }
         
         // Methods.
