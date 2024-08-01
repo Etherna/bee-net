@@ -358,11 +358,11 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: address
+          name: reference
           schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
-          description: Swarm address of chunk
+          description: Swarm address of content
       responses:
         "200":
           description: Chunk exists
@@ -409,6 +409,32 @@ paths:
           $ref: "SwarmCommon.yaml#/components/responses/404"
         "500":
           $ref: "SwarmCommon.yaml#/components/responses/500"
+        default:
+          description: Default response
+    head:
+      summary: Get the headers containing the content type and length for the reference
+      tags:
+        - BZZ
+      parameters:
+        - in: path
+          name: reference
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
+          required: true
+          description: Swarm address of content
+        - in: path
+          name: path
+          schema:
+            type: string
+          required: true
+          description: Path to the file in the collection.
+      responses:
+        "200":
+          description: Chunk exists
+        "400":
+          $ref: "SwarmCommon.yaml#/components/responses/400"
+        "404":
+          $ref: "SwarmCommon.yaml#/components/responses/404"
         default:
           description: Default response
 

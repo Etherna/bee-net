@@ -370,7 +370,7 @@ paths:
         - in: path
           name: address
           schema:
-            &a22
+            &a32
             type: string
             pattern: ^[A-Fa-f0-9]{64}$
             example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
@@ -422,7 +422,7 @@ paths:
             swarm-tag:
               description: Tag UID if it was passed to the request `swarm-tag` header.
               schema:
-                &a23
+                &a22
                 type: integer
                 format: int64
           content:
@@ -579,10 +579,10 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: address
-          schema: *a22
+          name: reference
+          schema: *a16
           required: true
-          description: Swarm address of chunk
+          description: Swarm address of content
       responses:
         "200":
           description: Chunk exists
@@ -621,6 +621,29 @@ paths:
         "400": *a3
         "404": *a21
         "500": *a5
+        default:
+          description: Default response
+    head:
+      summary: Get the headers containing the content type and length for the reference
+      tags:
+        - BZZ
+      parameters:
+        - in: path
+          name: reference
+          schema: *a16
+          required: true
+          description: Swarm address of content
+        - in: path
+          name: path
+          schema:
+            type: string
+          required: true
+          description: Path to the file in the collection.
+      responses:
+        "200":
+          description: Chunk exists
+        "400": *a3
+        "404": *a21
         default:
           description: Default response
   /tags:
@@ -710,7 +733,7 @@ paths:
           content:
             application/json:
               schema:
-                &a24
+                &a23
                 type: object
                 properties:
                   uid:
@@ -752,7 +775,7 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a23
+          schema: *a22
           required: true
           description: Uid
       responses:
@@ -760,7 +783,7 @@ paths:
           description: Tag info
           content:
             application/json:
-              schema: *a24
+              schema: *a23
         "400": *a3
         "404": *a21
         "500": *a5
@@ -773,7 +796,7 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a23
+          schema: *a22
           required: true
           description: Uid
       responses:
@@ -792,7 +815,7 @@ paths:
       parameters:
         - in: path
           name: uid
-          schema: *a23
+          schema: *a22
           required: true
           description: Uid
       requestBody:
@@ -814,7 +837,7 @@ paths:
           content:
             application/json:
               schema:
-                &a32
+                &a31
                 type: object
                 properties:
                   status:
@@ -846,7 +869,7 @@ paths:
       - in: path
         name: reference
         schema:
-          &a26
+          &a25
           oneOf:
             - type: string
               pattern: ^[A-Fa-f0-9]{64}$
@@ -866,7 +889,7 @@ paths:
           content:
             application/json:
               schema:
-                &a25
+                &a24
                 type: object
                 properties:
                   message:
@@ -877,7 +900,7 @@ paths:
           description: New pin with root reference was created
           content:
             application/json:
-              schema: *a25
+              schema: *a24
         "400": *a3
         "404": *a21
         "500": *a5
@@ -892,7 +915,7 @@ paths:
           description: Unpinning root hash with reference
           content:
             application/json:
-              schema: *a25
+              schema: *a24
         "400": *a3
         "500": *a5
         default:
@@ -957,7 +980,7 @@ paths:
       parameters:
         - in: query
           name: ref
-          schema: *a26
+          schema: *a25
           required: false
           description: The number of items to skip before starting to collect the result
             set.
@@ -995,7 +1018,7 @@ paths:
         - in: path
           name: topic
           schema:
-            &a27
+            &a26
             type: string
           required: true
           description: Topic name
@@ -1032,7 +1055,7 @@ paths:
       parameters:
         - in: path
           name: topic
-          schema: *a27
+          schema: *a26
           required: true
           description: Topic name
       responses:
@@ -1051,7 +1074,7 @@ paths:
         - in: path
           name: owner
           schema:
-            &a29
+            &a28
             type: string
             pattern: ^[A-Fa-f0-9]{40}$
             example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
@@ -1060,7 +1083,7 @@ paths:
         - in: path
           name: id
           schema:
-            &a28
+            &a27
             type: string
             pattern: ^([A-Fa-f0-9]+)$
             example: cf880b8eeac5093fa27b0825906c600685
@@ -1068,7 +1091,7 @@ paths:
           description: Id
         - in: query
           name: sig
-          schema: *a28
+          schema: *a27
           required: true
           description: Signature
         - *a11
@@ -1105,18 +1128,18 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a29
+          schema: *a28
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a28
+          schema: *a27
           required: true
           description: Topic
         - in: query
           name: type
           schema:
-            &a30
+            &a29
             type: string
             pattern: ^(sequence|epoch)$
           required: false
@@ -1142,12 +1165,12 @@ paths:
       parameters:
         - in: path
           name: owner
-          schema: *a29
+          schema: *a28
           required: true
           description: Owner
         - in: path
           name: topic
-          schema: *a28
+          schema: *a27
           required: true
           description: Topic
         - in: query
@@ -1164,7 +1187,7 @@ paths:
           description: "Start index (default: 0)"
         - in: query
           name: type
-          schema: *a30
+          schema: *a29
           required: false
           description: "Feed indexing scheme (default: sequence)"
       responses:
@@ -1271,11 +1294,11 @@ paths:
                     pattern: ^[A-Fa-f0-9]{40}$
                     example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
                   publicKey:
-                    &a31
+                    &a30
                     type: string
                     pattern: ^[A-Fa-f0-9]{66}$
                     example: 02ab7473879005929d10ce7d4f626412dad9fe56b0a6622038931d26bd79abf0a4
-                  pssPublicKey: *a31
+                  pssPublicKey: *a30
         "500": *a5
         default:
           description: Default response
@@ -1293,7 +1316,7 @@ paths:
           description: Health Status of node
           content:
             application/json:
-              schema: *a32
+              schema: *a31
         default:
           description: Default response
   /readiness:
@@ -1354,7 +1377,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       responses:
@@ -1444,7 +1467,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       responses:
@@ -1540,7 +1563,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of chunk
       responses:
@@ -1708,7 +1731,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       responses:
@@ -1716,7 +1739,7 @@ paths:
           description: Disconnected peer
           content:
             application/json:
-              schema: *a25
+              schema: *a24
         "400": *a3
         "500": *a5
         default:
@@ -1733,7 +1756,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       responses:
@@ -1765,7 +1788,7 @@ paths:
       parameters:
         - in: path
           name: address
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       responses:
@@ -1979,7 +2002,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: *a32
+              schema: *a31
         "400": *a3
         "500": *a5
         default:
@@ -1994,7 +2017,7 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       tags:
@@ -2052,7 +2075,7 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
         - &a48
@@ -2124,7 +2147,7 @@ paths:
       parameters:
         - in: path
           name: peer-id
-          schema: *a22
+          schema: *a32
           required: true
           description: Swarm address of peer
       tags:
@@ -2820,12 +2843,12 @@ paths:
           description: The storage depth.
         - in: path
           name: anchor1
-          schema: *a28
+          schema: *a27
           required: true
           description: The first anchor.
         - in: path
           name: anchor2
-          schema: *a28
+          schema: *a27
           required: true
           description: The second anchor.
       responses:
@@ -3029,11 +3052,11 @@ paths:
         - in: query
           name: address
           required: true
-          schema: *a29
+          schema: *a28
         - in: path
           name: coin
           required: true
-          schema: *a22
+          schema: *a32
       responses:
         "200":
           content:

@@ -506,8 +506,30 @@ namespace Etherna.BeeNet
             }
         }
 
-        public Task GetFileHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
-            generatedClient.BzzHeadAsync((string)hash, cancellationToken);
+        public async Task<Dictionary<string, IEnumerable<string>>> GetFileHeadersAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+
+            return address.HasPath ?
+                await generatedClient.BzzHeadAsync(
+                    address.Hash.ToString(),
+                    address.Path,
+                    cancellationToken).ConfigureAwait(false) :
+                
+                await generatedClient.BzzHeadAsync(
+                    address.Hash.ToString(),
+                    cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<long> GetFileSizeAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default)
+        {
+            var headers = await GetFileHeadersAsync(address, cancellationToken).ConfigureAwait(false);
+            return long.Parse(headers["Content-Length"].First(), CultureInfo.InvariantCulture);
+        }
 
         public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)
         {

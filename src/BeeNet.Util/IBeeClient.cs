@@ -353,15 +353,25 @@ namespace Etherna.BeeNet
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Get the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="hash">Swarm address of chunk</param>
-        /// <returns>Chunk exists</returns>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <returns>Headers with values</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task GetFileHeadAsync(
-            SwarmHash hash,
+        Task<Dictionary<string, IEnumerable<string>>> GetFileHeadersAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Get the byte length of a file
+        /// </summary>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Byte size of file</returns>
+        Task<long> GetFileSizeAsync(
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>
