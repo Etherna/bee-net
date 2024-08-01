@@ -16,6 +16,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -354,26 +355,6 @@ namespace Etherna.BeeNet
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Get the headers containing the content type and length for the reference
-        /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <returns>Headers with values</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<Dictionary<string, IEnumerable<string>>> GetFileHeadersAsync(
-            SwarmAddress address,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Get the byte length of a file
-        /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Byte size of file</returns>
-        Task<long> GetFileSizeAsync(
-            SwarmAddress address,
-            CancellationToken cancellationToken = default);
-
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
@@ -657,6 +638,26 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> TryConnectToPeerAsync(
             string peerId,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Try to get file headers
+        /// </summary>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <returns>Headers with values</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<HttpContentHeaders?> TryGetFileHeadersAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Try to get the byte length of a file
+        /// </summary>
+        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Byte size of file</returns>
+        Task<long?> TryGetFileSizeAsync(
+            SwarmAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>

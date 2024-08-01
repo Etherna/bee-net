@@ -148,7 +148,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="reference">Swarm address of content</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>> BzzHeadAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -171,7 +171,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="path">Path to the file in the collection.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>> BzzHeadAsync(string reference, string path, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1425,7 +1425,7 @@ namespace Etherna.BeeNet.Clients
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -1985,7 +1985,7 @@ namespace Etherna.BeeNet.Clients
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -2046,7 +2046,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="reference">Swarm address of content</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>>
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?>
             BzzHeadAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -2091,7 +2091,7 @@ namespace Etherna.BeeNet.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return headers_;
+                            return response_.Content?.Headers;
                         }
                         else
                         if (status_ == 400)
@@ -2204,7 +2204,7 @@ namespace Etherna.BeeNet.Clients
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -2266,7 +2266,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="path">Path to the file in the collection.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>>
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?>
             BzzHeadAsync(string reference, string path, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
@@ -2316,7 +2316,7 @@ namespace Etherna.BeeNet.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return headers_;
+                            return response_.Content?.Headers;
                         }
                         else
                         if (status_ == 400)
@@ -5121,7 +5121,7 @@ namespace Etherna.BeeNet.Clients
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -16989,6 +16989,8 @@ namespace Etherna.BeeNet.Clients
         private System.IDisposable? _response;
 
         public int StatusCode { get; private set; }
+        
+        public System.Net.Http.Headers.HttpContentHeaders? ContentHeaders { get; private set; }
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
@@ -16999,9 +17001,10 @@ namespace Etherna.BeeNet.Clients
             get { return StatusCode == 206; }
         }
 
-        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
+        public FileResponse(int statusCode, System.Net.Http.Headers.HttpContentHeaders? contentHeaders, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
         {
             StatusCode = statusCode;
+            ContentHeaders = contentHeaders;
             Headers = headers;
             Stream = stream;
             _client = client;

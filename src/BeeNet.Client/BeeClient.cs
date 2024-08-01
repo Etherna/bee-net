@@ -24,6 +24,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -488,6 +489,7 @@ namespace Etherna.BeeNet
                     swarmChunkRetrievalTimeout,
                     cancellationToken).ConfigureAwait(false);
                 return new FileResponse(
+                    response.ContentHeaders,
                     response.Headers,
                     response.Stream);
             }
@@ -501,34 +503,10 @@ namespace Etherna.BeeNet
                     swarmChunkRetrievalTimeout,
                     cancellationToken).ConfigureAwait(false);
                 return new FileResponse(
+                    response.ContentHeaders,
                     response.Headers,
                     response.Stream);
             }
-        }
-
-        public async Task<Dictionary<string, IEnumerable<string>>> GetFileHeadersAsync(
-            SwarmAddress address,
-            CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
-
-            return address.HasPath ?
-                await generatedClient.BzzHeadAsync(
-                    address.Hash.ToString(),
-                    address.Path,
-                    cancellationToken).ConfigureAwait(false) :
-                
-                await generatedClient.BzzHeadAsync(
-                    address.Hash.ToString(),
-                    cancellationToken).ConfigureAwait(false);
-        }
-
-        public async Task<long> GetFileSizeAsync(
-            SwarmAddress address,
-            CancellationToken cancellationToken = default)
-        {
-            var headers = await GetFileHeadersAsync(address, cancellationToken).ConfigureAwait(false);
-            return long.Parse(headers["Content-Length"].First(), CultureInfo.InvariantCulture);
         }
 
         public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)
@@ -1029,6 +1007,31 @@ namespace Etherna.BeeNet
             string peerId,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
+
+        public async Task<HttpContentHeaders?> TryGetFileHeadersAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(address, nameof(address));
+
+            return address.HasPath ?
+                await generatedClient.BzzHeadAsync(
+                    address.Hash.ToString(),
+                    address.Path,
+                    cancellationToken).ConfigureAwait(false) :
+                
+                await generatedClient.BzzHeadAsync(
+                    address.Hash.ToString(),
+                    cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<long?> TryGetFileSizeAsync(
+            SwarmAddress address,
+            CancellationToken cancellationToken = default)
+        {
+            var headers = await TryGetFileHeadersAsync(address, cancellationToken).ConfigureAwait(false);
+            return headers?.ContentLength;
+        }
 
         public Task UpdateTagAsync(
             long uid,
