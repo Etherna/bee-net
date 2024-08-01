@@ -1128,7 +1128,7 @@ paths:
         default:
           description: Default response
 
-  "/chunks/{address}":
+  "/chunks/{reference}":
     get:
       summary: "Get chunk"
       tags:

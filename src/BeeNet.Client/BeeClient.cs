@@ -440,11 +440,11 @@ namespace Etherna.BeeNet
             bool? swarmCache = null,
             CancellationToken cancellationToken = default)
         {
-            var chunkDto = await generatedClient.ChunksGetAsync((string)hash, swarmCache, cancellationToken).ConfigureAwait(false);
+            var response = await generatedClient.ChunksGetAsync((string)hash, swarmCache, cancellationToken).ConfigureAwait(false);
             using var memoryStream = new MemoryStream();
-            await chunkDto.Stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
-            var data = memoryStream.ToArray();
-            return new SwarmChunk(hash, data);
+            await response.Stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+            var spanAndData = memoryStream.ToArray();
+            return SwarmChunk.BuildFromSpanAndData(hash, spanAndData);
         }
 
         public async Task<Stream> GetChunkStreamAsync(

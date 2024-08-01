@@ -95,7 +95,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet/Clients/BeeGeneratedClient.cs",
+      "output": "../src/BeeNet.Client/Clients/BeeGeneratedClient.cs",
       "newLineBehavior": "Auto"
     }
   }
