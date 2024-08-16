@@ -42,17 +42,20 @@ namespace Etherna.BeeNet.Hashing.Postage
                 StampIssuer.PostageBatch.Id,
                 hash);
 
-            if (StampStore.TryGet(item.StoreKey, out var storedItem))
-                item = storedItem;
-            else
-                item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
+            lock (StampStore)
+            {
+                if (StampStore.TryGet(item.StoreKey, out var storedItem))
+                    item = storedItem;
+                else
+                    item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
 
-            if (item.StampBucketIndex is null)
-                throw new InvalidOperationException();
+                if (item.StampBucketIndex is null)
+                    throw new InvalidOperationException();
 
-            item.BucketTimestamp = DateTimeOffset.UtcNow;
+                item.BucketTimestamp = DateTimeOffset.UtcNow;
             
-            StampStore.Put(item);
+                StampStore.Put(item);
+            }
 
             var toSignDigest = ToSignDigest(
                 hash,
