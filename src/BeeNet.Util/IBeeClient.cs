@@ -146,7 +146,7 @@ namespace Etherna.BeeNet
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task DeleteTagAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default);
 
         /// <summary>Cancel existing transaction</summary>
@@ -676,7 +676,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task UpdateTagAsync(
-            long uid,
+            TagId id,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default);
 
@@ -694,7 +694,7 @@ namespace Etherna.BeeNet
             Stream chunkData,
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
-            long? swarmTag = null,
+            TagId? tagId = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
@@ -706,7 +706,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task UploadChunksStreamAsync(
             PostageBatchId batchId,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default);
 
@@ -723,7 +723,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
-            int? swarmTag = null, 
+            TagId? tagId = null, 
             bool? swarmPin = null, 
             bool? swarmEncrypt = null, 
             bool? swarmDeferredUpload = null,
@@ -749,7 +749,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
             string directoryPath,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -783,7 +783,7 @@ namespace Etherna.BeeNet
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,

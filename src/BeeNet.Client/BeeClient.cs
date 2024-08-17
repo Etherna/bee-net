@@ -194,7 +194,7 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false);
             return new TagInfo(
-                uid: response.Uid,
+                id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
                 split: response.Split,
                 seen: response.Seen,
@@ -214,9 +214,9 @@ namespace Etherna.BeeNet
             generatedClient.PinsDeleteAsync((string)hash, cancellationToken);
 
         public Task DeleteTagAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default) =>
-            generatedClient.TagsDeleteAsync(uid, cancellationToken);
+            generatedClient.TagsDeleteAsync(id.Value, cancellationToken);
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,
@@ -757,7 +757,7 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false);
             return new TagInfo(
-                uid: response.Uid,
+                id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
                 split: response.Split,
                 seen: response.Seen,
@@ -775,7 +775,7 @@ namespace Etherna.BeeNet
                 (await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
                 Array.Empty<Tags>();
             return tags.Select(t => new TagInfo(
-                uid: t.Uid,
+                id: new TagId(t.Uid),
                 startedAt: t.StartedAt,
                 split: t.Split,
                 seen: t.Seen,
@@ -1046,11 +1046,11 @@ namespace Etherna.BeeNet
         }
 
         public Task UpdateTagAsync(
-            long uid,
+            TagId id,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.TagsPatchAsync(
-                uid,
+                id.Value,
                 hash.HasValue ?
                     new Body3 { Address = hash.Value.ToString() } :
                     null,
@@ -1060,25 +1060,25 @@ namespace Etherna.BeeNet
             Stream chunkData,
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
-            long? swarmTag = null,
+            TagId? tagId = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksPostAsync(
-                swarmTag,
+                tagId?.Value,
                 batchId.ToString(),
                 chunkData,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
         public Task UploadChunksStreamAsync(
             PostageBatchId batchId,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             CancellationToken cancellationToken = default) =>
-            generatedClient.ChunksStreamAsync(swarmTag, batchId.ToString(), cancellationToken);
+            generatedClient.ChunksStreamAsync(tagId?.Value, batchId.ToString(), cancellationToken);
 
         public async Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             bool? swarmDeferredUpload = null,
@@ -1086,7 +1086,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.BytesPostAsync(
                 swarm_postage_batch_id: batchId.ToString(),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_deferred_upload: swarmDeferredUpload,
                 swarm_encrypt: swarmEncrypt,
@@ -1098,7 +1098,7 @@ namespace Etherna.BeeNet
         public async Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
             string directoryPath,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -1120,7 +1120,7 @@ namespace Etherna.BeeNet
             // Upload directory.
             return (await generatedClient.BzzPostAsync(
                 new FileParameter(memoryStream, null, "application/x-tar"),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_encrypt: swarmEncrypt,
                 swarm_collection: true,
@@ -1139,7 +1139,7 @@ namespace Etherna.BeeNet
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -1150,7 +1150,7 @@ namespace Etherna.BeeNet
         {
             return (await generatedClient.BzzPostAsync(
                 new FileParameter(content, name, contentType),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_encrypt: swarmEncrypt,
                 swarm_collection: isFileCollection,
