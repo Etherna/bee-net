@@ -24,9 +24,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Net.WebSockets;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -456,11 +459,55 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
-        public Task<WebSocket> GetChunkUploadWebSocketAsync(
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+        public async Task<ClientWebSocket> GetChunkUploadWebSocketAsync(
             PostageBatchId batchId,
             TagId? tagId = null,
-            CancellationToken cancellationToken = default) =>
-            generatedClient.ChunksStreamAsync(tagId?.Value, batchId.ToString(), cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            // Build protocol upgrade request.
+            //url
+            var urlBuilder = new System.Text.StringBuilder();
+            urlBuilder.Append(BaseUrl);
+            urlBuilder.Append("chunks/stream");
+            var url = urlBuilder.ToString();
+            
+            //secret key
+            byte[] keyBytes = new byte[16];
+            RandomNumberGenerator.Fill(keyBytes);
+            
+            //request
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Connection", "Upgrade");
+            request.Headers.Add("Upgrade", "websocket");
+            request.Headers.Add("Sec-WebSocket-Version", "13");
+            request.Headers.Add("Sec-WebSocket-Key", Convert.ToBase64String(keyBytes));
+            request.Headers.Add("swarm-postage-batch-id", batchId.ToString());
+            if (tagId.HasValue)
+                request.Headers.Add("swarm-tag", tagId.Value.ToString());
+
+            // Send request.
+            var response = await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
+
+            // Evaluate response and upgrade.
+            if (response.StatusCode != HttpStatusCode.SwitchingProtocols)
+                throw new InvalidOperationException($"Failed to upgrade to WebSocket: {response.StatusCode}");
+            
+            // Now we have to switch HttpClient's NetworkStream to WebSocket's ClientWebSocket
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+            // Extract the underlying socket from the HttpClient's response
+            if (stream is not NetworkStream networkStream)
+                throw new InvalidOperationException("Expected a NetworkStream to upgrade to WebSocket.");
+
+            var webSocket = new ClientWebSocket();
+            await webSocket.ConnectAsync(new Uri(url), cancellationToken).ConfigureAwait(false);
+            
+            return webSocket;
+        }
 
         public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
