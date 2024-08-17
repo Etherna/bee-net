@@ -595,7 +595,7 @@ namespace Etherna.BeeNet
                 id: response.BatchID,
                 isImmutable: response.ImmutableFlag,
                 label: response.Label,
-                ttl: TimeSpan.FromSeconds(response.BatchTTL),
+                ttl: TimeSpan.FromMilliseconds(response.BatchTTL),
                 isUsable: response.Usable,
                 utilization: response.Utilization,
                 storageRadius: null);
