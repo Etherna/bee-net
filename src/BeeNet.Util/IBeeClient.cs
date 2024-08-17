@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -315,6 +316,17 @@ namespace Etherna.BeeNet
             bool? swarmCache = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>Upload stream of chunks</summary>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<WebSocket> GetChunkUploadWebSocketAsync(
+            PostageBatchId batchId,
+            TagId? tagId = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Get the past due consumption balance with a specific peer</summary>
         /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
@@ -437,7 +449,7 @@ namespace Etherna.BeeNet
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> GetTagInfoAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get list of tags</summary>
@@ -695,19 +707,6 @@ namespace Etherna.BeeNet
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
             TagId? tagId = null,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Upload stream of chunks</summary>
-        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task UploadChunksStreamAsync(
-            PostageBatchId batchId,
-            TagId? tagId = null,
-            bool? swarmPin = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload data</summary>

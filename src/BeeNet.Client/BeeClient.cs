@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -455,6 +456,12 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
+        public Task<WebSocket> GetChunkUploadWebSocketAsync(
+            PostageBatchId batchId,
+            TagId? tagId = null,
+            CancellationToken cancellationToken = default) =>
+            generatedClient.ChunksStreamAsync(tagId?.Value, batchId.ToString(), cancellationToken);
+
         public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
@@ -752,10 +759,10 @@ namespace Etherna.BeeNet
         }
 
         public async Task<TagInfo> GetTagInfoAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default)
         {
-            var response = await generatedClient.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false);
+            var response = await generatedClient.TagsGetAsync(id.Value, cancellationToken).ConfigureAwait(false);
             return new TagInfo(
                 id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
@@ -1067,13 +1074,6 @@ namespace Etherna.BeeNet
                 batchId.ToString(),
                 chunkData,
                 cancellationToken).ConfigureAwait(false)).Reference;
-
-        public Task UploadChunksStreamAsync(
-            PostageBatchId batchId,
-            TagId? tagId = null,
-            bool? swarmPin = null,
-            CancellationToken cancellationToken = default) =>
-            generatedClient.ChunksStreamAsync(tagId?.Value, batchId.ToString(), cancellationToken);
 
         public async Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,

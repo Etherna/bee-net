@@ -16,10 +16,10 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public readonly struct TagId(long value) : IEquatable<TagId>
+    public readonly struct TagId(ulong value) : IEquatable<TagId>
     {
         // Properties.
-        public long Value { get; } = value;
+        public ulong Value { get; } = value;
 
         // Methods.
         public bool Equals(TagId other) => Value == other.Value;
