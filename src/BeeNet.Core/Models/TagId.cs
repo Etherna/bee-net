@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
@@ -25,6 +26,7 @@ namespace Etherna.BeeNet.Models
         public bool Equals(TagId other) => Value == other.Value;
         public override bool Equals(object? obj) => obj is TagId other && Equals(other);
         public override int GetHashCode() => Value.GetHashCode();
+        public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 
         // Operator methods.
         public static bool operator ==(TagId left, TagId right) => left.Equals(right);

@@ -46,6 +46,9 @@ namespace Etherna.BeeNet
     public class BeeClient : IBeeClient, IDisposable
     {
         // Consts.
+        public const int ChunkStreamWSInternalBufferSize = 2 * ChunkStreamWSReceiveBufferSize + ChunkStreamWSSendBufferSize + 256 + 20;
+        public const int ChunkStreamWSReceiveBufferSize = SwarmFeedChunk.MaxChunkSize;
+        public const int ChunkStreamWSSendBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int DefaultPort = 1633;
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
 
@@ -460,7 +463,7 @@ namespace Etherna.BeeNet
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
-        public async Task<ClientWebSocket> GetChunkUploadWebSocketAsync(
+        public async Task<WebSocket> GetChunkUploadWebSocketAsync(
             PostageBatchId batchId,
             TagId? tagId = null,
             CancellationToken cancellationToken = default)
@@ -498,13 +501,15 @@ namespace Etherna.BeeNet
             
             // Now we have to switch HttpClient's NetworkStream to WebSocket's ClientWebSocket
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-            // Extract the underlying socket from the HttpClient's response
-            if (stream is not NetworkStream networkStream)
-                throw new InvalidOperationException("Expected a NetworkStream to upgrade to WebSocket.");
-
-            var webSocket = new ClientWebSocket();
-            await webSocket.ConnectAsync(new Uri(url), cancellationToken).ConfigureAwait(false);
+            var internalBufferArray = new byte[ChunkStreamWSInternalBufferSize];
+            var webSocket = WebSocket.CreateClientWebSocket(
+                stream,
+                null,
+                ChunkStreamWSReceiveBufferSize,
+                ChunkStreamWSSendBufferSize,
+                WebSocket.DefaultKeepAliveInterval,
+                false,
+                internalBufferArray);
             
             return webSocket;
         }
