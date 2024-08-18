@@ -463,7 +463,7 @@ namespace Etherna.BeeNet
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
-        public async Task<WebSocket> GetChunkUploadWebSocketAsync(
+        public async Task<ChunkUploaderWebSocket> GetChunkUploaderWebSocketAsync(
             PostageBatchId batchId,
             TagId? tagId = null,
             CancellationToken cancellationToken = default)
@@ -511,7 +511,7 @@ namespace Etherna.BeeNet
                 false,
                 internalBufferArray);
             
-            return webSocket;
+            return new ChunkUploaderWebSocket(webSocket);
         }
 
         public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
