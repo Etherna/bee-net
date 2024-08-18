@@ -24,13 +24,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
 using Loggers = Etherna.BeeNet.Models.Loggers;
+using PostageProof = Etherna.BeeNet.Models.PostageProof;
+using SocProof = Etherna.BeeNet.Clients.SocProof;
 
 #if NET7_0_OR_GREATER
 using System.Formats.Tar;
@@ -42,6 +48,9 @@ namespace Etherna.BeeNet
     public class BeeClient : IBeeClient, IDisposable
     {
         // Consts.
+        public const int ChunkStreamWSInternalBufferSize = 2 * ChunkStreamWSReceiveBufferSize + ChunkStreamWSSendBufferSize + 256 + 20;
+        public const int ChunkStreamWSReceiveBufferSize = SwarmFeedChunk.MaxChunkSize;
+        public const int ChunkStreamWSSendBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int DefaultPort = 1633;
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
 
@@ -194,7 +203,7 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false);
             return new TagInfo(
-                uid: response.Uid,
+                id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
                 split: response.Split,
                 seen: response.Seen,
@@ -214,9 +223,9 @@ namespace Etherna.BeeNet
             generatedClient.PinsDeleteAsync((string)hash, cancellationToken);
 
         public Task DeleteTagAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default) =>
-            generatedClient.TagsDeleteAsync(uid, cancellationToken);
+            generatedClient.TagsDeleteAsync(id.Value, cancellationToken);
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,
@@ -455,6 +464,58 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksGetAsync(hash.ToString(), swarmCache,  cancellationToken).ConfigureAwait(false)).Stream;
 
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+        public async Task<ChunkUploaderWebSocket> GetChunkUploaderWebSocketAsync(
+            PostageBatchId batchId,
+            TagId? tagId = null,
+            CancellationToken cancellationToken = default)
+        {
+            // Build protocol upgrade request.
+            //url
+            var urlBuilder = new StringBuilder();
+            urlBuilder.Append(BaseUrl);
+            urlBuilder.Append("chunks/stream");
+            var url = urlBuilder.ToString();
+            
+            //secret key
+            byte[] keyBytes = new byte[16];
+            RandomNumberGenerator.Fill(keyBytes);
+            
+            //request
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Connection", "Upgrade");
+            request.Headers.Add("Upgrade", "websocket");
+            request.Headers.Add("Sec-WebSocket-Version", "13");
+            request.Headers.Add("Sec-WebSocket-Key", Convert.ToBase64String(keyBytes));
+            request.Headers.Add("swarm-postage-batch-id", batchId.ToString());
+            if (tagId.HasValue)
+                request.Headers.Add("swarm-tag", tagId.Value.ToString());
+
+            // Send request.
+            var response = await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
+
+            // Evaluate response and upgrade.
+            if (response.StatusCode != HttpStatusCode.SwitchingProtocols)
+                throw new InvalidOperationException($"Failed to upgrade to WebSocket: {response.StatusCode}");
+            
+            // Create websocket from stream.
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            var internalBufferArray = new byte[ChunkStreamWSInternalBufferSize];
+            var webSocket = WebSocket.CreateClientWebSocket(
+                stream,
+                null,
+                ChunkStreamWSReceiveBufferSize,
+                ChunkStreamWSSendBufferSize,
+                WebSocket.DefaultKeepAliveInterval,
+                false,
+                internalBufferArray);
+            
+            return new ChunkUploaderWebSocket(webSocket);
+        }
+
         public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
@@ -595,7 +656,7 @@ namespace Etherna.BeeNet
                 id: response.BatchID,
                 isImmutable: response.ImmutableFlag,
                 label: response.Label,
-                ttl: TimeSpan.FromSeconds(response.BatchTTL),
+                ttl: TimeSpan.FromMilliseconds(response.BatchTTL),
                 isUsable: response.Usable,
                 utilization: response.Utilization,
                 storageRadius: null);
@@ -610,7 +671,7 @@ namespace Etherna.BeeNet
                 hash: response.Hash,
                 proof1: new ReserveCommitmentProof(
                     chunkSpan: response.Proofs.Proof1.ChunkSpan,
-                    postageProof: new Models.PostageProof(
+                    postageProof: new PostageProof(
                         index: response.Proofs.Proof1.PostageProof.Index,
                         postageId: response.Proofs.Proof1.PostageProof.PostageId,
                         signature: response.Proofs.Proof1.PostageProof.Signature,
@@ -621,7 +682,7 @@ namespace Etherna.BeeNet
                     proofSegments3: response.Proofs.Proof1.ProofSegments3 ?? Array.Empty<string>(),
                     proveSegment: response.Proofs.Proof1.ProveSegment,
                     proveSegment2: response.Proofs.Proof1.ProveSegment2,
-                    socProof: (response.Proofs.Proof1.SocProof ?? Array.Empty<Clients.SocProof>()).Select(
+                    socProof: (response.Proofs.Proof1.SocProof ?? Array.Empty<SocProof>()).Select(
                         p => new Models.SocProof(
                             chunkHash: p.ChunkAddr,
                             identifier: p.Identifier,
@@ -629,7 +690,7 @@ namespace Etherna.BeeNet
                             signer: p.Signer))),
                 proof2: new ReserveCommitmentProof(
                     chunkSpan: response.Proofs.Proof2.ChunkSpan,
-                    postageProof: new Models.PostageProof(
+                    postageProof: new PostageProof(
                         index: response.Proofs.Proof2.PostageProof.Index,
                         postageId: response.Proofs.Proof2.PostageProof.PostageId,
                         signature: response.Proofs.Proof2.PostageProof.Signature,
@@ -648,7 +709,7 @@ namespace Etherna.BeeNet
                             signer: p.Signer))),
                 proofLast: new ReserveCommitmentProof(
                     chunkSpan: response.Proofs.ProofLast.ChunkSpan,
-                    postageProof: new Models.PostageProof(
+                    postageProof: new PostageProof(
                         index: response.Proofs.ProofLast.PostageProof.Index,
                         postageId: response.Proofs.ProofLast.PostageProof.PostageId,
                         signature: response.Proofs.ProofLast.PostageProof.Signature,
@@ -752,12 +813,12 @@ namespace Etherna.BeeNet
         }
 
         public async Task<TagInfo> GetTagInfoAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default)
         {
-            var response = await generatedClient.TagsGetAsync(uid, cancellationToken).ConfigureAwait(false);
+            var response = await generatedClient.TagsGetAsync(id.Value, cancellationToken).ConfigureAwait(false);
             return new TagInfo(
-                uid: response.Uid,
+                id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
                 split: response.Split,
                 seen: response.Seen,
@@ -775,7 +836,7 @@ namespace Etherna.BeeNet
                 (await generatedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
                 Array.Empty<Tags>();
             return tags.Select(t => new TagInfo(
-                uid: t.Uid,
+                id: new TagId(t.Uid),
                 startedAt: t.StartedAt,
                 split: t.Split,
                 seen: t.Seen,
@@ -1046,11 +1107,11 @@ namespace Etherna.BeeNet
         }
 
         public Task UpdateTagAsync(
-            long uid,
+            TagId id,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.TagsPatchAsync(
-                uid,
+                id.Value,
                 hash.HasValue ?
                     new Body3 { Address = hash.Value.ToString() } :
                     null,
@@ -1060,25 +1121,18 @@ namespace Etherna.BeeNet
             Stream chunkData,
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
-            long? swarmTag = null,
+            TagId? tagId = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChunksPostAsync(
-                swarmTag,
+                tagId?.Value,
                 batchId.ToString(),
                 chunkData,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
-        public Task UploadChunksStreamAsync(
-            PostageBatchId batchId,
-            int? swarmTag = null,
-            bool? swarmPin = null,
-            CancellationToken cancellationToken = default) =>
-            generatedClient.ChunksStreamAsync(swarmTag, batchId.ToString(), cancellationToken);
-
         public async Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             bool? swarmDeferredUpload = null,
@@ -1086,7 +1140,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.BytesPostAsync(
                 swarm_postage_batch_id: batchId.ToString(),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_deferred_upload: swarmDeferredUpload,
                 swarm_encrypt: swarmEncrypt,
@@ -1098,7 +1152,7 @@ namespace Etherna.BeeNet
         public async Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
             string directoryPath,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -1120,7 +1174,7 @@ namespace Etherna.BeeNet
             // Upload directory.
             return (await generatedClient.BzzPostAsync(
                 new FileParameter(memoryStream, null, "application/x-tar"),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_encrypt: swarmEncrypt,
                 swarm_collection: true,
@@ -1139,7 +1193,7 @@ namespace Etherna.BeeNet
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -1150,7 +1204,7 @@ namespace Etherna.BeeNet
         {
             return (await generatedClient.BzzPostAsync(
                 new FileParameter(content, name, contentType),
-                swarm_tag: swarmTag,
+                swarm_tag: tagId?.Value,
                 swarm_pin: swarmPin,
                 swarm_encrypt: swarmEncrypt,
                 swarm_collection: isFileCollection,

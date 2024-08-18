@@ -146,7 +146,7 @@ namespace Etherna.BeeNet
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task DeleteTagAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default);
 
         /// <summary>Cancel existing transaction</summary>
@@ -315,6 +315,17 @@ namespace Etherna.BeeNet
             bool? swarmCache = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>Upload stream of chunks</summary>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<ChunkUploaderWebSocket> GetChunkUploaderWebSocketAsync(
+            PostageBatchId batchId,
+            TagId? tagId = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Get the past due consumption balance with a specific peer</summary>
         /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
@@ -437,7 +448,7 @@ namespace Etherna.BeeNet
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> GetTagInfoAsync(
-            long uid,
+            TagId id,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get list of tags</summary>
@@ -676,7 +687,7 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task UpdateTagAsync(
-            long uid,
+            TagId id,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default);
 
@@ -694,20 +705,7 @@ namespace Etherna.BeeNet
             Stream chunkData,
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
-            long? swarmTag = null,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Upload stream of chunks</summary>
-        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task UploadChunksStreamAsync(
-            PostageBatchId batchId,
-            int? swarmTag = null,
-            bool? swarmPin = null,
+            TagId? tagId = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload data</summary>
@@ -723,7 +721,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
-            int? swarmTag = null, 
+            TagId? tagId = null, 
             bool? swarmPin = null, 
             bool? swarmEncrypt = null, 
             bool? swarmDeferredUpload = null,
@@ -749,7 +747,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
             string directoryPath,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,
@@ -783,7 +781,7 @@ namespace Etherna.BeeNet
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
-            int? swarmTag = null,
+            TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             string? swarmIndexDocument = null,

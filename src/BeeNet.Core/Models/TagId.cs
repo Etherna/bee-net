@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -13,25 +13,23 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class TagInfo(
-        TagId id,
-        DateTimeOffset startedAt,
-        int split,
-        int seen,
-        int stored,
-        int sent,
-        int synced)
+    public readonly struct TagId(ulong value) : IEquatable<TagId>
     {
         // Properties.
-        public TagId Id { get; } = id;
-        public DateTimeOffset StartedAt { get; } = startedAt;
-        public int Split { get; } = split;
-        public int Seen { get; } = seen;
-        public int Stored { get; } = stored;
-        public int Sent { get; } = sent;
-        public int Synced { get; } = synced;
+        public ulong Value { get; } = value;
+
+        // Methods.
+        public bool Equals(TagId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is TagId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+        public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+
+        // Operator methods.
+        public static bool operator ==(TagId left, TagId right) => left.Equals(right);
+        public static bool operator !=(TagId left, TagId right) => !(left == right);
     }
 }

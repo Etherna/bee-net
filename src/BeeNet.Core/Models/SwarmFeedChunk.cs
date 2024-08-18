@@ -29,7 +29,9 @@ namespace Etherna.BeeNet.Models
         public const int AccountSize = 20;
         public const int IdentifierSize = 32;
         public const int IndexSize = 32;
+        public const int MaxChunkSize = MinChunkSize + DataSize;
         public const int MaxPayloadSize = DataSize - TimeStampSize; //creation timestamp
+        public const int MinChunkSize = SwarmHash.HashSize + SwarmSignature.SignatureSize + SpanSize;
         public const int MinDataSize = TimeStampSize;
         public const int TimeStampSize = sizeof(ulong);
         public const int TopicSize = 32;

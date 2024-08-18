@@ -12,12 +12,13 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Hashing.Signer
+namespace Etherna.BeeNet.Models
 {
-    public class FakeSigner : ISigner
+    [SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable")]
+    public class SwarmSignature
     {
-        public byte[] Sign(byte[] toSign) => new byte[SwarmSignature.SignatureSize];
+        public const int SignatureSize = 65;
     }
 }
