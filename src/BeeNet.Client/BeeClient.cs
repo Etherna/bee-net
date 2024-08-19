@@ -199,9 +199,12 @@ namespace Etherna.BeeNet
             generatedClient.PinsPostAsync((string)hash, cancellationToken);
 
         public async Task<TagInfo> CreateTagAsync(
+            PostageBatchId postageBatchId,
             CancellationToken cancellationToken = default)
         {
-            var response = await generatedClient.TagsPostAsync(cancellationToken).ConfigureAwait(false);
+            var response = await generatedClient.TagsPostAsync(
+                postageBatchId.ToString(),
+                cancellationToken).ConfigureAwait(false);
             return new TagInfo(
                 id: new TagId(response.Uid),
                 startedAt: response.StartedAt,
