@@ -122,9 +122,11 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Create Tag</summary>
+        /// <param name="postageBatchId">Required to proxy pass on right node</param>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> CreateTagAsync(
+            PostageBatchId postageBatchId,
             CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
