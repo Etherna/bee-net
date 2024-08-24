@@ -10,7 +10,6 @@
 
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
-    <IsAotCompatible>true</IsAotCompatible>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 
