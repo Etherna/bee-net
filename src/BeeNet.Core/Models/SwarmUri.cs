@@ -22,6 +22,9 @@ namespace Etherna.BeeNet.Models
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
     public readonly struct SwarmUri : IEquatable<SwarmUri>
     {
+        // Fields.
+        private readonly string? _path;
+        
         // Constructor.
         public SwarmUri(SwarmHash? hash, string? path)
         {
@@ -29,7 +32,7 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentException("Hash and path can't be both null");
             
             Hash = hash;
-            Path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
+            _path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
         }
         public SwarmUri(string uri, UriKind uriKind)
         {
@@ -45,18 +48,18 @@ namespace Etherna.BeeNet.Models
             {
                 var address = new SwarmAddress(uri);
                 Hash = address.Hash;
-                Path = address.Path;
+                _path = address.Path;
             }
             else
             {
-                Path = uri;
+                _path = uri;
             }
         }
         
         // Properties.
         public SwarmHash? Hash { get; }
         public bool IsRooted => UriKind == UriKind.Absolute || System.IO.Path.IsPathRooted(Path);
-        public string Path { get; }
+        public string Path => _path ?? SwarmAddress.NormalizePath(null);
         public UriKind UriKind => Hash.HasValue ? UriKind.Absolute : UriKind.Relative;
         
         // Methods.

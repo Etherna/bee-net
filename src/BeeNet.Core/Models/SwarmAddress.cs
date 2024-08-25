@@ -22,11 +22,14 @@ namespace Etherna.BeeNet.Models
         // Consts.
         public const char Separator = '/';
         
+        // Fields.
+        private readonly string? _path;
+        
         // Constructor.
         public SwarmAddress(SwarmHash hash, string? path = null)
         {
             Hash = hash;
-            Path = NormalizePath(path);
+            _path = NormalizePath(path);
         }
         public SwarmAddress(string address)
         {
@@ -42,13 +45,13 @@ namespace Etherna.BeeNet.Models
             
             // Set hash and path.
             Hash = new SwarmHash(hash);
-            Path = NormalizePath(path);
+            _path = NormalizePath(path);
         }
         
         // Properties.
         public SwarmHash Hash { get; }
         public bool HasPath => Path != Separator.ToString();
-        public string Path { get; }
+        public string Path => _path ?? NormalizePath(null);
         
         // Methods.
         public bool Equals(SwarmAddress other) =>

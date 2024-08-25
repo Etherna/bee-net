@@ -58,14 +58,15 @@ namespace Etherna.BeeNet.Models
         public static SwarmHash Zero { get; } = new byte[HashSize];
 
         // Methods.
-        public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
+        public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(
+            byteHash ?? Zero.byteHash, other.byteHash);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
-        public uint ToBucketId() =>
-            BinaryPrimitives.ReadUInt32BigEndian(byteHash.AsSpan()[..4]) >> (32 - PostageBatch.BucketDepth);
-        public byte[] ToByteArray() => (byte[])byteHash.Clone();
-        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;
-        public override string ToString() => byteHash.ToHex();
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash ?? Zero.byteHash);
+        public uint ToBucketId() => BinaryPrimitives.ReadUInt32BigEndian(
+            (byteHash ?? Zero.byteHash).AsSpan()[..4]) >> (32 - PostageBatch.BucketDepth);
+        public byte[] ToByteArray() => (byte[])(byteHash ?? Zero.byteHash).Clone();
+        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash ?? Zero.byteHash;
+        public override string ToString() => (byteHash ?? Zero.byteHash).ToHex();
         
         // Static methods.
         public static SwarmHash FromByteArray(byte[] value) => new(value);
