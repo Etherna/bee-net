@@ -58,6 +58,7 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public SwarmHash? Hash { get; }
+        public bool HasPath => Path != SwarmAddress.Separator.ToString();
         public bool IsRooted => UriKind == UriKind.Absolute || System.IO.Path.IsPathRooted(Path);
         public string Path => _path ?? SwarmAddress.NormalizePath(null);
         public UriKind UriKind => Hash.HasValue ? UriKind.Absolute : UriKind.Relative;
