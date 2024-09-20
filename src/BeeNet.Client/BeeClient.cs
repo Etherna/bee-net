@@ -952,7 +952,7 @@ namespace Etherna.BeeNet
                 chunkStore,
                 address.Hash);
             
-            return await rootManifest.ResolveAddressToChunkReferenceAsync(address).ConfigureAwait(false);
+            return await rootManifest.ResolveAddressToChunkReferenceAsync(address.Path).ConfigureAwait(false);
         }
 
         public Task ReuploadContentAsync(

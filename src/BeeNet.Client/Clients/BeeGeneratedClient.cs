@@ -1961,9 +1961,10 @@ namespace Etherna.BeeNet.Clients
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "bzz/{reference}"
+                    // Operation Path: "bzz/{reference}/"
                     urlBuilder_.Append("bzz/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2181,7 +2182,7 @@ namespace Etherna.BeeNet.Clients
                     urlBuilder_.Append("bzz/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(path, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(path.TrimStart('/'));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

@@ -262,7 +262,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 address.Hash);
             
-            var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address).ConfigureAwait(false);
+            var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address.Path).ConfigureAwait(false);
             
             return await chunkJoiner.GetJoinedChunkDataAsync(
                 chunkReference,
