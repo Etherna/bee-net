@@ -1241,7 +1241,6 @@ components:
       name: swarm-act-history-address
       schema:
         $ref: "#/components/schemas/SwarmAddress"
-      required: false
       description: "ACT history reference address"
 
     SwarmActTimestamp:
