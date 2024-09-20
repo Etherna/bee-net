@@ -675,7 +675,7 @@ paths:
         "500": *a2
         default:
           description: Default response
-  "/bzz/{reference}":
+  "/bzz/{reference}/":
     get:
       summary: Get file or index document from a collection of files
       tags:
@@ -3444,6 +3444,7 @@ paths:
                     type: boolean
                   lastSyncedBlock:
                     type: integer
+                    format: int64
         "400": *a11
         default:
           description: Default response.
@@ -3501,6 +3502,7 @@ paths:
                           type: boolean
                         lastSyncedBlock:
                           type: integer
+                          format: int64
         "400": *a11
         default:
           description: Default response.

@@ -939,6 +939,7 @@ components:
           type: boolean
         lastSyncedBlock:
           type: integer
+          format: int64
 
     StatusResponse:
       type: object

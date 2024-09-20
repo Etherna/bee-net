@@ -409,7 +409,7 @@ paths:
         default:
           description: Default response
 
-  "/bzz/{reference}":
+  "/bzz/{reference}/":
     get:
       summary: "Get file or index document from a collection of files"
       tags:
