@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,18 +12,29 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-
 namespace Etherna.BeeNet.Models
 {
-    public sealed class Health(
-        bool isStatusOk,
-        string version,
-        string apiVersion)
+    public class EnvelopeResponse(
+        string issuer,
+        string index,
+        string timestamp,
+        string signature)
     {
-        // Properties.
-        public bool IsStatusOk { get; } = isStatusOk;
-        public string Version { get; } = version;
-        public string ApiVersion { get; } = apiVersion;
+        public string Issuer { get; set; } = issuer;
+
+        /// <summary>
+        /// Hexadecimal string representation of 8 bytes
+        /// </summary>
+        public string Index { get; set; } = index;
+
+        /// <summary>
+        /// Hexadecimal string representation of 8 bytes
+        /// </summary>
+        public string Timestamp { get; set; } = timestamp;
+
+        /// <summary>
+        /// Hexadecimal string representation of cryptographic signature
+        /// </summary>
+        public string Signature { get; set; } = signature;
     }
 }

@@ -18,8 +18,10 @@ namespace Etherna.BeeNet.Models
         StatusBeeMode beeMode,
         int batchCommitment,
         int connectedPeers,
+        bool isReachable,
+        long lastSyncedBlock,
         int neighborhoodSize,
-        string peer,
+        string overlay,
         int proximity,
         double pullsyncRate,
         int reserveSize,
@@ -31,8 +33,10 @@ namespace Etherna.BeeNet.Models
         public StatusBeeMode BeeMode { get; } = beeMode;
         public int BatchCommitment { get; } = batchCommitment;
         public int ConnectedPeers { get; } = connectedPeers;
+        public bool IsReachable { get; } = isReachable;
+        public long LastSyncedBlock { get; } = lastSyncedBlock;
         public int NeighborhoodSize { get; } = neighborhoodSize;
-        public string Peer { get; } = peer;
+        public string Overlay { get; } = overlay;
         public int Proximity { get; } = proximity;
         public double PullsyncRate { get; } = pullsyncRate;
         public int ReserveSize { get; } = reserveSize;
