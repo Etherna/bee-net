@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,18 +12,13 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-
 namespace Etherna.BeeNet.Models
 {
-    public sealed class Health(
-        bool isStatusOk,
-        string version,
-        string apiVersion)
+    public class GranteeResponse(
+        string reference,
+        string historyRef)
     {
-        // Properties.
-        public bool IsStatusOk { get; } = isStatusOk;
-        public string Version { get; } = version;
-        public string ApiVersion { get; } = apiVersion;
+        public string HistoryRef { get; } = historyRef;
+        public string Reference { get; } = reference;
     }
 }

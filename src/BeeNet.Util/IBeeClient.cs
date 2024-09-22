@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -35,11 +36,6 @@ namespace Etherna.BeeNet
         /// <returns>Own accounting associated values with all known peers</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<Dictionary<string, Account>> AccountingAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>Authenticate - This endpoint is experimental</summary>
-        /// <returns>Auth key</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> AuthenticateAsync(string role, int expiry);
 
         /// <summary>Buy a new postage batch.</summary>
         /// <param name="amount">Amount of BZZ added that the postage batch will have.</param>
@@ -78,6 +74,9 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<bool> CheckChunkExistsAsync(
             SwarmHash hash,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -112,6 +111,8 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             string? type = null,
             bool? swarmPin = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Pin the root hash with the given reference</summary>
@@ -181,6 +182,16 @@ namespace Etherna.BeeNet
             int depth,
             XDaiBalance? gasPrice = null,
             long? gasLimit = null,
+            CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Create postage stamp signature against given chunk address
+        /// </summary>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<EnvelopeResponse> EnvelopeAsync(
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get overlay and underlay addresses of the node</summary>
@@ -253,6 +264,9 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null, 
             CancellationToken cancellationToken = default);
         
         /// <summary>
@@ -261,7 +275,12 @@ namespace Etherna.BeeNet
         /// <param name="hash">Swarm hash of chunk</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task GetBytesHeadAsync(SwarmHash hash, CancellationToken cancellationToken = default);
+        Task GetBytesHeadersAsync(
+            SwarmHash hash,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
@@ -306,6 +325,9 @@ namespace Etherna.BeeNet
         Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
             bool? swarmCache = null,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
@@ -315,6 +337,9 @@ namespace Etherna.BeeNet
         Task<Stream> GetChunkStreamAsync(
             SwarmHash hash,
             bool? swarmCache = null,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload stream of chunks</summary>
@@ -366,6 +391,9 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>
@@ -482,6 +510,35 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default);
 
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get grantee list
+        /// </summary>
+        /// <param name="reference">Grantee list reference</param>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<ICollection<string>> GranteeGetAsync(string reference, CancellationToken cancellationToken = default);
+        
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Update grantee list
+        /// </summary>
+        /// <remarks>
+        /// Add or remove grantees from an existing grantee list
+        /// </remarks>
+        /// <param name="reference">Grantee list reference</param>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<GranteeResponse> GranteePatchAsync(string reference, string swarmActHistoryAddress, PostageBatchId batchId, string[] AddList, string[] RevokeList, TagId? tagId = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, CancellationToken cancellationToken = default);
+        
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Create grantee list
+        /// </summary>
+        /// <returns>Ok</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<GranteeResponse> GranteePostAsync(PostageBatchId batchId, string[] grantees, TagId? tagId = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, string? swarmActHistoryAddress = null, CancellationToken cancellationToken = default);
+
         /// <summary>Check if content is retrievable</summary>
         /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
@@ -531,14 +588,6 @@ namespace Etherna.BeeNet
         /// <returns>Redistribution status info</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>Refresh the auth token - This endpoint is experimental</summary>
-        /// <returns>Key</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> RefreshAuthAsync(
-            string role, 
-            int expiry,
-            CancellationToken cancellationToken = default);
 
         Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(SwarmAddress address);
 
@@ -598,6 +647,16 @@ namespace Etherna.BeeNet
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Withdraws all past staked amount back to the wallet.
+        /// </summary>
+        /// <remarks>
+        /// Be aware, the endpoint call only be called when the contract is paused and is in the process of being migrated to a new contract.
+        /// </remarks>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task StakeMigrateAsync(CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Deposit some amount for staking.
         /// </summary>
         /// <remarks>
@@ -612,6 +671,28 @@ namespace Etherna.BeeNet
             XDaiBalance? gasPrice = null,
             long? gasLimit = null,
             CancellationToken cancellationToken = default);
+        
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Withdraw the extra withdrawable staked amount.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint withdraws any amount that is possible to withdraw as surplus.
+        /// </remarks>
+        /// <param name="gas_price">Gas price for transaction</param>
+        /// <param name="gas_limit">Gas limit for transaction</param>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task StakeWithdrawableDeleteAsync(XDaiBalance? gasPrice = null, long? gasLimit = null, CancellationToken cancellationToken = default);
+        
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the withdrawable staked amount.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint fetches any amount that is possible to withdraw as surplus.
+        /// </remarks>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task StakeWithdrawableGetAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get the current status snapshot of this node.
@@ -661,6 +742,9 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<HttpContentHeaders?> TryGetFileHeadersAsync(
             SwarmAddress address,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null, 
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -681,6 +765,9 @@ namespace Etherna.BeeNet
         /// <returns>Byte size of file</returns>
         Task<long?> TryGetFileSizeAsync(
             SwarmAddress address,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null, 
             CancellationToken cancellationToken = default);
 
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>
@@ -708,6 +795,9 @@ namespace Etherna.BeeNet
             bool swarmPin = false,
             bool swarmDeferredUpload = true,
             TagId? tagId = null,
+            string? swarmPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload data</summary>
@@ -756,6 +846,8 @@ namespace Etherna.BeeNet
             string? swarmErrorDocument = null,
             bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 #endif
 
@@ -809,6 +901,9 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             Stream body,
             bool? swarmPin = null,
+            string? swarmPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
         
         /// <summary>
