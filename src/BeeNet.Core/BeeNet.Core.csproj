@@ -35,7 +35,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nethereum.Util" Version="4.21.4" />
+    <PackageReference Include="Nethereum.Util" Version="4.25.0" />
   </ItemGroup>
 
   <ItemGroup>
