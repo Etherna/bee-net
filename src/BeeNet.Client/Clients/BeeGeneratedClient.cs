@@ -2469,7 +2469,7 @@ namespace Etherna.BeeNet.Clients
                     urlBuilder_.Append("bzz/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(path, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(path.TrimStart('/'));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
