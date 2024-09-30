@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Manifest
             if (!_rootNode.IsDecoded)
                 await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await RootNode.GetResourceMetadataAsync(address.Path).ConfigureAwait(false);
+            return await RootNode.GetResourceMetadataAsync(address.Path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
         }
 
         public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(string path)
