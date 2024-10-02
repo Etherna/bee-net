@@ -188,13 +188,13 @@ namespace Etherna.BeeNet.Manifest
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
 
-        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path, SwarmHash manifestHash)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();
         }
 
-        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
+        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path, SwarmHash manifestHash)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();

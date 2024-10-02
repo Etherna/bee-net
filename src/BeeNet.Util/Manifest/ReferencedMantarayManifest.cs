@@ -42,9 +42,9 @@ namespace Etherna.BeeNet.Manifest
         public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(SwarmAddress address)
         {
             if (!_rootNode.IsDecoded)
-                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
+                await _rootNode.DecodeFromChunkAsync(_rootNode.Hash).ConfigureAwait(false);
 
-            return await RootNode.GetResourceMetadataAsync(address.Path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
+            return await RootNode.GetResourceMetadataAsync(address.Path.TrimStart(SwarmAddress.Separator), _rootNode.Hash).ConfigureAwait(false);
         }
 
         public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(string path)
@@ -52,12 +52,13 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             
             if (!_rootNode.IsDecoded)
-                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
+                await _rootNode.DecodeFromChunkAsync(_rootNode.Hash).ConfigureAwait(false);
 
-            return await RootNode.ResolveChunkReferenceAsync(
+            return await _rootNode.ResolveChunkReferenceAsync(
                 path == SwarmAddress.Separator.ToString() ?
                     path :
-                    path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
+                    path.TrimStart(SwarmAddress.Separator),
+                _rootNode.Hash).ConfigureAwait(false);
         }
     }
 }

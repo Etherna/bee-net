@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Hashing.Store
             CancellationToken cancellationToken)
         {
             // Read and decrypt chunk data.
-            var chunk = await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(chunkReference.Hash, null).ConfigureAwait(false);
             var dataArray = chunk.Data.ToArray();
             chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
             

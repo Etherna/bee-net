@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C162BCCF
 	ProjectSection(SolutionItems) = preProject
 		tools\README.md = tools\README.md
 		tools\bee-api.nswag = tools\bee-api.nswag
+		tools\GatewaySwarm.yaml = tools\GatewaySwarm.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92}"
