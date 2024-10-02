@@ -324,6 +324,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
+            int maxRetryAttempts = 10,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -336,6 +337,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Stream> GetChunkStreamAsync(
             SwarmHash hash,
+            int maxRetryAttempts = 10,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
