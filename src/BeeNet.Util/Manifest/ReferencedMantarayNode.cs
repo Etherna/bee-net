@@ -69,12 +69,12 @@ namespace Etherna.BeeNet.Manifest
             : throw new InvalidOperationException("Node is not decoded from chunk");
 
         // Methods.
-        public async Task DecodeFromChunkAsync()
+        public async Task DecodeFromChunkAsync(SwarmHash manifestHash)
         {
             if (IsDecoded)
                 return;
 
-            var chunk = await chunkStore.GetAsync(Hash).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(Hash, rootHash: manifestHash).ConfigureAwait(false);
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;
@@ -97,7 +97,9 @@ namespace Etherna.BeeNet.Manifest
             IsDecoded = true;
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+            string path,
+            SwarmHash manifestHash)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
@@ -127,12 +129,14 @@ namespace Etherna.BeeNet.Manifest
             
             // Else, proceed into it.
             if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
+                await fork.Node.DecodeFromChunkAsync(manifestHash).ConfigureAwait(false);
 
-            return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
+            return await fork.Node.GetResourceMetadataAsync(childSubPath, manifestHash).ConfigureAwait(false);
         }
 
-        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
+        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(
+            string path,
+            SwarmHash manifestHash)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
@@ -163,9 +167,11 @@ namespace Etherna.BeeNet.Manifest
                 throw new KeyNotFoundException($"Final path {path} can't be found");
 
             if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
+                await fork.Node.DecodeFromChunkAsync(manifestHash).ConfigureAwait(false);
 
-            return await fork.Node.ResolveChunkReferenceAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
+            return await fork.Node.ResolveChunkReferenceAsync(
+                path[fork.Prefix.Length..],
+                manifestHash).ConfigureAwait(false);
         }
         
         // Helpers.

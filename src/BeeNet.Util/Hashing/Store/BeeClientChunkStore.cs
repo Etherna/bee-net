@@ -21,14 +21,22 @@ namespace Etherna.BeeNet.Hashing.Store
     public class BeeClientChunkStore(IBeeClient beeClient)
         : IReadOnlyChunkStore
     {
-        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
-            beeClient.GetChunkAsync(hash);
+        public Task<SwarmChunk> GetAsync(
+            SwarmHash hash,
+            SwarmHash? rootHash) =>
+            beeClient.GetChunkAsync(
+                hash,
+                rootHash: rootHash);
 
-        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
+        public async Task<SwarmChunk?> TryGetAsync(
+            SwarmHash hash,
+            SwarmHash? rootHash)
         {
             try
             {
-                return await beeClient.GetChunkAsync(hash).ConfigureAwait(false);
+                return await beeClient.GetChunkAsync(
+                    hash,
+                    rootHash: rootHash).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
             {
