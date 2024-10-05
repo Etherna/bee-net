@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class ChunkUploaderWebSocket(
+    public class ChunkUploaderWebSocket(
         WebSocket webSocket)
         : IDisposable
     {
@@ -27,13 +27,21 @@ namespace Etherna.BeeNet.Models
         private readonly byte[] responseBuffer = new byte[SwarmHash.HashSize]; //not really used
         
         // Dispose.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                webSocket.Dispose();
+            }
+        }
         public void Dispose()
         {
-            webSocket.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
         
         // Methods.
-        public async Task CloseAsync()
+        public virtual async Task CloseAsync()
         {
             if (webSocket.State == WebSocketState.Open)
             {
@@ -49,7 +57,9 @@ namespace Etherna.BeeNet.Models
             }
         }
         
-        public async Task SendChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken)
+        public virtual async Task SendChunkAsync(
+            SwarmChunk chunk,
+            CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             
@@ -61,6 +71,21 @@ namespace Etherna.BeeNet.Models
             if (response.MessageType == WebSocketMessageType.Close)
                 throw new OperationCanceledException(
                     $"Connection closed by server, message: {response.CloseStatusDescription}");
+        }
+
+        public virtual async Task SendChunksAsync(
+            SwarmChunk[] chunks,
+            Action<int>? onChunkBatchSent = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(chunks, nameof(chunks));
+            
+            // Iterate on chunks.
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                await SendChunkAsync(chunks[i], cancellationToken).ConfigureAwait(false);
+                onChunkBatchSent?.Invoke(i);
+            }
         }
     }
 }
