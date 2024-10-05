@@ -76,16 +76,12 @@ namespace Etherna.BeeNet.Models
 
         public virtual async Task SendChunksAsync(
             SwarmChunk[] chunkBatch,
-            Action<int>? onChunkBatchSent = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkBatch, nameof(chunkBatch));
             
             foreach (var (chunk, i) in chunkBatch.Select((c, i) => (c, i)))
-            {
                 await SendChunkAsync(chunk, cancellationToken).ConfigureAwait(false);
-                onChunkBatchSent?.Invoke(i + 1);
-            }
         }
     }
 }
