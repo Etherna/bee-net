@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -576,6 +577,15 @@ namespace Etherna.BeeNet
         /// <returns>The verbosity was changed successfully.</returns>
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default);
+
+        Task<WebSocket> OpenChunkUploadWebSocketConnectionAsync(
+            string endpointPath,
+            PostageBatchId batchId,
+            TagId? tagId,
+            int internalBufferSize,
+            int receiveBufferSize,
+            int sendBufferSize,
+            CancellationToken cancellationToken);
 
         /// <summary>Rebroadcast existing transaction</summary>
         /// <param name="txHash">Hash of the transaction</param>

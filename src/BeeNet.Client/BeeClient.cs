@@ -552,49 +552,15 @@ namespace Etherna.BeeNet
             TagId? tagId = null,
             CancellationToken cancellationToken = default)
         {
-            // Build protocol upgrade request.
-            //url
-            var urlBuilder = new StringBuilder();
-            urlBuilder.Append(BaseUrl);
-            urlBuilder.Append("chunks/stream");
-            var url = urlBuilder.ToString();
-            
-            //secret key
-            byte[] keyBytes = new byte[16];
-            RandomNumberGenerator.Fill(keyBytes);
-            
-            //request
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("Connection", "Upgrade");
-            request.Headers.Add("Upgrade", "websocket");
-            request.Headers.Add("Sec-WebSocket-Version", "13");
-            request.Headers.Add("Sec-WebSocket-Key", Convert.ToBase64String(keyBytes));
-            request.Headers.Add("swarm-postage-batch-id", batchId.ToString());
-            if (tagId.HasValue)
-                request.Headers.Add("swarm-tag", tagId.Value.ToString());
-
-            // Send request.
-            var response = await httpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken).ConfigureAwait(false);
-
-            // Evaluate response and upgrade.
-            if (response.StatusCode != HttpStatusCode.SwitchingProtocols)
-                throw new InvalidOperationException($"Failed to upgrade to WebSocket: {response.StatusCode}");
-            
-            // Create websocket from stream.
-            var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-            var internalBufferArray = new byte[ChunkStreamWSInternalBufferSize];
-            var webSocket = WebSocket.CreateClientWebSocket(
-                stream,
-                null,
+            // Build uploader.
+            var webSocket = await OpenChunkUploadWebSocketConnectionAsync(
+                "chunks/stream",
+                batchId,
+                tagId,
+                ChunkStreamWSInternalBufferSize,
                 ChunkStreamWSReceiveBufferSize,
                 ChunkStreamWSSendBufferSize,
-                WebSocket.DefaultKeepAliveInterval,
-                false,
-                internalBufferArray);
-            
+                cancellationToken).ConfigureAwait(false);
             return new ChunkUploaderWebSocket(webSocket);
         }
 
@@ -1042,6 +1008,60 @@ namespace Etherna.BeeNet
 
         public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
             await generatedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
+
+        public async Task<WebSocket> OpenChunkUploadWebSocketConnectionAsync(
+            string endpointPath,
+            PostageBatchId batchId,
+            TagId? tagId,
+            int internalBufferSize,
+            int receiveBufferSize,
+            int sendBufferSize,
+            CancellationToken cancellationToken)
+        {
+            // Build protocol upgrade request.
+            //url
+            var urlBuilder = new StringBuilder();
+            urlBuilder.Append(BaseUrl);
+            urlBuilder.Append(endpointPath);
+            var url = urlBuilder.ToString();
+            
+            //secret key
+            byte[] keyBytes = new byte[16];
+            RandomNumberGenerator.Fill(keyBytes);
+            
+            //request
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Connection", "Upgrade");
+            request.Headers.Add("Upgrade", "websocket");
+            request.Headers.Add("Sec-WebSocket-Version", "13");
+            request.Headers.Add("Sec-WebSocket-Key", Convert.ToBase64String(keyBytes));
+            request.Headers.Add("swarm-postage-batch-id", batchId.ToString());
+            if (tagId.HasValue)
+                request.Headers.Add("swarm-tag", tagId.Value.ToString());
+
+            // Send request.
+            var response = await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
+
+            // Evaluate response and upgrade.
+            if (response.StatusCode != HttpStatusCode.SwitchingProtocols)
+                throw new InvalidOperationException($"Failed to upgrade to WebSocket: {response.StatusCode}");
+            
+            // Create websocket from stream.
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            var internalBufferArray = new byte[internalBufferSize];
+            var webSocket = WebSocket.CreateClientWebSocket(
+                stream,
+                null,
+                receiveBufferSize,
+                sendBufferSize,
+                WebSocket.DefaultKeepAliveInterval,
+                false,
+                internalBufferArray);
+            return webSocket;
+        }
 
         public async Task<string> RebroadcastTransactionAsync(
             string txHash,
