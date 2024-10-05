@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
@@ -76,13 +75,13 @@ namespace Etherna.BeeNet.Models
         }
 
         public virtual async Task SendChunksAsync(
-            IEnumerable<SwarmChunk> chunks,
+            SwarmChunk[] chunkBatch,
             Action<int>? onChunkBatchSent = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(chunks, nameof(chunks));
+            ArgumentNullException.ThrowIfNull(chunkBatch, nameof(chunkBatch));
             
-            foreach (var (chunk, i) in chunks.Select((c, i) => (c, i)))
+            foreach (var (chunk, i) in chunkBatch.Select((c, i) => (c, i)))
             {
                 await SendChunkAsync(chunk, cancellationToken).ConfigureAwait(false);
                 onChunkBatchSent?.Invoke(i + 1);
