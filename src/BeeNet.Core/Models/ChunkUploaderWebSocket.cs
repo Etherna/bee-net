@@ -59,19 +59,25 @@ namespace Etherna.BeeNet.Models
         }
         
         public virtual async Task SendChunkAsync(
-            SwarmChunk chunk,
+            byte[] chunkPayload,
             CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunkPayload, nameof(chunkPayload));
             
-            var chunkBytes = chunk.GetSpanAndData();
-            
-            await webSocket.SendAsync(chunkBytes, WebSocketMessageType.Binary, true, cancellationToken).ConfigureAwait(false);
+            await webSocket.SendAsync(chunkPayload, WebSocketMessageType.Binary, true, cancellationToken).ConfigureAwait(false);
             var response = await webSocket.ReceiveAsync(responseBuffer, CancellationToken.None).ConfigureAwait(false);
 
             if (response.MessageType == WebSocketMessageType.Close)
                 throw new OperationCanceledException(
                     $"Connection closed by server, message: {response.CloseStatusDescription}");
+        }
+
+        public virtual Task SendChunkAsync(
+            SwarmChunk chunk,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            return SendChunkAsync(chunk.GetSpanAndData(), cancellationToken);
         }
 
         public virtual async Task SendChunksAsync(
