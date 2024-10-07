@@ -12,17 +12,17 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Models;
 using System;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Models
+namespace Etherna.BeeNet.Tools
 {
-    public sealed class ChunkUploaderWebSocket(
+    public sealed class ChunkWebSocketUploader(
         WebSocket webSocket)
-        : IDisposable
+        : IChunkWebSocketUploader
     {
         // Fields.
         private readonly byte[] responseBuffer = new byte[SwarmHash.HashSize]; //not really used
@@ -68,6 +68,17 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             return SendChunkAsync(chunk.GetSpanAndData(), cancellationToken);
+        }
+
+        public async Task SendChunkBatchAsync(
+            SwarmChunk[] chunkBatch,
+            bool isLastBatch,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(chunkBatch, nameof(chunkBatch));
+            
+            foreach (var chunk in chunkBatch)
+                await SendChunkAsync(chunk, cancellationToken).ConfigureAwait(false);
         }
     }
 }

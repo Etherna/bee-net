@@ -18,6 +18,7 @@ using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services;
+using Etherna.BeeNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -547,7 +548,7 @@ namespace Etherna.BeeNet
         }
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
-        public async Task<ChunkUploaderWebSocket> GetChunkUploaderWebSocketAsync(
+        public async Task<IChunkWebSocketUploader> GetChunkUploaderWebSocketAsync(
             PostageBatchId batchId,
             TagId? tagId = null,
             CancellationToken cancellationToken = default)
@@ -561,7 +562,7 @@ namespace Etherna.BeeNet
                 ChunkStreamWSReceiveBufferSize,
                 ChunkStreamWSSendBufferSize,
                 cancellationToken).ConfigureAwait(false);
-            return new ChunkUploaderWebSocket(webSocket);
+            return new ChunkWebSocketUploader(webSocket);
         }
 
         public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(

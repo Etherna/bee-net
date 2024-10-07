@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -353,7 +354,7 @@ namespace Etherna.BeeNet
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Returns a Websocket connection on which stream of chunks can be uploaded. Each chunk sent is acknowledged using a binary response `0` which serves as confirmation of upload of single chunk. Chunks should be packaged as binary messages for uploading.</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<ChunkUploaderWebSocket> GetChunkUploaderWebSocketAsync(
+        Task<IChunkWebSocketUploader> GetChunkUploaderWebSocketAsync(
             PostageBatchId batchId,
             TagId? tagId = null,
             CancellationToken cancellationToken = default);
