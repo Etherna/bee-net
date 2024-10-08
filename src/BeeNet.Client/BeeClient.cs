@@ -716,6 +716,19 @@ namespace Etherna.BeeNet
                 storageRadius: null);
         }
 
+        public async Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await generatedClient.ReadinessAsync(cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch (BeeNetApiException e) when (e.StatusCode == 400)
+            {
+                return false;
+            }
+        }
+
         public async Task<ReserveCommitment> GetReserveCommitmentAsync(int depth, string anchor1, string anchor2,
             CancellationToken cancellationToken = default)
         {

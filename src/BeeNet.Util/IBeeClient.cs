@@ -440,6 +440,8 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
+        Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Get reserve commitment hash with sample proofs
         /// </summary>
