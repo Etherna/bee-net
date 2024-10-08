@@ -333,9 +333,11 @@ namespace Etherna.BeeNet
         public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
 
-        public async Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false)).Reference
-            .Select(h => new SwarmHash(h));
+        public async Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false);
+            return (response.References ?? []).Select(h => new SwarmHash(h));
+        }
 
         public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default)
         {

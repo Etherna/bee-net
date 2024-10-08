@@ -683,7 +683,7 @@ components:
     SwarmOnlyReferencesList:
       type: object
       properties:
-        reference:
+        references:
           type: array
           nullable: false
           items:

@@ -10523,8 +10523,8 @@ namespace Etherna.BeeNet.Clients
     internal partial class Response14
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public System.Collections.Generic.ICollection<string> Reference { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("references")]
+        public System.Collections.Generic.ICollection<string> References { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
