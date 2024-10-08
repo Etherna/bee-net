@@ -535,7 +535,7 @@ namespace Etherna.BeeNet
         /// <param name="reference">Grantee list reference</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<GranteeResponse> GranteePatchAsync(string reference, string swarmActHistoryAddress, PostageBatchId batchId, string[] AddList, string[] RevokeList, TagId? tagId = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, CancellationToken cancellationToken = default);
+        Task<GranteeResponse> GranteePatchAsync(string reference, string swarmActHistoryAddress, PostageBatchId batchId, string[] addList, string[] revokeList, TagId? tagId = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, CancellationToken cancellationToken = default);
         
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
