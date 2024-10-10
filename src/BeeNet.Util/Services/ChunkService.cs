@@ -100,15 +100,15 @@ namespace Etherna.BeeNet.Services
                     [ManifestEntry.ContentTypeKey] = fileContentType,
                     [ManifestEntry.FilenameKey] = fileName
                 };
-                if (fileHashingResult.EncryptionKey != null)
-                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+                if (fileHashingResult.ChunkRef.EncryptionKey != null)
+                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.ChunkRef.EncryptionKey.ToString());
                 if (compactLevel > 0)
                     fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
                 
                 dirManifest.Add(
                     Path.GetRelativePath(directoryPath, file),
                     ManifestEntry.NewFile(
-                        fileHashingResult.Hash,
+                        fileHashingResult.ChunkRef.Hash,
                         fileEntryMetadata));
             }
             
@@ -189,7 +189,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel,
                 chunkCuncorrency);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            fileName ??= fileHashingResult.Hash.ToString(); //if missing, set file name with its address
+            fileName ??= fileHashingResult.ChunkRef.Hash.ToString(); //if missing, set file name with its address
             
             // Create manifest.
             var manifest = new MantarayManifest(
@@ -215,15 +215,15 @@ namespace Etherna.BeeNet.Services
                 [ManifestEntry.ContentTypeKey] = fileContentType,
                 [ManifestEntry.FilenameKey] = fileName
             };
-            if (fileHashingResult.EncryptionKey != null)
-                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+            if (fileHashingResult.ChunkRef.EncryptionKey != null)
+                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.ChunkRef.EncryptionKey.ToString());
             if (compactLevel > 0)
                 fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileHashingResult.Hash,
+                    fileHashingResult.ChunkRef.Hash,
                     fileEntryMetadata));
 
             var chunkHashingResult = await manifest.GetHashAsync().ConfigureAwait(false);
@@ -270,7 +270,7 @@ namespace Etherna.BeeNet.Services
                 cancellationToken).ConfigureAwait(false);
         }
 
-        public Task<SwarmHash> WriteDataChunksAsync(
+        public Task<SwarmHashTree> WriteDataChunksAsync(
             byte[] data,
             string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -292,7 +292,7 @@ namespace Etherna.BeeNet.Services
                 chunkCuncorrency);
         }
 
-        public async Task<SwarmHash> WriteDataChunksAsync(
+        public async Task<SwarmHashTree> WriteDataChunksAsync(
             Stream stream,
             string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -318,10 +318,10 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            var hashTree = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Return file hash.
-            return fileHashingResult.Hash;
+            return hashTree;
         }
     }
 }

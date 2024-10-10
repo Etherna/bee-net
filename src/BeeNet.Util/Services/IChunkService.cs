@@ -139,8 +139,8 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <returns>The data root hash</returns>
-        Task<SwarmHash> WriteDataChunksAsync(
+        /// <returns>The hash tree root</returns>
+        Task<SwarmHashTree> WriteDataChunksAsync(
             byte[] data,
             string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -161,8 +161,8 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <returns>The data root hash</returns>
-        Task<SwarmHash> WriteDataChunksAsync(
+        /// <returns>The hash tree root</returns>
+        Task<SwarmHashTree> WriteDataChunksAsync(
             Stream stream,
             string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,

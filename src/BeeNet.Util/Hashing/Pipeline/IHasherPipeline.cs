@@ -32,13 +32,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<SwarmChunkReference> HashDataAsync(byte[] data);
+        Task<SwarmHashTree> HashDataAsync(byte[] data);
 
         /// <summary>
         /// Consume a stream slicing it in chunk size parts, and returns a Swarm hash as result
         /// </summary>
         /// <param name="dataStream">Input data stream</param>
         /// <returns>Resulting swarm hash</returns>
-        Task<SwarmChunkReference> HashDataAsync(Stream dataStream);
+        Task<SwarmHashTree> HashDataAsync(Stream dataStream);
     }
 }
