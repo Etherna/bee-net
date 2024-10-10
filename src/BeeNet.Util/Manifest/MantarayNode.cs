@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Manifest
             {
                 SetNodeTypeFlag(NodeType.Value);
                 
-                EntryHash = entry.Hash;
+                EntryHash = entry.HashTree.ChunkRef.Hash;
                 if (entry.Metadata.Count > 0)
                 {
                     Metadata = entry.Metadata;

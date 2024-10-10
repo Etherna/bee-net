@@ -29,26 +29,29 @@ namespace Etherna.BeeNet.Manifest
         
         // Constructor.
         private ManifestEntry(
-            SwarmHash hash,
+            SwarmHashTree hashTree,
             IReadOnlyDictionary<string, string> metadata)
         {
-            Hash = hash;
+            HashTree = hashTree;
             Metadata = metadata;
         }
         
         // Static builders.
         public static ManifestEntry NewDirectory(
             IReadOnlyDictionary<string, string> metadata) =>
-            new(SwarmHash.Zero, metadata);
+            new(new SwarmHashTree(
+                    new SwarmChunkReference(SwarmHash.Zero, null, false),
+                    []),
+                metadata);
 
         public static ManifestEntry NewFile(
-            SwarmHash fileHash,
+            SwarmHashTree fileHashTree,
             IReadOnlyDictionary<string, string> metadata) =>
-            new(fileHash, metadata);
+            new(fileHashTree, metadata);
         
         // Properties.
-        public SwarmHash Hash { get; }
-        public bool IsDirectory => Hash == SwarmHash.Zero;
+        public SwarmHashTree HashTree { get; }
+        public bool IsDirectory => HashTree.ChunkRef.Hash == SwarmHash.Zero;
         public IReadOnlyDictionary<string, string> Metadata { get; }
     }
 }

@@ -108,7 +108,7 @@ namespace Etherna.BeeNet.Services
                 dirManifest.Add(
                     Path.GetRelativePath(directoryPath, file),
                     ManifestEntry.NewFile(
-                        fileHashingResult.ChunkRef.Hash,
+                        fileHashingResult,
                         fileEntryMetadata));
             }
             
@@ -223,7 +223,7 @@ namespace Etherna.BeeNet.Services
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileHashingResult.ChunkRef.Hash,
+                    fileHashingResult,
                     fileEntryMetadata));
 
             var chunkHashingResult = await manifest.GetHashAsync().ConfigureAwait(false);
