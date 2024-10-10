@@ -22,7 +22,10 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
+    internal sealed class ChunkAggregatorPipelineStage(
+        ChunkBmtPipelineStage shortBmtPipelineStage,
+        bool useRecursiveEncryption)
+        : IHasherPipelineStage
     {
         // Private classes.
         private sealed class ChunkHeader(
@@ -40,26 +43,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Fields.
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
-        private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
-        private readonly byte maxChildrenChunks;
-        private readonly ChunkBmtPipelineStage shortBmtPipelineStage;
-        private readonly bool useRecursiveEncryption;
-        
+        private readonly List<List<ChunkHeader>> chunkLevels = []; //[level][chunk]
+        private readonly byte maxChildrenChunks = (byte)(useRecursiveEncryption
+            ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
+            : SwarmChunkBmt.SegmentsCount);
+
         private long feededChunkNumberId;
 
-        // Constructor.
-        public ChunkAggregatorPipelineStage(
-            ChunkBmtPipelineStage shortBmtPipelineStage,
-            bool useRecursiveEncryption)
-        {
-            chunkLevels = [];
-            maxChildrenChunks = (byte)(useRecursiveEncryption
-                ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
-                : SwarmChunkBmt.SegmentsCount);
-            this.shortBmtPipelineStage = shortBmtPipelineStage;
-            this.useRecursiveEncryption = useRecursiveEncryption;
-        }
-        
         // Dispose.
         public void Dispose()
         {
@@ -104,7 +94,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmChunkReference> SumAsync()
+        public async Task<SwarmHashTree> SumAsync()
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -130,7 +120,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
 
-            return new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption);
+            return new SwarmHashTree(
+                new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption),
+                [/*TODO*/]);
         }
 
         // Helpers.
