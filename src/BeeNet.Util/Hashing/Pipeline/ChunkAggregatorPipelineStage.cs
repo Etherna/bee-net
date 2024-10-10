@@ -29,13 +29,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Private classes.
         private sealed class ChunkHeader(
-            SwarmHash hash,
+            SwarmHashTree hashTree,
             ReadOnlyMemory<byte> span,
-            XorEncryptKey? chunkKey,
             bool isParityChunk)
         {
-            public XorEncryptKey? ChunkKey { get; } = chunkKey;
-            public SwarmHash Hash { get; } = hash;
+            public SwarmHashTree HashTree { get; } = hashTree;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
         }
@@ -82,9 +80,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     await AddChunkToLevelAsync(
                         1,
                         new ChunkHeader(
-                            processingChunk.Hash!.Value,
+                            new SwarmHashTree(
+                                new SwarmChunkReference(
+                                    processingChunk.Hash!.Value,
+                                    processingChunk.ChunkKey,
+                                    useRecursiveEncryption),
+                                []),
                             processingChunk.Span,
-                            processingChunk.ChunkKey,
                             false)).ConfigureAwait(false);
                 }
             }
@@ -118,11 +120,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 }
             }
             
-            var rootChunk = chunkLevels.Last()[0];
-
-            return new SwarmHashTree(
-                new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption),
-                [/*TODO*/]);
+            return chunkLevels.Last()[0].HashTree;
         }
 
         // Helpers.
@@ -158,8 +156,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // If chunks are compacted, append the encryption key after the chunk hash.
             var totalData = totalSpan.Concat(
                 levelChunks.SelectMany(c => useRecursiveEncryption
-                    ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Bytes.ToArray())
-                    : c.Hash.ToByteArray()))
+                    ? c.HashTree.ChunkRef.Hash.ToByteArray().Concat(c.HashTree.ChunkRef.EncryptionKey!.Bytes.ToArray())
+                    : c.HashTree.ChunkRef.Hash.ToByteArray()))
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.
@@ -167,9 +165,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
-                    hashingResult.Hash,
+                    new SwarmHashTree(
+                        new SwarmChunkReference(
+                            hashingResult.Hash,
+                            hashingResult.EncryptionKey,
+                            useRecursiveEncryption),
+                        levelChunks.Select(lc => lc.HashTree)),
                     totalSpan,
-                    hashingResult.EncryptionKey,
                     false)).ConfigureAwait(false);
             
             levelChunks.Clear();
