@@ -129,6 +129,7 @@ namespace Etherna.BeeNet
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<TagInfo> CreateTagAsync(
+            SwarmHash hash,
             PostageBatchId postageBatchId,
             CancellationToken cancellationToken = default);
 

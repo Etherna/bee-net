@@ -229,7 +229,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response7> TagsPostAsync(string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -257,7 +257,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -619,7 +619,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response41> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response41> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2645,8 +2645,11 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -2656,7 +2659,10 @@ namespace Etherna.BeeNet.Clients
 
                     if (swarm_postage_batch_id != null)
                         request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -2947,7 +2953,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -6629,7 +6635,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response41> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response41> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10161,6 +10167,25 @@ namespace Etherna.BeeNet.Clients
     internal partial class Body4
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
+        public string Address { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class Body5
+    {
+
         [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
         public string WelcomeMessage { get; set; } = default!;
 
@@ -10524,7 +10549,7 @@ namespace Etherna.BeeNet.Clients
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("references")]
-        public System.Collections.Generic.ICollection<string> References { get; set; } = default!;
+        public System.Collections.Generic.ICollection<string>? References { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 

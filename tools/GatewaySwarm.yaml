@@ -865,6 +865,17 @@ paths:
         `Swarm-Deferred-Upload` header.
       parameters:
         - *a5
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  pattern: ^[A-Fa-f0-9]{64}$
+                  example: 36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f
       responses:
         "201":
           description: New Tag Info
@@ -1095,7 +1106,7 @@ paths:
                 properties:
                   references:
                     type: array
-                    nullable: false
+                    nullable: true
                     items:
                       oneOf:
                         - type: string

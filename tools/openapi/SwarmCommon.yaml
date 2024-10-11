@@ -685,7 +685,7 @@ components:
       properties:
         references:
           type: array
-          nullable: false
+          nullable: true
           items:
             $ref: "#/components/schemas/SwarmOnlyReference"
 

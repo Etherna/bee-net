@@ -210,10 +210,12 @@ namespace Etherna.BeeNet
             generatedClient.PinsPostAsync((string)hash, cancellationToken);
 
         public async Task<TagInfo> CreateTagAsync(
+            SwarmHash hash,
             PostageBatchId postageBatchId,
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.TagsPostAsync(
+                new Body3 { Address = hash.ToString() },
                 postageBatchId.ToString(),
                 cancellationToken).ConfigureAwait(false);
             return new TagInfo(
@@ -1128,10 +1130,7 @@ namespace Etherna.BeeNet
             string welcomeMessage,
             CancellationToken cancellationToken = default) =>
             generatedClient.WelcomeMessagePostAsync(
-                new Body4
-                {
-                    WelcomeMessage = welcomeMessage
-                },
+                new Body5 { WelcomeMessage = welcomeMessage },
                 cancellationToken);
 
         public async Task StakeDeleteAsync(
@@ -1302,7 +1301,7 @@ namespace Etherna.BeeNet
             generatedClient.TagsPatchAsync(
                 id.Value,
                 hash.HasValue ?
-                    new Body3 { Address = hash.Value.ToString() } :
+                    new Body4 { Address = hash.Value.ToString() } :
                     null,
                 cancellationToken);
 
