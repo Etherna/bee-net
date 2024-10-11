@@ -245,19 +245,21 @@ namespace Etherna.BeeNet.Clients
         /// Delete Tag information using Uid
         /// </summary>
         /// <param name="uid">Uid</param>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task TagsDeleteAsync(ulong uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task TagsDeleteAsync(ulong uid, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid
         /// </summary>
         /// <param name="uid">Uid</param>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, string? swarm_postage_batch_id = null, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2847,9 +2849,10 @@ namespace Etherna.BeeNet.Clients
         /// Delete Tag information using Uid
         /// </summary>
         /// <param name="uid">Uid</param>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>The resource was deleted successfully.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task TagsDeleteAsync(ulong uid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task TagsDeleteAsync(ulong uid, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -2860,6 +2863,9 @@ namespace Etherna.BeeNet.Clients
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
+
+                    if (swarm_postage_batch_id != null)
+                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
@@ -2950,10 +2956,11 @@ namespace Etherna.BeeNet.Clients
         /// Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid
         /// </summary>
         /// <param name="uid">Uid</param>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, string? swarm_postage_batch_id = null, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -2964,6 +2971,9 @@ namespace Etherna.BeeNet.Clients
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
+
+                    if (swarm_postage_batch_id != null)
+                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");

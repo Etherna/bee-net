@@ -240,8 +240,12 @@ namespace Etherna.BeeNet
 
         public Task DeleteTagAsync(
             TagId id,
+            PostageBatchId? batchId = null,
             CancellationToken cancellationToken = default) =>
-            generatedClient.TagsDeleteAsync(id.Value, cancellationToken);
+            generatedClient.TagsDeleteAsync(
+                uid: id.Value,
+                swarm_postage_batch_id: batchId?.ToString(),
+                cancellationToken: cancellationToken);
 
         public async Task<string> DeleteTransactionAsync(
             string txHash,
@@ -1296,14 +1300,16 @@ namespace Etherna.BeeNet
 
         public Task UpdateTagAsync(
             TagId id,
+            PostageBatchId? batchId = null,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.TagsPatchAsync(
-                id.Value,
-                hash.HasValue ?
+                uid: id.Value,
+                swarm_postage_batch_id: batchId?.ToString(),
+                body: hash.HasValue ?
                     new Body4 { Address = hash.Value.ToString() } :
                     null,
-                cancellationToken);
+                cancellationToken: cancellationToken);
 
         public async Task<SwarmHash> UploadChunkAsync(PostageBatchId batchId,
             Stream chunkData,

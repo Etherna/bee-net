@@ -948,6 +948,7 @@ paths:
           schema: *a28
           required: true
           description: Uid
+        - *a5
       responses:
         "204":
           description: The resource was deleted successfully.
@@ -967,6 +968,7 @@ paths:
           schema: *a28
           required: true
           description: Uid
+        - *a5
       requestBody:
         description: Can contain swarm hash to use for the tag
         required: false
