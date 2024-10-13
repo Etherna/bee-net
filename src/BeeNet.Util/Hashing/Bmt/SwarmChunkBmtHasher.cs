@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Hashing.Bmt
 {
-    internal static class SwarmChunkBmtHasher
+    public static class SwarmChunkBmtHasher
     {
         // Static methods.
         public static SwarmHash Hash(byte[] span, byte[] data, IHasher? hasher = null)
