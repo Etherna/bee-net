@@ -33,11 +33,14 @@ namespace Etherna.BeeNet.Manifest
         // Constructors.
         public MantarayManifest(
             BuildHasherPipeline hasherBuilder,
-            bool isEncrypted)
+            bool isEncrypted,
+            bool useRecursiveEncryption)
             : this(hasherBuilder,
-                new MantarayNode(isEncrypted
-                    ? null //auto-generate random on hash building
-                    : XorEncryptKey.Empty))
+                new MantarayNode(
+                    useRecursiveEncryption,
+                    isEncrypted
+                        ? null //auto-generate random on hash building
+                        : XorEncryptKey.Empty))
         { }
 
         public MantarayManifest(

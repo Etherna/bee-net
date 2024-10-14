@@ -88,7 +88,8 @@ namespace Etherna.BeeNet.Manifest
             var versionHash = data.AsMemory()[readIndex..(readIndex + MantarayNode.VersionHashSize)];
             readIndex += MantarayNode.VersionHashSize;
             
-            if (versionHash.Span.SequenceEqual(MantarayNode.Version02Hash))
+            if (versionHash.Span.SequenceEqual(MantarayNode.Version0_2Hash) ||
+                versionHash.Span.SequenceEqual(MantarayNode.Version0_2_1Hash))
                 DecodeVersion02(data.AsSpan()[readIndex..]);
             else
                 throw new InvalidOperationException("Manifest version not recognized");

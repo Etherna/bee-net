@@ -17,26 +17,36 @@ using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class MantarayNode : IReadOnlyMantarayNode
     {
         // Consts.
         public const int ForksIndexSize = 32;
-        public static readonly byte[] Version02Hash = new Hasher().ComputeHash(
+#pragma warning disable CA1707
+        public static readonly byte[] Version0_2Hash = new Hasher().ComputeHash(
             "mantaray:0.2"u8.ToArray()).Take(VersionHashSize).ToArray();
+        public static readonly byte[] Version0_2_1Hash = new Hasher().ComputeHash(
+            "mantaray:0.2.1"u8.ToArray()).Take(VersionHashSize).ToArray();
+#pragma warning restore CA1707
         public const int VersionHashSize = 31;
         
         // Fields.
         private SwarmHash? _hash;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
         private bool skipWriteEntryHash;
+        private readonly bool useRecursiveEncryption;
 
-        public MantarayNode(XorEncryptKey? obfuscationKey = null)
+        public MantarayNode(
+            bool useRecursiveEncryption,
+            XorEncryptKey? obfuscationKey = null)
         {
+            this.useRecursiveEncryption = useRecursiveEncryption;
             ObfuscationKey = obfuscationKey;
             skipWriteEntryHash = true;
         }
@@ -94,7 +104,7 @@ namespace Etherna.BeeNet.Manifest
                         
                         // Create new parent node.
                         //parentPrefix = commonPrefix
-                        var parentNode = new MantarayNode(ObfuscationKey)
+                        var parentNode = new MantarayNode(useRecursiveEncryption, ObfuscationKey)
                         {
                             _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
                             skipWriteEntryHash = skipWriteEntryHash
@@ -127,7 +137,7 @@ namespace Etherna.BeeNet.Manifest
                     var prefixRest = path.Length > MantarayNodeFork.PrefixMaxSize ?
                         path[MantarayNodeFork.PrefixMaxSize..] : "";
                     
-                    var newNode = new MantarayNode(ObfuscationKey)
+                    var newNode = new MantarayNode(useRecursiveEncryption, ObfuscationKey)
                     {
                         skipWriteEntryHash = skipWriteEntryHash
                     };
@@ -212,7 +222,11 @@ namespace Etherna.BeeNet.Manifest
             bytes.AddRange(ObfuscationKey.Bytes.ToArray());
             
             // Write version.
-            bytes.AddRange(Version02Hash);
+            //try to keep compatibility with bee, until it will support recursive encryption
+            bytes.AddRange(
+                useRecursiveEncryption ?
+                    Version0_2_1Hash :
+                    Version0_2Hash);
 
             // Write last entry hash.
             bytes.Add((byte)(skipWriteEntryHash ? 0 : SwarmHash.HashSize));

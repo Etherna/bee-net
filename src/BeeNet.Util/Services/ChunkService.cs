@@ -70,7 +70,8 @@ namespace Etherna.BeeNet.Services
                     encrypt,
                     0,
                     chunkCuncorrency),
-                encrypt);
+                encrypt,
+                compactLevel > 0);
 
             // Iterate through the files in the supplied directory.
             var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
@@ -200,7 +201,8 @@ namespace Etherna.BeeNet.Services
                     encrypt,
                     0,
                     chunkCuncorrency),
-                encrypt);
+                encrypt,
+                compactLevel > 0);
 
             manifest.Add(
                 MantarayManifest.RootPath,
