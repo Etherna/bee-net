@@ -1276,12 +1276,6 @@ paths:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
           description: Swarm address of chunk
-        - in: query
-          name: rootHash
-          schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
-          required: false
-          description: Optional root hash to route the request
         - in: header
           schema:
             $ref: "SwarmCommon.yaml#/components/parameters/SwarmCache"

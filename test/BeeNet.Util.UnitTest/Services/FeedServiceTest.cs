@@ -143,7 +143,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -174,7 +173,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Setup(g => g.GetChunkStreamAsync(
                                 childChunkReference,
                                 It.IsAny<int>(),
-                                It.IsAny<SwarmHash?>(),
                                 It.IsAny<bool?>(),
                                 It.IsAny<long?>(),
                                 It.IsAny<string?>(),
@@ -184,7 +182,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -220,7 +217,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     rightChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -230,7 +226,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -241,7 +236,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -271,7 +265,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -282,7 +275,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -315,7 +307,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     rightChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -325,7 +316,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -336,7 +326,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -372,7 +361,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     rightChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -382,7 +370,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChildChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -393,7 +380,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -468,7 +454,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Setup(g => g.GetChunkStreamAsync(
                                 reference,
                                 It.IsAny<int>(),
-                                It.IsAny<SwarmHash?>(),
                                 It.IsAny<bool?>(),
                                 It.IsAny<long?>(),
                                 It.IsAny<string?>(),
@@ -478,7 +463,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -497,7 +481,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Setup(g => g.GetChunkStreamAsync(
                                 It.IsAny<SwarmHash>(),
                                 It.IsAny<int>(),
-                                It.IsAny<SwarmHash?>(),
                                 It.IsAny<bool?>(),
                                 It.IsAny<long?>(),
                                 It.IsAny<string?>(),
@@ -507,7 +490,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -531,7 +513,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Setup(g => g.GetChunkStreamAsync(
                                 reference,
                                 It.IsAny<int>(),
-                                It.IsAny<SwarmHash?>(),
                                 It.IsAny<bool?>(),
                                 It.IsAny<long?>(),
                                 It.IsAny<string?>(),
@@ -541,7 +522,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -570,7 +550,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     startingChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -580,7 +559,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -591,7 +569,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -622,7 +599,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     startingChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -632,7 +608,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     leftChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -643,7 +618,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -672,7 +646,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     startingChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -682,7 +655,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     parentChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -693,7 +665,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -724,7 +695,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     startingChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -734,7 +704,6 @@ namespace Etherna.BeeNet.Services
                             gateMock.Setup(g => g.GetChunkStreamAsync(
                                     parentChunkReference,
                                     It.IsAny<int>(),
-                                    It.IsAny<SwarmHash?>(),
                                     It.IsAny<bool?>(),
                                     It.IsAny<long?>(),
                                     It.IsAny<string?>(),
@@ -745,7 +714,6 @@ namespace Etherna.BeeNet.Services
                         gateMock => gateMock.Verify(g => g.GetChunkStreamAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<int>(),
-                            It.IsAny<SwarmHash?>(),
                             It.IsAny<bool?>(),
                             It.IsAny<long?>(),
                             It.IsAny<string?>(),
@@ -805,7 +773,6 @@ namespace Etherna.BeeNet.Services
                 gatewayClientMock.Setup(c => c.GetChunkStreamAsync(
                         referenceHash,
                         It.IsAny<int>(),
-                        It.IsAny<SwarmHash?>(),
                         It.IsAny<bool?>(),
                         It.IsAny<long?>(),
                         It.IsAny<string?>(),
@@ -816,7 +783,6 @@ namespace Etherna.BeeNet.Services
                 gatewayClientMock.Setup(c => c.GetChunkStreamAsync(
                         referenceHash,
                         It.IsAny<int>(),
-                        It.IsAny<SwarmHash?>(),
                         It.IsAny<bool?>(),
                         It.IsAny<long?>(),
                         It.IsAny<string?>(),

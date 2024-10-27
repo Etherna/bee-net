@@ -1697,11 +1697,6 @@ paths:
           schema: *a23
           required: true
           description: Swarm address of chunk
-        - in: query
-          name: rootHash
-          schema: *a23
-          required: false
-          description: Optional root hash to route the request
         - in: header
           schema: *a24
           name: swarm-cache

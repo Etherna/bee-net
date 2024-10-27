@@ -487,13 +487,12 @@ namespace Etherna.BeeNet.Clients
         /// Get chunk
         /// </summary>
         /// <param name="reference">Swarm address of chunk</param>
-        /// <param name="rootHash">Optional root hash to route the request</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, string? rootHash = null, object? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, object? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -5272,13 +5271,12 @@ namespace Etherna.BeeNet.Clients
         /// Get chunk
         /// </summary>
         /// <param name="reference">Swarm address of chunk</param>
-        /// <param name="rootHash">Optional root hash to route the request</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, string? rootHash = null, object? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, object? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -5309,12 +5307,6 @@ namespace Etherna.BeeNet.Clients
                     // Operation Path: "chunks/{reference}"
                     urlBuilder_.Append("chunks/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('?');
-                    if (rootHash != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("rootHash")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(rootHash, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

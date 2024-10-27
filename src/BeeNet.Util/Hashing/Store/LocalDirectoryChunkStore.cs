@@ -63,15 +63,15 @@ namespace Etherna.BeeNet.Hashing.Store
             return Task.FromResult<IEnumerable<SwarmHash>>(hashes);
         }
 
-        public async Task<SwarmChunk> GetAsync(SwarmHash hash, SwarmHash? rootHash)
+        public async Task<SwarmChunk> GetAsync(SwarmHash hash)
         {
-            var chunk = await TryGetAsync(hash, rootHash).ConfigureAwait(false);
+            var chunk = await TryGetAsync(hash).ConfigureAwait(false);
             if (chunk is null)
                 throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
             return chunk;
         }
 
-        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash, SwarmHash? rootHash)
+        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
         {
             var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
             

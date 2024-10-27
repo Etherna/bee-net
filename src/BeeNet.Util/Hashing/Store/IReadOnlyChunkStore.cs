@@ -19,12 +19,8 @@ namespace Etherna.BeeNet.Hashing.Store
 {
     public interface IReadOnlyChunkStore
     {
-        public Task<SwarmChunk> GetAsync(
-            SwarmHash hash,
-            SwarmHash? rootHash);
+        public Task<SwarmChunk> GetAsync(SwarmHash hash);
         
-        public Task<SwarmChunk?> TryGetAsync(
-            SwarmHash hash,
-            SwarmHash? rootHash);
+        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash);
     }
 }

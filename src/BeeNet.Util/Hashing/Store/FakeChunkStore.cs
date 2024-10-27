@@ -20,10 +20,10 @@ namespace Etherna.BeeNet.Hashing.Store
 {
     public class FakeChunkStore : IChunkStore
     {
-        public Task<SwarmChunk> GetAsync(SwarmHash hash, SwarmHash? rootHash) =>
+        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
             throw new KeyNotFoundException("Chunk get on a fake chunk store");
 
-        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash, SwarmHash? rootHash) => Task.FromResult<SwarmChunk?>(null);
+        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash) => Task.FromResult<SwarmChunk?>(null);
 
         public Task<bool> AddAsync(SwarmChunk chunk) => Task.FromResult(true);
     }

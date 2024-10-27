@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Manifest
             if (IsDecoded)
                 return;
 
-            var chunk = await chunkStore.GetAsync(Hash, rootHash: manifestHash).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(Hash).ConfigureAwait(false);
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;

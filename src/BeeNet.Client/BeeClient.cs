@@ -490,7 +490,6 @@ namespace Etherna.BeeNet
         public async Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
             int maxRetryAttempts = 10,
-            SwarmHash? rootHash = null,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -500,7 +499,6 @@ namespace Etherna.BeeNet
             using var stream = await GetChunkStreamAsync(
                 (string)hash,
                 maxRetryAttempts,
-                rootHash,
                 swarmCache,
                 swarmActTimestamp,
                 swarmActPublisher,
@@ -515,7 +513,6 @@ namespace Etherna.BeeNet
         public async Task<Stream> GetChunkStreamAsync(
             SwarmHash hash,
             int maxRetryAttempts = 10,
-            SwarmHash? rootHash = null,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -529,7 +526,6 @@ namespace Etherna.BeeNet
                 {
                     return (await generatedClient.ChunksGetAsync(
                         hash.ToString(),
-                        i == 0 ? rootHash?.ToString() : null, //use rootHash only for first attempt
                         swarmCache,
                         swarmActTimestamp,
                         swarmActPublisher,
