@@ -31,7 +31,6 @@ using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
@@ -61,22 +60,15 @@ namespace Etherna.BeeNet
         
         private bool disposed;
 
-        // Constructors.
+        // Constructor.
         public BeeClient(
-            string baseUrl = "http://localhost/",
-            int port = DefaultPort,
-            HttpClient? httpClient = null)
-            : this(BuildBaseUrl(baseUrl, port), httpClient)
-        { }
-
-        public BeeClient(
-            Uri baseUrl,
+            Uri beeUrl,
             HttpClient? httpClient = null)
         {
             this.httpClient = httpClient ?? new HttpClient { Timeout = DefaultTimeout };
 
-            BaseUrl = baseUrl;
-            generatedClient = new BeeGeneratedClient(this.httpClient) { BaseUrl = BaseUrl.ToString() };
+            BeeUrl = beeUrl;
+            generatedClient = new BeeGeneratedClient(this.httpClient) { BaseUrl = BeeUrl.ToString() };
         }
 
         // Dispose.
@@ -97,9 +89,8 @@ namespace Etherna.BeeNet
             disposed = true;
         }
 
-
         // Properties.
-        public Uri BaseUrl { get; }
+        public Uri BeeUrl { get; }
         
         // Methods.
         public async Task<Dictionary<string, Account>> AccountingAsync(
@@ -1043,7 +1034,7 @@ namespace Etherna.BeeNet
             // Build protocol upgrade request.
             //url
             var urlBuilder = new StringBuilder();
-            urlBuilder.Append(BaseUrl);
+            urlBuilder.Append(BeeUrl);
             urlBuilder.Append(endpointPath);
             var url = urlBuilder.ToString();
             
@@ -1462,29 +1453,5 @@ namespace Etherna.BeeNet
                 amount.ToPlurLong(),
                 gasPrice?.ToWeiLong(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
-
-        // Helpers.
-        private static Uri BuildBaseUrl(string url, int port)
-        {
-            var normalizedUrl = url;
-            if (normalizedUrl.Last() != '/')
-                normalizedUrl += '/';
-
-            var baseUrl = "";
-
-            var urlRegex = new Regex(@"^((?<proto>\w+)://)?(?<host>[^/:]+)",
-                RegexOptions.None, TimeSpan.FromMilliseconds(150));
-            var urlMatch = urlRegex.Match(normalizedUrl);
-
-            if (!urlMatch.Success)
-                throw new ArgumentException("Url is not valid", nameof(url));
-
-            if (!string.IsNullOrEmpty(urlMatch.Groups["proto"].Value))
-                baseUrl += urlMatch.Groups["proto"].Value + "://";
-
-            baseUrl += $"{urlMatch.Groups["host"].Value}:{port}";
-
-            return new Uri(baseUrl);
-        }
     }
 }

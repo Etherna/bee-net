@@ -28,7 +28,7 @@ namespace Etherna.BeeNet
     public interface IBeeClient
     {
         // Properties.
-        Uri BaseUrl { get; }
+        Uri BeeUrl { get; }
         
         // Methods.
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
