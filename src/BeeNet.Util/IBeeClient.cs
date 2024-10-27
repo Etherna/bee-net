@@ -606,7 +606,9 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetDebugApiException">A server side error occurred.</exception>
         Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default);
 
-        Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(SwarmAddress address);
+        Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(
+            SwarmAddress address,
+            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null);
 
         /// <summary>Reupload a root hash to the network</summary>
         /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>
@@ -772,6 +774,7 @@ namespace Etherna.BeeNet
         /// <returns>The file name if found</returns>
         Task<string?> TryGetFileNameAsync(
             SwarmAddress address,
+            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>

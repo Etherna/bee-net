@@ -14,21 +14,33 @@
 
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Store
 {
-    public class BeeClientChunkStore(IBeeClient beeClient)
+    public class BeeClientChunkStore(
+        IBeeClient beeClient,
+        IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
         : IReadOnlyChunkStore
     {
-        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
-            beeClient.GetChunkAsync(hash);
+        public async Task<SwarmChunk> GetAsync(SwarmHash hash)
+        {
+            if (chunksCache != null && chunksCache.TryGetValue(hash, out var chunk))
+                return chunk;
+            
+            chunk = await beeClient.GetChunkAsync(hash).ConfigureAwait(false);
+            if (chunksCache != null)
+                chunksCache[hash] = chunk;
+
+            return chunk;
+        }
 
         public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
         {
             try
             {
-                return await beeClient.GetChunkAsync(hash).ConfigureAwait(false);
+                return await GetAsync(hash).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
             {

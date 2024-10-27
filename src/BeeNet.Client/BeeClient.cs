@@ -1093,9 +1093,11 @@ namespace Etherna.BeeNet
                 fees: XDaiBalance.FromWeiString(response.Fees));
         }
 
-        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(SwarmAddress address)
+        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(
+            SwarmAddress address,
+            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
         {
-            var chunkStore = new BeeClientChunkStore(this);
+            var chunkStore = new BeeClientChunkStore(this, chunksCache);
             
             var rootManifest = new ReferencedMantarayManifest(
                 chunkStore,
@@ -1260,12 +1262,13 @@ namespace Etherna.BeeNet
 
         public async Task<string?> TryGetFileNameAsync(
             SwarmAddress address,
+            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
             CancellationToken cancellationToken = default)
         {
             var chunkService = new ChunkService();
             var metadata = await chunkService.GetFileMetadataFromChunksAsync(
                 address,
-                new BeeClientChunkStore(this)).ConfigureAwait(false);
+                new BeeClientChunkStore(this, chunksCache)).ConfigureAwait(false);
             return metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }
 
