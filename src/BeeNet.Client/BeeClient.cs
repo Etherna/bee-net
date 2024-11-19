@@ -52,7 +52,9 @@ namespace Etherna.BeeNet
         public const int ChunkStreamWSReceiveBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int ChunkStreamWSSendBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int DefaultPort = 1633;
+#pragma warning disable CA1051
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
+#pragma warning restore CA1051
 
         // Fields.
         private readonly BeeGeneratedClient generatedClient;

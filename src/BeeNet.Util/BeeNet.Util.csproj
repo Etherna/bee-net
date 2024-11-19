@@ -24,13 +24,11 @@
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <EmbedUntrackedSources>true</EmbedUntrackedSources>
       <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-
-      <GitVersionTargetFramework>net8.0</GitVersionTargetFramework>
     </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
-    <PackageReference Include="GitVersion.MsBuild" Version="6.0.2">
+    <PackageReference Include="GitVersion.MsBuild" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
