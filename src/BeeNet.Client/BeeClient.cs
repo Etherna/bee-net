@@ -588,8 +588,6 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
-
             if (!address.HasPath)
             {
                 var response = await generatedClient.BzzGetAsync(
@@ -1246,8 +1244,6 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null, 
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
-
             return address.HasPath ?
                 await generatedClient.BzzHeadAsync(
                     address.Hash.ToString(),

@@ -16,41 +16,30 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PostageStamp
+    public class PostageStamp(
+        PostageBatchId batchId,
+        StampBucketIndex stampBucketIndex,
+        DateTimeOffset timeStamp,
+        byte[] signature)
     {
-        // Constructor.
-        public PostageStamp(
-            PostageBatchId batchId,
-            StampBucketIndex stampBucketIndex,
-            DateTimeOffset timeStamp,
-            byte[] signature)
-        {
-            ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
-            
-            BatchId = batchId;
-            StampBucketIndex = stampBucketIndex;
-            TimeStamp = timeStamp;
-            Signature = signature;
-        }
-
         /// <summary>
         /// Postage batch ID
         /// </summary>
-        public PostageBatchId BatchId { get; }
+        public PostageBatchId BatchId { get; } = batchId;
 
         /// <summary>
         /// Index of the batch
         /// </summary>
-        public StampBucketIndex StampBucketIndex { get; }
+        public StampBucketIndex StampBucketIndex { get; } = stampBucketIndex;
 
         /// <summary>
         /// To signal order when assigning the indexes to multiple chunks
         /// </summary>
-        public DateTimeOffset TimeStamp { get; }
+        public DateTimeOffset TimeStamp { get; } = timeStamp;
 
         /// <summary>
         /// common r[32]s[32]v[1]-style 65 byte ECDSA signature of batchID|index|address by owner or grantee
         /// </summary>
-        public ReadOnlyMemory<byte> Signature { get; }
+        public ReadOnlyMemory<byte> Signature { get; } = signature;
     }
 }

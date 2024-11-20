@@ -33,7 +33,6 @@ namespace Etherna.BeeNet.Models
         // Constructors.
         public SwarmChunk(SwarmHash hash, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (data.Length > DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
@@ -45,7 +44,6 @@ namespace Etherna.BeeNet.Models
 
         public SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
             
