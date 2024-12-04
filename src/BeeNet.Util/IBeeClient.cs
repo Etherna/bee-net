@@ -265,6 +265,7 @@ namespace Etherna.BeeNet
         Task<Stream> GetBytesAsync(
             SwarmHash hash,
             bool? swarmCache = null,
+            RedundancyLevel? swarmRedundancyLevel = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
@@ -375,12 +376,17 @@ namespace Etherna.BeeNet
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<SwarmHash> GetFeedAsync(
+        Task<FileResponse> GetFeedAsync(
             string owner,
             string topic,
             int? at = null,
             int? after = null,
             string? type = null,
+            bool? swarmOnlyRootChunk = null,
+            bool? swarmCache = null,
+            RedundancyStrategy? swarmRedundancyStrategy = null,
+            bool? swarmRedundancyFallbackMode = null,
+            string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get file or index document from a collection of files</summary>
@@ -394,6 +400,7 @@ namespace Etherna.BeeNet
         Task<FileResponse> GetFileAsync(
             SwarmAddress address,
             bool? swarmCache = null,
+            RedundancyLevel? swarmRedundancyLevel = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
@@ -406,6 +413,9 @@ namespace Etherna.BeeNet
         /// <returns>Health State of node</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<Health> GetHealthAsync(CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<NeighborhoodStatus>> GetNeighborhoodsStatus(
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get information about the node
@@ -467,6 +477,16 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SettlementData> GetSettlementsWithPeerAsync(
             string peerAddress,
+            CancellationToken cancellationToken = default);
+
+        Task<FileResponse> GetSocDataAsync(
+            string owner,
+            string id,
+            bool? swarmOnlyRootChunk = null,
+            bool? swarmCache = null,
+            RedundancyStrategy? swarmRedundancyStrategy = null,
+            bool? swarmRedundancyFallbackMode = null,
+            string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get extended bucket data of a batch</summary>
@@ -725,6 +745,10 @@ namespace Etherna.BeeNet
         /// <returns>Returns the status snapshot of this node connected peers</returns>
         Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default);
 
+        Task SubscribeToGsocAsync(
+            string reference,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Subscribe for messages on the given topic.</summary>
         /// <param name="topic">Topic name</param>
         /// <returns>Returns a WebSocket with a subscription for incoming message data on the requested topic.</returns>
@@ -911,8 +935,6 @@ namespace Etherna.BeeNet
         /// <param name="sig">Signature</param>
         /// <param name="batchId"></param>
         /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadSocAsync(
@@ -921,7 +943,6 @@ namespace Etherna.BeeNet
             string sig,
             PostageBatchId batchId,
             Stream body,
-            bool? swarmPin = null,
             string? swarmPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
