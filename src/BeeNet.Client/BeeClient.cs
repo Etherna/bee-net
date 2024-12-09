@@ -14,14 +14,15 @@
 
 using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services;
+using Etherna.BeeNet.Stores;
 using Etherna.BeeNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Formats.Tar;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -37,10 +38,6 @@ using FileResponse = Etherna.BeeNet.Models.FileResponse;
 using Loggers = Etherna.BeeNet.Models.Loggers;
 using PostageProof = Etherna.BeeNet.Models.PostageProof;
 using SocProof = Etherna.BeeNet.Clients.SocProof;
-
-#if NET7_0_OR_GREATER
-using System.Formats.Tar;
-#endif
 
 namespace Etherna.BeeNet
 {
@@ -1404,7 +1401,6 @@ namespace Etherna.BeeNet
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
 
-#if NET7_0_OR_GREATER
         public async Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
             string directoryPath,
@@ -1445,7 +1441,6 @@ namespace Etherna.BeeNet
                 swarm_act_history_address: swarmActHistoryAddress,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
-#endif
 
         public async Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,

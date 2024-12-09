@@ -19,20 +19,24 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Hashing.Store
+namespace Etherna.BeeNet.Stores
 {
     /// <summary>
     /// Store chunks in a local directory
     /// </summary>
     [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-    public class LocalDirectoryChunkStore : IChunkStore
+    public class LocalDirectoryChunkStore : ChunkStoreBase
     {
         // Consts.
         public const string ChunkFileExtension = ".chunk";
         
         // Constructor.
-        public LocalDirectoryChunkStore(string directoryPath, bool createDirectory = false)
+        public LocalDirectoryChunkStore(
+            string directoryPath,
+            bool createDirectory = false,
+            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
+            : base(chunksCache)
         {
             if (!Directory.Exists(directoryPath))
             {
@@ -41,7 +45,7 @@ namespace Etherna.BeeNet.Hashing.Store
                 else
                     throw new IOException($"Directory \"{directoryPath}\" doesn't exist");
             }
-                
+
             DirectoryPath = directoryPath;
         }
 
@@ -63,30 +67,24 @@ namespace Etherna.BeeNet.Hashing.Store
             return Task.FromResult<IEnumerable<SwarmHash>>(hashes);
         }
 
-        public async Task<SwarmChunk> GetAsync(SwarmHash hash)
-        {
-            var chunk = await TryGetAsync(hash).ConfigureAwait(false);
-            if (chunk is null)
-                throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
-            return chunk;
-        }
-
-        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
+        // Protected methods.
+        protected override async Task<SwarmChunk> LoadChunkAsync(SwarmHash hash)
         {
             var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
             
             if (!File.Exists(chunkPath))
-                return null;
+                throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
 
             var buffer = new byte[SwarmChunk.SpanAndDataSize];
-            using var fileStream = File.OpenRead(chunkPath);
+            var fileStream = File.OpenRead(chunkPath);
+            await using var stream = fileStream.ConfigureAwait(false);
             var readBytes = await fileStream.ReadAsync(buffer).ConfigureAwait(false);
 
             var chunk = SwarmChunk.BuildFromSpanAndData(hash, buffer.AsSpan()[..readBytes]);
             return chunk;
         }
 
-        public async Task<bool> AddAsync(SwarmChunk chunk)
+        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 

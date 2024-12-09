@@ -12,8 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
@@ -26,7 +26,9 @@ namespace Etherna.BeeNet.Manifest
     public class ReferencedMantarayNode : IReadOnlyMantarayNode
     {
         // Fields.
-        private readonly IReadOnlyChunkStore chunkStore;
+        private readonly ReadOnlyChunkStoreBase chunkStore;
+        private readonly bool useChunksCache;
+        
         private SwarmHash? _entryHash;
         private readonly Dictionary<char, ReferencedMantarayNodeFork> _forks = new();
         private readonly Dictionary<string, string> _metadata;
@@ -34,12 +36,14 @@ namespace Etherna.BeeNet.Manifest
 
         // Constructor.
         public ReferencedMantarayNode(
-            IReadOnlyChunkStore chunkStore,
+            ReadOnlyChunkStoreBase chunkStore,
             SwarmHash chunkHash,
             Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags)
+            NodeType nodeTypeFlags,
+            bool useChunksCache)
         {
             this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
+            this.useChunksCache = useChunksCache;
             Hash = chunkHash;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
@@ -74,7 +78,10 @@ namespace Etherna.BeeNet.Manifest
             if (IsDecoded)
                 return;
 
-            var chunk = await chunkStore.GetAsync(Hash).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(
+                Hash,
+                !useChunksCache,
+                !useChunksCache).ConfigureAwait(false);
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;
@@ -238,7 +245,12 @@ namespace Etherna.BeeNet.Manifest
                 //add fork
                 _forks[key] = new ReferencedMantarayNodeFork(
                     prefix,
-                    new ReferencedMantarayNode(chunkStore, childNodeHash, childNodeMetadata, childNodeTypeFlags));
+                    new ReferencedMantarayNode(
+                        chunkStore,
+                        childNodeHash,
+                        childNodeMetadata,
+                        childNodeTypeFlags,
+                        useChunksCache));
             }
         }
     }

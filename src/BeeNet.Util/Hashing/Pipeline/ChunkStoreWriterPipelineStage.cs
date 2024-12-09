@@ -13,15 +13,15 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkStoreWriterPipelineStage(
-        IChunkStore chunkStore,
+        ChunkStoreBase chunkStore,
         IPostageStamper postageStamper,
         IHasherPipelineStage? nextStage)
         : IHasherPipelineStage
@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Store chunk.
             var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
             chunk.PostageStamp = stamp;
-            await chunkStore.AddAsync(chunk).ConfigureAwait(false);
+            await chunkStore.AddAsync(chunk, true).ConfigureAwait(false);
 
             if (nextStage is not null)
                 await nextStage.FeedAsync(args).ConfigureAwait(false);

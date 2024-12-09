@@ -12,27 +12,23 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ReferencedMantarayManifest : IReadOnlyMantarayManifest
+    public class ReferencedMantarayManifest(
+        ReadOnlyChunkStoreBase chunkStore,
+        SwarmHash rootHash,
+        bool useChunksCache = true)
+        : IReadOnlyMantarayManifest
     {
         // Fields.
-        private readonly ReferencedMantarayNode _rootNode;
+        private readonly ReferencedMantarayNode _rootNode = new(chunkStore, rootHash, null, NodeType.Edge, useChunksCache);
 
-        // Constructors.
-        public ReferencedMantarayManifest(
-            IReadOnlyChunkStore chunkStore,
-            SwarmHash rootHash)
-        {
-            _rootNode = new ReferencedMantarayNode(chunkStore, rootHash, null, NodeType.Edge);
-        }
-        
         // Properties.
         public IReadOnlyMantarayNode RootNode => _rootNode;
 
