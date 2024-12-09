@@ -13,8 +13,8 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Signer;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 
 namespace Etherna.BeeNet.Hashing.Postage

@@ -865,7 +865,6 @@ namespace Etherna.BeeNet
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default);
         
-#if NET7_0_OR_GREATER
         /// <summary>Upload a directory</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="directoryPath">The directory path</param>
@@ -894,7 +893,6 @@ namespace Etherna.BeeNet
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
-#endif
 
         /// <summary>Upload a file</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>

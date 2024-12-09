@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Etherna.BeeNet.Hashing.Store
+namespace Etherna.BeeNet.Stores
 {
     public class MemoryStampStore : IStampStore
     {

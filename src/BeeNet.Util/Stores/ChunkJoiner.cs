@@ -18,10 +18,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Hashing.Store
+namespace Etherna.BeeNet.Stores
 {
     public class ChunkJoiner(
-        IReadOnlyChunkStore chunkStore)
+        ReadOnlyChunkStoreBase chunkStore)
     {
         // Methods.
         /// <summary>
@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Hashing.Store
             CancellationToken cancellationToken)
         {
             // Read and decrypt chunk data.
-            var chunk = await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(chunkReference.Hash, true, true).ConfigureAwait(false);
             var dataArray = chunk.Data.ToArray();
             chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
             

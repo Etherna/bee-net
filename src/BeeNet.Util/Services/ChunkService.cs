@@ -15,9 +15,9 @@
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Hashing.Signer;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            IChunkStore? chunkStore = null)
+            ChunkStoreBase? chunkStore = null)
         {
             // Checks.
             if (indexFilename?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            IChunkStore? chunkStore = null)
+            ChunkStoreBase? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
             return await EvaluateSingleFileUploadAsync(
@@ -170,7 +170,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            IChunkStore? chunkStore = null)
+            ChunkStoreBase? chunkStore = null)
         {
             chunkStore ??= new FakeChunkStore();
             
@@ -240,7 +240,7 @@ namespace Etherna.BeeNet.Services
 
         public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             SwarmAddress address,
-            IReadOnlyChunkStore chunkStore)
+            ReadOnlyChunkStoreBase chunkStore)
         {
             var rootManifest = new ReferencedMantarayManifest(
                 chunkStore,

@@ -12,12 +12,24 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-namespace Etherna.BeeNet.Hashing.Store
-{
-    public interface IStampStore
-    {
-        public bool TryGet(string storeKey, out StampStoreItem item);
+using Etherna.BeeNet.Models;
+using System;
 
-        public void Put(StampStoreItem item);
+namespace Etherna.BeeNet.Stores
+{
+    public class StampStoreItem(
+        PostageBatchId batchId,
+        SwarmHash chunkHash)
+    {
+        // Consts.
+        public const string NamespaceStr = "stampItem";
+        
+        // Properties.
+        public PostageBatchId BatchId { get; protected set; } = batchId;
+        public DateTimeOffset? BucketTimestamp { get; set; }
+        public SwarmHash ChunkHash { get; protected set; } = chunkHash;
+        public string Id => string.Join("/", BatchId.ToString(), ChunkHash.ToString());
+        public StampBucketIndex? StampBucketIndex { get; set; }
+        public string StoreKey => string.Join("/", NamespaceStr, Id);
     }
 }

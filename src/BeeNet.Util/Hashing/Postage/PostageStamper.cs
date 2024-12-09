@@ -14,8 +14,8 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing.Signer;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using Org.BouncyCastle.Crypto.Digests;
 using System;
 

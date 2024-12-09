@@ -13,8 +13,8 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Hashing.Store;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 chunkConcurrency);
         
         public static IHasherPipeline BuildNewHasherPipeline(
-            IChunkStore chunkStore,
+            ChunkStoreBase chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,

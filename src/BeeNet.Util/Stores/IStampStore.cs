@@ -12,19 +12,12 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Etherna.BeeNet.Hashing.Store
+namespace Etherna.BeeNet.Stores
 {
-    public class FakeChunkStore : IChunkStore
+    public interface IStampStore
     {
-        public Task<SwarmChunk> GetAsync(SwarmHash hash) =>
-            throw new KeyNotFoundException("Chunk get on a fake chunk store");
+        public bool TryGet(string storeKey, out StampStoreItem item);
 
-        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash) => Task.FromResult<SwarmChunk?>(null);
-
-        public Task<bool> AddAsync(SwarmChunk chunk) => Task.FromResult(true);
+        public void Put(StampStoreItem item);
     }
 }

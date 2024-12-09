@@ -17,35 +17,48 @@ using Etherna.BeeNet.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Hashing.Store
+namespace Etherna.BeeNet.Stores
 {
-    public class BeeClientChunkStore(
-        IBeeClient beeClient,
+    public abstract class ReadOnlyChunkStoreBase(
         IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-        : IReadOnlyChunkStore
     {
-        public async Task<SwarmChunk> GetAsync(SwarmHash hash)
+        // Fields.
+        protected readonly IDictionary<SwarmHash, SwarmChunk> ChunksCache =
+            chunksCache ?? new Dictionary<SwarmHash, SwarmChunk>();
+
+        // Methods.
+        public async Task<SwarmChunk> GetAsync(
+            SwarmHash hash,
+            bool bypassCacheReading,
+            bool bypassCacheWriting)
         {
-            if (chunksCache != null && chunksCache.TryGetValue(hash, out var chunk))
+            if (!bypassCacheReading && ChunksCache.TryGetValue(hash, out var chunk))
                 return chunk;
             
-            chunk = await beeClient.GetChunkAsync(hash).ConfigureAwait(false);
-            if (chunksCache != null)
-                chunksCache[hash] = chunk;
+            chunk = await LoadChunkAsync(hash).ConfigureAwait(false);
+            
+            if (!bypassCacheWriting)
+                ChunksCache[hash] = chunk;
 
             return chunk;
         }
-
-        public async Task<SwarmChunk?> TryGetAsync(SwarmHash hash)
+        
+        public async Task<SwarmChunk?> TryGetAsync(
+            SwarmHash hash,
+            bool bypassCacheReading,
+            bool bypassCacheWriting)
         {
             try
             {
-                return await GetAsync(hash).ConfigureAwait(false);
+                return await GetAsync(hash, bypassCacheReading, bypassCacheWriting).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
             {
                 return null;
             }
         }
+        
+        // Protected methods.
+        protected abstract Task<SwarmChunk> LoadChunkAsync(SwarmHash hash);
     }
 }
