@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 chunkConcurrency);
         
         public static IHasherPipeline BuildNewHasherPipeline(
-            ChunkStoreBase chunkStore,
+            IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,

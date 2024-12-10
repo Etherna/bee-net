@@ -21,6 +21,7 @@ namespace Etherna.BeeNet.Stores
 {
     public abstract class ReadOnlyChunkStoreBase(
         IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
+        : IReadOnlyChunkStore
     {
         // Fields.
         protected readonly IDictionary<SwarmHash, SwarmChunk> ChunksCache =
@@ -34,15 +35,15 @@ namespace Etherna.BeeNet.Stores
         {
             if (!bypassCacheReading && ChunksCache.TryGetValue(hash, out var chunk))
                 return chunk;
-            
+
             chunk = await LoadChunkAsync(hash).ConfigureAwait(false);
-            
+
             if (!bypassCacheWriting)
                 ChunksCache[hash] = chunk;
 
             return chunk;
         }
-        
+
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
             bool bypassCacheReading,
@@ -57,7 +58,7 @@ namespace Etherna.BeeNet.Stores
                 return null;
             }
         }
-        
+
         // Protected methods.
         protected abstract Task<SwarmChunk> LoadChunkAsync(SwarmHash hash);
     }

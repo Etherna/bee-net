@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            ChunkStoreBase? chunkStore = null)
+            IChunkStore? chunkStore = null)
         {
             // Checks.
             if (indexFilename?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            ChunkStoreBase? chunkStore = null)
+            IChunkStore? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
             return await EvaluateSingleFileUploadAsync(
@@ -170,7 +170,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null, 
-            ChunkStoreBase? chunkStore = null)
+            IChunkStore? chunkStore = null)
         {
             chunkStore ??= new FakeChunkStore();
             
@@ -240,7 +240,7 @@ namespace Etherna.BeeNet.Services
 
         public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             SwarmAddress address,
-            ReadOnlyChunkStoreBase chunkStore)
+            IReadOnlyChunkStore chunkStore)
         {
             var rootManifest = new ReferencedMantarayManifest(
                 chunkStore,

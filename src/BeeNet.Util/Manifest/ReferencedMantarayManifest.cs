@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Manifest
 {
     public class ReferencedMantarayManifest(
-        ReadOnlyChunkStoreBase chunkStore,
+        IReadOnlyChunkStore chunkStore,
         SwarmHash rootHash,
         bool useChunksCache = true)
         : IReadOnlyMantarayManifest

@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Stores
 {
     public abstract class ChunkStoreBase(
         IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-        : ReadOnlyChunkStoreBase(chunksCache)
+        : ReadOnlyChunkStoreBase(chunksCache), IChunkStore
     {
         /// <summary>
         /// Add a chunk in the store

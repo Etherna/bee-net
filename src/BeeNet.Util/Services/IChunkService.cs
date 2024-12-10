@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null,
-            ChunkStoreBase? chunkStore = null);
+            IChunkStore? chunkStore = null);
         
         /// <summary>
         /// Evaluate the result uploading a single file
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null,
-            ChunkStoreBase? chunkStore = null);
+            IChunkStore? chunkStore = null);
         
         /// <summary>
         /// Evaluate the result uploading a single file
@@ -94,7 +94,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             IPostageStampIssuer? postageStampIssuer = null,
             int? chunkCuncorrency = null,
-            ChunkStoreBase? chunkStore = null);
+            IChunkStore? chunkStore = null);
 
         /// <summary>
         /// Get list of all chunk files in directory
@@ -112,7 +112,7 @@ namespace Etherna.BeeNet.Services
         /// <returns>Resource metadata</returns>
         Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             SwarmAddress address,
-            ReadOnlyChunkStoreBase chunkStore);
+            IReadOnlyChunkStore chunkStore);
         
         /// <summary>
         /// Get resource stream from a directory of chunks and the resource address

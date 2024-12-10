@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkStoreWriterPipelineStage(
-        ChunkStoreBase chunkStore,
+        IChunkStore chunkStore,
         IPostageStamper postageStamper,
         IHasherPipelineStage? nextStage)
         : IHasherPipelineStage

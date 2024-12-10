@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Stores
 {
     public class ChunkJoiner(
-        ReadOnlyChunkStoreBase chunkStore)
+        IReadOnlyChunkStore chunkStore)
     {
         // Methods.
         /// <summary>
