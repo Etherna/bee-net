@@ -16,7 +16,8 @@ namespace Etherna.BeeNet.Models
 {
     public static class SwarmHttpConsts
     {
-        public const string SwarmPostageBatchId = "swarm-postage-batch-id";
-        public const string SwarmTag = "swarm-tag";
+        public const string SwarmPinningHeader = "swarm-pin";
+        public const string SwarmPostageBatchIdHeader = "swarm-postage-batch-id";
+        public const string SwarmTagHeader = "swarm-tag";
     }
 }
