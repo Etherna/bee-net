@@ -27,17 +27,17 @@ namespace Etherna.BeeNet.Stores
         /// Add a chunk in the store
         /// </summary>
         /// <param name="chunk">The chuck to add</param>
-        /// <param name="bypassCacheWriting">Bypass cache update</param>
+        /// <param name="cacheChunk">Add chunk in cache</param>
         /// <returns>True if chunk has been added, false if already existing</returns>
         public async Task<bool> AddAsync(
             SwarmChunk chunk,
-            bool bypassCacheWriting)
+            bool cacheChunk = false)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             
             var result = await SaveChunkAsync(chunk).ConfigureAwait(false);
             
-            if (!bypassCacheWriting)
+            if (cacheChunk)
                 ChunksCache[chunk.Hash] = chunk;
             
             return result;

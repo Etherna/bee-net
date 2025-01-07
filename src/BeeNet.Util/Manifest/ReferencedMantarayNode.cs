@@ -80,8 +80,7 @@ namespace Etherna.BeeNet.Manifest
 
             var chunk = await chunkStore.GetAsync(
                 Hash,
-                !useChunksCache,
-                !useChunksCache).ConfigureAwait(false);
+                useChunksCache).ConfigureAwait(false);
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;

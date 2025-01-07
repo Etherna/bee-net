@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Store chunk.
             var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
             chunk.PostageStamp = stamp;
-            await chunkStore.AddAsync(chunk, true).ConfigureAwait(false);
+            await chunkStore.AddAsync(chunk).ConfigureAwait(false);
 
             if (nextStage is not null)
                 await nextStage.FeedAsync(args).ConfigureAwait(false);

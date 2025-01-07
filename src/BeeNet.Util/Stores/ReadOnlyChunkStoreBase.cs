@@ -23,22 +23,21 @@ namespace Etherna.BeeNet.Stores
         IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
         : IReadOnlyChunkStore
     {
-        // Fields.
-        protected readonly IDictionary<SwarmHash, SwarmChunk> ChunksCache =
+        // Properties.
+        protected IDictionary<SwarmHash, SwarmChunk> ChunksCache { get; } =
             chunksCache ?? new Dictionary<SwarmHash, SwarmChunk>();
 
         // Methods.
         public async Task<SwarmChunk> GetAsync(
             SwarmHash hash,
-            bool bypassCacheReading,
-            bool bypassCacheWriting)
+            bool cacheChunk = false)
         {
-            if (!bypassCacheReading && ChunksCache.TryGetValue(hash, out var chunk))
+            if (ChunksCache.TryGetValue(hash, out var chunk))
                 return chunk;
 
             chunk = await LoadChunkAsync(hash).ConfigureAwait(false);
 
-            if (!bypassCacheWriting)
+            if (cacheChunk)
                 ChunksCache[hash] = chunk;
 
             return chunk;
@@ -46,12 +45,11 @@ namespace Etherna.BeeNet.Stores
 
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
-            bool bypassCacheReading,
-            bool bypassCacheWriting)
+            bool cacheChunk = false)
         {
             try
             {
-                return await GetAsync(hash, bypassCacheReading, bypassCacheWriting).ConfigureAwait(false);
+                return await GetAsync(hash, cacheChunk).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
             {

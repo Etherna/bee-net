@@ -21,12 +21,10 @@ namespace Etherna.BeeNet.Stores
     {
         Task<SwarmChunk> GetAsync(
             SwarmHash hash,
-            bool bypassCacheReading,
-            bool bypassCacheWriting);
+            bool cacheChunk = false);
 
         Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
-            bool bypassCacheReading,
-            bool bypassCacheWriting);
+            bool cacheChunk = false);
     }
 }

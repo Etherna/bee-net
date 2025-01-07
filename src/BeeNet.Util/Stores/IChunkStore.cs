@@ -21,6 +21,6 @@ namespace Etherna.BeeNet.Stores
     {
         Task<bool> AddAsync(
             SwarmChunk chunk,
-            bool bypassCacheWriting);
+            bool cacheChunk = false);
     }
 }
