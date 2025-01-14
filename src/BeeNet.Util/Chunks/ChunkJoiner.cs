@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Chunks
             }
 
             //file cached
-            await using (var writeDataStream = File.OpenWrite(fileCachePath))
+            using (var writeDataStream = File.OpenWrite(fileCachePath))
             {
                 await GetJoinedChunkDataHelperAsync(
                     rootChunkReference,
@@ -81,7 +81,7 @@ namespace Etherna.BeeNet.Chunks
             // Determine if is a data chunk, or an intermediate chunk.
             var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
             
-            //if is data chunk
+            //if is data leaf chunk
             if (totalDataLength <= SwarmChunk.DataSize)
             {
                 await dataStream.WriteAsync(dataArray, cancellationToken).ConfigureAwait(false);
