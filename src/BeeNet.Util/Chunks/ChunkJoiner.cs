@@ -13,12 +13,13 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Chunks
 {
     public class ChunkJoiner(
         IReadOnlyChunkStore chunkStore)
@@ -34,7 +35,7 @@ namespace Etherna.BeeNet.Stores
         public async Task<Stream> GetJoinedChunkDataAsync(
             SwarmChunkReference rootChunkReference,
             string? fileCachePath = null,
-            CancellationToken? cancellationToken = default)
+            CancellationToken? cancellationToken = null)
         {
             ArgumentNullException.ThrowIfNull(rootChunkReference, nameof(rootChunkReference));
 
@@ -53,7 +54,7 @@ namespace Etherna.BeeNet.Stores
             }
 
             //file cached
-            using (var writeDataStream = File.OpenWrite(fileCachePath))
+            await using (var writeDataStream = File.OpenWrite(fileCachePath))
             {
                 await GetJoinedChunkDataHelperAsync(
                     rootChunkReference,

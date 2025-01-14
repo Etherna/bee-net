@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Manifest
     {
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
-        private readonly bool useChunksCache;
+        private readonly bool useChunkStoreCache;
         
         private SwarmHash? _entryHash;
         private readonly Dictionary<char, ReferencedMantarayNodeFork> _forks = new();
@@ -40,10 +40,10 @@ namespace Etherna.BeeNet.Manifest
             SwarmHash chunkHash,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
-            bool useChunksCache)
+            bool useChunkStoreCache = false)
         {
             this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
-            this.useChunksCache = useChunksCache;
+            this.useChunkStoreCache = useChunkStoreCache;
             Hash = chunkHash;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
@@ -73,14 +73,14 @@ namespace Etherna.BeeNet.Manifest
             : throw new InvalidOperationException("Node is not decoded from chunk");
 
         // Methods.
-        public async Task DecodeFromChunkAsync(SwarmHash manifestHash)
+        public async Task DecodeFromChunkAsync()
         {
             if (IsDecoded)
                 return;
 
             var chunk = await chunkStore.GetAsync(
                 Hash,
-                useChunksCache).ConfigureAwait(false);
+                useChunkStoreCache).ConfigureAwait(false);
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;
@@ -135,7 +135,7 @@ namespace Etherna.BeeNet.Manifest
             
             // Else, proceed into it.
             if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync(manifestHash).ConfigureAwait(false);
+                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await fork.Node.GetResourceMetadataAsync(childSubPath, manifestHash).ConfigureAwait(false);
         }
@@ -173,7 +173,7 @@ namespace Etherna.BeeNet.Manifest
                 throw new KeyNotFoundException($"Final path {path} can't be found");
 
             if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync(manifestHash).ConfigureAwait(false);
+                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await fork.Node.ResolveChunkReferenceAsync(
                 path[fork.Prefix.Length..],
@@ -249,7 +249,7 @@ namespace Etherna.BeeNet.Manifest
                         childNodeHash,
                         childNodeMetadata,
                         childNodeTypeFlags,
-                        useChunksCache));
+                        useChunkStoreCache));
             }
         }
     }

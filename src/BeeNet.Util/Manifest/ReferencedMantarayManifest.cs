@@ -23,11 +23,11 @@ namespace Etherna.BeeNet.Manifest
     public class ReferencedMantarayManifest(
         IReadOnlyChunkStore chunkStore,
         SwarmHash rootHash,
-        bool useChunksCache = true)
+        bool useChunkStoreCache = false)
         : IReadOnlyMantarayManifest
     {
         // Fields.
-        private readonly ReferencedMantarayNode _rootNode = new(chunkStore, rootHash, null, NodeType.Edge, useChunksCache);
+        private readonly ReferencedMantarayNode _rootNode = new(chunkStore, rootHash, null, NodeType.Edge, useChunkStoreCache);
 
         // Properties.
         public IReadOnlyMantarayNode RootNode => _rootNode;
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Manifest
         public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(SwarmAddress address)
         {
             if (!_rootNode.IsDecoded)
-                await _rootNode.DecodeFromChunkAsync(_rootNode.Hash).ConfigureAwait(false);
+                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await RootNode.GetResourceMetadataAsync(address.Path.TrimStart(SwarmAddress.Separator), _rootNode.Hash).ConfigureAwait(false);
         }
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             
             if (!_rootNode.IsDecoded)
-                await _rootNode.DecodeFromChunkAsync(_rootNode.Hash).ConfigureAwait(false);
+                await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await _rootNode.ResolveChunkReferenceAsync(
                 path == SwarmAddress.Separator.ToString() ?
