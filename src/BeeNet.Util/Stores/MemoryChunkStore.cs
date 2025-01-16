@@ -13,21 +13,30 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public class FakeChunkStore : ChunkStoreBase
+    public class MemoryChunkStore : ChunkStoreBase
     {
-        // Protected methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
-            Task.FromResult(false);
+        // Fields.
+        private readonly ConcurrentDictionary<SwarmHash, SwarmChunk> chunks = new();
         
-        protected override Task<SwarmChunk> LoadChunkAsync(SwarmHash hash) =>
-            throw new KeyNotFoundException("Chunk get on a fake chunk store");
+        // Methods.
+        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
+            Task.FromResult(chunks.Remove(hash, out _));
 
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk) =>
-            Task.FromResult(true);
+        protected override Task<SwarmChunk> LoadChunkAsync(SwarmHash hash) =>
+            Task.FromResult(chunks[hash]);
+
+        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            
+            return Task.FromResult(chunks.TryAdd(chunk.Hash, chunk));
+        }
     }
 }

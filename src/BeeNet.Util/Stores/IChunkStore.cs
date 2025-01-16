@@ -22,5 +22,8 @@ namespace Etherna.BeeNet.Stores
         Task<bool> AddAsync(
             SwarmChunk chunk,
             bool cacheChunk = false);
+
+        Task<bool> DeleteAsync(
+            SwarmHash hash);
     }
 }

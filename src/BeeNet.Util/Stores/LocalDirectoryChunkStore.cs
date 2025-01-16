@@ -68,6 +68,17 @@ namespace Etherna.BeeNet.Stores
         }
 
         // Protected methods.
+        protected override Task<bool> DeleteChunkAsync(SwarmHash hash)
+        {
+            var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
+
+            if (!File.Exists(chunkPath))
+                return Task.FromResult(false);
+            
+            File.Delete(chunkPath);
+            return Task.FromResult(true);
+        }
+
         protected override async Task<SwarmChunk> LoadChunkAsync(SwarmHash hash)
         {
             var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
