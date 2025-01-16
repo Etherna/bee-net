@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Chunks
         IReadOnlyChunkStore chunkStore)
     {
         // Methods.
-        public async Task<long> TraverseDataAsync(
+        public async Task TraverseFromDataChunkAsync(
             SwarmChunkReference chunkReference,
             Action<SwarmChunk>? onChunkFound,
             Action<SwarmHash>? onChunkNotFound)
@@ -42,10 +42,9 @@ namespace Etherna.BeeNet.Chunks
                 visitedHashes,
                 onChunkFound,
                 onChunkNotFound).ConfigureAwait(false);
-            return visitedHashes.Count;
         }
         
-        public async Task<long> TraverseMantarayManifestAsync(
+        public async Task TraverseFromMantarayManifestRootAsync(
             SwarmHash rootHash,
             Action<SwarmChunk>? onChunkFound,
             Action<SwarmHash>? onChunkNotFound)
@@ -62,10 +61,9 @@ namespace Etherna.BeeNet.Chunks
                 visitedHashes,
                 onChunkFound,
                 onChunkNotFound).ConfigureAwait(false);
-            return visitedHashes.Count;
         }
 
-        public Task<long> TraverseMantarayNodeAsync(
+        public Task TraverseFromMantarayNodeChunkAsync(
             SwarmHash nodeHash,
             XorEncryptKey? encryptKey,
             bool? useRecursiveEncryption,
@@ -81,7 +79,7 @@ namespace Etherna.BeeNet.Chunks
                 metadata.Add(ManifestEntry.UseRecursiveEncryptionKey, useRecursiveEncryption.Value.ToString());
 
             // Traverse.
-            return TraverseMantarayNodeAsync(
+            return TraverseFromMantarayNodeChunkAsync(
                 nodeHash,
                 metadata,
                 nodeTypeFlags,
@@ -89,7 +87,7 @@ namespace Etherna.BeeNet.Chunks
                 onChunkNotFound);
         }
 
-        public async Task<long> TraverseMantarayNodeAsync(
+        public async Task TraverseFromMantarayNodeChunkAsync(
             SwarmHash nodeHash,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
@@ -112,7 +110,6 @@ namespace Etherna.BeeNet.Chunks
                 visitedHashes,
                 onChunkFound,
                 onChunkNotFound).ConfigureAwait(false);
-            return visitedHashes.Count;
         }
 
         // Helpers.
@@ -122,6 +119,8 @@ namespace Etherna.BeeNet.Chunks
             Action<SwarmChunk> onChunkFound,
             Action<SwarmHash> onChunkNotFound)
         {
+            visitedHashes.Add(chunkReference.Hash);
+            
             // Read and decrypt chunk data.
             SwarmChunk chunk;
             try
@@ -135,7 +134,6 @@ namespace Etherna.BeeNet.Chunks
                 return;
             }
 #pragma warning restore CA1031
-            visitedHashes.Add(chunkReference.Hash);
             onChunkFound(chunk);
             
             // Extract data and decrypt.
@@ -184,6 +182,8 @@ namespace Etherna.BeeNet.Chunks
             Action<SwarmChunk> onChunkFound,
             Action<SwarmHash> onChunkNotFound)
         {
+            visitedHashes.Add(manifestNode.Hash);
+            
             // Try decode manifest.
             try
             {
@@ -196,7 +196,6 @@ namespace Etherna.BeeNet.Chunks
                 return;
             }
 #pragma warning restore CA1031
-            visitedHashes.Add(manifestNode.Hash);
             onChunkFound(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false));
             
             // Traverse forks.

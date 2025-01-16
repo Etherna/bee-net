@@ -24,24 +24,16 @@ namespace Etherna.BeeNet.Models.Feeds
     public class SwarmFeedChunkTest
     {
         // Internal classes.
-        public class VerifyConstructorArgumentsTestElement
+        public class VerifyConstructorArgumentsTestElement(
+            FeedIndexBase index,
+            byte[] payload,
+            SwarmHash referenceHash,
+            Type expectedExceptionType)
         {
-            public VerifyConstructorArgumentsTestElement(
-                FeedIndexBase index,
-                byte[] payload,
-                SwarmHash referenceHash,
-                Type expectedExceptionType)
-            {
-                ExpectedExceptionType = expectedExceptionType;
-                Index = index;
-                Payload = payload;
-                ReferenceHash = referenceHash;
-            }
-
-            public Type ExpectedExceptionType { get; }
-            public FeedIndexBase Index { get; }
-            public byte[] Payload { get; }
-            public SwarmHash ReferenceHash { get; }
+            public Type ExpectedExceptionType { get; } = expectedExceptionType;
+            public FeedIndexBase Index { get; } = index;
+            public byte[] Payload { get; } = payload;
+            public SwarmHash ReferenceHash { get; } = referenceHash;
         }
 
         // Data.
@@ -52,15 +44,13 @@ namespace Etherna.BeeNet.Models.Feeds
                 var tests = new List<VerifyConstructorArgumentsTestElement>
                 {
                     // Shorter payload.
-                    new VerifyConstructorArgumentsTestElement(
-                        new EpochFeedIndex(0, 0),
+                    new(new EpochFeedIndex(0, 0),
                         new byte[SwarmFeedChunk.MinDataSize - 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException)),
 
                     // Longer payload.
-                    new VerifyConstructorArgumentsTestElement(
-                        new EpochFeedIndex(0, 0),
+                    new(new EpochFeedIndex(0, 0),
                         new byte[SwarmChunk.DataSize + 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException))
@@ -83,7 +73,7 @@ namespace Etherna.BeeNet.Models.Feeds
         {
             var chunk = new SwarmFeedChunk(
                 new EpochFeedIndex(0, 0),
-                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
+                [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
             var result = chunk.Payload;
@@ -96,7 +86,7 @@ namespace Etherna.BeeNet.Models.Feeds
         {
             var chunk = new SwarmFeedChunk(
                 new EpochFeedIndex(0, 0),
-                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
+                [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
             var result = chunk.TimeStamp;

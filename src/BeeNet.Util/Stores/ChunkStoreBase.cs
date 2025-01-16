@@ -42,8 +42,18 @@ namespace Etherna.BeeNet.Stores
             
             return result;
         }
-        
+
+        public Task<bool> DeleteAsync(SwarmHash hash)
+        {
+            var result = DeleteChunkAsync(hash);
+
+            ChunksCache.Remove(hash);
+
+            return result;
+        }
+
         // Protected methods.
+        protected abstract Task<bool> DeleteChunkAsync(SwarmHash hash);
         protected abstract Task<bool> SaveChunkAsync(SwarmChunk chunk);
     }
 }
