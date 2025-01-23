@@ -27,30 +27,30 @@ namespace Etherna.BeeNet.Chunks
         // Methods.
         public async Task TraverseFromDataChunkAsync(
             SwarmChunkReference chunkReference,
-            Action<SwarmChunk>? onChunkFound,
-            Action<SwarmHash>? onChunkNotFound)
+            Func<SwarmChunk, Task>? onChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             ArgumentNullException.ThrowIfNull(chunkReference, nameof(chunkReference));
             
-            onChunkFound ??= _ => { };
-            onChunkNotFound ??= _ => { };
+            onChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
 
             // Read as data chunk.
             await TraverseDataHelperAsync(
                 chunkReference,
                 visitedHashes,
-                onChunkFound,
-                onChunkNotFound).ConfigureAwait(false);
+                onChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
         
         public async Task TraverseFromMantarayManifestRootAsync(
             SwarmHash rootHash,
-            Action<SwarmChunk>? onChunkFound,
-            Action<SwarmHash>? onChunkNotFound)
+            Func<SwarmChunk, Task>? onChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
-            onChunkFound ??= _ => { };
-            onChunkNotFound ??= _ => { };
+            onChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
             
             // Read as manifest.
@@ -59,8 +59,8 @@ namespace Etherna.BeeNet.Chunks
             await TraverseMantarayNodeHelperAsync(
                 manifestNode,
                 visitedHashes,
-                onChunkFound,
-                onChunkNotFound).ConfigureAwait(false);
+                onChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
 
         public Task TraverseFromMantarayNodeChunkAsync(
@@ -68,8 +68,8 @@ namespace Etherna.BeeNet.Chunks
             XorEncryptKey? encryptKey,
             bool? useRecursiveEncryption,
             NodeType nodeTypeFlags,
-            Action<SwarmChunk>? onChunkFound,
-            Action<SwarmHash>? onChunkNotFound)
+            Func<SwarmChunk, Task>? onChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             // Build metadata.
             var metadata = new Dictionary<string, string>();
@@ -83,19 +83,19 @@ namespace Etherna.BeeNet.Chunks
                 nodeHash,
                 metadata,
                 nodeTypeFlags,
-                onChunkFound,
-                onChunkNotFound);
+                onChunkFoundAsync,
+                onChunkNotFoundAsync);
         }
 
         public async Task TraverseFromMantarayNodeChunkAsync(
             SwarmHash nodeHash,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
-            Action<SwarmChunk>? onChunkFound,
-            Action<SwarmHash>? onChunkNotFound)
+            Func<SwarmChunk, Task>? onChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
-            onChunkFound ??= _ => { };
-            onChunkNotFound ??= _ => { };
+            onChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
 
             // Read as manifest node.
@@ -108,16 +108,16 @@ namespace Etherna.BeeNet.Chunks
             await TraverseMantarayNodeHelperAsync(
                 manifestNode,
                 visitedHashes,
-                onChunkFound,
-                onChunkNotFound).ConfigureAwait(false);
+                onChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
 
         // Helpers.
         private async Task TraverseDataHelperAsync(
             SwarmChunkReference chunkReference,
             HashSet<SwarmHash> visitedHashes,
-            Action<SwarmChunk> onChunkFound,
-            Action<SwarmHash> onChunkNotFound)
+            Func<SwarmChunk, Task> onChunkFoundAsync,
+            Func<SwarmHash, Task> onChunkNotFoundAsync)
         {
             visitedHashes.Add(chunkReference.Hash);
             
@@ -130,11 +130,11 @@ namespace Etherna.BeeNet.Chunks
 #pragma warning disable CA1031
             catch
             {
-                onChunkNotFound(chunkReference.Hash);
+                await onChunkNotFoundAsync(chunkReference.Hash).ConfigureAwait(false);
                 return;
             }
 #pragma warning restore CA1031
-            onChunkFound(chunk);
+            await onChunkFoundAsync(chunk).ConfigureAwait(false);
             
             // Extract data and decrypt.
             var dataArray = chunk.Data.ToArray();
@@ -171,16 +171,16 @@ namespace Etherna.BeeNet.Chunks
                         childEncryptionKey,
                         chunkReference.UseRecursiveEncryption),
                     visitedHashes,
-                    onChunkFound,
-                    onChunkNotFound).ConfigureAwait(false);
+                    onChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
             }
         }
         
         private async Task TraverseMantarayNodeHelperAsync(
             ReferencedMantarayNode manifestNode,
             HashSet<SwarmHash> visitedHashes,
-            Action<SwarmChunk> onChunkFound,
-            Action<SwarmHash> onChunkNotFound)
+            Func<SwarmChunk, Task> onChunkFoundAsync,
+            Func<SwarmHash, Task> onChunkNotFoundAsync)
         {
             visitedHashes.Add(manifestNode.Hash);
             
@@ -192,11 +192,11 @@ namespace Etherna.BeeNet.Chunks
 #pragma warning disable CA1031
             catch
             {
-                onChunkNotFound(manifestNode.Hash);
+                await onChunkNotFoundAsync(manifestNode.Hash).ConfigureAwait(false);
                 return;
             }
 #pragma warning restore CA1031
-            onChunkFound(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false));
+            await onChunkFoundAsync(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false)).ConfigureAwait(false);
             
             // Traverse forks.
             foreach (var fork in manifestNode.Forks.Values)
@@ -208,8 +208,8 @@ namespace Etherna.BeeNet.Chunks
                 await TraverseMantarayNodeHelperAsync(
                     fork.Node,
                     visitedHashes,
-                    onChunkFound,
-                    onChunkNotFound).ConfigureAwait(false);
+                    onChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
             }
             
             // Traverse data.
@@ -222,8 +222,8 @@ namespace Etherna.BeeNet.Chunks
                         manifestNode.EntryEncryptionKey,
                         manifestNode.EntryUseRecursiveEncryption),
                     visitedHashes,
-                    onChunkFound,
-                    onChunkNotFound).ConfigureAwait(false);
+                    onChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
         }
     }
 }

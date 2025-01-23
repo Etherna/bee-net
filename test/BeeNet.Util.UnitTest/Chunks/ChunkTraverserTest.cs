@@ -427,8 +427,8 @@ namespace Etherna.BeeNet.Chunks
         
             await chunkTraverser.TraverseFromDataChunkAsync(
                 new SwarmChunkReference(test.RootHash, null, false),
-                c => foundChunkHashes.Add(c.Hash),
-                h => notFoundChunkHashes.Add(h));
+                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
         
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
@@ -443,8 +443,8 @@ namespace Etherna.BeeNet.Chunks
 
             await chunkTraverser.TraverseFromMantarayManifestRootAsync(
                 test.RootHash,
-                c => foundChunkHashes.Add(c.Hash),
-                h => notFoundChunkHashes.Add(h));
+                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
 
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
@@ -462,8 +462,8 @@ namespace Etherna.BeeNet.Chunks
                 null,
                 null,
                 NodeType.Edge,
-                c => foundChunkHashes.Add(c.Hash),
-                h => notFoundChunkHashes.Add(h));
+                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
         
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
