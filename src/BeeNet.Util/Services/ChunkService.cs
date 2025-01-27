@@ -22,6 +22,7 @@ using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +30,8 @@ namespace Etherna.BeeNet.Services
 {
     public class ChunkService : IChunkService
     {
-        public async Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+        // Methods.
+        public Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
             string directoryPath,
             string? indexFilename = null,
             string? errorFilename = null,
@@ -40,15 +42,56 @@ namespace Etherna.BeeNet.Services
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
+            // Get all files from directory.
+            var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
+
+            // Evaluate upload.
+            return EvaluateDirectoryUploadAsync(
+                files.Select(f => Path.GetRelativePath(directoryPath, f)).ToArray(),
+                f =>  File.OpenRead(Path.Combine(directoryPath, f)),
+                indexFilename,
+                errorFilename,
+                compactLevel,
+                encrypt,
+                redundancyLevel,
+                postageStampIssuer,
+                chunkCuncorrency,
+                chunkStore);
+        }
+
+        public async Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+            string[] fileNames,
+            Func<string, Stream> getFileStream,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null)
+        {
             // Checks.
+            ArgumentNullException.ThrowIfNull(fileNames, nameof(fileNames));
+            ArgumentNullException.ThrowIfNull(getFileStream, nameof(getFileStream));
+            
+            if (fileNames.Length == 0)
+                throw new ArgumentException("No files in directory", nameof(fileNames));
+            if (fileNames.Any(f => f.StartsWith(SwarmAddress.Separator)))
+                throw new ArgumentException(
+                    "File names can't start with slash character",
+                    nameof(fileNames));
             if (indexFilename?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
                 throw new ArgumentException(
                     "Index document suffix must not include slash character",
                     nameof(indexFilename));
+            if (errorFilename?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
+                throw new ArgumentException(
+                    "Error document suffix must not include slash character",
+                    nameof(errorFilename));
             
             // Init.
             chunkStore ??= new FakeChunkStore();
-            
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
@@ -58,9 +101,8 @@ namespace Etherna.BeeNet.Services
             long totalMissedOptimisticHashing = 0;
             
             // Try set index document.
-            if (indexFilename is null &&
-                File.Exists(Path.Combine(directoryPath, "index.html")))
-                indexFilename = "index.html";
+            if (indexFilename is null && fileNames.Contains(SwarmHttpConsts.DefaultIndexFilename))
+                indexFilename = SwarmHttpConsts.DefaultIndexFilename;
             
             // Create manifest.
             var dirManifest = new MantarayManifest(
@@ -73,12 +115,8 @@ namespace Etherna.BeeNet.Services
                     chunkCuncorrency),
                 encrypt);
 
-            // Iterate through the files in the supplied directory.
-            var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
-            if (files.Length == 0)
-                throw new ArgumentException("No files in root directory", nameof(directoryPath));
-            
-            foreach (var file in files)
+            // Iterate through the files.
+            foreach (var file in fileNames)
             {
                 using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
@@ -90,7 +128,7 @@ namespace Etherna.BeeNet.Services
                 
                 var fileContentType = FileContentTypeProvider.GetContentType(file);
                 var fileName = Path.GetFileName(file);
-                using var fileStream = File.OpenRead(file);
+                using var fileStream = getFileStream(file);
 
                 var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
                 totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
@@ -107,7 +145,7 @@ namespace Etherna.BeeNet.Services
                     fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
                 
                 dirManifest.Add(
-                    Path.GetRelativePath(directoryPath, file),
+                    file,
                     ManifestEntry.NewFile(
                         fileHashingResult.Hash,
                         fileEntryMetadata));
@@ -173,9 +211,11 @@ namespace Etherna.BeeNet.Services
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
-            // Validate input.
-            if (fileName?.Contains('/', StringComparison.InvariantCulture) == true)
-                throw new ArgumentException("Invalid name", nameof(fileName));
+            // Checks.
+            if (fileName?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
+                throw new ArgumentException(
+                    "File name must not include slash character",
+                    nameof(fileName));
 
             // Init.
             chunkStore ??= new FakeChunkStore();

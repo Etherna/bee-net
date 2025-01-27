@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -39,6 +40,32 @@ namespace Etherna.BeeNet.Services
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
             string directoryPath,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStampIssuer? postageStampIssuer = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null);
+
+        /// <summary>
+        /// Evaluate the result uploading a directory
+        /// </summary>
+        /// <param name="fileNames">The list of files names</param>
+        /// <param name="getFileStream">Return a file stream from its name</param>
+        /// <param name="indexFilename">The index default file</param>
+        /// <param name="errorFilename">The error default file</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+            string[] fileNames,
+            Func<string, Stream> getFileStream,
             string? indexFilename = null,
             string? errorFilename = null,
             ushort compactLevel = 0,
