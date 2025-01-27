@@ -16,6 +16,8 @@ namespace Etherna.BeeNet.Models
 {
     public static class SwarmHttpConsts
     {
+        public const string ContentTypeHeader = "Content-Type";
+        public const string SwarmCollectionHeader = "swarm-collection";
         public const string SwarmErrorDocumentHeader = "swarm-error-document";
         public const string SwarmFeedIndexHeader = "swarm-feed-index";
         public const string SwarmIndexDocumentHeader = "swarm-index-document";
