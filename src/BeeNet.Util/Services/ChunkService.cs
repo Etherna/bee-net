@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.Services
             
             // Return result.
             return new UploadEvaluationResult(
-                chunkHashingResult.Hash,
+                chunkHashingResult,
                 totalMissedOptimisticHashing,
                 postageStampIssuer);
         }
@@ -173,8 +173,12 @@ namespace Etherna.BeeNet.Services
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
+            // Validate input.
+            if (fileName?.Contains('/', StringComparison.InvariantCulture) == true)
+                throw new ArgumentException("Invalid name", nameof(fileName));
+
+            // Init.
             chunkStore ??= new FakeChunkStore();
-            
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
@@ -190,7 +194,10 @@ namespace Etherna.BeeNet.Services
                 compactLevel,
                 chunkCuncorrency);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            fileName ??= fileHashingResult.Hash.ToString(); //if missing, set file name with its address
+            
+            // If file name is null or empty, use the file hash as name.
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = fileHashingResult.Hash.ToString();
             
             // Create manifest.
             var manifest = new MantarayManifest(
@@ -231,7 +238,7 @@ namespace Etherna.BeeNet.Services
             
             // Return result.
             return new UploadEvaluationResult(
-                chunkHashingResult.Hash,
+                chunkHashingResult,
                 fileHasherPipeline.MissedOptimisticHashing,
                 postageStampIssuer);
         }

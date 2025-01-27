@@ -22,20 +22,20 @@ namespace Etherna.BeeNet.Services
     {
         // Constructor.
         internal UploadEvaluationResult(
-            SwarmHash hash,
+            SwarmChunkReference chunkReference,
             long missedOptimisticHashing,
             IPostageStampIssuer postageStampIssuer)
         {
-            Hash = hash;
+            ChunkReference = chunkReference;
             MissedOptimisticHashing = missedOptimisticHashing;
             PostageStampIssuer = postageStampIssuer;
         }
 
         // Properties.
         /// <summary>
-        /// The upload resulting hash
+        /// The upload resulting reference
         /// </summary>
-        public SwarmHash Hash { get; }
+        public SwarmChunkReference ChunkReference { get; }
         
         public long MissedOptimisticHashing { get; }
 
