@@ -31,7 +31,42 @@ namespace Etherna.BeeNet.Services
     public class ChunkService : IChunkService
     {
         // Methods.
-        public Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+        public string[] GetAllChunkFilesInDirectory(string chunkStoreDirectory) =>
+            Directory.GetFiles(chunkStoreDirectory, '*' + LocalDirectoryChunkStore.ChunkFileExtension);
+
+        public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
+            SwarmAddress address,
+            IReadOnlyChunkStore chunkStore)
+        {
+            var rootManifest = new ReferencedMantarayManifest(
+                chunkStore,
+                address.Hash);
+            
+            return await rootManifest.GetResourceMetadataAsync(address).ConfigureAwait(false);
+        }
+
+        public async Task<Stream> GetFileStreamFromChunksAsync(
+            string chunkStoreDirectory,
+            SwarmAddress address,
+            string? fileCachePath = null,
+            CancellationToken? cancellationToken = default)
+        {
+            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
+            var chunkJoiner = new ChunkJoiner(chunkStore);
+            
+            var rootManifest = new ReferencedMantarayManifest(
+                chunkStore,
+                address.Hash);
+            
+            var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address.Path).ConfigureAwait(false);
+            
+            return await chunkJoiner.GetJoinedChunkDataAsync(
+                chunkReference,
+                fileCachePath,
+                cancellationToken).ConfigureAwait(false);
+        }
+        
+        public Task<UploadEvaluationResult> UploadDirectoryAsync(
             string directoryPath,
             string? indexFilename = null,
             string? errorFilename = null,
@@ -46,7 +81,7 @@ namespace Etherna.BeeNet.Services
             var files = Directory.GetFiles(directoryPath, "", SearchOption.AllDirectories);
 
             // Evaluate upload.
-            return EvaluateDirectoryUploadAsync(
+            return UploadDirectoryAsync(
                 files.Select(f => Path.GetRelativePath(directoryPath, f)).ToArray(),
                 f =>  File.OpenRead(Path.Combine(directoryPath, f)),
                 indexFilename,
@@ -59,7 +94,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore);
         }
 
-        public async Task<UploadEvaluationResult> EvaluateDirectoryUploadAsync(
+        public async Task<UploadEvaluationResult> UploadDirectoryAsync(
             string[] fileNames,
             Func<string, Stream> getFileStream,
             string? indexFilename = null,
@@ -176,7 +211,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer);
         }
 
-        public async Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
+        public async Task<UploadEvaluationResult> UploadSingleFileAsync(
             byte[] data,
             string fileContentType,
             string? fileName,
@@ -188,7 +223,7 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null)
         {
             using var stream = new MemoryStream(data);
-            return await EvaluateSingleFileUploadAsync(
+            return await UploadSingleFileAsync(
                 stream,
                 fileContentType,
                 fileName,
@@ -200,7 +235,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore).ConfigureAwait(false);
         }
 
-        public async Task<UploadEvaluationResult> EvaluateSingleFileUploadAsync(
+        public async Task<UploadEvaluationResult> UploadSingleFileAsync(
             Stream stream,
             string fileContentType,
             string? fileName,
@@ -281,41 +316,6 @@ namespace Etherna.BeeNet.Services
                 chunkHashingResult,
                 fileHasherPipeline.MissedOptimisticHashing,
                 postageStampIssuer);
-        }
-
-        public string[] GetAllChunkFilesInDirectory(string chunkStoreDirectory) =>
-            Directory.GetFiles(chunkStoreDirectory, '*' + LocalDirectoryChunkStore.ChunkFileExtension);
-
-        public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore)
-        {
-            var rootManifest = new ReferencedMantarayManifest(
-                chunkStore,
-                address.Hash);
-            
-            return await rootManifest.GetResourceMetadataAsync(address).ConfigureAwait(false);
-        }
-
-        public async Task<Stream> GetFileStreamFromChunksAsync(
-            string chunkStoreDirectory,
-            SwarmAddress address,
-            string? fileCachePath = null,
-            CancellationToken? cancellationToken = default)
-        {
-            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
-            var chunkJoiner = new ChunkJoiner(chunkStore);
-            
-            var rootManifest = new ReferencedMantarayManifest(
-                chunkStore,
-                address.Hash);
-            
-            var chunkReference = await rootManifest.ResolveAddressToChunkReferenceAsync(address.Path).ConfigureAwait(false);
-            
-            return await chunkJoiner.GetJoinedChunkDataAsync(
-                chunkReference,
-                fileCachePath,
-                cancellationToken).ConfigureAwait(false);
         }
 
         public Task<SwarmHash> WriteDataChunksAsync(
