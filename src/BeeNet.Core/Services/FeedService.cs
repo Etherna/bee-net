@@ -55,8 +55,8 @@ namespace Etherna.BeeNet.Services
 
                 return Enum.Parse<FeedType>(strType, true) switch
                 {
-                    FeedType.Epoch => new EpochFeed(owner, topic),
-                    FeedType.Sequence => new SequenceFeed(owner, topic),
+                    FeedType.Epoch => new SwarmEpochFeed(owner, topic),
+                    FeedType.Sequence => new SwarmSequenceFeed(owner, topic),
                     _ => throw new InvalidOperationException()
                 };
             }
@@ -67,12 +67,12 @@ namespace Etherna.BeeNet.Services
         }
         
         public async Task<UploadEvaluationResult> UploadFeedManifestAsync(
-            byte[] account,
-            byte[] topic,
-            FeedType feedType,
+            SwarmFeedBase swarmFeed,
             IPostageStampIssuer? postageStampIssuer = null,
             IChunkStore? chunkStore = null)
         {
+            ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
+            
             // Init.
             chunkStore ??= new FakeChunkStore();
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
@@ -96,9 +96,9 @@ namespace Etherna.BeeNet.Services
                 MantarayManifest.RootPath,
                 ManifestEntry.NewDirectory(new Dictionary<string, string>
                 {
-                    [FeedMetadataEntryOwner] = account.ToHex(),
-                    [FeedMetadataEntryTopic] = topic.ToHex(),
-                    [FeedMetadataEntryType] = feedType.ToString()
+                    [FeedMetadataEntryOwner] = swarmFeed.Owner.ToArray().ToHex(),
+                    [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
+                    [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                 }));
 
             var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);

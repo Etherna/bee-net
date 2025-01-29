@@ -18,7 +18,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class EpochFeedIndex : FeedIndexBase
+    public sealed class SwarmEpochFeedIndex : FeedIndexBase
     {
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Models
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
         /// <param name="level">Epoch level</param>
-        public EpochFeedIndex(ulong start, byte level)
+        public SwarmEpochFeedIndex(ulong start, byte level)
         {
 #if NET8_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
@@ -53,9 +53,9 @@ namespace Etherna.BeeNet.Models
 
         public bool IsRight => !IsLeft;
 
-        public EpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
+        public SwarmEpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
 
-        public EpochFeedIndex Parent
+        public SwarmEpochFeedIndex Parent
         {
             get
             {
@@ -64,11 +64,11 @@ namespace Etherna.BeeNet.Models
 
                 var parentLevel = (byte)(Level + 1);
                 var parentStart = Start >> parentLevel << parentLevel;
-                return new EpochFeedIndex(parentStart, parentLevel);
+                return new SwarmEpochFeedIndex(parentStart, parentLevel);
             }
         }
 
-        public EpochFeedIndex Right => IsRight ? this : new(Start + Length, Level);
+        public SwarmEpochFeedIndex Right => IsRight ? this : new(Start + Length, Level);
 
         /// <summary>
         /// Epoch length in seconds
@@ -95,14 +95,14 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj)) return true;
-            if (obj is not EpochFeedIndex epochObj) return false;
+            if (obj is not SwarmEpochFeedIndex epochObj) return false;
             return Level == epochObj.Level && Start == epochObj.Start;
         }
 
-        public EpochFeedIndex GetChildAt(DateTimeOffset at) =>
+        public SwarmEpochFeedIndex GetChildAt(DateTimeOffset at) =>
             GetChildAt((ulong)at.ToUnixTimeSeconds());
 
-        public EpochFeedIndex GetChildAt(ulong at)
+        public SwarmEpochFeedIndex GetChildAt(ulong at)
         {
             if (Level == 0)
                 throw new InvalidOperationException();
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Models
             if ((at & childLength) > 0)
                 childStart |= childLength;
 
-            return new EpochFeedIndex(childStart, (byte)(Level - 1));
+            return new SwarmEpochFeedIndex(childStart, (byte)(Level - 1));
         }
 
         public override int GetHashCode() =>
@@ -157,7 +157,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="t0"></param>
         /// <param name="t1"></param>
         /// <returns>Lowest common ancestor epoch index</returns>
-        public static EpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1)
+        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1)
         {
             byte level = 0;
             while (t0 >> level != t1 >> level)

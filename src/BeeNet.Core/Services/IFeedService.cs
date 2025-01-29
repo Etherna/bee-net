@@ -25,9 +25,7 @@ namespace Etherna.BeeNet.Services
         Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(ReferencedMantarayManifest manifest);
 
         Task<UploadEvaluationResult> UploadFeedManifestAsync(
-            byte[] account,
-            byte[] topic,
-            FeedType feedType,
+            SwarmFeedBase swarmFeed,
             IPostageStampIssuer? postageStampIssuer = null,
             IChunkStore? chunkStore = null);
     }

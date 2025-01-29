@@ -17,21 +17,21 @@ using Xunit;
 
 namespace Etherna.BeeNet.Models
 {
-    public class EpochFeedIndexTest
+    public class SwarmEpochFeedIndexTest
     {
         // Tests.
         [Fact]
         public void VerifyMaxStart()
         {
             Assert.Throws<ArgumentOutOfRangeException>(
-                () => new EpochFeedIndex(8_589_934_592, 0));
+                () => new SwarmEpochFeedIndex(8_589_934_592, 0));
         }
 
         [Fact]
         public void VerifyMaxLevel()
         {
             Assert.Throws<ArgumentOutOfRangeException>(
-                () => new EpochFeedIndex(0, 33));
+                () => new SwarmEpochFeedIndex(0, 33));
         }
 
         [Theory]
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(8_589_934_591, 32, 4_294_967_296)]
         public void StartNormalization(ulong start, byte level, ulong expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Equal(expected, index.Start);
         }
 
@@ -57,7 +57,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, false)]
         public void IsLeft(ulong start, byte level, bool expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Equal(expected, index.IsLeft);
         }
 
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, true)]
         public void IsRight(ulong start, byte level, bool expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Equal(expected, index.IsRight);
         }
 
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, 0, 32)]
         public void Left(ulong start, byte level, ulong expectedStart, byte expectedLevel)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             var leftIndex = index.Left;
             Assert.Equal(expectedStart, leftIndex.Start);
             Assert.Equal(expectedLevel, leftIndex.Level);
@@ -98,7 +98,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, 4_294_967_296, 32)]
         public void Right(ulong start, byte level, ulong expectedStart, byte expectedLevel)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             var rightIndex = index.Right;
             Assert.Equal(expectedStart, rightIndex.Start);
             Assert.Equal(expectedLevel, rightIndex.Level);
@@ -110,7 +110,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(0, 32, 4_294_967_296)]
         public void Length(ulong start, byte level, ulong expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Equal(expected, index.Length);
         }
 
@@ -123,7 +123,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, new byte[] { 138, 221, 60, 55, 69, 133, 200, 248, 94, 216, 56, 133, 121, 93, 5, 7, 253, 249, 194, 232, 213, 22, 134, 6, 183, 249, 62, 225, 177, 8, 9, 103 })]
         public void MarshalBinary(ulong start, byte level, byte[] expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Equal(expected, index.GetMarshalBinaryHash(new HashProvider()));
         }
 
@@ -138,7 +138,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, 4_294_967_296, true)]
         public void ContainsTime(ulong start, byte level, ulong at, bool expected)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             var result = index.ContainsTime(at);
             Assert.Equal(expected, result);
         }
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void GetChildAtVerifyMinLevel()
         {
-            var index = new EpochFeedIndex(0, 0);
+            var index = new SwarmEpochFeedIndex(0, 0);
             Assert.Throws<InvalidOperationException>(
                 () => index.GetChildAt(0));
         }
@@ -156,7 +156,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(2, 1, 4)]
         public void GetChildAtVerifyAtBounds(ulong start, byte level, ulong at)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => index.GetChildAt(at));
         }
@@ -170,7 +170,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4_294_967_296, 32, 7000000000, 6_442_450_944, 31)]
         public void GetChildAt(ulong start, byte level, ulong at, ulong expectedStart, byte expectedLevel)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             var childIndex = index.GetChildAt(at);
             Assert.Equal(expectedStart, childIndex.Start);
             Assert.Equal(expectedLevel, childIndex.Level);
@@ -179,7 +179,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void GetNextVerifyMinAt()
         {
-            var index = new EpochFeedIndex(2, 1);
+            var index = new SwarmEpochFeedIndex(2, 1);
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => index.GetNext(1));
         }
@@ -190,8 +190,8 @@ namespace Etherna.BeeNet.Models
         [InlineData(2, 1, 4, 4, 2)]
         public void GetNext(ulong start, byte level, ulong at, ulong expectedStart, byte expectedLevel)
         {
-            var index = new EpochFeedIndex(start, level);
-            var nextIndex = (EpochFeedIndex)index.GetNext(at);
+            var index = new SwarmEpochFeedIndex(start, level);
+            var nextIndex = (SwarmEpochFeedIndex)index.GetNext(at);
             Assert.Equal(expectedStart, nextIndex.Start);
             Assert.Equal(expectedLevel, nextIndex.Level);
         }
@@ -199,7 +199,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void GetParentVerifyMaxLevel()
         {
-            var index = new EpochFeedIndex(0, 32);
+            var index = new SwarmEpochFeedIndex(0, 32);
             Assert.Throws<InvalidOperationException>(
                 () => index.Parent);
         }
@@ -209,7 +209,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(4, 1, 4, 2)]
         public void GetParent(ulong start, byte level, ulong expectedStart, byte expectedLevel)
         {
-            var index = new EpochFeedIndex(start, level);
+            var index = new SwarmEpochFeedIndex(start, level);
             var parentIndex = index.Parent;
             Assert.Equal(expectedStart, parentIndex.Start);
             Assert.Equal(expectedLevel, parentIndex.Level);
@@ -221,7 +221,7 @@ namespace Etherna.BeeNet.Models
         public void LowestCommonAncestorVerifyMaxLevel(ulong t0, ulong t1)
         {
             Assert.Throws<InvalidOperationException>(
-                () => EpochFeedIndex.LowestCommonAncestor(t0, t1));
+                () => SwarmEpochFeedIndex.LowestCommonAncestor(t0, t1));
         }
 
         [Theory]
@@ -233,7 +233,7 @@ namespace Etherna.BeeNet.Models
         [InlineData(5, 6, 4, 2)]
         public void LowestCommonAncestor(ulong t0, ulong t1, ulong expectedStart, byte expectedLevel)
         {
-            var lcaIndex = EpochFeedIndex.LowestCommonAncestor(t0, t1);
+            var lcaIndex = SwarmEpochFeedIndex.LowestCommonAncestor(t0, t1);
             Assert.Equal(expectedStart, lcaIndex.Start);
             Assert.Equal(expectedLevel, lcaIndex.Level);
         }

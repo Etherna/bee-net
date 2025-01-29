@@ -44,13 +44,13 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<VerifyConstructorArgumentsTestElement>
                 {
                     // Shorter payload.
-                    new(new EpochFeedIndex(0, 0),
+                    new(new SwarmEpochFeedIndex(0, 0),
                         new byte[SwarmFeedChunk.MinDataSize - 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException)),
 
                     // Longer payload.
-                    new(new EpochFeedIndex(0, 0),
+                    new(new SwarmEpochFeedIndex(0, 0),
                         new byte[SwarmChunk.DataSize + 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException))
@@ -72,7 +72,7 @@ namespace Etherna.BeeNet.Models
         public void GetContentPayload()
         {
             var chunk = new SwarmFeedChunk(
-                new EpochFeedIndex(0, 0),
+                new SwarmEpochFeedIndex(0, 0),
                 [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Models
         public void GetTimeStamp()
         {
             var chunk = new SwarmFeedChunk(
-                new EpochFeedIndex(0, 0),
+                new SwarmEpochFeedIndex(0, 0),
                 [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
@@ -125,7 +125,7 @@ namespace Etherna.BeeNet.Models
         public void BuildIdentifierVerifyTopic()
         {
             var topic = new byte[] { 1, 2, 3 };
-            var index = new EpochFeedIndex(0, 0);
+            var index = new SwarmEpochFeedIndex(0, 0);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
                 SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider()));
@@ -135,7 +135,7 @@ namespace Etherna.BeeNet.Models
         public void BuildIdentifier()
         {
             var topic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-            var index = new EpochFeedIndex(2, 1);
+            var index = new SwarmEpochFeedIndex(2, 1);
 
             var result = SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider());
 

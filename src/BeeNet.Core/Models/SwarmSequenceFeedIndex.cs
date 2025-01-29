@@ -17,7 +17,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SequenceFeedIndex : FeedIndexBase
+    public class SwarmSequenceFeedIndex : FeedIndexBase
     {
         public override Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider)
         {

@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SequenceFeed : SwarmFeedBase
+    public class SwarmSequenceFeed : SwarmFeedBase
     {
         // Constructors.
-        public SequenceFeed(string owner, byte[] topic)
+        public SwarmSequenceFeed(string owner, byte[] topic)
             : base(owner.HexToByteArray(), topic)
         { }
 
-        public SequenceFeed(byte[] owner, byte[] topic)
+        public SwarmSequenceFeed(byte[] owner, byte[] topic)
             : base(owner, topic)
         { }
 
@@ -38,15 +38,15 @@ namespace Etherna.BeeNet.Models
             byte[] contentPayload,
             FeedIndexBase? knownNearIndex)
         {
-            if (knownNearIndex is not (null or SequenceFeedIndex))
+            if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(beeClient, contentPayload, knownNearIndex as SequenceFeedIndex);
+            return BuildNextFeedChunkAsync(beeClient, contentPayload, knownNearIndex as SwarmSequenceFeedIndex);
         }
         
         public Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IBeeClient beeClient,
             byte[] contentPayload,
-            SequenceFeedIndex? knownNearIndex)
+            SwarmSequenceFeedIndex? knownNearIndex)
         {
             throw new NotImplementedException();
         }
@@ -56,15 +56,15 @@ namespace Etherna.BeeNet.Models
             DateTimeOffset at,
             FeedIndexBase? knownNearIndex)
         {
-            if (knownNearIndex is not (null or SequenceFeedIndex))
+            if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return TryFindFeedAsync(beeClient, at, knownNearIndex as SequenceFeedIndex);
+            return TryFindFeedAsync(beeClient, at, knownNearIndex as SwarmSequenceFeedIndex);
         }
 
         public Task<SwarmFeedChunk?> TryFindFeedAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
-            SequenceFeedIndex? knownNearIndex)
+            SwarmSequenceFeedIndex? knownNearIndex)
         {
             throw new NotImplementedException();
         }
