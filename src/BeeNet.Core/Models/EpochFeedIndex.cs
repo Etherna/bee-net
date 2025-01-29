@@ -16,7 +16,7 @@ using Etherna.BeeNet.Extensions;
 using Nethereum.Util.HashProviders;
 using System;
 
-namespace Etherna.BeeNet.Models.Feeds
+namespace Etherna.BeeNet.Models
 {
     public sealed class EpochFeedIndex : FeedIndexBase
     {

@@ -15,7 +15,6 @@
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Models.Feeds;
 using Moq;
 using System;
 using System.Collections.Generic;

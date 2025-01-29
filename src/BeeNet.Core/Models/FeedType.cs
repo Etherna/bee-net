@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,20 +12,11 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Nethereum.Util.HashProviders;
-using System;
-
-namespace Etherna.BeeNet.Models.Feeds
+namespace Etherna.BeeNet.Models
 {
-    public abstract class FeedIndexBase
+    public enum FeedType
     {
-        // Properties.
-        public abstract Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider);
-
-        // Methods.
-        public FeedIndexBase GetNext(DateTimeOffset at) =>
-            GetNext((ulong)at.ToUnixTimeSeconds());
-
-        public abstract FeedIndexBase GetNext(ulong at);
+        Epoch,
+        Sequence
     }
 }

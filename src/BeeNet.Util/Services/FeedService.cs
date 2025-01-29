@@ -14,10 +14,15 @@
 
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Hashing.Pipeline;
+using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Hashing.Signer;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Models.Feeds;
+using Etherna.BeeNet.Stores;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -26,15 +31,20 @@ namespace Etherna.BeeNet.Services
     public class FeedService(IBeeClient gatewayClient)
         : IFeedService
     {
+        // Consts.
+        public const string FeedMetadataEntryOwner = "swarm-feed-owner";
+        public const string FeedMetadataEntryTopic = "swarm-feed-topic";
+        public const string FeedMetadataEntryType  = "swarm-feed-type";
+        
         // Methods.
-        public Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
+        public Task<SwarmFeedChunk> BuildNextEpochFeedChunkAsync(
             string account,
             byte[] topic,
             byte[] contentPayload,
             EpochFeedIndex? knownNearEpochIndex) =>
-            CreateNextEpochFeedChunkAsync(account.HexToByteArray(), topic, contentPayload, knownNearEpochIndex);
+            BuildNextEpochFeedChunkAsync(account.HexToByteArray(), topic, contentPayload, knownNearEpochIndex);
 
-        public async Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
+        public async Task<SwarmFeedChunk> BuildNextEpochFeedChunkAsync(
             byte[] account,
             byte[] topic,
             byte[] contentPayload,
@@ -168,6 +178,50 @@ namespace Etherna.BeeNet.Services
             {
                 return null;
             }
+        }
+        
+        public async Task<UploadEvaluationResult> UploadFeedManifestAsync(
+            byte[] account,
+            byte[] topic,
+            FeedType feedType,
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null)
+        {
+            // Init.
+            chunkStore ??= new FakeChunkStore();
+            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
+            var postageStamper = new PostageStamper(
+                new FakeSigner(),
+                postageStampIssuer,
+                new MemoryStampStore());
+
+            // Create manifest.
+            var feedManifest = new MantarayManifest(
+                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                    chunkStore,
+                    postageStamper,
+                    RedundancyLevel.None,
+                    false,
+                    0,
+                    null),
+                false);
+            
+            feedManifest.Add(
+                MantarayManifest.RootPath,
+                ManifestEntry.NewDirectory(new Dictionary<string, string>
+                {
+                    [FeedMetadataEntryOwner] = account.ToHex(),
+                    [FeedMetadataEntryTopic] = topic.ToHex(),
+                    [FeedMetadataEntryType] = feedType.ToString()
+                }));
+
+            var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
+            
+            // Return result.
+            return new UploadEvaluationResult(
+                chunkHashingResult,
+                0,
+                postageStampIssuer);
         }
 
         // Helpers.

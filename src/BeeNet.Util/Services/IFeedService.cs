@@ -12,8 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Models.Feeds;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
 
@@ -21,13 +22,13 @@ namespace Etherna.BeeNet.Services
 {
     public interface IFeedService
     {
-        Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
+        Task<SwarmFeedChunk> BuildNextEpochFeedChunkAsync(
             string account,
             byte[] topic,
             byte[] contentPayload,
             EpochFeedIndex? knownNearEpochIndex);
 
-        Task<SwarmFeedChunk> CreateNextEpochFeedChunkAsync(
+        Task<SwarmFeedChunk> BuildNextEpochFeedChunkAsync(
             byte[] account,
             byte[] topic,
             byte[] contentPayload,
@@ -50,5 +51,12 @@ namespace Etherna.BeeNet.Services
         Task<SwarmFeedChunk?> TryGetFeedChunkAsync(string account, byte[] topic, FeedIndexBase index);
 
         Task<SwarmFeedChunk?> TryGetFeedChunkAsync(SwarmHash hash, FeedIndexBase index);
+
+        Task<UploadEvaluationResult> UploadFeedManifestAsync(
+            byte[] account,
+            byte[] topic,
+            FeedType feedType,
+            IPostageStampIssuer? postageStampIssuer = null,
+            IChunkStore? chunkStore = null);
     }
 }
