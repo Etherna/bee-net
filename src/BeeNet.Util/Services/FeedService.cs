@@ -23,6 +23,7 @@ using Etherna.BeeNet.Stores;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -71,6 +72,37 @@ namespace Etherna.BeeNet.Services
             var chunkHash = SwarmFeedChunk.BuildHash(account, topic, nextEpochIndex, new Hasher());
 
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
+        }
+
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        public async Task<(bool succeeded, byte[] account, byte[] topic, FeedType type)> TryDecodeFeedManifestAsync(
+            ReferencedMantarayManifest manifest)
+        {
+            ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
+            
+            var metadata = await manifest.GetResourceMetadataAsync(MantarayManifest.RootPath).ConfigureAwait(false);
+            if (!metadata.TryGetValue(FeedMetadataEntryOwner, out var hexAccount))
+                return (false, [], [], 0);
+            if (!metadata.TryGetValue(FeedMetadataEntryTopic, out var hexTopic))
+                return (false, [], [], 0);
+            if (!metadata.TryGetValue(FeedMetadataEntryType, out var strType))
+                return (false, [], [], 0);
+
+            try
+            {
+                var account = hexAccount.HexToByteArray();
+                var topic = hexTopic.HexToByteArray();
+                var type = Enum.Parse<FeedType>(strType, true);
+            
+                return (true,
+                    account,
+                    topic,
+                    type);
+            }
+            catch
+            {
+                return (false, [], [], 0);
+            }
         }
 
         public Task<SwarmFeedChunk?> TryFindEpochFeedAsync(

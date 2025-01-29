@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
@@ -33,6 +34,9 @@ namespace Etherna.BeeNet.Services
             byte[] topic,
             byte[] contentPayload,
             EpochFeedIndex? knownNearEpochIndex);
+
+        Task<(bool succeeded, byte[] account, byte[] topic, FeedType type)> TryDecodeFeedManifestAsync(
+            ReferencedMantarayManifest manifest);
 
         /// <summary>
         /// Try to find epoch feed at a given time
