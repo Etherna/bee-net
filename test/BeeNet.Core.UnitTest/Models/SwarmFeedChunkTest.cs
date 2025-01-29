@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading;
 using Xunit;
 
-namespace Etherna.BeeNet.Models.Feeds
+namespace Etherna.BeeNet.Models
 {
     public class SwarmFeedChunkTest
     {

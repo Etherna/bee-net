@@ -25,13 +25,13 @@ namespace Etherna.BeeNet.Models
     public class SwarmFeedChunk : SwarmChunk
     {
         // Consts.
-        public const int AccountSize = 20;
         public const int IdentifierSize = 32;
         public const int IndexSize = 32;
         public const int MaxChunkSize = MinChunkSize + DataSize;
         public const int MaxPayloadSize = DataSize - TimeStampSize; //creation timestamp
         public const int MinChunkSize = SwarmHash.HashSize + SwarmSignature.SignatureSize + SpanSize;
         public const int MinDataSize = TimeStampSize;
+        public const int OwnerAccountSize = 20;
         public const int TimeStampSize = sizeof(ulong);
         public const int TopicSize = 32;
 
@@ -96,32 +96,32 @@ namespace Etherna.BeeNet.Models
             return chunkData;
         }
 
-        public static SwarmHash BuildHash(string account, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
-            BuildHash(account, BuildIdentifier(topic, index, hashProvider), hashProvider);
+        public static SwarmHash BuildHash(string owner, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
+            BuildHash(owner, BuildIdentifier(topic, index, hashProvider), hashProvider);
 
-        public static SwarmHash BuildHash(byte[] account, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
-            BuildHash(account, BuildIdentifier(topic, index, hashProvider), hashProvider);
+        public static SwarmHash BuildHash(byte[] owner, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
+            BuildHash(owner, BuildIdentifier(topic, index, hashProvider), hashProvider);
 
-        public static SwarmHash BuildHash(string account, byte[] identifier, IHashProvider hashProvider)
+        public static SwarmHash BuildHash(string owner, byte[] identifier, IHashProvider hashProvider)
         {
-            if (!account.IsValidEthereumAddressHexFormat())
-                throw new ArgumentException("Value is not a valid ethereum account", nameof(account));
+            if (!owner.IsValidEthereumAddressHexFormat())
+                throw new ArgumentException("Value is not a valid ethereum account", nameof(owner));
 
-            return BuildHash(account.HexToByteArray(), identifier, hashProvider);
+            return BuildHash(owner.HexToByteArray(), identifier, hashProvider);
         }
 
-        public static SwarmHash BuildHash(byte[] account, byte[] identifier, IHashProvider hashProvider)
+        public static SwarmHash BuildHash(byte[] owner, byte[] identifier, IHashProvider hashProvider)
         {
-            ArgumentNullException.ThrowIfNull(account, nameof(account));
+            ArgumentNullException.ThrowIfNull(owner, nameof(owner));
             ArgumentNullException.ThrowIfNull(hashProvider, nameof(hashProvider));
             ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
 
-            if (account.Length != AccountSize)
-                throw new ArgumentOutOfRangeException(nameof(account), "Invalid account length");
+            if (owner.Length != OwnerAccountSize)
+                throw new ArgumentOutOfRangeException(nameof(owner), "Invalid owner account length");
             if (identifier.Length != IdentifierSize)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
             
-            return hashProvider.ComputeHash(identifier.Concat(account).ToArray());
+            return hashProvider.ComputeHash(identifier.Concat(owner).ToArray());
         }
 
         public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index, IHashProvider hashProvider)

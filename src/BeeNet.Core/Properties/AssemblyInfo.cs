@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,23 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Manifest;
-using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Stores;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
-namespace Etherna.BeeNet.Services
-{
-    public interface IFeedService
-    {
-        Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(ReferencedMantarayManifest manifest);
-
-        Task<UploadEvaluationResult> UploadFeedManifestAsync(
-            byte[] account,
-            byte[] topic,
-            FeedType feedType,
-            IPostageStampIssuer? postageStampIssuer = null,
-            IChunkStore? chunkStore = null);
-    }
-}
+[assembly: InternalsVisibleTo("BeeNet.Core.UnitTest")]
