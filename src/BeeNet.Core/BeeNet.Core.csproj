@@ -6,7 +6,7 @@
     <RootNamespace>Etherna.BeeNet</RootNamespace>
 
     <Authors>Etherna SA</Authors>
-    <Description>Core models to work with Ethereum Swarm in .Net</Description>
+    <Description>Core models and services to work with Ethereum Swarm in .Net</Description>
 
     <Nullable>enable</Nullable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -35,6 +35,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Nethereum.Merkle" Version="4.27.1" />
     <PackageReference Include="Nethereum.Util" Version="4.27.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>

@@ -15,12 +15,10 @@ There are several NuGet packages available for Bee.Net. Here's a brief descripti
 1. **Bee.Net.Client**: This package contains a client that is designed to connect to and work with Bee Swarm. It
    simplifies the interaction with Bee nodes by providing high-level methods and classes.
 
-2. **Bee.Net.Core**: This package contains the base models for working with Swarm. These models represent the core
-   entities in the Swarm world and provide a foundation for interacting with the Bee Swarm.
-
-3. **Bee.Net.Util**: This package contains a series of useful tools. These tools include utilities for data chunking,
-   calculating postage batch usage, and other helpful operations that enhance your experience when working with
-   Swarm.
+2. **Bee.Net.Core**: This package contains base models and useful tools to work with Swarm.
+   Models represent the core entities in the Swarm world and provide a foundation for interacting with the Bee Swarm.
+   Tools include utilities for data chunking, calculating postage batch usage, fork with feeds, and other helpful 
+   operations that enhance your experience when working with Swarm.
 
 ## Package repositories
 
