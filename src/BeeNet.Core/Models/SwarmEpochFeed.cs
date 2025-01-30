@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Models
             var at = DateTimeOffset.UtcNow;
 
             // Find last published chunk.
-            var lastEpochFeedChunk = await TryFindFeedAsync(beeClient, at, knownNearIndex).ConfigureAwait(false);
+            var lastEpochFeedChunk = await TryFindFeedAtAsync(beeClient, at, knownNearIndex).ConfigureAwait(false);
 
             // Define next epoch index.
             SwarmEpochFeedIndex nextEpochIndex;
@@ -72,17 +72,17 @@ namespace Etherna.BeeNet.Models
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }
 
-        public override Task<SwarmFeedChunk?> TryFindFeedAsync(
+        public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
             FeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
-            return TryFindFeedAsync(beeClient, at, knownNearIndex as SwarmEpochFeedIndex);
+            return TryFindFeedAtAsync(beeClient, at, knownNearIndex as SwarmEpochFeedIndex);
         }
 
-        public async Task<SwarmFeedChunk?> TryFindFeedAsync(
+        public async Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
             SwarmEpochFeedIndex? knownNearEpochIndex)

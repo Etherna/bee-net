@@ -51,17 +51,17 @@ namespace Etherna.BeeNet.Models
             throw new NotImplementedException();
         }
 
-        public override Task<SwarmFeedChunk?> TryFindFeedAsync(
+        public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
             FeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return TryFindFeedAsync(beeClient, at, knownNearIndex as SwarmSequenceFeedIndex);
+            return TryFindFeedAtAsync(beeClient, at, knownNearIndex as SwarmSequenceFeedIndex);
         }
 
-        public Task<SwarmFeedChunk?> TryFindFeedAsync(
+        public Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
             SwarmSequenceFeedIndex? knownNearIndex)

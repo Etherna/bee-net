@@ -57,10 +57,11 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Try to find feed at a given time
         /// </summary>
+        /// <param name="beeClient">The bee client</param>
         /// <param name="at">The time to search</param>
         /// <param name="knownNearIndex">Another known existing index, near to looked time. Helps to perform lookup quicker</param>
         /// <returns>The found feed chunk, or null</returns>
-        public abstract Task<SwarmFeedChunk?> TryFindFeedAsync(
+        public abstract Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IBeeClient beeClient,
             DateTimeOffset at,
             FeedIndexBase? knownNearIndex);
