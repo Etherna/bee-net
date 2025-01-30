@@ -19,6 +19,7 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util.HashProviders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -26,8 +27,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
-    public class FeedService
-        : IFeedService
+    public class FeedService : IFeedService
     {
         // Consts.
         public const string FeedMetadataEntryOwner = "swarm-feed-owner";
@@ -36,7 +36,9 @@ namespace Etherna.BeeNet.Services
         
         // Methods.
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        public async Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(ReferencedMantarayManifest manifest)
+        public async Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
+            ReferencedMantarayManifest manifest,
+            IHashProvider hashProvider)
         {
             ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
             
@@ -55,7 +57,7 @@ namespace Etherna.BeeNet.Services
 
                 return Enum.Parse<FeedType>(strType, true) switch
                 {
-                    FeedType.Epoch => new SwarmEpochFeed(owner, topic),
+                    FeedType.Epoch => new SwarmEpochFeed(owner, topic, hashProvider),
                     FeedType.Sequence => new SwarmSequenceFeed(owner, topic),
                     _ => throw new InvalidOperationException()
                 };

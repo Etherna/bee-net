@@ -12,20 +12,18 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Nethereum.Util.HashProviders;
 using System;
 
 namespace Etherna.BeeNet.Models
 {
     public abstract class FeedIndexBase
     {
-        // Properties.
-        public abstract Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider);
-
         // Methods.
         public FeedIndexBase GetNext(DateTimeOffset at) =>
             GetNext((ulong)at.ToUnixTimeSeconds());
 
         public abstract FeedIndexBase GetNext(ulong at);
+        
+        public abstract Memory<byte> MarshalBinary();
     }
 }

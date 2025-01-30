@@ -26,10 +26,14 @@ namespace Etherna.BeeNet.Models
         public const ulong MinLevel = 0;
         public const ulong MinUnixTimeStamp = 0;
 
+        // Fields.
+        private readonly IHashProvider hashProvider;
+        
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
         /// <param name="level">Epoch level</param>
-        public SwarmEpochFeedIndex(ulong start, byte level)
+        /// <param name="hashProvider">The hash provider</param>
+        public SwarmEpochFeedIndex(ulong start, byte level, IHashProvider hashProvider)
         {
 #if NET8_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
@@ -44,6 +48,7 @@ namespace Etherna.BeeNet.Models
             //normalize start clearing less relevent bits
             start = start >> level << level;
 
+            this.hashProvider = hashProvider;
             Level = level;
             Start = start;
         }
@@ -53,7 +58,7 @@ namespace Etherna.BeeNet.Models
 
         public bool IsRight => !IsLeft;
 
-        public SwarmEpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level);
+        public SwarmEpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level, hashProvider);
 
         public SwarmEpochFeedIndex Parent
         {
@@ -64,11 +69,11 @@ namespace Etherna.BeeNet.Models
 
                 var parentLevel = (byte)(Level + 1);
                 var parentStart = Start >> parentLevel << parentLevel;
-                return new SwarmEpochFeedIndex(parentStart, parentLevel);
+                return new SwarmEpochFeedIndex(parentStart, parentLevel, hashProvider);
             }
         }
 
-        public SwarmEpochFeedIndex Right => IsRight ? this : new(Start + Length, Level);
+        public SwarmEpochFeedIndex Right => IsRight ? this : new(Start + Length, Level, hashProvider);
 
         /// <summary>
         /// Epoch length in seconds
@@ -115,7 +120,7 @@ namespace Etherna.BeeNet.Models
             if ((at & childLength) > 0)
                 childStart |= childLength;
 
-            return new SwarmEpochFeedIndex(childStart, (byte)(Level - 1));
+            return new SwarmEpochFeedIndex(childStart, (byte)(Level - 1), hashProvider);
         }
 
         public override int GetHashCode() =>
@@ -124,7 +129,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Index representation as keccak256 hash
         /// </summary>
-        public override Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider)
+        public override Memory<byte> MarshalBinary()
         {
             var epochBytes = Start.UnixDateTimeToByteArray();
             var newArray = new byte[epochBytes.Length + 1];
@@ -145,7 +150,7 @@ namespace Etherna.BeeNet.Models
 
             return Start + Length > at ?
                 GetChildAt(at) :
-                LowestCommonAncestor(Start, at).GetChildAt(at);
+                LowestCommonAncestor(Start, at, hashProvider).GetChildAt(at);
         }
 
         public override string ToString() => $"{Start}/{Level}";
@@ -157,7 +162,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="t0"></param>
         /// <param name="t1"></param>
         /// <returns>Lowest common ancestor epoch index</returns>
-        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1)
+        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, IHashProvider hashProvider)
         {
             byte level = 0;
             while (t0 >> level != t1 >> level)
@@ -167,7 +172,7 @@ namespace Etherna.BeeNet.Models
                     throw new InvalidOperationException();
             }
             var start = t1 >> level << level;
-            return new(start, level);
+            return new(start, level, hashProvider);
         }
     }
 }

@@ -14,20 +14,18 @@
 
 using Etherna.BeeNet.Hashing;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util.HashProviders;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmEpochFeed : SwarmFeedBase
+    public class SwarmEpochFeed(byte[] owner, byte[] topic, IHashProvider hashProvider)
+        : SwarmFeedBase(owner, topic)
     {
         // Constructors.
-        public SwarmEpochFeed(string owner, byte[] topic)
-            : base(owner.HexToByteArray(), topic)
-        { }
-        
-        public SwarmEpochFeed(byte[] owner, byte[] topic)
-            : base(owner, topic)
+        public SwarmEpochFeed(string owner, byte[] topic, IHashProvider hashProvider)
+            : this(owner.HexToByteArray(), topic, hashProvider)
         { }
 
         // Properties.
@@ -58,7 +56,7 @@ namespace Etherna.BeeNet.Models
             SwarmEpochFeedIndex nextEpochIndex;
             if (lastEpochFeedChunk is null)
             {
-                nextEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel);
+                nextEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hashProvider);
                 if (!nextEpochIndex.ContainsTime(at))
                     nextEpochIndex = nextEpochIndex.Right;
             }
@@ -196,7 +194,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="knownNearEpoch">An optional epoch index with known existing chunk</param>
         /// <param name="at">The searched date</param>
         /// <returns>A starting epoch index</returns>
-        internal static SwarmEpochFeedIndex FindStartingEpochOffline(SwarmEpochFeedIndex? knownNearEpoch, ulong at)
+        internal SwarmEpochFeedIndex FindStartingEpochOffline(SwarmEpochFeedIndex? knownNearEpoch, ulong at)
         {
             var startEpoch = knownNearEpoch;
             if (startEpoch is not null)
@@ -212,7 +210,7 @@ namespace Etherna.BeeNet.Models
             }
 
             //if start epoch is null (known near was null or max epoch level is hit)
-            startEpoch ??= new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel);
+            startEpoch ??= new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hashProvider);
             if (!startEpoch.ContainsTime(at))
                 startEpoch = startEpoch.Right;
             return startEpoch;

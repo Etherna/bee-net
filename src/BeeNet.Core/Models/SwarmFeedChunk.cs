@@ -135,7 +135,7 @@ namespace Etherna.BeeNet.Models
 
             var newArray = new byte[TopicSize + IndexSize];
             topic.CopyTo(newArray, 0);
-            index.GetMarshalBinaryHash(hashProvider).CopyTo(newArray.AsMemory()[topic.Length..]);
+            index.MarshalBinary().CopyTo(newArray.AsMemory()[topic.Length..]);
 
             return hashProvider.ComputeHash(newArray);
         }

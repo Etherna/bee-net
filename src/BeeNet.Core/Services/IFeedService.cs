@@ -16,13 +16,16 @@ using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
+using Nethereum.Util.HashProviders;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
 {
     public interface IFeedService
     {
-        Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(ReferencedMantarayManifest manifest);
+        Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
+            ReferencedMantarayManifest manifest,
+            IHashProvider hashProvider);
 
         Task<UploadEvaluationResult> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,

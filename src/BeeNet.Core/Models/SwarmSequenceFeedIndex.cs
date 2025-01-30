@@ -12,14 +12,13 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Nethereum.Util.HashProviders;
 using System;
 
 namespace Etherna.BeeNet.Models
 {
     public class SwarmSequenceFeedIndex : FeedIndexBase
     {
-        public override Memory<byte> GetMarshalBinaryHash(IHashProvider hashProvider)
+        public override Memory<byte> MarshalBinary()
         {
             throw new NotImplementedException();
         }
