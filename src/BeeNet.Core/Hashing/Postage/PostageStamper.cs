@@ -91,11 +91,22 @@ namespace Etherna.BeeNet.Hashing.Postage
 
             lock (hasher)
             {
-                hasher.BlockUpdate(hash.ToByteArray());
-                hasher.BlockUpdate(batchId.ToByteArray());
-                hasher.BlockUpdate(stampBucketIndex.ToByteArray());
-                hasher.BlockUpdate(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray());
-                hasher.DoFinal(result);
+                hasher.BlockUpdate(hash.ToByteArray(), 0, SwarmHash.HashSize);
+                hasher.BlockUpdate(batchId.ToByteArray(), 0, PostageBatchId.BatchIdSize);
+                hasher.BlockUpdate(stampBucketIndex.ToByteArray(), 0, StampBucketIndex.BucketIndexSize);
+                var unixDateTimeToByteArray = timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray();
+                hasher.BlockUpdate(unixDateTimeToByteArray, 0, unixDateTimeToByteArray.Length);
+                hasher.DoFinal(result, 0);
+                
+                /*
+                 * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
+                 * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
+                 */
+                // hasher.BlockUpdate(hash.ToByteArray());
+                // hasher.BlockUpdate(batchId.ToByteArray());
+                // hasher.BlockUpdate(stampBucketIndex.ToByteArray());
+                // hasher.BlockUpdate(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray());
+                // hasher.DoFinal(result);
             }
 
             return result;

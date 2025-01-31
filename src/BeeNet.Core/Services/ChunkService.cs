@@ -68,58 +68,22 @@ namespace Etherna.BeeNet.Services
                 cancellationToken).ConfigureAwait(false);
         }
 
-        public SwarmChunk UnwrapChunk(SwarmChunk chunk)
+        public async Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore)
         {
-            // SocFromChunk recreates a SOC representation from swarm.Chunk data.
-            SingleOwnerChunk SocFromChunk(SwarmChunk chunk)
+            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+            
+            var soc = SingleOwnerChunk.DeserializeFromChunk(chunk);
+            
+            // Check if is legacy payload. Possible lengths:
+            if (soc.Chunk.Data.Length is
+                16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
+                16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
             {
-                var chunkData = chunk.Data;
-                if(chunkData.Length < SingleOwnerChunk.MinChunkSize)
-                    throw new ArgumentOutOfRangeException(nameof(chunk), "Chunk data length is too small");
-                
-                // add all the data fields to the SOC
-                var cursor = 0;
-                
-                var id = chunkData[cursor..SwarmHash.HashSize];
-                cursor += SwarmHash.HashSize;
-                
-                var signature = chunkData[cursor..(cursor+SingleOwnerChunk.SocSignatureSize)];
-                cursor += SingleOwnerChunk.SocSignatureSize;
-
-                var spanAndData = chunkData[cursor..];
-                var hasher = new Hasher();
-                var plainChunkHash = SwarmChunkBmtHasher.Hash(
-                    spanAndData[..SwarmChunk.SpanSize].ToArray(),
-                    spanAndData[SwarmChunk.SpanSize..].ToArray(),
-                    hasher);
-                var ch = SwarmChunk.BuildFromSpanAndData(plainChunkHash, spanAndData.Span);
-                var toSignBytes = hasher.ComputeHash(id.ToArray().Concat(ch.Hash.ToByteArray()).ToArray());
-                
-                // recover owner information
-                var recoveredOwnerAddress = recoverAddress(signature, toSignBytes);
-                if (recoveredOwnerAddress.Length != crypto.AddressSize)
-                    throw new InvalidOperationException("invalid address length");
-                
-                var owner = recoveredOwnerAddress;
-                
-                return new SingleOwnerChunk(
-                    id.ToArray(),
-                    signature.ToArray(),
-                    owner.ToArray(),
-                    ch);
+                var hash = new SwarmHash(soc.Chunk.Data[16..].ToArray());
+                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
             }
-            
-            var s = SocFromChunk(chunk);
-            var wrappedChunk = s.WrappedChunk();
-            
-            // try to split the timestamp and reference
-            // possible values right now:
-            // unencrypted ref: span+timestamp+ref => 8+8+32=48
-            // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
-            if (TryDecodeLegacyPayload(wrappedChunk, out var @ref))
-                return getter.Get(@ref);
 
-            return wrappedChunk;
+            return soc.Chunk;
         }
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
