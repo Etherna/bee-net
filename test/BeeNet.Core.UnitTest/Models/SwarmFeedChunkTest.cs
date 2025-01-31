@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,13 +45,13 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<VerifyConstructorArgumentsTestElement>
                 {
                     // Shorter payload.
-                    new(new SwarmEpochFeedIndex(0, 0, new HashProvider()),
+                    new(new SwarmEpochFeedIndex(0, 0, new Hasher()),
                         new byte[SwarmFeedChunk.MinDataSize - 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException)),
 
                     // Longer payload.
-                    new(new SwarmEpochFeedIndex(0, 0, new HashProvider()),
+                    new(new SwarmEpochFeedIndex(0, 0, new Hasher()),
                         new byte[SwarmChunk.DataSize + 1],
                         "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
                         typeof(ArgumentOutOfRangeException))
@@ -72,7 +73,7 @@ namespace Etherna.BeeNet.Models
         public void GetContentPayload()
         {
             var chunk = new SwarmFeedChunk(
-                new SwarmEpochFeedIndex(0, 0, new HashProvider()),
+                new SwarmEpochFeedIndex(0, 0, new Hasher()),
                 [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
@@ -85,7 +86,7 @@ namespace Etherna.BeeNet.Models
         public void GetTimeStamp()
         {
             var chunk = new SwarmFeedChunk(
-                new SwarmEpochFeedIndex(0, 0, new HashProvider()),
+                new SwarmEpochFeedIndex(0, 0, new Hasher()),
                 [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
@@ -125,19 +126,19 @@ namespace Etherna.BeeNet.Models
         public void BuildIdentifierVerifyTopic()
         {
             var topic = new byte[] { 1, 2, 3 };
-            var index = new SwarmEpochFeedIndex(0, 0, new HashProvider());
+            var index = new SwarmEpochFeedIndex(0, 0, new Hasher());
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider()));
+                SwarmFeedChunk.BuildIdentifier(topic, index, new Hasher()));
         }
 
         [Fact]
         public void BuildIdentifier()
         {
             var topic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-            var index = new SwarmEpochFeedIndex(2, 1, new HashProvider());
+            var index = new SwarmEpochFeedIndex(2, 1, new Hasher());
 
-            var result = SwarmFeedChunk.BuildIdentifier(topic, index, new HashProvider());
+            var result = SwarmFeedChunk.BuildIdentifier(topic, index, new Hasher());
 
             Assert.Equal(
                 new byte[] { 229, 116, 252, 141, 32, 73, 147, 48, 181, 92, 124, 96, 74, 217, 20, 163, 90, 16, 124, 66, 174, 221, 76, 184, 135, 58, 193, 210, 235, 104, 138, 215 },
@@ -151,7 +152,7 @@ namespace Etherna.BeeNet.Models
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier, new HashProvider()));
+                SwarmFeedChunk.BuildHash(account, identifier, new Hasher()));
         }
 
         [Fact]
@@ -161,7 +162,7 @@ namespace Etherna.BeeNet.Models
             var identifier = new byte[] { 0, 1, 2, 3 };
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier, new HashProvider()));
+                SwarmFeedChunk.BuildHash(account, identifier, new Hasher()));
         }
 
         [Fact]
@@ -170,7 +171,7 @@ namespace Etherna.BeeNet.Models
             var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
             var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
-            var result = SwarmFeedChunk.BuildHash(account, identifier, new HashProvider());
+            var result = SwarmFeedChunk.BuildHash(account, identifier, new Hasher());
 
             Assert.Equal(
                 "854f1dd0c708a544e282b25b9f9c1d353dca28e352656993ab3c2c17b384a86f",

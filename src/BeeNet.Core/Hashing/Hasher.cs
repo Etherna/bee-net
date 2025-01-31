@@ -30,15 +30,33 @@ namespace Etherna.BeeNet.Hashing
         // Methods.
         public void ComputeHash(byte[] data, Span<byte> output)
         {
-            hasher.BlockUpdate(data);
-            hasher.DoFinal(output);
+            var hash = ComputeHash(data);
+            hash.CopyTo(output);
+
+            /*
+             * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
+             * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
+             */
+            // hasher.BlockUpdate(data);
+            // hasher.DoFinal(output);
         }
         
         public byte[] ComputeHash(byte[] data)
         {
-            var result = new byte[SwarmHash.HashSize];
-            ComputeHash(data, result);
-            return result;
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            
+            var output = new byte[hasher.GetDigestSize()];
+            hasher.BlockUpdate(data, 0, data.Length);
+            hasher.DoFinal(output, 0);
+            return output;
+            
+            /*
+             * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
+             * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
+             */
+            // var result = new byte[SwarmHash.HashSize];
+            // ComputeHash(data, result);
+            // return result;
         }
 
         public byte[] ComputeHash(string data) =>

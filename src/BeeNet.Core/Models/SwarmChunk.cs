@@ -19,16 +19,16 @@ namespace Etherna.BeeNet.Models
 {
     public class SwarmChunk
     {
+        // Consts.
+        public const int DataSize = 4096;
+        public const int SpanAndDataSize = SpanSize + DataSize;
+        public const int SpanSize = 8;
+        
         // Fields.
 #pragma warning disable CA1051
         protected readonly byte[] _data;
         protected readonly byte[] _span;
 #pragma warning restore CA1051
-        
-        // Consts.
-        public const int DataSize = 4096;
-        public const int SpanAndDataSize = SpanSize + DataSize;
-        public const int SpanSize = 8;
         
         // Constructors.
         public SwarmChunk(SwarmHash hash, byte[] data)
