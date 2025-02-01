@@ -100,8 +100,6 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null);
-        
-        Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore);
     
         /// <summary>
         /// Evaluate the result uploading a directory

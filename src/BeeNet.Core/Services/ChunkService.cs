@@ -68,24 +68,6 @@ namespace Etherna.BeeNet.Services
                 cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore)
-        {
-            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
-            
-            var soc = SingleOwnerChunk.DeserializeFromChunk(chunk);
-            
-            // Check if is legacy payload. Possible lengths:
-            if (soc.Chunk.Data.Length is
-                16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
-                16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
-            {
-                var hash = new SwarmHash(soc.Chunk.Data[16..].ToArray());
-                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
-            }
-
-            return soc.Chunk;
-        }
-
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
             string directoryPath,
             string? indexFilename = null,
