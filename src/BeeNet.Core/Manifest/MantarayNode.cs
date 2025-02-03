@@ -194,6 +194,12 @@ namespace Etherna.BeeNet.Manifest
             throw new NotImplementedException();
         }
 
+        public Task<bool> HasPathPrefixAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
+
         public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             //this will be implemented probably into a base class

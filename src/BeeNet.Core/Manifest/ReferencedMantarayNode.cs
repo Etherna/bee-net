@@ -138,6 +138,25 @@ namespace Etherna.BeeNet.Manifest
             return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
         }
 
+        public async Task<bool> HasPathPrefixAsync(string path)
+        {
+            ArgumentNullException.ThrowIfNull(path, nameof(path));
+
+            if (path.Length == 0)
+                return true;
+            
+            // Find the child fork.
+            if (!_forks.TryGetValue(path[0], out var fork) ||
+                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+                return false;
+            
+            if (!fork.Node.IsDecoded)
+                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
+
+            return await fork.Node.HasPathPrefixAsync(
+                path[fork.Prefix.Length..]).ConfigureAwait(false);
+        }
+
         public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
