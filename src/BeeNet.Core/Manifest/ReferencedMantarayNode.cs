@@ -103,9 +103,7 @@ namespace Etherna.BeeNet.Manifest
             IsDecoded = true;
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
-            string path,
-            SwarmHash manifestHash)
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
@@ -137,12 +135,10 @@ namespace Etherna.BeeNet.Manifest
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await fork.Node.GetResourceMetadataAsync(childSubPath, manifestHash).ConfigureAwait(false);
+            return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
         }
 
-        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(
-            string path,
-            SwarmHash manifestHash)
+        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
@@ -176,8 +172,7 @@ namespace Etherna.BeeNet.Manifest
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await fork.Node.ResolveChunkReferenceAsync(
-                path[fork.Prefix.Length..],
-                manifestHash).ConfigureAwait(false);
+                path[fork.Prefix.Length..]).ConfigureAwait(false);
         }
         
         // Helpers.

@@ -44,14 +44,14 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 address.Hash);
             
-            return await rootManifest.GetResourceMetadataAsync(address).ConfigureAwait(false);
+            return await rootManifest.GetResourceMetadataAsync(address.Path).ConfigureAwait(false);
         }
 
         public async Task<Stream> GetFileStreamFromChunksAsync(
             string chunkStoreDirectory,
             SwarmAddress address,
             string? fileCachePath = null,
-            CancellationToken? cancellationToken = default)
+            CancellationToken? cancellationToken = null)
         {
             var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
             var chunkJoiner = new ChunkJoiner(chunkStore);
