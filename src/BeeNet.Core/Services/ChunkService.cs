@@ -33,9 +33,6 @@ namespace Etherna.BeeNet.Services
     public class ChunkService : IChunkService
     {
         // Methods.
-        public string[] GetAllChunkFilesInDirectory(string chunkStoreDirectory) =>
-            Directory.GetFiles(chunkStoreDirectory, '*' + LocalDirectoryChunkStore.ChunkFileExtension);
-
         public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
             SwarmAddress address,
             IReadOnlyChunkStore chunkStore)
@@ -48,12 +45,11 @@ namespace Etherna.BeeNet.Services
         }
 
         public async Task<Stream> GetFileStreamFromChunksAsync(
-            string chunkStoreDirectory,
+            IChunkStore chunkStore,
             SwarmAddress address,
             string? fileCachePath = null,
             CancellationToken? cancellationToken = null)
         {
-            var chunkStore = new LocalDirectoryChunkStore(chunkStoreDirectory);
             var chunkJoiner = new ChunkJoiner(chunkStore);
             
             var rootManifest = new ReferencedMantarayManifest(
@@ -321,10 +317,9 @@ namespace Etherna.BeeNet.Services
         }
 
         public Task<SwarmHash> WriteDataChunksAsync(
+            IChunkStore chunkStore,
             byte[] data,
-            string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
-            bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
@@ -332,10 +327,9 @@ namespace Etherna.BeeNet.Services
         {
             using var stream = new MemoryStream(data);
             return WriteDataChunksAsync(
+                chunkStore,
                 stream,
-                outputDirectory,
                 postageStampIssuer,
-                createDirectory,
                 compactLevel,
                 encrypt,
                 redundancyLevel,
@@ -343,17 +337,14 @@ namespace Etherna.BeeNet.Services
         }
 
         public async Task<SwarmHash> WriteDataChunksAsync(
+            IChunkStore chunkStore,
             Stream stream,
-            string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
-            bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null)
         {
-            var chunkStore = new LocalDirectoryChunkStore(outputDirectory, createDirectory);
-            
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
