@@ -25,21 +25,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Static builders.
         public static IHasherPipeline BuildNewHasherPipeline(
-            IPostageStamper postageStamper,
-            RedundancyLevel redundancyLevel,
-            bool isEncrypted,
-            string? chunkStoreDirectory,
-            ushort compactLevel,
-            int? chunkConcurrency) =>
-            BuildNewHasherPipeline(
-                chunkStoreDirectory is null ? new FakeChunkStore() : new LocalDirectoryChunkStore(chunkStoreDirectory),
-                postageStamper,
-                redundancyLevel,
-                isEncrypted,
-                compactLevel,
-                chunkConcurrency);
-        
-        public static IHasherPipeline BuildNewHasherPipeline(
             IChunkStore chunkStore,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,

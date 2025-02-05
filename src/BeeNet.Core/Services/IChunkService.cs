@@ -26,14 +26,6 @@ namespace Etherna.BeeNet.Services
     public interface IChunkService
     {
         /// <summary>
-        /// Get list of all chunk files in directory
-        /// </summary>
-        /// <param name="chunkStoreDirectory">The chunk directory</param>
-        /// <returns>List of chunk files</returns>
-        string[] GetAllChunkFilesInDirectory(
-            string chunkStoreDirectory);
-
-        /// <summary>
         /// Get resource metadata from a directory of chunks and the resource address
         /// </summary>
         /// <param name="address">Resource address</param>
@@ -44,15 +36,15 @@ namespace Etherna.BeeNet.Services
             IReadOnlyChunkStore chunkStore);
         
         /// <summary>
-        /// Get resource stream from a directory of chunks and the resource address
+        /// Get resource stream from a chunks store and the resource address
         /// </summary>
-        /// <param name="chunkStoreDirectory">The chunk directory</param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="address">Resource address</param>
         /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
         /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetFileStreamFromChunksAsync(
-            string chunkStoreDirectory,
+            IChunkStore chunkStore,
             SwarmAddress address,
             string? fileCachePath = null,
             CancellationToken? cancellationToken = default);
@@ -60,20 +52,18 @@ namespace Etherna.BeeNet.Services
         /// <summary>
         /// Write data chunks on a local directory, without any manifest
         /// </summary>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="data">The data byte array input</param>
-        /// <param name="outputDirectory">The output directory path</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="createDirectory">If true, create if directory doesn't exist</param>
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <returns>The data root hash</returns>
         Task<SwarmHash> WriteDataChunksAsync(
+            IChunkStore chunkStore,
             byte[] data,
-            string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
-            bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
@@ -82,20 +72,18 @@ namespace Etherna.BeeNet.Services
         /// <summary>
         /// Write data chunks on a local directory, without any manifest
         /// </summary>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="stream">The data stream input</param>
-        /// <param name="outputDirectory">The output directory path</param>
         /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="createDirectory">If true, create if directory doesn't exist</param>
         /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
         /// <returns>The data root hash</returns>
         Task<SwarmHash> WriteDataChunksAsync(
+            IChunkStore chunkStore,
             Stream stream,
-            string outputDirectory,
             IPostageStampIssuer? postageStampIssuer = null,
-            bool createDirectory = true,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
