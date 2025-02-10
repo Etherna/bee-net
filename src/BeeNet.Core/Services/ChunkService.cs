@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Services
                     encrypt,
                     0,
                     chunkCuncorrency),
-                encrypt);
+                compactLevel);
 
             // Iterate through the files.
             foreach (var file in fileNames)
@@ -200,7 +200,7 @@ namespace Etherna.BeeNet.Services
             }
 
             // Get manifest hash.
-            var chunkHashingResult = await dirManifest.GetHashAsync().ConfigureAwait(false);
+            var chunkHashingResult = await dirManifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
@@ -281,7 +281,7 @@ namespace Etherna.BeeNet.Services
                     encrypt,
                     0,
                     chunkCuncorrency),
-                encrypt);
+                compactLevel);
 
             manifest.Add(
                 MantarayManifest.RootPath,
@@ -307,7 +307,7 @@ namespace Etherna.BeeNet.Services
                     fileHashingResult.Hash,
                     fileEntryMetadata));
 
-            var chunkHashingResult = await manifest.GetHashAsync().ConfigureAwait(false);
+            var chunkHashingResult = await manifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(

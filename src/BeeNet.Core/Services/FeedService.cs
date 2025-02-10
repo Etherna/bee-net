@@ -110,7 +110,7 @@ namespace Etherna.BeeNet.Services
                     false,
                     0,
                     null),
-                false);
+                0);
             
             feedManifest.Add(
                 MantarayManifest.RootPath,
@@ -121,7 +121,7 @@ namespace Etherna.BeeNet.Services
                     [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                 }));
 
-            var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
+            var chunkHashingResult = await feedManifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(

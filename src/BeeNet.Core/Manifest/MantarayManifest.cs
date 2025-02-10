@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Pipeline;
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
@@ -21,35 +22,28 @@ namespace Etherna.BeeNet.Manifest
 {
     public delegate IHasherPipeline BuildHasherPipeline();
     
-    public class MantarayManifest : IReadOnlyMantarayManifest
+    public class MantarayManifest(
+        BuildHasherPipeline hasherBuilder,
+        MantarayNode rootNode)
+        : IReadOnlyMantarayManifest
     {
         // Consts.
         public static readonly string RootPath = SwarmAddress.Separator.ToString();
-        
-        // Fields.
-        private readonly BuildHasherPipeline hasherBuilder;
-        private readonly MantarayNode _rootNode;
 
         // Constructors.
         public MantarayManifest(
             BuildHasherPipeline hasherBuilder,
-            bool isEncrypted)
+            ushort compactLevel)
             : this(hasherBuilder,
-                new MantarayNode(isEncrypted
-                    ? null //auto-generate random on hash building
-                    : XorEncryptKey.Empty))
+                new MantarayNode(
+                    compactLevel,
+                    compactLevel > 0
+                        ? null //auto-generate on hash building
+                        : XorEncryptKey.Empty))
         { }
 
-        public MantarayManifest(
-            BuildHasherPipeline hasherBuilder,
-            MantarayNode rootNode)
-        {
-            this.hasherBuilder = hasherBuilder;
-            _rootNode = rootNode;
-        }
-        
         // Properties.
-        public IReadOnlyMantarayNode RootNode => _rootNode;
+        public IReadOnlyMantarayNode RootNode => rootNode;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -57,13 +51,14 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(entry, nameof(entry));
 
-            _rootNode.Add(path, entry);
+            rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmChunkReference> GetHashAsync()
+        public async Task<SwarmChunkReference> GetHashAsync(
+            IPostageStampIssuer stampIssuer)
         {
-            await _rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
-            return new SwarmChunkReference(_rootNode.Hash, null, false);
+            await rootNode.ComputeHashAsync(hasherBuilder, stampIssuer).ConfigureAwait(false);
+            return new SwarmChunkReference(rootNode.Hash, null, false);
         }
     }
 }
