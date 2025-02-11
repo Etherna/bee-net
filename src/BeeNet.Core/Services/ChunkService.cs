@@ -139,13 +139,14 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var dirManifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
-                    chunkCuncorrency),
+                    chunkCuncorrency,
+                    readOnlyPipeline),
                 compactLevel);
 
             // Iterate through the files.
@@ -200,7 +201,7 @@ namespace Etherna.BeeNet.Services
             }
 
             // Get manifest hash.
-            var chunkHashingResult = await dirManifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
+            var chunkHashingResult = await dirManifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
@@ -274,13 +275,14 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var manifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
-                    chunkCuncorrency),
+                    chunkCuncorrency,
+                    readOnlyPipeline),
                 compactLevel);
 
             manifest.Add(
@@ -307,7 +309,7 @@ namespace Etherna.BeeNet.Services
                     fileHashingResult.Hash,
                     fileEntryMetadata));
 
-            var chunkHashingResult = await manifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
+            var chunkHashingResult = await manifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(

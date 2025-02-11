@@ -13,14 +13,13 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Pipeline;
-using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public delegate IHasherPipeline BuildHasherPipeline();
+    public delegate IHasherPipeline BuildHasherPipeline(bool readOnlyPipeline);
     
     public class MantarayManifest(
         BuildHasherPipeline hasherBuilder,
@@ -54,10 +53,9 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmChunkReference> GetHashAsync(
-            IPostageStampIssuer stampIssuer)
+        public async Task<SwarmChunkReference> GetHashAsync()
         {
-            await rootNode.ComputeHashAsync(hasherBuilder, stampIssuer).ConfigureAwait(false);
+            await rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
             return new SwarmChunkReference(rootNode.Hash, null, false);
         }
     }

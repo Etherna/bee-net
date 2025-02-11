@@ -521,14 +521,14 @@ namespace Etherna.BeeNet.Chunks
             
             // Build manifest.
             var dirManifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                _ => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     RedundancyLevel.None,
                     false,
                     0,
                     null),
-                false);
+                0);
 
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,

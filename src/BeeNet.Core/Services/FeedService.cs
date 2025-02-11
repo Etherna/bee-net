@@ -103,13 +103,14 @@ namespace Etherna.BeeNet.Services
 
             // Create manifest.
             var feedManifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     RedundancyLevel.None,
                     false,
                     0,
-                    null),
+                    null,
+                    readOnlyPipeline),
                 0);
             
             feedManifest.Add(
@@ -121,7 +122,7 @@ namespace Etherna.BeeNet.Services
                     [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                 }));
 
-            var chunkHashingResult = await feedManifest.GetHashAsync(postageStampIssuer).ConfigureAwait(false);
+            var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(

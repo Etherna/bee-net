@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.IO;
@@ -23,8 +24,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Properties.
         bool IsUsable { get; }
-        
         long MissedOptimisticHashing { get; }
+        IPostageStamper PostageStamper { get; }
         
         // Methods.
         /// <summary>

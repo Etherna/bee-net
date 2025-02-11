@@ -27,8 +27,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// </summary>
     internal sealed class ChunkBmtPipelineStage(
         ushort compactLevel,
-        IHasherPipelineStage nextStage,
-        IPostageStampIssuer stampIssuer) : IHasherPipelineStage
+        IHasherPipelineStage nextStage)
+        : IHasherPipelineStage
     {
         // Fields.
         private long _missedOptimisticHashing;
@@ -42,6 +42,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Properties.
         public long MissedOptimisticHashing =>
             _missedOptimisticHashing + nextStage.MissedOptimisticHashing;
+        public IPostageStamper PostageStamper => nextStage.PostageStamper;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -131,7 +132,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
                 // Check the optimistic result, and keep if valid.
                 var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
-                var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
+                var actualCollisions = PostageStamper.StampIssuer.Buckets.GetCollisions(bestBucketId);
             
                 if (actualCollisions == expectedCollisions)
                     return encryptionCache[bestKeyAttempt];
@@ -167,7 +168,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 
                 if (optimisticCache.TryGetValue(i, out var cachedValues))
                 {
-                    collisions = stampIssuer.Buckets.GetCollisions(cachedValues.Hash.ToBucketId());
+                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(cachedValues.Hash.ToBucketId());
                 }
                 else
                 {
@@ -187,7 +188,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
 
                     // Check key collisions.
-                    collisions = stampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
+                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
                 }
                 
                 // First attempt is always the best one.
@@ -195,7 +196,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     bestCollisions = collisions;
                 
                 // Check if collisions are optimal.
-                if (collisions == stampIssuer.Buckets.MinBucketCollisions)
+                if (collisions == PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
                     return (i, collisions);
                 
                 // Else, if this reach better collisions, but not the best.

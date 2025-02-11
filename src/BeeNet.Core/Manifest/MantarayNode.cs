@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
@@ -152,37 +151,27 @@ namespace Etherna.BeeNet.Manifest
         }
 
         public async Task ComputeHashAsync(
-            BuildHasherPipeline hasherPipelineBuilder,
-            IPostageStampIssuer stampIssuer)
+            BuildHasherPipeline hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
-            ArgumentNullException.ThrowIfNull(stampIssuer, nameof(stampIssuer));
             
             if (_hash != null)
                 return;
 
             // Recursively compute hash for each fork nodes.
             foreach (var fork in _forks.Values)
-                await fork.Node.ComputeHashAsync(hasherPipelineBuilder, stampIssuer).ConfigureAwait(false);
+                await fork.Node.ComputeHashAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
             if (CompactLevel == 0)
-            {
-                //set random obfuscation key if missing
-                ObfuscationKey ??= XorEncryptKey.BuildNewRandom();
-            
-                var byteArray = ToByteArray(ObfuscationKey);
-                using var hasherPipeline = hasherPipelineBuilder();
-                var hashingResult = await hasherPipeline.HashDataAsync(byteArray).ConfigureAwait(false);
-                _hash = hashingResult.Hash;
-            }
+                ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
             else
-            {
-                var (bestKey, bestHash) = await GetBestObfuscationKeyAndHashAsync(hasherPipelineBuilder, stampIssuer).ConfigureAwait(false);
-
-                ObfuscationKey = bestKey;
-                _hash = bestHash;
-            }
+                ObfuscationKey = await GetBestObfuscationKeyAsync(hasherPipelineBuilder).ConfigureAwait(false);
+            
+            var byteArray = ToByteArray(ObfuscationKey);
+            using var hasherPipeline = hasherPipelineBuilder(false);
+            var hashingResult = await hasherPipeline.HashDataAsync(byteArray).ConfigureAwait(false);
+            _hash = hashingResult.Hash;
             
             // Clean forks.
             _forks.Clear();
@@ -211,9 +200,8 @@ namespace Etherna.BeeNet.Manifest
             return bytes.ToArray();
         }
         
-        private async Task<(XorEncryptKey bestKey, SwarmHash bestHash)> GetBestObfuscationKeyAndHashAsync(
-            BuildHasherPipeline hasherPipelineBuilder,
-            IPostageStampIssuer stampIssuer)
+        private async Task<XorEncryptKey> GetBestObfuscationKeyAsync(
+            BuildHasherPipeline hasherPipelineBuilder)
         {
             /*
              * Calculate an obfuscation key, and try to find a bucket with optimal collisions.
@@ -233,14 +221,13 @@ namespace Etherna.BeeNet.Manifest
 
             // Calculate plain hash, and use as starting seed.
             var plainByteArray = ToByteArray(XorEncryptKey.Empty);
-            using var plainHasherPipeline = hasherPipelineBuilder();
+            using var plainHasherPipeline = hasherPipelineBuilder(true);
             var plainHashingResult = await plainHasherPipeline.HashDataAsync(plainByteArray).ConfigureAwait(false);
             var plainChunkHashArray = plainHashingResult.Hash.ToByteArray();
 
             // Search best chunk key.
             uint bestCollisions = 0;
             var bestKey = XorEncryptKey.Empty;
-            var bestHash = SwarmHash.Zero;
             var hasher = new Hasher();
 
             for (ushort i = 0; i < CompactLevel; i++)
@@ -251,24 +238,23 @@ namespace Etherna.BeeNet.Manifest
                 var obfuscatedData = ToByteArray(obfuscationKey);
                 
                 // Calculate hash and count collisions.
-                using var hasherPipeline = hasherPipelineBuilder();
+                using var hasherPipeline = hasherPipelineBuilder(true);
                 var hashingResult = await hasherPipeline.HashDataAsync(obfuscatedData).ConfigureAwait(false);
-                var collisions = stampIssuer.Buckets.GetCollisions(hashingResult.Hash.ToBucketId());
+                var collisions = hasherPipeline.PostageStamper.StampIssuer.Buckets.GetCollisions(hashingResult.Hash.ToBucketId());
+                
+                // If collisions are optimal, chose this.
+                if (collisions == hasherPipeline.PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
+                    return obfuscationKey;
                 
                 // If is the first attempt, or a better one.
                 if (i == 0 || collisions < bestCollisions)
                 {
                     bestCollisions = collisions;
                     bestKey = obfuscationKey;
-                    bestHash = hashingResult.Hash;
                 }
-                
-                // If collisions are optimal, chose this.
-                if (collisions == stampIssuer.Buckets.MinBucketCollisions)
-                    return (obfuscationKey, hashingResult.Hash);
             }
 
-            return (bestKey, bestHash);
+            return bestKey;
         }
 
         private void RemoveNodeTypeFlag(NodeType flag) =>
