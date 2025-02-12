@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Concurrent;
@@ -41,7 +42,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public ChunkFeederPipelineStage(
             IHasherPipelineStage nextStage,
-            int? chunkConcurrency = default)
+            int? chunkConcurrency = null)
         {
             chunkConcurrency ??= Environment.ProcessorCount;
             
@@ -82,8 +83,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         // Properties.
         public bool IsUsable { get; private set; } = true;
-
         public long MissedOptimisticHashing => nextStage.MissedOptimisticHashing;
+        public IPostageStamper PostageStamper => nextStage.PostageStamper;
 
         // Methods.
         public async Task<SwarmChunkReference> HashDataAsync(byte[] data)

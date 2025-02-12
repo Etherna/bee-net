@@ -103,14 +103,15 @@ namespace Etherna.BeeNet.Services
 
             // Create manifest.
             var feedManifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     RedundancyLevel.None,
                     false,
                     0,
-                    null),
-                false);
+                    null,
+                    readOnlyPipeline),
+                0);
             
             feedManifest.Add(
                 MantarayManifest.RootPath,

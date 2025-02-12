@@ -25,28 +25,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// <summary>
     /// Calculate hash of each chunk
     /// </summary>
-    internal sealed class ChunkBmtPipelineStage : IHasherPipelineStage
+    internal sealed class ChunkBmtPipelineStage(
+        ushort compactLevel,
+        IHasherPipelineStage nextStage)
+        : IHasherPipelineStage
     {
         // Fields.
-        private readonly ushort compactLevel;
-        private readonly IHasherPipelineStage nextStage;
-        private readonly IPostageStampIssuer stampIssuer;
-
         private long _missedOptimisticHashing;
-
-        // Constructor.
-        /// <summary>
-        /// Calculate hash of each chunk
-        /// </summary>
-        public ChunkBmtPipelineStage(
-            ushort compactLevel,
-            IHasherPipelineStage nextStage,
-            IPostageStampIssuer stampIssuer)
-        {
-            this.compactLevel = compactLevel;
-            this.nextStage = nextStage;
-            this.stampIssuer = stampIssuer;
-        }
 
         // Dispose.
         public void Dispose()
@@ -57,6 +42,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Properties.
         public long MissedOptimisticHashing =>
             _missedOptimisticHashing + nextStage.MissedOptimisticHashing;
+        public IPostageStamper PostageStamper => nextStage.PostageStamper;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -113,12 +99,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * the previous chunk has been completed. Then verify if the same bucket has received
              * new collisions, or not. If not, proceed, otherwise try again to search the best chunk key.
              *
-             * The chunk key is calculate from the plain chunk hash, replacing the last 4 bytes
-             * with the attempt counter (int), and then hashing again.
+             * The chunk key is calculated from the plain chunk hash, replacing the last 2 bytes
+             * with the attempt counter (ushort), and then hashing again.
              * 
              *     chunkKey = Keccack(plainChunkHash[^2..] + attempt)
              *
-             * The encrypted chunk is calculated encrypting data with the chunk key.
+             * Optimized chunk is calculated encrypting data with the chunk key.
              *
              * The optimistic algorithm will search the first best chunk available, trying a max of
              * incremental attempts with max at the "compactionLevel" parameter.
@@ -146,7 +132,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
                 // Check the optimistic result, and keep if valid.
                 var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
-                var actualCollisions = stampIssuer.Buckets.GetCollisions(bestBucketId);
+                var actualCollisions = PostageStamper.StampIssuer.Buckets.GetCollisions(bestBucketId);
             
                 if (actualCollisions == expectedCollisions)
                     return encryptionCache[bestKeyAttempt];
@@ -182,7 +168,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 
                 if (optimisticCache.TryGetValue(i, out var cachedValues))
                 {
-                    collisions = stampIssuer.Buckets.GetCollisions(cachedValues.Hash.ToBucketId());
+                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(cachedValues.Hash.ToBucketId());
                 }
                 else
                 {
@@ -202,7 +188,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
 
                     // Check key collisions.
-                    collisions = stampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
+                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
                 }
                 
                 // First attempt is always the best one.
@@ -210,7 +196,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     bestCollisions = collisions;
                 
                 // Check if collisions are optimal.
-                if (collisions == stampIssuer.Buckets.MinBucketCollisions)
+                if (collisions == PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
                     return (i, collisions);
                 
                 // Else, if this reach better collisions, but not the best.

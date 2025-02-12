@@ -23,7 +23,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     internal sealed class ChunkStoreWriterPipelineStage(
         IChunkStore chunkStore,
         IPostageStamper postageStamper,
-        IHasherPipelineStage? nextStage)
+        IHasherPipelineStage? nextStage,
+        bool readOnly)
         : IHasherPipelineStage
     {
         // Dispose.
@@ -34,6 +35,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         // Properties.
         public long MissedOptimisticHashing => nextStage?.MissedOptimisticHashing ?? 0;
+        public IPostageStamper PostageStamper => postageStamper;
 
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
@@ -41,13 +43,16 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             ArgumentNullException.ThrowIfNull(args, nameof(args));
             if (args.Hash is null) throw new InvalidOperationException();
 
-            // Stamp chunk and store stamp.
-            var stamp = postageStamper.Stamp(args.Hash.Value);
+            if (!readOnly)
+            {
+                // Stamp chunk and store stamp.
+                var stamp = postageStamper.Stamp(args.Hash.Value);
             
-            // Store chunk.
-            var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
-            chunk.PostageStamp = stamp;
-            await chunkStore.AddAsync(chunk).ConfigureAwait(false);
+                // Store chunk.
+                var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
+                chunk.PostageStamp = stamp;
+                await chunkStore.AddAsync(chunk).ConfigureAwait(false);
+            }
 
             if (nextStage is not null)
                 await nextStage.FeedAsync(args).ConfigureAwait(false);

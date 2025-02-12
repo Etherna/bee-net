@@ -139,14 +139,15 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var dirManifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
-                    chunkCuncorrency),
-                encrypt);
+                    chunkCuncorrency,
+                    readOnlyPipeline),
+                compactLevel);
 
             // Iterate through the files.
             foreach (var file in fileNames)
@@ -274,14 +275,15 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var manifest = new MantarayManifest(
-                () => HasherPipelineBuilder.BuildNewHasherPipeline(
+                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
-                    chunkCuncorrency),
-                encrypt);
+                    chunkCuncorrency,
+                    readOnlyPipeline),
+                compactLevel);
 
             manifest.Add(
                 MantarayManifest.RootPath,

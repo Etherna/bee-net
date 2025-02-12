@@ -30,7 +30,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
             ushort compactLevel,
-            int? chunkConcurrency)
+            int? chunkConcurrency,
+            bool readOnly = false)
         {
             ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
             
@@ -48,13 +49,20 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
                     new ChunkBmtPipelineStage(
                         compactLevel,
-                        new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, null),
-                        postageStamper.StampIssuer),
+                        new ChunkStoreWriterPipelineStage(
+                            chunkStore,
+                            postageStamper,
+                            null,
+                            readOnly)),
                     compactLevel > 0);
                 
-                var storeWriterStage = new ChunkStoreWriterPipelineStage(chunkStore, postageStamper, chunkAggregatorStage);
+                var storeWriterStage = new ChunkStoreWriterPipelineStage(
+                    chunkStore,
+                    postageStamper,
+                    chunkAggregatorStage,
+                    readOnly);
                 
-                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage, postageStamper.StampIssuer);
+                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage);
             }
             
             return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);

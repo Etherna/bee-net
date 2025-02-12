@@ -16,6 +16,7 @@ using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,15 +34,22 @@ namespace Etherna.BeeNet.Manifest
         // Fields.
         private SwarmHash? _hash;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
-        private bool skipWriteEntryHash;
+        private bool skipWriteEntryHash = true;
 
-        public MantarayNode(XorEncryptKey? obfuscationKey = null)
+        // Constructors.
+        public MantarayNode(
+            ushort compactLevel = 0,
+            XorEncryptKey? obfuscationKey = null)
         {
+            if (compactLevel > 0 && obfuscationKey != null)
+                throw new ArgumentException("Can't preset obfuscation key with compactLevel > 0");
+            
+            CompactLevel = compactLevel;
             ObfuscationKey = obfuscationKey;
-            skipWriteEntryHash = true;
         }
 
         // Properties.
+        public ushort CompactLevel { get; }
         public SwarmHash? EntryHash { get; private set; }
         public IReadOnlyDictionary<char, MantarayNodeFork> Forks => _forks;
         public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
@@ -94,7 +102,7 @@ namespace Etherna.BeeNet.Manifest
                         
                         // Create new parent node.
                         //parentPrefix = commonPrefix
-                        var parentNode = new MantarayNode(ObfuscationKey)
+                        var parentNode = new MantarayNode(CompactLevel, ObfuscationKey)
                         {
                             _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
                             skipWriteEntryHash = skipWriteEntryHash
@@ -127,7 +135,7 @@ namespace Etherna.BeeNet.Manifest
                     var prefixRest = path.Length > MantarayNodeFork.PrefixMaxSize ?
                         path[MantarayNodeFork.PrefixMaxSize..] : "";
                     
-                    var newNode = new MantarayNode(ObfuscationKey)
+                    var newNode = new MantarayNode(CompactLevel, ObfuscationKey)
                     {
                         skipWriteEntryHash = skipWriteEntryHash
                     };
@@ -142,7 +150,8 @@ namespace Etherna.BeeNet.Manifest
             }
         }
 
-        public async Task ComputeHashAsync(BuildHasherPipeline hasherPipelineBuilder)
+        public async Task ComputeHashAsync(
+            BuildHasherPipeline hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
@@ -154,8 +163,14 @@ namespace Etherna.BeeNet.Manifest
                 await fork.Node.ComputeHashAsync(hasherPipelineBuilder).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
-            using var hasherPipeline = hasherPipelineBuilder();
-            var hashingResult = await hasherPipeline.HashDataAsync(ToByteArray()).ConfigureAwait(false);
+            if (CompactLevel == 0)
+                ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
+            else
+                ObfuscationKey = await GetBestObfuscationKeyAsync(hasherPipelineBuilder).ConfigureAwait(false);
+            
+            var byteArray = ToByteArray(ObfuscationKey);
+            using var hasherPipeline = hasherPipelineBuilder(false);
+            var hashingResult = await hasherPipeline.HashDataAsync(byteArray).ConfigureAwait(false);
             _hash = hashingResult.Hash;
             
             // Clean forks.
@@ -184,6 +199,63 @@ namespace Etherna.BeeNet.Manifest
 
             return bytes.ToArray();
         }
+        
+        private async Task<XorEncryptKey> GetBestObfuscationKeyAsync(
+            BuildHasherPipeline hasherPipelineBuilder)
+        {
+            /*
+             * Calculate an obfuscation key, and try to find a bucket with optimal collisions.
+             *
+             * The chunk key is calculated from the plain chunk hash, replacing the last 2 bytes
+             * with the attempt counter (ushort), and then hashing again.
+             *
+             *     chunkKey = Keccack(plainChunkHash[^2..] + attempt)
+             *
+             * Optimized chunk is calculated encrypting data with the obfuscation key.
+             *
+             * The algorithm will search the first best chunk available, trying a max of
+             * incremental attempts with max at the "compactionLevel" parameter.
+             *
+             * Best chunk is a chunk that fits in a bucket with the lowest possible number of collisions.
+             */
+
+            // Calculate plain hash, and use as starting seed.
+            var plainByteArray = ToByteArray(XorEncryptKey.Empty);
+            using var plainHasherPipeline = hasherPipelineBuilder(true);
+            var plainHashingResult = await plainHasherPipeline.HashDataAsync(plainByteArray).ConfigureAwait(false);
+            var plainChunkHashArray = plainHashingResult.Hash.ToByteArray();
+
+            // Search best chunk key.
+            uint bestCollisions = 0;
+            var bestKey = XorEncryptKey.Empty;
+            var hasher = new Hasher();
+
+            for (ushort i = 0; i < CompactLevel; i++)
+            {
+                // Create key and data byte array.
+                BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
+                var obfuscationKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
+                var obfuscatedData = ToByteArray(obfuscationKey);
+                
+                // Calculate hash and count collisions.
+                using var hasherPipeline = hasherPipelineBuilder(true);
+                var hashingResult = await hasherPipeline.HashDataAsync(obfuscatedData).ConfigureAwait(false);
+                var collisions = hasherPipeline.PostageStamper.StampIssuer.Buckets.GetCollisions(hashingResult.Hash.ToBucketId());
+                
+                // If collisions are optimal, chose this.
+                if (collisions == hasherPipeline.PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
+                    return obfuscationKey;
+                
+                // If is the first attempt, or a better one.
+                if (i == 0 || collisions < bestCollisions)
+                {
+                    bestCollisions = collisions;
+                    bestKey = obfuscationKey;
+                }
+            }
+
+            return bestKey;
+        }
 
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
@@ -209,13 +281,12 @@ namespace Etherna.BeeNet.Manifest
         private void SetNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags |= flag;
         
-        private byte[] ToByteArray()
+        private byte[] ToByteArray(XorEncryptKey obfuscationKey)
         {
             var bytes = new List<byte>();
             
             // Write obfuscation key.
-            ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //generate obfuscation key if required
-            bytes.AddRange(ObfuscationKey.Bytes.ToArray());
+            bytes.AddRange(obfuscationKey.Bytes.ToArray());
             
             // Write version.
             bytes.AddRange(Version02Hash);
@@ -230,7 +301,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Obfuscate with key (except for key as first value).
             var bytesArray = bytes.ToArray();
-            ObfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
+            obfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
             return bytesArray;
         }
 

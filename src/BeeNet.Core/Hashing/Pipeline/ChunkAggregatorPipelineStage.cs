@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing.Bmt;
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,10 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    internal sealed class ChunkAggregatorPipelineStage : IHasherPipelineStage
+    internal sealed class ChunkAggregatorPipelineStage(
+        ChunkBmtPipelineStage shortBmtPipelineStage,
+        bool useRecursiveEncryption)
+        : IHasherPipelineStage
     {
         // Private classes.
         private sealed class ChunkHeader(
@@ -40,25 +44,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Fields.
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
-        private readonly List<List<ChunkHeader>> chunkLevels; //[level][chunk]
-        private readonly byte maxChildrenChunks;
-        private readonly ChunkBmtPipelineStage shortBmtPipelineStage;
-        private readonly bool useRecursiveEncryption;
+        private readonly List<List<ChunkHeader>> chunkLevels = []; //[level][chunk]
+        private readonly byte maxChildrenChunks = (byte)(useRecursiveEncryption
+            ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
+            : SwarmChunkBmt.SegmentsCount);
         
         private long feededChunkNumberId;
-
-        // Constructor.
-        public ChunkAggregatorPipelineStage(
-            ChunkBmtPipelineStage shortBmtPipelineStage,
-            bool useRecursiveEncryption)
-        {
-            chunkLevels = [];
-            maxChildrenChunks = (byte)(useRecursiveEncryption
-                ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
-                : SwarmChunkBmt.SegmentsCount);
-            this.shortBmtPipelineStage = shortBmtPipelineStage;
-            this.useRecursiveEncryption = useRecursiveEncryption;
-        }
         
         // Dispose.
         public void Dispose()
@@ -68,7 +59,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         // Properties.
         public long MissedOptimisticHashing => shortBmtPipelineStage.MissedOptimisticHashing;
-        
+        public IPostageStamper PostageStamper => shortBmtPipelineStage.PostageStamper;
+
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
