@@ -175,7 +175,7 @@ namespace Etherna.BeeNet.Services
                 };
                 if (fileHashingResult.EncryptionKey != null)
                     fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
-                if (compactLevel > 0)
+                if (fileHashingResult.UseRecursiveEncryption)
                     fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
                 
                 dirManifest.Add(
@@ -300,7 +300,7 @@ namespace Etherna.BeeNet.Services
             };
             if (fileHashingResult.EncryptionKey != null)
                 fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
-            if (compactLevel > 0)
+            if (fileHashingResult.UseRecursiveEncryption)
                 fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             
             manifest.Add(
