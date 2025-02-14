@@ -12,11 +12,11 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using Nethereum.Util.HashProviders;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Services
     {
         Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
             ReferencedMantarayManifest manifest,
-            IHashProvider hashProvider);
+            IHasher hasher);
         
         Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore);
 

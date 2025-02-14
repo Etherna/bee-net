@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Hashing.Signer;
@@ -19,7 +20,6 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util.HashProviders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Services
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public async Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
             ReferencedMantarayManifest manifest,
-            IHashProvider hashProvider)
+            IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
             
@@ -57,7 +57,7 @@ namespace Etherna.BeeNet.Services
 
                 return Enum.Parse<FeedType>(strType, true) switch
                 {
-                    FeedType.Epoch => new SwarmEpochFeed(owner, topic, hashProvider),
+                    FeedType.Epoch => new SwarmEpochFeed(owner, topic, hasher),
                     FeedType.Sequence => new SwarmSequenceFeed(owner, topic),
                     _ => throw new InvalidOperationException()
                 };

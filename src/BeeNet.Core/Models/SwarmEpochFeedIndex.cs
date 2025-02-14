@@ -13,7 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
-using Nethereum.Util.HashProviders;
+using Etherna.BeeNet.Hashing;
 using System;
 
 namespace Etherna.BeeNet.Models
@@ -27,13 +27,13 @@ namespace Etherna.BeeNet.Models
         public const ulong MinUnixTimeStamp = 0;
 
         // Fields.
-        private readonly IHashProvider hashProvider;
+        private readonly IHasher hasher;
         
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
         /// <param name="level">Epoch level</param>
-        /// <param name="hashProvider">The hash provider</param>
-        public SwarmEpochFeedIndex(ulong start, byte level, IHashProvider hashProvider)
+        /// <param name="hasher">The hash provider</param>
+        public SwarmEpochFeedIndex(ulong start, byte level, IHasher hasher)
         {
 #if NET8_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Models
             //normalize start clearing less relevent bits
             start = start >> level << level;
 
-            this.hashProvider = hashProvider;
+            this.hasher = hasher;
             Level = level;
             Start = start;
         }
@@ -58,7 +58,7 @@ namespace Etherna.BeeNet.Models
 
         public bool IsRight => !IsLeft;
 
-        public SwarmEpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level, hashProvider);
+        public SwarmEpochFeedIndex Left => IsLeft ? this : new(Start - Length, Level, hasher);
 
         public SwarmEpochFeedIndex Parent
         {
@@ -69,11 +69,11 @@ namespace Etherna.BeeNet.Models
 
                 var parentLevel = (byte)(Level + 1);
                 var parentStart = Start >> parentLevel << parentLevel;
-                return new SwarmEpochFeedIndex(parentStart, parentLevel, hashProvider);
+                return new SwarmEpochFeedIndex(parentStart, parentLevel, hasher);
             }
         }
 
-        public SwarmEpochFeedIndex Right => IsRight ? this : new(Start + Length, Level, hashProvider);
+        public SwarmEpochFeedIndex Right => IsRight ? this : new(Start + Length, Level, hasher);
 
         /// <summary>
         /// Epoch length in seconds
@@ -120,7 +120,7 @@ namespace Etherna.BeeNet.Models
             if ((at & childLength) > 0)
                 childStart |= childLength;
 
-            return new SwarmEpochFeedIndex(childStart, (byte)(Level - 1), hashProvider);
+            return new SwarmEpochFeedIndex(childStart, (byte)(Level - 1), hasher);
         }
 
         public override int GetHashCode() =>
@@ -136,7 +136,7 @@ namespace Etherna.BeeNet.Models
             epochBytes.CopyTo(newArray, 0);
             newArray[epochBytes.Length] = Level;
 
-            return hashProvider.ComputeHash(newArray);
+            return hasher.ComputeHash(newArray);
         }
 
         public override FeedIndexBase GetNext(ulong at)
@@ -150,7 +150,7 @@ namespace Etherna.BeeNet.Models
 
             return Start + Length > at ?
                 GetChildAt(at) :
-                LowestCommonAncestor(Start, at, hashProvider).GetChildAt(at);
+                LowestCommonAncestor(Start, at, hasher).GetChildAt(at);
         }
 
         public override string ToString() => $"{Start}/{Level}";
@@ -162,7 +162,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="t0"></param>
         /// <param name="t1"></param>
         /// <returns>Lowest common ancestor epoch index</returns>
-        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, IHashProvider hashProvider)
+        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, IHasher hasher)
         {
             byte level = 0;
             while (t0 >> level != t1 >> level)
@@ -172,7 +172,7 @@ namespace Etherna.BeeNet.Models
                     throw new InvalidOperationException();
             }
             var start = t1 >> level << level;
-            return new(start, level, hashProvider);
+            return new(start, level, hasher);
         }
     }
 }

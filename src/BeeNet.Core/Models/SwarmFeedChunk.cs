@@ -13,9 +13,9 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
-using Nethereum.Util.HashProviders;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -96,24 +96,24 @@ namespace Etherna.BeeNet.Models
             return chunkData;
         }
 
-        public static SwarmHash BuildHash(string owner, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
-            BuildHash(owner, BuildIdentifier(topic, index, hashProvider), hashProvider);
+        public static SwarmHash BuildHash(string owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
+            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
 
-        public static SwarmHash BuildHash(byte[] owner, byte[] topic, FeedIndexBase index, IHashProvider hashProvider) =>
-            BuildHash(owner, BuildIdentifier(topic, index, hashProvider), hashProvider);
+        public static SwarmHash BuildHash(byte[] owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
+            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
 
-        public static SwarmHash BuildHash(string owner, byte[] identifier, IHashProvider hashProvider)
+        public static SwarmHash BuildHash(string owner, byte[] identifier, IHasher hasher)
         {
             if (!owner.IsValidEthereumAddressHexFormat())
                 throw new ArgumentException("Value is not a valid ethereum account", nameof(owner));
 
-            return BuildHash(owner.HexToByteArray(), identifier, hashProvider);
+            return BuildHash(owner.HexToByteArray(), identifier, hasher);
         }
 
-        public static SwarmHash BuildHash(byte[] owner, byte[] identifier, IHashProvider hashProvider)
+        public static SwarmHash BuildHash(byte[] owner, byte[] identifier, IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(owner, nameof(owner));
-            ArgumentNullException.ThrowIfNull(hashProvider, nameof(hashProvider));
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
 
             if (owner.Length != OwnerAccountSize)
@@ -121,12 +121,12 @@ namespace Etherna.BeeNet.Models
             if (identifier.Length != IdentifierSize)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
             
-            return hashProvider.ComputeHash(identifier.Concat(owner).ToArray());
+            return hasher.ComputeHash(identifier.Concat(owner).ToArray());
         }
 
-        public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index, IHashProvider hashProvider)
+        public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index, IHasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hashProvider, nameof(hashProvider));
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(index, nameof(index));
             ArgumentNullException.ThrowIfNull(topic, nameof(topic));
 
@@ -137,7 +137,7 @@ namespace Etherna.BeeNet.Models
             topic.CopyTo(newArray, 0);
             index.MarshalBinary().CopyTo(newArray.AsMemory()[topic.Length..]);
 
-            return hashProvider.ComputeHash(newArray);
+            return hasher.ComputeHash(newArray);
         }
     }
 }

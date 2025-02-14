@@ -14,18 +14,17 @@
 
 using Etherna.BeeNet.Hashing;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util.HashProviders;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmEpochFeed(byte[] owner, byte[] topic, IHashProvider hashProvider)
+    public class SwarmEpochFeed(byte[] owner, byte[] topic, IHasher hasher)
         : SwarmFeedBase(owner, topic)
     {
         // Constructors.
-        public SwarmEpochFeed(string owner, byte[] topic, IHashProvider hashProvider)
-            : this(owner.HexToByteArray(), topic, hashProvider)
+        public SwarmEpochFeed(string owner, byte[] topic, IHasher hasher)
+            : this(owner.HexToByteArray(), topic, hasher)
         { }
 
         // Properties.
@@ -56,7 +55,7 @@ namespace Etherna.BeeNet.Models
             SwarmEpochFeedIndex nextEpochIndex;
             if (lastEpochFeedChunk is null)
             {
-                nextEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hashProvider);
+                nextEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hasher);
                 if (!nextEpochIndex.ContainsTime(at))
                     nextEpochIndex = nextEpochIndex.Right;
             }
@@ -210,7 +209,7 @@ namespace Etherna.BeeNet.Models
             }
 
             //if start epoch is null (known near was null or max epoch level is hit)
-            startEpoch ??= new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hashProvider);
+            startEpoch ??= new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, hasher);
             if (!startEpoch.ContainsTime(at))
                 startEpoch = startEpoch.Right;
             return startEpoch;
