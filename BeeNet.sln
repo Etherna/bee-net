@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Client", "src\BeeNet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core.UnitTest", "test\BeeNet.Core.UnitTest\BeeNet.Core.UnitTest.csproj", "{63368E76-475A-45BE-B6DB-86402C041C39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core.AspNet", "src\BeeNet.Core.AspNet\BeeNet.Core.AspNet.csproj", "{2020D0B8-6325-4DC5-B199-9929772FBBED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{0C681EE6-7290-4548-9502-4C9B6B061F12} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{EC667802-776E-4306-922C-AA23C7D5835B} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{63368E76-475A-45BE-B6DB-86402C041C39} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
+		{2020D0B8-6325-4DC5-B199-9929772FBBED} = {7932D52A-3D44-4723-9E77-1711F7486417}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BC8368EB-8E3B-4FBB-B657-D1C9375AFAFC}
