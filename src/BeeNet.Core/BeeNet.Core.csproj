@@ -34,8 +34,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nethereum.Merkle" Version="4.28.0" />
-    <PackageReference Include="Nethereum.Signer" Version="4.28.0" />
+    <PackageReference Include="Nethereum.Merkle" Version="4.29.0" />
+    <PackageReference Include="Nethereum.Signer" Version="4.29.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
