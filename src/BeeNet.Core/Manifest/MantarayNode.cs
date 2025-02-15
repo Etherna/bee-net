@@ -168,7 +168,7 @@ namespace Etherna.BeeNet.Manifest
             else
                 ObfuscationKey = await GetBestObfuscationKeyAsync(hasherPipelineBuilder).ConfigureAwait(false);
             
-            var byteArray = ToByteArray(ObfuscationKey);
+            var byteArray = ToByteArray(ObfuscationKey.Value);
             using var hasherPipeline = hasherPipelineBuilder(false);
             var hashingResult = await hasherPipeline.HashDataAsync(byteArray).ConfigureAwait(false);
             _hash = hashingResult.Hash;
@@ -220,14 +220,14 @@ namespace Etherna.BeeNet.Manifest
              */
 
             // Calculate plain hash, and use as starting seed.
-            var plainByteArray = ToByteArray(XorEncryptKey.Empty);
+            var plainByteArray = ToByteArray(XorEncryptKey.Zero);
             using var plainHasherPipeline = hasherPipelineBuilder(true);
             var plainHashingResult = await plainHasherPipeline.HashDataAsync(plainByteArray).ConfigureAwait(false);
             var plainChunkHashArray = plainHashingResult.Hash.ToByteArray();
 
             // Search best chunk key.
             uint bestCollisions = 0;
-            var bestKey = XorEncryptKey.Empty;
+            var bestKey = XorEncryptKey.Zero;
             var hasher = new Hasher();
 
             for (ushort i = 0; i < CompactLevel; i++)
@@ -286,7 +286,7 @@ namespace Etherna.BeeNet.Manifest
             var bytes = new List<byte>();
             
             // Write obfuscation key.
-            bytes.AddRange(obfuscationKey.Bytes.ToArray());
+            bytes.AddRange(obfuscationKey.ToByteArray());
             
             // Write version.
             bytes.AddRange(Version02Hash);

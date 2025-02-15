@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.Manifest
             
             // Get obfuscation key and de-obfuscate.
             _obfuscationKey = new XorEncryptKey(data[..XorEncryptKey.KeySize]);
-            _obfuscationKey.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
+            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
             readIndex += XorEncryptKey.KeySize;
             
             // Read header.

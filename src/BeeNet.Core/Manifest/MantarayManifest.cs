@@ -37,8 +37,8 @@ namespace Etherna.BeeNet.Manifest
                 new MantarayNode(
                     compactLevel,
                     compactLevel > 0
-                        ? null //auto-generate on hash building
-                        : XorEncryptKey.Empty))
+                        ? (XorEncryptKey?)null //auto-generate on hash building
+                        : XorEncryptKey.Zero))
         { }
 
         // Properties.

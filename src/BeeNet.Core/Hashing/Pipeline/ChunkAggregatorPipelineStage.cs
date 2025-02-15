@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // If chunks are compacted, append the encryption key after the chunk hash.
             var totalData = totalSpan.Concat(
                 levelChunks.SelectMany(c => useRecursiveEncryption
-                    ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Bytes.ToArray())
+                    ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Value.ToByteArray())
                     : c.Hash.ToByteArray()))
                 .ToArray();
 

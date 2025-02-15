@@ -174,7 +174,7 @@ namespace Etherna.BeeNet.Services
                     [ManifestEntry.FilenameKey] = fileName
                 };
                 if (fileHashingResult.EncryptionKey != null)
-                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
                 if (fileHashingResult.UseRecursiveEncryption)
                     fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
                 
@@ -299,7 +299,7 @@ namespace Etherna.BeeNet.Services
                 [ManifestEntry.FilenameKey] = fileName
             };
             if (fileHashingResult.EncryptionKey != null)
-                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.ToString());
+                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
             if (fileHashingResult.UseRecursiveEncryption)
                 fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             

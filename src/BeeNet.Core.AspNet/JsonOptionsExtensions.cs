@@ -31,6 +31,7 @@ namespace Etherna.BeeNet.AspNet
             options.JsonSerializerOptions.Converters.Add(new SwarmHashJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmUriJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new TagIdJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new XorEncryptKeyJsonConverter());
         }
     }
 }

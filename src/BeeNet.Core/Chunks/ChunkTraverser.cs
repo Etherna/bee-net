@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Chunks
             // Build metadata.
             var metadata = new Dictionary<string, string>();
             if (encryptKey is not null)
-                metadata.Add(ManifestEntry.ChunkEncryptKeyKey, encryptKey.ToString());
+                metadata.Add(ManifestEntry.ChunkEncryptKeyKey, encryptKey.Value.ToString());
             if (useRecursiveEncryption.HasValue)
                 metadata.Add(ManifestEntry.UseRecursiveEncryptionKey, useRecursiveEncryption.Value.ToString());
 
