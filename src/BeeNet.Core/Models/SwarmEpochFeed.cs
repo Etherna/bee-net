@@ -13,20 +13,14 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmEpochFeed(byte[] owner, byte[] topic, IHasher hasher)
+    public class SwarmEpochFeed(EthAddress owner, byte[] topic, IHasher hasher)
         : SwarmFeedBase(owner, topic)
     {
-        // Constructors.
-        public SwarmEpochFeed(string owner, byte[] topic, IHasher hasher)
-            : this(owner.HexToByteArray(), topic, hasher)
-        { }
-
         // Properties.
         public override FeedType Type => FeedType.Epoch;
 
@@ -64,7 +58,7 @@ namespace Etherna.BeeNet.Models
 
             // Create new chunk.
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkHash = SwarmFeedChunk.BuildHash(_owner, _topic, nextEpochIndex, new Hasher());
+            var chunkHash = SwarmFeedChunk.BuildHash(Owner, _topic, nextEpochIndex, new Hasher());
 
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }

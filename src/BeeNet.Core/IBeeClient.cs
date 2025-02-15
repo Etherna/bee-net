@@ -108,7 +108,7 @@ namespace Etherna.BeeNet
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmHash> CreateFeedAsync(
-            string owner,
+            EthAddress owner,
             string topic,
             PostageBatchId batchId,
             string? type = null,
@@ -300,7 +300,7 @@ namespace Etherna.BeeNet
         /// <summary>Get the address of the chequebook contract used</summary>
         /// <returns>Ethereum address of chequebook contract</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<string> GetChequebookAddressAsync(CancellationToken cancellationToken = default);
+        Task<EthAddress> GetChequebookAddressAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balance of the chequebook</summary>
         /// <returns>Balance of the chequebook</returns>
@@ -377,7 +377,7 @@ namespace Etherna.BeeNet
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<FileResponse> GetFeedAsync(
-            string owner,
+            EthAddress owner,
             string topic,
             int? at = null,
             int? after = null,
@@ -480,7 +480,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         Task<FileResponse> GetSocDataAsync(
-            string owner,
+            EthAddress owner,
             string id,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
@@ -936,7 +936,7 @@ namespace Etherna.BeeNet
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadSocAsync(
-            string owner,
+            EthAddress owner,
             string id,
             string sig,
             PostageBatchId batchId,
@@ -955,7 +955,7 @@ namespace Etherna.BeeNet
         /// <returns>Tx hash</returns>
         Task<string> WalletWithdrawAsync(
             BzzBalance amount,
-            string address,
+            EthAddress address,
             XDaiBalance coin,
             CancellationToken cancellationToken = default);
 

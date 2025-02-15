@@ -18,17 +18,9 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmSequenceFeed : SwarmFeedBase
+    public class SwarmSequenceFeed(EthAddress owner, byte[] topic)
+        : SwarmFeedBase(owner, topic)
     {
-        // Constructors.
-        public SwarmSequenceFeed(string owner, byte[] topic)
-            : base(owner.HexToByteArray(), topic)
-        { }
-
-        public SwarmSequenceFeed(byte[] owner, byte[] topic)
-            : base(owner, topic)
-        { }
-
         // Properties.
         public override FeedType Type => FeedType.Sequence;
 
