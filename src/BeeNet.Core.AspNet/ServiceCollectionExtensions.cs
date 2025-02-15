@@ -25,6 +25,7 @@ namespace Etherna.BeeNet.AspNet
         public static IServiceCollection AddBeeNet(this IServiceCollection services)
         {
             // Register global TypeConverters.
+            TypeDescriptor.AddAttributes(typeof(EthAddress), new TypeConverterAttribute(typeof(EthAddressTypeConverter)));
             TypeDescriptor.AddAttributes(typeof(PostageBatchId), new TypeConverterAttribute(typeof(PostageBatchIdTypeConverter)));
             TypeDescriptor.AddAttributes(typeof(SwarmAddress), new TypeConverterAttribute(typeof(SwarmAddressTypeConverter)));
             TypeDescriptor.AddAttributes(typeof(SwarmHash), new TypeConverterAttribute(typeof(SwarmHashTypeConverter)));

@@ -24,6 +24,7 @@ namespace Etherna.BeeNet.AspNet
         {
             ArgumentNullException.ThrowIfNull(options, nameof(options));
             
+            options.JsonSerializerOptions.Converters.Add(new EthAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new PostageBatchIdJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmHashJsonConverter());
