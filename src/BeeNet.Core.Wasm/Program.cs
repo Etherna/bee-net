@@ -11,6 +11,7 @@ Console.WriteLine("Main, don't remove!");
 [SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("Design", "CA1050:Declare types in namespaces")]
+#pragma warning disable CA1515
 public partial class BeeNetWasmUtil
 {
     [JSExport]
@@ -27,3 +28,4 @@ public partial class BeeNetWasmUtil
         return result.ChunkReference.Hash.ToString();
     }
 }
+#pragma warning restore CA1515

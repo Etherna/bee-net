@@ -18,9 +18,9 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Etherna.BeeNet.AspNet.TypeConverters
+namespace Etherna.BeeNet.TypeConverters
 {
-    public class SwarmAddressTypeConverter : TypeConverter
+    public class PostageBatchIdTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
             sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
@@ -31,14 +31,14 @@ namespace Etherna.BeeNet.AspNet.TypeConverters
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
             if (value is string str)
-                return new SwarmAddress(str);
+                return new PostageBatchId(str);
             return base.ConvertFrom(context, culture, value);
         }
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
-            if (destinationType == typeof(string) && value is SwarmAddress address)
-                return address.ToString();
+            if (destinationType == typeof(string) && value is PostageBatchId batchId)
+                return batchId.ToString();
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }

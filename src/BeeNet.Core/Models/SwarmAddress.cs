@@ -12,11 +12,14 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(SwarmAddressTypeConverter))]
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Consts.
