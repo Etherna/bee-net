@@ -19,14 +19,14 @@ namespace Etherna.BeeNet.Models
     public sealed class AddressDetail(
         string overlay,
         IEnumerable<string> underlay,
-        string ethereum,
+        EthAddress ethereum,
         string publicKey,
         string pssPublicKey)
     {
         // Properties.
         public string Overlay { get; } = overlay;
         public IEnumerable<string> Underlay { get; } = underlay;
-        public string Ethereum { get; } = ethereum;
+        public EthAddress Ethereum { get; } = ethereum;
         public string PublicKey { get; } = publicKey;
         public string PssPublicKey { get; } = pssPublicKey;
     }

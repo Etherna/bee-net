@@ -25,26 +25,22 @@ namespace Etherna.BeeNet.Models
     public abstract class SwarmFeedBase
     {
         // Fields.
-        protected readonly byte[] _owner;
         protected readonly byte[] _topic;
 
         // Constructors.
-        protected SwarmFeedBase(byte[] owner, byte[] topic)
+        protected SwarmFeedBase(EthAddress owner, byte[] topic)
         {
-            ArgumentNullException.ThrowIfNull(owner, nameof(owner));
             ArgumentNullException.ThrowIfNull(topic, nameof(topic));
 
-            if (owner.Length != SwarmFeedChunk.OwnerAccountSize)
-                throw new ArgumentOutOfRangeException(nameof(owner), "Invalid owner account length");
             if (topic.Length != SwarmFeedChunk.TopicSize)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
             
-            _owner = owner;
+            Owner = owner;
             _topic = topic;
         }
 
         // Properties.
-        public ReadOnlyMemory<byte> Owner => _owner.AsMemory();
+        public EthAddress Owner { get; }
         public ReadOnlyMemory<byte> Topic => _topic.AsMemory();
         public abstract FeedType Type { get; }
         
@@ -72,7 +68,7 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(beeClient, nameof(beeClient));
             
-            var hash = SwarmFeedChunk.BuildHash(_owner, _topic, index, new Hasher());
+            var hash = SwarmFeedChunk.BuildHash(Owner, _topic, index, new Hasher());
             try
             {
                 using var chunkStream = await beeClient.GetChunkStreamAsync(hash).ConfigureAwait(false);

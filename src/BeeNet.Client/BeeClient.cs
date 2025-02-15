@@ -176,7 +176,7 @@ namespace Etherna.BeeNet
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
         public async Task<SwarmHash> CreateFeedAsync(
-            string owner,
+            EthAddress owner,
             string topic,
             PostageBatchId batchId,
             string? type = null,
@@ -185,7 +185,7 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.FeedsPostAsync(
-                owner,
+                owner.ToString(),
                 topic,
                 type,
                 swarmPin,
@@ -437,7 +437,7 @@ namespace Etherna.BeeNet
                 totalAmount: BzzBalance.FromPlurString(response.TotalAmount));
         }
 
-        public async Task<string> GetChequebookAddressAsync(CancellationToken cancellationToken = default) =>
+        public async Task<EthAddress> GetChequebookAddressAsync(CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookAddressAsync(cancellationToken).ConfigureAwait(false)).ChequebookAddress;
 
         public async Task<ChequebookBalance> GetChequebookBalanceAsync(CancellationToken cancellationToken = default)
@@ -568,7 +568,7 @@ namespace Etherna.BeeNet
                 (await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
         public async Task<FileResponse> GetFeedAsync(
-            string owner,
+            EthAddress owner,
             string topic,
             int? at = null,
             int? after = null,
@@ -581,7 +581,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.FeedsGetAsync(
-                owner: owner,
+                owner: owner.ToString(),
                 topic: topic,
                 at: at,
                 after: after,
@@ -844,7 +844,7 @@ namespace Etherna.BeeNet
         }
 
         public async Task<FileResponse> GetSocDataAsync(
-            string owner,
+            EthAddress owner,
             string id,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
@@ -854,7 +854,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.SocGetAsync(
-                owner: owner,
+                owner: owner.ToString(),
                 id: id,
                 swarm_only_root_chunk: swarmOnlyRootChunk,
                 swarm_cache: swarmCache,
@@ -1472,7 +1472,7 @@ namespace Etherna.BeeNet
         }
 
         public async Task<SwarmHash> UploadSocAsync(
-            string owner,
+            EthAddress owner,
             string id,
             string sig,
             PostageBatchId batchId,
@@ -1482,7 +1482,7 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.SocPostAsync(
-                owner: owner,
+                owner: owner.ToString(),
                 id: id,
                 sig: sig,
                 swarm_postage_batch_id: batchId.ToString(),
@@ -1494,12 +1494,12 @@ namespace Etherna.BeeNet
 
         public async Task<string> WalletWithdrawAsync(
             BzzBalance amount,
-            string address,
+            EthAddress address,
             XDaiBalance coin,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.WalletWithdrawAsync(
                 amount.ToPlurString(),
-                address,
+                address.ToString(),
                 coin.ToWeiString(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 

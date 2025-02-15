@@ -31,7 +31,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert 
-            Assert.StartsWith("0x", result.Ethereum);
         }
 
         [Fact]

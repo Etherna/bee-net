@@ -117,7 +117,7 @@ namespace Etherna.BeeNet.Services
                 MantarayManifest.RootPath,
                 ManifestEntry.NewDirectory(new Dictionary<string, string>
                 {
-                    [FeedMetadataEntryOwner] = swarmFeed.Owner.ToArray().ToHex(),
+                    [FeedMetadataEntryOwner] = swarmFeed.Owner.ToString(),
                     [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
                     [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                 }));

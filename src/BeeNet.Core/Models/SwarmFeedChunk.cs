@@ -31,7 +31,6 @@ namespace Etherna.BeeNet.Models
         public const int MaxPayloadSize = DataSize - TimeStampSize; //creation timestamp
         public const int MinChunkSize = SwarmHash.HashSize + SwarmSignature.SignatureSize + SpanSize;
         public const int MinDataSize = TimeStampSize;
-        public const int OwnerAccountSize = 20;
         public const int TimeStampSize = sizeof(ulong);
         public const int TopicSize = 32;
 
@@ -96,32 +95,18 @@ namespace Etherna.BeeNet.Models
             return chunkData;
         }
 
-        public static SwarmHash BuildHash(string owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
+        public static SwarmHash BuildHash(EthAddress owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
             BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
 
-        public static SwarmHash BuildHash(byte[] owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
-            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
-
-        public static SwarmHash BuildHash(string owner, byte[] identifier, IHasher hasher)
+        public static SwarmHash BuildHash(EthAddress owner, byte[] identifier, IHasher hasher)
         {
-            if (!owner.IsValidEthereumAddressHexFormat())
-                throw new ArgumentException("Value is not a valid ethereum account", nameof(owner));
-
-            return BuildHash(owner.HexToByteArray(), identifier, hasher);
-        }
-
-        public static SwarmHash BuildHash(byte[] owner, byte[] identifier, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(owner, nameof(owner));
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
 
-            if (owner.Length != OwnerAccountSize)
-                throw new ArgumentOutOfRangeException(nameof(owner), "Invalid owner account length");
             if (identifier.Length != IdentifierSize)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
             
-            return hasher.ComputeHash(identifier.Concat(owner).ToArray());
+            return hasher.ComputeHash(identifier.Concat(owner.ToByteArray()).ToArray());
         }
 
         public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index, IHasher hasher)
