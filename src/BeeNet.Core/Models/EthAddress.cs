@@ -12,12 +12,15 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(EthAddressTypeConverter))]
     public readonly struct EthAddress : IEquatable<EthAddress>
     {
         // Consts.

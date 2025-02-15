@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Etherna.BeeNet.AspNet.TypeConverters
+namespace Etherna.BeeNet.TypeConverters
 {
     public class SwarmHashTypeConverter : TypeConverter
     {

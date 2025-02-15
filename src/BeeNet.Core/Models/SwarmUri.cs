@@ -12,14 +12,17 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
+    [TypeConverter(typeof(SwarmUriTypeConverter))]
     public readonly struct SwarmUri : IEquatable<SwarmUri>
     {
         // Fields.

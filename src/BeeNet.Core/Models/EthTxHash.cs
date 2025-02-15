@@ -16,31 +16,30 @@ using Etherna.BeeNet.TypeConverters;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
-using System.Buffers.Binary;
 using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
-    [TypeConverter(typeof(SwarmHashTypeConverter))]
-    public readonly struct SwarmHash : IEquatable<SwarmHash>
+    [TypeConverter(typeof(EthTxHashTypeConverter))]
+    public readonly struct EthTxHash : IEquatable<EthTxHash>
     {
         // Consts.
         public const int HashSize = 32;
         
         // Fields.
         private readonly byte[] byteHash;
-
+        
         // Constructors.
-        public SwarmHash(byte[] hash)
+        public EthTxHash(byte[] hash)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
-            
+
             byteHash = hash;
         }
 
-        public SwarmHash(string hash)
+        public EthTxHash(string hash)
         {
             ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             
@@ -56,23 +55,18 @@ namespace Etherna.BeeNet.Models
             if (!IsValidHash(byteHash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
         }
-        
-        // Static properties.
-        public static SwarmHash Zero { get; } = new byte[HashSize];
 
         // Methods.
-        public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
-        public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
+        public bool Equals(EthTxHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
+        public override bool Equals(object? obj) => obj is EthTxHash other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
-        public uint ToBucketId() => BinaryPrimitives.ReadUInt32BigEndian(
-            byteHash.AsSpan()[..4]) >> (32 - PostageBatch.BucketDepth);
         public byte[] ToByteArray() => (byte[])byteHash.Clone();
-        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;
-        public override string ToString() => byteHash.ToHex();
+        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash.AsMemory();
+        public override string ToString() => byteHash.ToHex(prefix: true);
         
         // Static methods.
-        public static SwarmHash FromByteArray(byte[] value) => new(value);
-        public static SwarmHash FromString(string value) => new(value);
+        public static EthTxHash FromByteArray(byte[] value) => new(value);
+        public static EthTxHash FromString(string value) => new(value);
         public static bool IsValidHash(byte[] value)
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
@@ -91,16 +85,16 @@ namespace Etherna.BeeNet.Models
         }
         
         // Operator methods.
-        public static bool operator ==(SwarmHash left, SwarmHash right) => left.Equals(right);
-        public static bool operator !=(SwarmHash left, SwarmHash right) => !(left == right);
+        public static bool operator ==(EthTxHash left, EthTxHash right) => left.Equals(right);
+        public static bool operator !=(EthTxHash left, EthTxHash right) => !(left == right);
         
         // Implicit conversion operator methods.
-        public static implicit operator SwarmHash(string value) => new(value);
-        public static implicit operator SwarmHash(byte[] value) => new(value);
+        public static implicit operator EthTxHash(string value) => new(value);
+        public static implicit operator EthTxHash(byte[] value) => new(value);
         
         // Explicit conversion operator methods.
-        public static explicit operator string(SwarmHash value) => value.ToString();
-        public static explicit operator ReadOnlyMemory<byte>(SwarmHash value) => value.ToReadOnlyMemory();
-        public static explicit operator byte[](SwarmHash value) => value.ToByteArray();
+        public static explicit operator string(EthTxHash value) => value.ToString();
+        public static explicit operator ReadOnlyMemory<byte>(EthTxHash value) => value.ToReadOnlyMemory();
+        public static explicit operator byte[](EthTxHash value) => value.ToByteArray();
     }
 }

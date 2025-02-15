@@ -162,7 +162,7 @@ namespace Etherna.BeeNet
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> DeleteTransactionAsync(
-            string txHash,
+            EthTxHash txHash,
             XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default);
 
@@ -432,7 +432,7 @@ namespace Etherna.BeeNet
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<EthTx>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
         /// <param name="hash">Swarm reference of the root hash</param>
@@ -523,8 +523,8 @@ namespace Etherna.BeeNet
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<TxInfo> GetTransactionInfoAsync(
-            string txHash,
+        Task<EthTx> GetTransactionInfoAsync(
+            EthTxHash txHash,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -615,7 +615,7 @@ namespace Etherna.BeeNet
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
         Task<string> RebroadcastTransactionAsync(
-            string txHash,
+            EthTxHash txHash,
             CancellationToken cancellationToken = default);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>

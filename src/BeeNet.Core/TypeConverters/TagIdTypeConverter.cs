@@ -18,27 +18,34 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Etherna.BeeNet.AspNet.TypeConverters
+namespace Etherna.BeeNet.TypeConverters
 {
-    public class SwarmUriTypeConverter : TypeConverter
+    public class TagIdTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
-            sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+            sourceType == typeof(ulong) ||
+            sourceType == typeof(uint) ||
+            sourceType == typeof(ushort) ||
+            base.CanConvertFrom(context, sourceType);
 
         public override bool CanConvertTo(ITypeDescriptorContext? context, [NotNullWhen(true)] Type? destinationType) =>
-            destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
+            destinationType == typeof(ulong) || base.CanConvertTo(context, destinationType);
 
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
-            if (value is string str)
-                return SwarmUri.FromString(str);
-            return base.ConvertFrom(context, culture, value);
+            return value switch
+            {
+                ulong u => u,
+                uint u => (ulong)u,
+                ushort u => (ulong)u,
+                _ => base.ConvertFrom(context, culture, value)
+            };
         }
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
-            if (destinationType == typeof(string) && value is SwarmUri uri)
-                return uri.ToString();
+            if (destinationType == typeof(ulong) && value is TagId tagId)
+                return tagId.Value;
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }

@@ -12,20 +12,28 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Services;
-using Microsoft.Extensions.DependencyInjection;
+using Etherna.BeeNet.Models;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet
+namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public static class ServiceCollectionExtensions
+    public class EthTxHashJsonConverter : JsonConverter<EthTxHash>
     {
-        public static IServiceCollection AddBeeNet(this IServiceCollection services)
+        public override EthTxHash Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            // Register services.
-            services.AddScoped<IChunkService, ChunkService>();
-            services.AddScoped<IFeedService, FeedService>();
+            if (reader.TokenType != JsonTokenType.String)
+                throw new JsonException();
 
-            return services;
+            return reader.GetString()!;
+        }
+
+        public override void Write(Utf8JsonWriter writer, EthTxHash value, JsonSerializerOptions options)
+        {
+            ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+            
+            writer.WriteStringValue(value.ToString());
         }
     }
 }

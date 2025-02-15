@@ -16,9 +16,9 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class TxInfo(
-        string transactionHash,
-        string to,
+    public sealed class EthTx(
+        EthTxHash transactionHash,
+        EthAddress to,
         int nonce,
         XDaiBalance gasPrice,
         long gasLimit,
@@ -28,8 +28,8 @@ namespace Etherna.BeeNet.Models
         XDaiBalance value)
     {
         // Properties.
-        public string TransactionHash { get; } = transactionHash;
-        public string To { get; } = to;
+        public EthTxHash TransactionHash { get; } = transactionHash;
+        public EthAddress To { get; } = to;
         public int Nonce { get; } = nonce;
         public XDaiBalance GasPrice { get; } = gasPrice;
         public long GasLimit { get; } = gasLimit;

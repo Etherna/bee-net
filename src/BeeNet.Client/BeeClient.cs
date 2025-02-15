@@ -238,11 +238,11 @@ namespace Etherna.BeeNet
                 cancellationToken: cancellationToken);
 
         public async Task<string> DeleteTransactionAsync(
-            string txHash,
+            EthTxHash txHash,
             XDaiBalance? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.TransactionsDeleteAsync(
-                txHash,
+                txHash.ToString(),
                 gasPrice?.ToWeiLong(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
@@ -702,11 +702,11 @@ namespace Etherna.BeeNet
                     storageRadius: null));
         }
 
-        public async Task<IEnumerable<TxInfo>> GetPendingTransactionsAsync(
+        public async Task<IEnumerable<EthTx>> GetPendingTransactionsAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
-            return response.PendingTransactions.Select(tx => new TxInfo(
+            return response.PendingTransactions.Select(tx => new EthTx(
                 transactionHash: tx.TransactionHash,
                 to: tx.To,
                 nonce: tx.Nonce,
@@ -965,12 +965,12 @@ namespace Etherna.BeeNet
                 synced: t.Synced));
         }
 
-        public async Task<TxInfo> GetTransactionInfoAsync(
-            string txHash,
+        public async Task<EthTx> GetTransactionInfoAsync(
+            EthTxHash txHash,
             CancellationToken cancellationToken = default)
         {
-            var response = await generatedClient.TransactionsGetAsync(txHash, cancellationToken).ConfigureAwait(false);
-            return new TxInfo(
+            var response = await generatedClient.TransactionsGetAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false);
+            return new EthTx(
                 transactionHash: response.TransactionHash,
                 to: response.To,
                 nonce: response.Nonce,
@@ -1131,9 +1131,9 @@ namespace Etherna.BeeNet
         }
 
         public async Task<string> RebroadcastTransactionAsync(
-            string txHash,
+            EthTxHash txHash,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.TransactionsPostAsync(txHash, cancellationToken).ConfigureAwait(false)).TransactionHash;
+            (await generatedClient.TransactionsPostAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default)
         {
