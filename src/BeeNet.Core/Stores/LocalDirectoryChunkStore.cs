@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -35,7 +36,7 @@ namespace Etherna.BeeNet.Stores
         public LocalDirectoryChunkStore(
             string directoryPath,
             bool createDirectory = false,
-            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
+            ConcurrentDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
             : base(chunksCache)
         {
             if (!Directory.Exists(directoryPath))

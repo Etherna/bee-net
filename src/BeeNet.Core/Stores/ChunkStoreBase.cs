@@ -14,13 +14,13 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
     public abstract class ChunkStoreBase(
-        IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
+        ConcurrentDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
         : ReadOnlyChunkStoreBase(chunksCache), IChunkStore
     {
         /// <summary>
