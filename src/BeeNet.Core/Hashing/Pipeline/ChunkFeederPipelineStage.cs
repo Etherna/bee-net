@@ -107,14 +107,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
             var chunkBuffer = new byte[SwarmChunk.DataSize];
-            int chunkReadSize;
+            bool isEndOfStream = false;
             SemaphoreSlim? prevChunkSemaphore = null;
-            do
+            while (!isEndOfStream)
             {
-                chunkReadSize = await dataStream.ReadAsync(chunkBuffer).ConfigureAwait(false);
+                (var chunkReadSize, isEndOfStream) = await ReadChunkDataFromStreamAsync(dataStream, chunkBuffer).ConfigureAwait(false);
                 
                 if (chunkReadSize > 0 || //write only chunks with data
-                    passedBytes == 0)    //or if the first and only one is empty
+                    passedBytes == 0)    //or accept also edge case trying to hash an empty stream
                 {
                     var chunkNumberId = passedBytes / SwarmChunk.DataSize;
                     
@@ -169,12 +169,32 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     
                     passedBytes += chunkReadSize;
                 }
-            } while (chunkReadSize == SwarmChunk.DataSize);
+            }
 
             // Wait the end of all chunk computation.
             await Task.WhenAll(nextStageTasks).ConfigureAwait(false);
 
             return await nextStage.SumAsync().ConfigureAwait(false);
+        }
+
+        // Helpers.
+        private static async Task<(int chunkDataSize, bool isEndOfStream)> ReadChunkDataFromStreamAsync(
+            Stream dataStream,
+            Memory<byte> chunkBuffer)
+        {
+            var isEndOfStream = false;
+            var totalDataSize = 0;
+
+            do
+            {
+                var dataSize = await dataStream.ReadAsync(chunkBuffer[totalDataSize..]).ConfigureAwait(false);
+                if (dataSize == 0)
+                    isEndOfStream = true;
+                totalDataSize += dataSize;
+            } while (!isEndOfStream &&
+                     totalDataSize < chunkBuffer.Length);
+            
+            return (totalDataSize, isEndOfStream);
         }
     }
 }
