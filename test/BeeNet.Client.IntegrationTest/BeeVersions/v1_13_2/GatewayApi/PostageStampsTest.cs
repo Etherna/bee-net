@@ -54,14 +54,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         }
 
         [Fact]
-        public async Task GetStampsBucketsForBatchAsync()
+        public async Task GetPostageBatchBucketsAsync()
         {
             // Arrange.
             var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act.
-            var reserveState = await beeNodeClient.GetStampsBucketsForBatchAsync(batch);
+            var reserveState = await beeNodeClient.GetPostageBatchBucketsAsync(batch);
 
             // Assert.
             Assert.Equal(32, reserveState.Depth);
