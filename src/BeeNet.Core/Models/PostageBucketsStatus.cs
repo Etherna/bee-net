@@ -16,16 +16,16 @@ using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class StampsBuckets(
-        int depth,
+    public sealed class PostageBucketsStatus(
         int bucketDepth,
         int bucketUpperBound,
-        IEnumerable<int> collisions)
+        IEnumerable<uint> collisions,
+        int depth)
     {
         // Properties.
-        public int Depth { get; } = depth;
         public int BucketDepth { get; } = bucketDepth;
         public int BucketUpperBound { get; } = bucketUpperBound;
-        public IEnumerable<int> Collisions { get; } = collisions;
+        public IEnumerable<uint> Collisions { get; } = collisions;
+        public int Depth { get; } = depth;
     }
 }

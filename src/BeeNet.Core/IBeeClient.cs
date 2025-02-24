@@ -450,6 +450,14 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
+        /// <summary>Get extended bucket data of a batch</summary>
+        /// <param name="batchId">Swarm address of the stamp</param>
+        /// <returns>Returns extended bucket data of the provided batch ID</returns>
+        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
+        Task<PostageBucketsStatus> GetPostageBatchBucketsAsync(
+            PostageBatchId batchId,
+            CancellationToken cancellationToken = default);
+
         Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -487,14 +495,6 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Get extended bucket data of a batch</summary>
-        /// <param name="batchId">Swarm address of the stamp</param>
-        /// <returns>Returns extended bucket data of the provided batch ID</returns>
-        /// <exception cref="BeeNetGatewayApiException">A server side error occurred.</exception>
-        Task<StampsBuckets> GetStampsBucketsForBatchAsync(
-            PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <returns>Swarm topology of the bee node</returns>

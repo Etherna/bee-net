@@ -744,6 +744,20 @@ namespace Etherna.BeeNet
                 storageRadius: null);
         }
 
+        public async Task<PostageBucketsStatus> GetPostageBatchBucketsAsync(
+            PostageBatchId batchId,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.StampsBucketsAsync(
+                batchId.ToString(),
+                cancellationToken).ConfigureAwait(false);
+            return new(
+                bucketDepth: response.BucketDepth,
+                bucketUpperBound: response.BucketUpperBound,
+                collisions: response.Buckets.Select(b => (uint)b.Collisions),
+                depth: response.Depth);
+        }
+
         public async Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -866,20 +880,6 @@ namespace Etherna.BeeNet
                 response.ContentHeaders,
                 response.Headers,
                 response.Stream);
-        }
-
-        public async Task<StampsBuckets> GetStampsBucketsForBatchAsync(
-            PostageBatchId batchId,
-            CancellationToken cancellationToken = default)
-        {
-            var response = await generatedClient.StampsBucketsAsync(
-                batchId.ToString(),
-                cancellationToken).ConfigureAwait(false);
-            return new(
-                depth: response.Depth,
-                bucketDepth: response.BucketDepth,
-                bucketUpperBound: response.BucketUpperBound,
-                collisions: response.Buckets.Select(b => b.Collisions));
         }
 
         public async Task<Topology> GetSwarmTopologyAsync(CancellationToken cancellationToken = default)
