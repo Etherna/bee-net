@@ -753,7 +753,7 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false);
             return new(
                 bucketDepth: response.BucketDepth,
-                bucketUpperBound: response.BucketUpperBound,
+                bucketUpperBound: (uint)response.BucketUpperBound,
                 collisions: response.Buckets.Select(b => (uint)b.Collisions),
                 depth: response.Depth);
         }

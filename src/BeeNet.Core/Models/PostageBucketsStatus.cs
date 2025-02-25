@@ -18,13 +18,13 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class PostageBucketsStatus(
         int bucketDepth,
-        int bucketUpperBound,
+        uint bucketUpperBound,
         IEnumerable<uint> collisions,
         int depth)
     {
         // Properties.
         public int BucketDepth { get; } = bucketDepth;
-        public int BucketUpperBound { get; } = bucketUpperBound;
+        public uint BucketUpperBound { get; } = bucketUpperBound;
         public IEnumerable<uint> Collisions { get; } = collisions;
         public int Depth { get; } = depth;
     }
