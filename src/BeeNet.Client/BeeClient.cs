@@ -1268,7 +1268,7 @@ namespace Etherna.BeeNet
                     proximity: s.Proximity,
                     pullsyncRate: s.PullsyncRate,
                     reserveSize: s.ReserveSize,
-                    reserveSizeWithinRadius: (int)s.ReserveSizeWithinRadius,
+                    reserveSizeWithinRadius: s.ReserveSizeWithinRadius,
                     requestFailed: s.RequestFailed,
                     storageRadius: s.StorageRadius,
                     committedDepth: s.CommittedDepth));

@@ -62,7 +62,7 @@ namespace Etherna.BeeNet.Models
             EqualityComparer<string>.Default.Equals(Path, other.Path);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
-                                             (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
+                                             Path.GetHashCode(StringComparison.InvariantCulture);
         public override string ToString() => Hash + Path;
         
         // Static methods.

@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Models
         public void VerifyConstructorArguments(VerifyConstructorArgumentsTestElement test)
         {
             Assert.Throws(test.ExpectedExceptionType,
-                () => new SwarmFeedChunk(test.Index!, test.Payload!, test.ReferenceHash!));
+                () => new SwarmFeedChunk(test.Index, test.Payload, test.ReferenceHash));
         }
 
         [Fact]

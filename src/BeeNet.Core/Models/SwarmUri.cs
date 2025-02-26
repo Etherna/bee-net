@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmUri other && Equals(other);
         
         public override int GetHashCode() => Hash.GetHashCode() ^
-                                             (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
+                                             Path.GetHashCode(StringComparison.InvariantCulture);
         
         public override string ToString() =>
             UriKind == UriKind.Absolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;

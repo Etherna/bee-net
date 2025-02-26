@@ -1,4 +1,3 @@
-using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using System.Diagnostics.CodeAnalysis;
 
