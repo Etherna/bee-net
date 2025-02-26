@@ -11,6 +11,7 @@
     <Nullable>enable</Nullable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <IsAotCompatible>true</IsAotCompatible>
 
     <PackageId>Bee.Net.Core.AspNet</PackageId>
     <RepositoryUrl>https://github.com/Etherna/bee-net</RepositoryUrl>

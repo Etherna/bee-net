@@ -10,6 +10,7 @@
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <IsAotCompatible>true</IsAotCompatible>
 
     <RepositoryUrl>https://github.com/Etherna/bee-net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
