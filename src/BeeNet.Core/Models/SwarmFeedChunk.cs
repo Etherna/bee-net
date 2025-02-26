@@ -14,8 +14,6 @@
 
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;

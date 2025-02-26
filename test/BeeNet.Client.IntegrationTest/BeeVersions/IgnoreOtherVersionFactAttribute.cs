@@ -15,7 +15,7 @@
 using System;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions
+namespace BeeNet.Client.IntegrationTest.BeeVersions
 {
     public sealed class IgnoreOtherVersionFactAttribute : FactAttribute
     {

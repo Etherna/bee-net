@@ -13,8 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Chunks;
-using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Bmt;
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Hashing.Signer;

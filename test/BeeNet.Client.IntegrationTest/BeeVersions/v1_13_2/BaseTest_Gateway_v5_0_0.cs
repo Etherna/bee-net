@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
 {
     public abstract class BaseTest_Gateway_v5_0_0
     {

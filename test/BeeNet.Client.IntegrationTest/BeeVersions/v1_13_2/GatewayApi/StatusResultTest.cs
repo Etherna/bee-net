@@ -12,11 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class StatusResultTest : BaseTest_Gateway_v5_0_0
     {

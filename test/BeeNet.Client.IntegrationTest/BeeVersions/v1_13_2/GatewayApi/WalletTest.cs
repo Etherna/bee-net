@@ -16,7 +16,7 @@ using Etherna.BeeNet.Models;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class WalletTest : BaseTest_Gateway_v5_0_0
     {
