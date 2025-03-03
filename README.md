@@ -20,7 +20,7 @@ There are several NuGet packages available for Bee.Net. Here's a brief descripti
    Tools include utilities for data chunking, calculating postage batch usage, fork with feeds, and other helpful 
    operations that enhance your experience when working with Swarm.
 
-3. **BeeNet.Core.AspNet**: This package helps to register Bee.Net Core services and converters~~~~ with Asp.Net
+3. **BeeNet.Core.AspNet**: This package helps to register Bee.Net Core services and converters with Asp.Net
 
 ## Package repositories
 
