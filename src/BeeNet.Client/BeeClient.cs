@@ -49,9 +49,9 @@ namespace Etherna.BeeNet
         public const int ChunkStreamWSReceiveBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int ChunkStreamWSSendBufferSize = SwarmFeedChunk.MaxChunkSize;
         public const int DefaultPort = 1633;
-#pragma warning disable CA1051
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
-#pragma warning restore CA1051
+
+        private readonly double TimeSpanMaxSeconds = TimeSpan.MaxValue.TotalSeconds;
 
         // Fields.
         private readonly BeeGeneratedClient generatedClient;
@@ -300,7 +300,7 @@ namespace Etherna.BeeNet
                 b => BzzBalance.FromPlurString(b.Balance));
         }
 
-        public async Task<IEnumerable<ChequebookCheque>> GetAllChequebookChequesAsync(
+        public async Task<ChequebookCheque[]> GetAllChequebookChequesAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.ChequebookChequeGetAsync(cancellationToken).ConfigureAwait(false);
@@ -314,7 +314,8 @@ namespace Etherna.BeeNet
                 lastSent: c.Lastsent is not null ? new ChequePayment(
                     beneficiary: c.Lastsent.Beneficiary,
                     chequebook: c.Lastsent.Chequebook,
-                    payout: BzzBalance.FromPlurString(c.Lastsent.Payout)) : null));
+                    payout: BzzBalance.FromPlurString(c.Lastsent.Payout)) : null))
+                .ToArray();
         }
 
         public async Task<IDictionary<string, BzzBalance>> GetAllConsumedBalancesAsync(
@@ -326,13 +327,13 @@ namespace Etherna.BeeNet
                 b => BzzBalance.FromPlurString(b.Balance));
         }
 
-        public async Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address);
+        public async Task<string[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers.Select(i => i.Address).ToArray();
 
-        public async Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default)
+        public async Task<SwarmHash[]> GetAllPinsAsync(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.PinsGetAsync(cancellationToken).ConfigureAwait(false);
-            return (response.References ?? []).Select(h => new SwarmHash(h));
+            return (response.References ?? []).Select(h => new SwarmHash(h)).ToArray();
         }
 
         public async Task<Settlement> GetAllSettlementsAsync(CancellationToken cancellationToken = default)
@@ -361,7 +362,7 @@ namespace Etherna.BeeNet
                         sent: BzzBalance.FromPlurString(s.Sent))));
         }
 
-        public async Task<IDictionary<string, IEnumerable<PostageBatch>>> GetAllValidPostageBatchesFromAllNodesAsync(
+        public async Task<IDictionary<string, PostageBatch[]>> GetAllValidPostageBatchesFromAllNodesAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
@@ -378,8 +379,9 @@ namespace Etherna.BeeNet
                         isUsable: true,
                         label: null,
                         storageRadius: batch.StorageRadius,
-                        ttl: TimeSpan.FromSeconds(batch.BatchTTL),
-                        utilization: null)));
+                        ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                        utilization: null))
+                        .ToArray());
         }
 
         public async Task<BzzBalance> GetBalanceWithPeerAsync(
@@ -424,8 +426,8 @@ namespace Etherna.BeeNet
                 swarmActHistoryAddress,
                 cancellationToken);
 
-        public async Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
-            (await generatedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1);
+        public async Task<string[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default) =>
+            (await generatedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false)).Select(i => i.Address.Address1).ToArray();
 
         public async Task<ChainState> GetChainStateAsync(CancellationToken cancellationToken = default)
         {
@@ -658,14 +660,14 @@ namespace Etherna.BeeNet
                 apiVersion: response.ApiVersion);
         }
 
-        public async Task<IEnumerable<NeighborhoodStatus>> GetNeighborhoodsStatus(
+        public async Task<NeighborhoodStatus[]> GetNeighborhoodsStatus(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StatusNeighborhoodsAsync(cancellationToken).ConfigureAwait(false);
             return response.Stamps.Select(s => new NeighborhoodStatus(
                 s.Neighborhood,
                 s.Proximity,
-                s.ReserveSizeWithinRadius));
+                s.ReserveSizeWithinRadius)).ToArray();
         }
 
         public async Task<NodeInfo> GetNodeInfoAsync(CancellationToken cancellationToken = default)
@@ -683,7 +685,7 @@ namespace Etherna.BeeNet
                 swapEnabled: response.SwapEnabled);
         }
 
-        public async Task<IEnumerable<PostageBatch>> GetOwnedPostageBatchesByNodeAsync(
+        public async Task<PostageBatch[]> GetOwnedPostageBatchesByNodeAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
@@ -696,13 +698,14 @@ namespace Etherna.BeeNet
                     id: b.BatchID,
                     isImmutable: b.ImmutableFlag,
                     label: b.Label,
-                    ttl: TimeSpan.FromSeconds(b.BatchTTL),
+                    ttl: TimeSpan.FromSeconds(Math.Min(b.BatchTTL, TimeSpanMaxSeconds)),
                     isUsable: b.Usable,
                     utilization: b.Utilization,
-                    storageRadius: null));
+                    storageRadius: null))
+                .ToArray();
         }
 
-        public async Task<IEnumerable<EthTx>> GetPendingTransactionsAsync(
+        public async Task<EthTx[]> GetPendingTransactionsAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
@@ -715,7 +718,8 @@ namespace Etherna.BeeNet
                 data: tx.Data,
                 created: tx.Created,
                 description: tx.Description,
-                value: XDaiBalance.FromWeiString(tx.Value)));
+                value: XDaiBalance.FromWeiString(tx.Value)))
+                .ToArray();
         }
 
         public async Task<string> GetPinStatusAsync(
@@ -776,7 +780,7 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.RchashAsync(depth, anchor1, anchor2, cancellationToken).ConfigureAwait(false);
             return new(
-                duration: TimeSpan.FromSeconds(response.DurationSeconds),
+                duration: TimeSpan.FromSeconds(Math.Min(response.DurationSeconds, TimeSpanMaxSeconds)),
                 hash: response.Hash,
                 proof1: new ReserveCommitmentProof(
                     chunkSpan: response.Proofs.Proof1.ChunkSpan,
@@ -947,7 +951,7 @@ namespace Etherna.BeeNet
                 synced: response.Synced);
         }
 
-        public async Task<IEnumerable<TagInfo>> GetTagsListAsync(
+        public async Task<TagInfo[]> GetTagsListAsync(
             int? offset = null,
             int? limit = null,
             CancellationToken cancellationToken = default)
@@ -962,7 +966,8 @@ namespace Etherna.BeeNet
                 seen: t.Seen,
                 stored: t.Stored,
                 sent: t.Sent,
-                synced: t.Synced));
+                synced: t.Synced))
+                .ToArray();
         }
 
         public async Task<EthTx> GetTransactionInfoAsync(
@@ -1246,7 +1251,7 @@ namespace Etherna.BeeNet
                 committedDepth: response.CommittedDepth);
         }
 
-        public async Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default)
+        public async Task<StatusNode[]> StatusPeersAsync(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false);
             return response.Stamps.Select(
@@ -1271,7 +1276,8 @@ namespace Etherna.BeeNet
                     reserveSizeWithinRadius: s.ReserveSizeWithinRadius,
                     requestFailed: s.RequestFailed,
                     storageRadius: s.StorageRadius,
-                    committedDepth: s.CommittedDepth));
+                    committedDepth: s.CommittedDepth))
+                .ToArray();
         }
 
         public Task SubscribeToGsocAsync(

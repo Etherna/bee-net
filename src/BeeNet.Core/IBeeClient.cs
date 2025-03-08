@@ -211,7 +211,7 @@ namespace Etherna.BeeNet
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<ChequebookCheque>> GetAllChequebookChequesAsync(CancellationToken cancellationToken = default);
+        Task<ChequebookCheque[]> GetAllChequebookChequesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the past due consumption balances with all known peers</summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
@@ -221,12 +221,12 @@ namespace Etherna.BeeNet
         /// <summary>Get a list of peers</summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<string>> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default);
+        Task<string[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<SwarmHash>> GetAllPinsAsync(CancellationToken cancellationToken = default);
+        Task<SwarmHash[]> GetAllPinsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get settlements with all known peers and total amount sent or received</summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
@@ -244,7 +244,7 @@ namespace Etherna.BeeNet
         /// <returns></returns>
         /// <returns>Returns a dictionary with owner as keys, and enumerable of currently valid owned postage batches as values.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IDictionary<string, IEnumerable<PostageBatch>>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default);
+        Task<IDictionary<string, PostageBatch[]>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="peerAddress">Swarm address of peer</param>
@@ -290,7 +290,7 @@ namespace Etherna.BeeNet
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<string>> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default);
+        Task<string[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get chain state</summary>
         /// <returns>Chain State</returns>
@@ -413,7 +413,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<Health> GetHealthAsync(CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<NeighborhoodStatus>> GetNeighborhoodsStatus(
+        Task<NeighborhoodStatus[]> GetNeighborhoodsStatus(
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -426,12 +426,12 @@ namespace Etherna.BeeNet
         /// <summary>Get all owned postage batches by this node</summary>
         /// <returns>List of all owned postage batches</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred</exception>
-        Task<IEnumerable<PostageBatch>> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default);
+        Task<PostageBatch[]> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<EthTx>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
+        Task<EthTx[]> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
         /// <param name="hash">Swarm reference of the root hash</param>
@@ -513,7 +513,7 @@ namespace Etherna.BeeNet
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IEnumerable<TagInfo>> GetTagsListAsync(
+        Task<TagInfo[]> GetTagsListAsync(
             int? offset = null,
             int? limit = null,
             CancellationToken cancellationToken = default);
@@ -742,7 +742,7 @@ namespace Etherna.BeeNet
         /// Get the current status snapshot of this node connected peers.
         /// </summary>
         /// <returns>Returns the status snapshot of this node connected peers</returns>
-        Task<IEnumerable<StatusNode>> StatusPeersAsync(CancellationToken cancellationToken = default);
+        Task<StatusNode[]> StatusPeersAsync(CancellationToken cancellationToken = default);
 
         Task SubscribeToGsocAsync(
             string reference,
