@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
         // Fields.
         private readonly uint[] _buckets;
         private long _totalChunks;
-        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions; //<collisions, bucketId[]>
+        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions = new(); //<collisions, bucketId[]>
         private readonly ReaderWriterLockSlim bucketsLock = new(LockRecursionPolicy.NoRecursion);
         private bool disposed;
         
@@ -45,13 +45,14 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(initialBuckets),
                     $"Initial buckets must have length {BucketsSize}, or be null");
             
-            //init "buckets" and reverse index "bucketsByCollisions"
+            // Init.
             _buckets = initialBuckets ?? new uint[BucketsSize];
-            bucketsByCollisions = new Dictionary<uint, HashSet<uint>> { [0] = [] };
             for (uint i = 0; i < BucketsSize; i++)
-                bucketsByCollisions[0].Add(i);
+            {
+                bucketsByCollisions.TryAdd(_buckets[i], []);
+                bucketsByCollisions[_buckets[i]].Add(i);
+            }
 
-            //init counters
             MaxBucketCollisions = 0;
             MinBucketCollisions = 0;
             _totalChunks = 0;
