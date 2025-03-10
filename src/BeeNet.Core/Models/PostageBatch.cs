@@ -55,17 +55,17 @@ namespace Etherna.BeeNet.Models
         
         // Static properties.
         public static PostageBatch MaxDepthInstance { get; } = new(
-            PostageBatchId.Zero,
-            0,
-            0,
-            MaxDepth,
-            true,
-            false,
-            true,
-            null,
-            null,
-            TimeSpan.FromDays(3650),
-            0);
+            id: PostageBatchId.Zero,
+            amount: 0,
+            blockNumber: 0,
+            depth: MaxDepth,
+            exists: true,
+            isImmutable: false,
+            isUsable: true,
+            label: null,
+            storageRadius: null,
+            ttl: TimeSpan.FromDays(3650),
+            utilization: 0);
 
         // Properties.
         public PostageBatchId Id { get; }
