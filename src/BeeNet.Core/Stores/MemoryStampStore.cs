@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Stores
 {
@@ -22,14 +23,24 @@ namespace Etherna.BeeNet.Stores
         // Fields.
         private readonly ConcurrentDictionary<string, StampStoreItem> storeDictionary = new();
 
+        // Constructor.
+        public MemoryStampStore(IEnumerable<StampStoreItem>? initialItems = null)
+        {
+            foreach (var item in initialItems ?? [])
+                storeDictionary.TryAdd(item.Id, item);
+        }
+
         // Methods.
-        public bool TryGet(string storeKey, out StampStoreItem item) =>
-            storeDictionary.TryGetValue(storeKey, out item!);
+        public IEnumerable<StampStoreItem> GetItems() =>
+            storeDictionary.Values;
 
         public void Put(StampStoreItem item)
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
-            storeDictionary.TryAdd(item.StoreKey, item);
+            storeDictionary.TryAdd(item.Id, item);
         }
+        
+        public bool TryGet(string storeKey, out StampStoreItem item) =>
+            storeDictionary.TryGetValue(storeKey, out item!);
     }
 }

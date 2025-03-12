@@ -38,22 +38,20 @@ namespace Etherna.BeeNet.Hashing.Postage
         // Methods.
         public PostageStamp Stamp(SwarmHash hash)
         {
-            var item = new StampStoreItem(
-                StampIssuer.PostageBatch.Id,
-                hash);
+            StampStoreItem item;
 
             lock (StampStore)
             {
-                if (StampStore.TryGet(item.StoreKey, out var storedItem))
+                if (StampStore.TryGet(StampStoreItem.BuildId(StampIssuer.PostageBatch.Id, hash), out var storedItem))
                     item = storedItem;
                 else
-                    item.StampBucketIndex = StampIssuer.IncrementBucketCount(hash);
-
-                if (item.StampBucketIndex is null)
-                    throw new InvalidOperationException();
+                    item = new StampStoreItem(
+                        StampIssuer.PostageBatch.Id,
+                        hash,
+                        StampIssuer.IncrementBucketCount(hash));
 
                 item.BucketTimestamp = DateTimeOffset.UtcNow;
-            
+
                 StampStore.Put(item);
             }
 

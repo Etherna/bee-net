@@ -12,12 +12,14 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+
 namespace Etherna.BeeNet.Stores
 {
     public interface IStampStore
     {
-        public bool TryGet(string storeKey, out StampStoreItem item);
-
-        public void Put(StampStoreItem item);
+        IEnumerable<StampStoreItem> GetItems();
+        void Put(StampStoreItem item);
+        bool TryGet(string storeKey, out StampStoreItem item);
     }
 }
