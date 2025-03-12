@@ -664,7 +664,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StatusNeighborhoodsAsync(cancellationToken).ConfigureAwait(false);
-            return response.Stamps.Select(s => new NeighborhoodStatus(
+            return response.Neighborhoods.Select(s => new NeighborhoodStatus(
                 s.Neighborhood,
                 s.Proximity,
                 s.ReserveSizeWithinRadius)).ToArray();
@@ -1201,9 +1201,6 @@ namespace Etherna.BeeNet
         public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
             await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
 
-        public Task StakeMigrateAsync(CancellationToken cancellationToken = default) =>
-            generatedClient.StakeMigrateAsync(cancellationToken);
-
         public async Task StakePostAsync(
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
@@ -1254,14 +1251,15 @@ namespace Etherna.BeeNet
         public async Task<StatusNode[]> StatusPeersAsync(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false);
-            return response.Stamps.Select(
+            return response.Snapshots.Select(
                 s => new StatusNode(
                     beeMode: s.BeeMode switch
                     {
-                        StampsBeeMode.Light => StatusBeeMode.Light,
-                        StampsBeeMode.Full => StatusBeeMode.Full,
-                        StampsBeeMode.UltraLight => StatusBeeMode.UltraLight,
-                        StampsBeeMode.Unknown => StatusBeeMode.Unknown,
+                        SnapshotsBeeMode.Light => StatusBeeMode.Light,
+                        SnapshotsBeeMode.Full => StatusBeeMode.Full,
+                        SnapshotsBeeMode.Dev => StatusBeeMode.Dev,
+                        SnapshotsBeeMode.UltraLight => StatusBeeMode.UltraLight,
+                        SnapshotsBeeMode.Unknown => StatusBeeMode.Unknown,
                         _ => throw new InvalidOperationException()
                     },
                     batchCommitment: s.BatchCommitment,

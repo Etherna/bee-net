@@ -685,16 +685,6 @@ namespace Etherna.BeeNet
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Withdraws all past staked amount back to the wallet.
-        /// </summary>
-        /// <remarks>
-        /// Be aware, the endpoint call only be called when the contract is paused and is in the process of being migrated to a new contract.
-        /// </remarks>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task StakeMigrateAsync(CancellationToken cancellationToken = default);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
         /// Deposit some amount for staking.
         /// </summary>
         /// <remarks>
