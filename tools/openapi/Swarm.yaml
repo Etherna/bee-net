@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 7.2.0
+  version: 7.3.0
   title: Bee API
   description: "A list of the currently provided Interfaces to interact with the swarm, implementing file operations and sending messages"
 
@@ -270,7 +270,23 @@ paths:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmActHistoryAddress"
       responses:
         "200":
-          description: Chunk exists
+          description: The chunk exists.
+          headers:
+            Content-Type:
+              description: The MIME type of the resource (e.g., application/octet-stream).
+              schema:
+                type: string
+                example: application/octet-stream
+            Content-Length:
+              description: The size of the chunk in bytes.
+              schema:
+                type: integer
+                example: 1024
+            Access-Control-Expose-Headers:
+              description: Headers exposed for CORS.
+              schema:
+                type: string
+                example: Accept-Ranges, Content-Encoding
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         "404":
@@ -673,7 +689,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/HealthStatus"
+                $ref: "SwarmCommon.yaml#/components/schemas/Response"
         "404":
           $ref: "SwarmCommon.yaml#/components/responses/404"
         "500":
@@ -854,8 +870,6 @@ paths:
       summary: Subscribe to GSOC payloads
       tags:
         - GSOC
-        - Subscribe
-        - Websocket
       parameters:
         - in: path
           name: reference
@@ -2308,20 +2322,6 @@ paths:
         default:
           description: Default response
 
-  "/stake/migrate":
-    post:
-      summary: Withdraws all past staked amount back to the wallet.
-      description: Be aware, the endpoint call only be called when the contract is paused and is in the process of being migrated to a new contract.
-      tags:
-        - Staking
-      responses:
-        "200":
-          $ref: "SwarmCommon.yaml#/components/schemas/StakeTransactionResponse"
-        "500":
-          $ref: "SwarmCommon.yaml#/components/responses/500"
-        default:
-          description: Default response
-
   "/stake/withdrawable":
     get:
       summary: Get the withdrawable staked amount.
@@ -2496,7 +2496,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "SwarmCommon.yaml#/components/schemas/StatusResponse"
+                $ref: "SwarmCommon.yaml#/components/schemas/StatusPeersResponse"
         "400":
           $ref: "SwarmCommon.yaml#/components/responses/400"
         default:
