@@ -287,6 +287,7 @@ namespace Etherna.BeeNet
                 underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
                 overlay: response.Overlay,
                 ethereum: response.Ethereum,
+                chainAddress: response.Chain_address,
                 publicKey: response.PublicKey,
                 pssPublicKey: response.PssPublicKey);
         }

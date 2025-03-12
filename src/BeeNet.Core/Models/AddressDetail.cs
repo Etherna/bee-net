@@ -20,6 +20,7 @@ namespace Etherna.BeeNet.Models
         string overlay,
         IEnumerable<string> underlay,
         EthAddress ethereum,
+        string chainAddress,
         string publicKey,
         string pssPublicKey)
     {
@@ -27,6 +28,7 @@ namespace Etherna.BeeNet.Models
         public string Overlay { get; } = overlay;
         public IEnumerable<string> Underlay { get; } = underlay;
         public EthAddress Ethereum { get; } = ethereum;
+        public string ChainAddress { get; } = chainAddress;
         public string PublicKey { get; } = publicKey;
         public string PssPublicKey { get; } = pssPublicKey;
     }
