@@ -17,14 +17,14 @@ using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Models
 {
-    public class StampBucketIndex(uint bucketId, uint bucketCounter)
+    public class StampBucketIndex(ushort bucketId, uint bucketCounter)
     {
         // Consts.
         public const int BucketIndexSize = 8;
 
         // Properties.
         public uint BucketCounter { get; } = bucketCounter;
-        public uint BucketId { get; } = bucketId;
+        public ushort BucketId { get; } = bucketId;
         
         // Methods.
         public byte[] ToByteArray()

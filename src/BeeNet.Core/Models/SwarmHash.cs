@@ -64,8 +64,7 @@ namespace Etherna.BeeNet.Models
         public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
-        public uint ToBucketId() => BinaryPrimitives.ReadUInt32BigEndian(
-            byteHash.AsSpan()[..4]) >> (32 - PostageBatch.BucketDepth);
+        public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.AsSpan()[..2]);
         public byte[] ToByteArray() => (byte[])byteHash.Clone();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;
         public override string ToString() => byteHash.ToHex();
