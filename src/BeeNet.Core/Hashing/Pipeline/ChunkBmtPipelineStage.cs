@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Hashing.Bmt;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -113,11 +114,21 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              *
              * Use a cache on generated chunkKey and relative bucketId for each attempt. This permits to not
              * repeat the hash calculation in case that we need to repeat the search.
+             *
+             * In case that a chunk hash has already been stored into stamp store, accept it without optimistic check.
+             * This is the best case of all, because it will not increment any bucket. Anyway, still wait
+             * prev chunk completion because we want to avoid this otherwise possible case:
+             * - sequential input chunks are [0, 1, 2, ...]
+             * - chunk 1 is the only one with its hash previously stamped
+             * - hashing of 0 keeps long time to complete,
+             * - hashing of 1 immediately proceed because was already stamped, and
+             * - from 2 onwards can proceed with optimization without need of wait for 0 to be inserted
              */
                 
             // Run optimistically before prev chunk completion.
             var encryptionCache = new Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult>();
-            var (bestKeyAttempt, expectedCollisions) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+            var (bestKeyAttempt, expectedCollisions, wasAlreadyStamped) =
+                SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
 
             // If there isn't any prev chunk to wait, proceed with result.
             if (args.PrevChunkSemaphore == null)
@@ -129,6 +140,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 await args.PrevChunkSemaphore.WaitAsync().ConfigureAwait(false);
                 
                 // ** Here chunks can enter only once per time, and in order. **
+                
+                // If chunk was already stamped, keep it.
+                if (wasAlreadyStamped)
+                    return encryptionCache[bestKeyAttempt];
             
                 // Check the optimistic result, and keep if valid.
                 var bestBucketId = encryptionCache[bestKeyAttempt].Hash.ToBucketId();
@@ -139,7 +154,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
                 // If it has been invalidated, do it again.
                 _missedOptimisticHashing++;
-                var (newBestKeyAttempt, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+                var (newBestKeyAttempt, _, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
                 return encryptionCache[newBestKeyAttempt];
             }
             finally
@@ -149,7 +164,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
         
-        private (ushort BestKeyAttempt, uint ExpectedCollisions) SearchFirstBestChunkKey(
+        private (ushort bestKeyAttempt, uint expectedCollisions, bool wasAlreadyStamped) SearchFirstBestChunkKey(
             HasherPipelineFeedArgs args,
             Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult> optimisticCache,
             SwarmHash plainChunkHash,
@@ -195,9 +210,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 if (i == 0)
                     bestCollisions = collisions;
                 
+                // Check if hash was already stamped.
+                if (PostageStamper.StampStore.TryGet(
+                        StampStoreItem.BuildId(PostageStamper.StampIssuer.PostageBatch.Id, optimisticCache[i].Hash),
+                        out _))
+                    return (i, collisions, true);
+                
                 // Check if collisions are optimal.
                 if (collisions == PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
-                    return (i, collisions);
+                    return (i, collisions, false);
                 
                 // Else, if this reach better collisions, but not the best.
                 if (collisions < bestCollisions)
@@ -207,7 +228,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 }
             }
 
-            return (bestAttempt, bestCollisions);
+            return (bestAttempt, bestCollisions, false);
         }
     }
 }

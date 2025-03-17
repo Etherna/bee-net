@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -217,6 +218,9 @@ namespace Etherna.BeeNet.Manifest
              * incremental attempts with max at the "compactionLevel" parameter.
              *
              * Best chunk is a chunk that fits in a bucket with the lowest possible number of collisions.
+             *
+             * In case that a chunk hash has already been stored into stamp store, accept it without optimistic check.
+             * This is the best case of all, because it will not increment any bucket.
              */
 
             // Calculate plain hash, and use as starting seed.
@@ -241,6 +245,12 @@ namespace Etherna.BeeNet.Manifest
                 using var hasherPipeline = hasherPipelineBuilder(true);
                 var hashingResult = await hasherPipeline.HashDataAsync(obfuscatedData).ConfigureAwait(false);
                 var collisions = hasherPipeline.PostageStamper.StampIssuer.Buckets.GetCollisions(hashingResult.Hash.ToBucketId());
+                
+                // Check if hash was already stamped.
+                if (hasherPipeline.PostageStamper.StampStore.TryGet(
+                        StampStoreItem.BuildId(hasherPipeline.PostageStamper.StampIssuer.PostageBatch.Id, hashingResult.Hash),
+                        out _))
+                    return obfuscationKey;
                 
                 // If collisions are optimal, chose this.
                 if (collisions == hasherPipeline.PostageStamper.StampIssuer.Buckets.MinBucketCollisions)
