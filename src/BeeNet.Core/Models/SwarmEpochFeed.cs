@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Models
         : SwarmFeedBase(owner, topic)
     {
         // Properties.
-        public override FeedType Type => FeedType.Epoch;
+        public override SwarmFeedType Type => SwarmFeedType.Epoch;
 
         // Methods.
         public override Task<SwarmFeedChunk> BuildNextFeedChunkAsync(

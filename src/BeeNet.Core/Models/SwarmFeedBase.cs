@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public EthAddress Owner { get; }
         public ReadOnlyMemory<byte> Topic => _topic.AsMemory();
-        public abstract FeedType Type { get; }
+        public abstract SwarmFeedType Type { get; }
         
         // Methods.
         public abstract Task<SwarmFeedChunk> BuildNextFeedChunkAsync(

@@ -14,7 +14,7 @@
 
 namespace Etherna.BeeNet.Models
 {
-    public enum FeedType
+    public enum SwarmFeedType
     {
         Epoch,
         Sequence

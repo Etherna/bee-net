@@ -75,8 +75,8 @@ namespace Etherna.BeeNet.Models
         }
 
         // Consts.
-        private static readonly byte[] ChunkOwner = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-        private static readonly byte[] ChunkTopic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+        private static readonly byte[] ChunkOwner = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+        private static readonly byte[] ChunkTopic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
         // Fields.
         private readonly Mock<IBeeClient> gatewayClientMock = new();
@@ -361,32 +361,27 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<FindStartingEpochOfflineTestElement>
                 {
                     // Null known near epoch, date on left epoch at max level.
-                    new FindStartingEpochOfflineTestElement(
-                        10,
+                    new(10,
                         null,
                         new SwarmEpochFeedIndex(0, 32, new Hasher())),
                     
                     // Null known near epoch, date on right epoch at max level.
-                    new FindStartingEpochOfflineTestElement(
-                        5_000_000_000,
+                    new(5_000_000_000,
                         null,
                         new SwarmEpochFeedIndex(4_294_967_296, 32, new Hasher())),
 
                     // Known near epoch prior to date.
-                    new FindStartingEpochOfflineTestElement(
-                        7,
+                    new(7,
                         new SwarmEpochFeedIndex(5, 0, new Hasher()),
                         new SwarmEpochFeedIndex(4, 2, new Hasher())),
 
                     // Known near epoch successive to date.
-                    new FindStartingEpochOfflineTestElement(
-                        8,
+                    new(8,
                         new SwarmEpochFeedIndex(14, 1, new Hasher()),
                         new SwarmEpochFeedIndex(8, 3, new Hasher())),
 
                     // Known near epoch contains date.
-                    new FindStartingEpochOfflineTestElement(
-                        10,
+                    new(10,
                         new SwarmEpochFeedIndex(8, 2, new Hasher()),
                         new SwarmEpochFeedIndex(8, 2, new Hasher()))
                 };

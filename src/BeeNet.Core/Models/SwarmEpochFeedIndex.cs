@@ -35,15 +35,8 @@ namespace Etherna.BeeNet.Models
         /// <param name="hasher">The hash provider</param>
         public SwarmEpochFeedIndex(ulong start, byte level, IHasher hasher)
         {
-#if NET8_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
             ArgumentOutOfRangeException.ThrowIfGreaterThan(level, MaxLevel);
-#else
-            if (start >= (ulong)1 << MaxLevel + 1)
-                throw new ArgumentOutOfRangeException(nameof(start));
-            if (level > MaxLevel)
-                throw new ArgumentOutOfRangeException(nameof(level));
-#endif
 
             //normalize start clearing less relevent bits
             start = start >> level << level;
@@ -141,12 +134,7 @@ namespace Etherna.BeeNet.Models
 
         public override FeedIndexBase GetNext(ulong at)
         {
-#if NET8_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfLessThan(at, Start);
-#else
-            if (at < Start)
-                throw new ArgumentOutOfRangeException(nameof(at));
-#endif
 
             return Start + Length > at ?
                 GetChildAt(at) :
@@ -159,8 +147,6 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Calculates the lowest common ancestor epoch given two unix times
         /// </summary>
-        /// <param name="t0"></param>
-        /// <param name="t1"></param>
         /// <returns>Lowest common ancestor epoch index</returns>
         public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, IHasher hasher)
         {

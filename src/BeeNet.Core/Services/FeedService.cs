@@ -55,10 +55,10 @@ namespace Etherna.BeeNet.Services
                 var owner = hexOwner.HexToByteArray();
                 var topic = hexTopic.HexToByteArray();
 
-                return Enum.Parse<FeedType>(strType, true) switch
+                return Enum.Parse<SwarmFeedType>(strType, true) switch
                 {
-                    FeedType.Epoch => new SwarmEpochFeed(owner, topic, hasher),
-                    FeedType.Sequence => new SwarmSequenceFeed(owner, topic),
+                    SwarmFeedType.Epoch => new SwarmEpochFeed(owner, topic, hasher),
+                    SwarmFeedType.Sequence => new SwarmSequenceFeed(owner, topic),
                     _ => throw new InvalidOperationException()
                 };
             }
