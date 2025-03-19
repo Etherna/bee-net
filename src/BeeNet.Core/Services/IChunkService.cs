@@ -47,7 +47,105 @@ namespace Etherna.BeeNet.Services
             IChunkStore chunkStore,
             SwarmAddress address,
             string? fileCachePath = null,
-            CancellationToken? cancellationToken = default);
+            CancellationToken? cancellationToken = null);
+    
+        /// <summary>
+        /// Evaluate the result uploading a directory
+        /// </summary>
+        /// <param name="directoryPath">The directory to upload</param>
+        /// <param name="indexFilename">The index default file</param>
+        /// <param name="errorFilename">The error default file</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStamper">Custom postage stamper</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> UploadDirectoryAsync(
+            string directoryPath,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStamper? postageStamper = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null);
+
+        /// <summary>
+        /// Evaluate the result uploading a directory
+        /// </summary>
+        /// <param name="fileNames">The list of files names</param>
+        /// <param name="getFileStream">Return a file stream from its name</param>
+        /// <param name="indexFilename">The index default file</param>
+        /// <param name="errorFilename">The error default file</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStamper">Custom postage stamper</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> UploadDirectoryAsync(
+            string[] fileNames,
+            Func<string, Stream> getFileStream,
+            string? indexFilename = null,
+            string? errorFilename = null,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStamper? postageStamper = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null);
+        
+        /// <summary>
+        /// Evaluate the result uploading a single file
+        /// </summary>
+        /// <param name="data">The file data in byte array</param>
+        /// <param name="fileContentType">The file content type</param>
+        /// <param name="fileName">The file name</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStamper">Custom postage stamper</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> UploadSingleFileAsync(
+            byte[] data,
+            string fileContentType,
+            string? fileName,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStamper? postageStamper = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null);
+        
+        /// <summary>
+        /// Evaluate the result uploading a single file
+        /// </summary>
+        /// <param name="stream">The file stream</param>
+        /// <param name="fileContentType">The file content type</param>
+        /// <param name="fileName">The file name</param>
+        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
+        /// <param name="encrypt">True to encrypt</param>
+        /// <param name="redundancyLevel">Choose the redundancy level</param>
+        /// <param name="postageStamper">Custom postage stamper</param>
+        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
+        /// <param name="chunkStore">Optional custom chunk store</param>
+        /// <returns>The upload evaluation result</returns>
+        Task<UploadEvaluationResult> UploadSingleFileAsync(
+            Stream stream,
+            string fileContentType,
+            string? fileName,
+            ushort compactLevel = 0,
+            bool encrypt = false,
+            RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            IPostageStamper? postageStamper = null,
+            int? chunkCuncorrency = null,
+            IChunkStore? chunkStore = null);
         
         /// <summary>
         /// Write data chunks on a local directory, without any manifest
@@ -88,103 +186,5 @@ namespace Etherna.BeeNet.Services
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null);
-    
-        /// <summary>
-        /// Evaluate the result uploading a directory
-        /// </summary>
-        /// <param name="directoryPath">The directory to upload</param>
-        /// <param name="indexFilename">The index default file</param>
-        /// <param name="errorFilename">The error default file</param>
-        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
-        /// <param name="encrypt">True to encrypt</param>
-        /// <param name="redundancyLevel">Choose the redundancy level</param>
-        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <param name="chunkStore">Optional custom chunk store</param>
-        /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> UploadDirectoryAsync(
-            string directoryPath,
-            string? indexFilename = null,
-            string? errorFilename = null,
-            ushort compactLevel = 0,
-            bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
-            int? chunkCuncorrency = null,
-            IChunkStore? chunkStore = null);
-
-        /// <summary>
-        /// Evaluate the result uploading a directory
-        /// </summary>
-        /// <param name="fileNames">The list of files names</param>
-        /// <param name="getFileStream">Return a file stream from its name</param>
-        /// <param name="indexFilename">The index default file</param>
-        /// <param name="errorFilename">The error default file</param>
-        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
-        /// <param name="encrypt">True to encrypt</param>
-        /// <param name="redundancyLevel">Choose the redundancy level</param>
-        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <param name="chunkStore">Optional custom chunk store</param>
-        /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> UploadDirectoryAsync(
-            string[] fileNames,
-            Func<string, Stream> getFileStream,
-            string? indexFilename = null,
-            string? errorFilename = null,
-            ushort compactLevel = 0,
-            bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
-            int? chunkCuncorrency = null,
-            IChunkStore? chunkStore = null);
-        
-        /// <summary>
-        /// Evaluate the result uploading a single file
-        /// </summary>
-        /// <param name="data">The file data in byte array</param>
-        /// <param name="fileContentType">The file content type</param>
-        /// <param name="fileName">The file name</param>
-        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
-        /// <param name="encrypt">True to encrypt</param>
-        /// <param name="redundancyLevel">Choose the redundancy level</param>
-        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <param name="chunkStore">Optional custom chunk store</param>
-        /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> UploadSingleFileAsync(
-            byte[] data,
-            string fileContentType,
-            string? fileName,
-            ushort compactLevel = 0,
-            bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
-            int? chunkCuncorrency = null,
-            IChunkStore? chunkStore = null);
-        
-        /// <summary>
-        /// Evaluate the result uploading a single file
-        /// </summary>
-        /// <param name="stream">The file stream</param>
-        /// <param name="fileContentType">The file content type</param>
-        /// <param name="fileName">The file name</param>
-        /// <param name="compactLevel">Chunk compact level [0, 65535]</param>
-        /// <param name="encrypt">True to encrypt</param>
-        /// <param name="redundancyLevel">Choose the redundancy level</param>
-        /// <param name="postageStampIssuer">Custom postage stamp issuer</param>
-        /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <param name="chunkStore">Optional custom chunk store</param>
-        /// <returns>The upload evaluation result</returns>
-        Task<UploadEvaluationResult> UploadSingleFileAsync(
-            Stream stream,
-            string fileContentType,
-            string? fileName,
-            ushort compactLevel = 0,
-            bool encrypt = false,
-            RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
-            int? chunkCuncorrency = null,
-            IChunkStore? chunkStore = null);
     }
 }

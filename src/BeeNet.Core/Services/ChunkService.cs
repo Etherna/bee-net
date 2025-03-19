@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Services
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel,
                 encrypt,
                 redundancyLevel,
-                postageStampIssuer,
+                postageStamper,
                 chunkCuncorrency,
                 chunkStore);
         }
@@ -98,7 +98,7 @@ namespace Etherna.BeeNet.Services
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             int? chunkCuncorrency = null,
             IChunkStore? chunkStore = null)
         {
@@ -123,12 +123,10 @@ namespace Etherna.BeeNet.Services
             
             // Init.
             chunkStore ??= new FakeChunkStore();
-            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
-            var postageStamper = new PostageStamper(
+            postageStamper ??= new PostageStamper(
                 new FakeSigner(),
-                postageStampIssuer,
+                new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore());
-
             long totalMissedOptimisticHashing = 0;
             
             // Try set index document.
@@ -160,27 +158,29 @@ namespace Etherna.BeeNet.Services
                 
                 var fileContentType = FileContentTypeProvider.GetContentType(file);
                 var fileName = Path.GetFileName(file);
-                using var fileStream = getFileStream(file);
-
-                var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
-                totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
-                
-                // Add file entry to dir manifest.
-                var fileEntryMetadata = new Dictionary<string, string>
+                var fileStream = getFileStream(file);
+                await using (fileStream.ConfigureAwait(false))
                 {
-                    [ManifestEntry.ContentTypeKey] = fileContentType,
-                    [ManifestEntry.FilenameKey] = fileName
-                };
-                if (fileHashingResult.EncryptionKey != null)
-                    fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
-                if (fileHashingResult.UseRecursiveEncryption)
-                    fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
+                    var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                    totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
                 
-                dirManifest.Add(
-                    file,
-                    ManifestEntry.NewFile(
-                        fileHashingResult.Hash,
-                        fileEntryMetadata));
+                    // Add file entry to dir manifest.
+                    var fileEntryMetadata = new Dictionary<string, string>
+                    {
+                        [ManifestEntry.ContentTypeKey] = fileContentType,
+                        [ManifestEntry.FilenameKey] = fileName
+                    };
+                    if (fileHashingResult.EncryptionKey != null)
+                        fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
+                    if (fileHashingResult.UseRecursiveEncryption)
+                        fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
+                
+                    dirManifest.Add(
+                        file,
+                        ManifestEntry.NewFile(
+                            fileHashingResult.Hash,
+                            fileEntryMetadata));
+                }
             }
             
             // Store website information.
@@ -205,7 +205,7 @@ namespace Etherna.BeeNet.Services
             return new UploadEvaluationResult(
                 chunkHashingResult,
                 totalMissedOptimisticHashing,
-                postageStampIssuer);
+                postageStamper.StampIssuer);
         }
 
         public async Task<UploadEvaluationResult> UploadSingleFileAsync(
@@ -215,7 +215,7 @@ namespace Etherna.BeeNet.Services
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
@@ -227,7 +227,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel,
                 encrypt,
                 redundancyLevel,
-                postageStampIssuer,
+                postageStamper,
                 chunkCuncorrency,
                 chunkStore).ConfigureAwait(false);
         }
@@ -239,7 +239,7 @@ namespace Etherna.BeeNet.Services
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
@@ -251,10 +251,9 @@ namespace Etherna.BeeNet.Services
 
             // Init.
             chunkStore ??= new FakeChunkStore();
-            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
-            var postageStamper = new PostageStamper(
+            postageStamper ??= new PostageStamper(
                 new FakeSigner(),
-                postageStampIssuer,
+                new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore());
             
             // Get file hash.
@@ -313,7 +312,7 @@ namespace Etherna.BeeNet.Services
             return new UploadEvaluationResult(
                 chunkHashingResult,
                 fileHasherPipeline.MissedOptimisticHashing,
-                postageStampIssuer);
+                postageStamper.StampIssuer);
         }
 
         public Task<SwarmHash> WriteDataChunksAsync(
