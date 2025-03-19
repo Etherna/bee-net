@@ -88,17 +88,16 @@ namespace Etherna.BeeNet.Services
         
         public async Task<UploadEvaluationResult> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
             ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
             
             // Init.
             chunkStore ??= new FakeChunkStore();
-            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
-            var postageStamper = new PostageStamper(
+            postageStamper ??= new PostageStamper(
                 new FakeSigner(),
-                postageStampIssuer,
+                new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore());
 
             // Create manifest.
@@ -128,7 +127,7 @@ namespace Etherna.BeeNet.Services
             return new UploadEvaluationResult(
                 chunkHashingResult,
                 0,
-                postageStampIssuer);
+                postageStamper.StampIssuer);
         }
     }
 }

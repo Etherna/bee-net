@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Services
 
         Task<UploadEvaluationResult> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            IPostageStampIssuer? postageStampIssuer = null,
+            IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null);
     }
 }
