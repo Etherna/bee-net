@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public class XDaiBalanceJsonConverter: JsonConverter<XDaiBalance>
+    public class XDaiBalanceJsonConverter : JsonConverter<XDaiBalance>
     {
         public override XDaiBalance Read(
             ref Utf8JsonReader reader,
