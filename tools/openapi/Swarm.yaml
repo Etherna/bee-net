@@ -1056,12 +1056,14 @@ paths:
           name: at
           schema:
             type: integer
+            format: int64
           required: false
           description: "Timestamp of the update (default: now)"
         - in: query
           name: after
           schema:
             type: integer
+            format: int64
           required: false
           description: "Start index (default: 0)"
         - in: query
