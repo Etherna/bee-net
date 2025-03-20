@@ -111,15 +111,17 @@ namespace Etherna.BeeNet.Services
                     null,
                     readOnlyPipeline),
                 0);
-            
+
             feedManifest.Add(
                 MantarayManifest.RootPath,
-                ManifestEntry.NewDirectory(new Dictionary<string, string>
-                {
-                    [FeedMetadataEntryOwner] = swarmFeed.Owner.ToString(),
-                    [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
-                    [FeedMetadataEntryType] = swarmFeed.Type.ToString()
-                }));
+                ManifestEntry.NewFile(
+                    SwarmHash.Zero,
+                    new Dictionary<string, string>
+                    {
+                        [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
+                        [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
+                        [FeedMetadataEntryType] = swarmFeed.Type.ToString()
+                    }));
 
             var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
             
