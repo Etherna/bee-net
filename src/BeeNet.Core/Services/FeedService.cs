@@ -86,8 +86,9 @@ namespace Etherna.BeeNet.Services
             return soc.Chunk;
         }
         
-        public async Task<UploadEvaluationResult> UploadFeedManifestAsync(
+        public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
+            ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
@@ -110,7 +111,7 @@ namespace Etherna.BeeNet.Services
                     0,
                     null,
                     readOnlyPipeline),
-                0);
+                compactLevel);
 
             feedManifest.Add(
                 MantarayManifest.RootPath,
@@ -123,13 +124,7 @@ namespace Etherna.BeeNet.Services
                         [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                     }));
 
-            var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
-            
-            // Return result.
-            return new UploadEvaluationResult(
-                chunkHashingResult,
-                0,
-                postageStamper.StampIssuer);
+            return await feedManifest.GetHashAsync().ConfigureAwait(false);
         }
     }
 }
