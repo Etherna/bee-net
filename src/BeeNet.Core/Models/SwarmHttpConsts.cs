@@ -21,9 +21,12 @@ namespace Etherna.BeeNet.Models
         public const string SwarmCollectionHeader = "swarm-collection";
         public const string SwarmErrorDocumentHeader = "swarm-error-document";
         public const string SwarmFeedIndexHeader = "swarm-feed-index";
+        public const string SwarmFeedIndexNextHeader = "swarm-feed-index-next";
         public const string SwarmIndexDocumentHeader = "swarm-index-document";
+        public const string SwarmOnlyRootChunkHeader = "swarm-only-root-chunk";
         public const string SwarmPinningHeader = "swarm-pin";
         public const string SwarmPostageBatchIdHeader = "swarm-postage-batch-id";
+        public const string SwarmSocSignatureHeader = "swarm-soc-signature";
         public const string SwarmTagHeader = "swarm-tag";
     }
 }

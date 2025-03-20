@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class SwarmUriJsonConverter : JsonConverter<SwarmUri>
+    public sealed class SwarmUriJsonConverter : JsonConverter<SwarmUri>
     {
         public override SwarmUri Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

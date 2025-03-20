@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class XorEncryptKeyJsonConverter : JsonConverter<XorEncryptKey>
+    public sealed class XorEncryptKeyJsonConverter : JsonConverter<XorEncryptKey>
     {
         public override XorEncryptKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
