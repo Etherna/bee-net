@@ -125,11 +125,11 @@ namespace Etherna.BeeNet.Models
         public override Memory<byte> MarshalBinary()
         {
             var epochBytes = Start.UnixDateTimeToByteArray();
-            var newArray = new byte[epochBytes.Length + 1];
-            epochBytes.CopyTo(newArray, 0);
-            newArray[epochBytes.Length] = Level;
+            var buffer = new byte[epochBytes.Length + 1];
+            epochBytes.CopyTo(buffer, 0);
+            buffer[epochBytes.Length] = Level;
 
-            return hasher.ComputeHash(newArray);
+            return hasher.ComputeHash(buffer);
         }
 
         public override SwarmFeedIndexBase GetNext(ulong at)

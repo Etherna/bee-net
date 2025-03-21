@@ -18,15 +18,16 @@ namespace Etherna.BeeNet.Models
     {
         public const string ContentTypeHeader = "Content-Type";
         public const string DefaultIndexFilename = "index.html";
-        public const string SwarmCollectionHeader = "swarm-collection";
-        public const string SwarmErrorDocumentHeader = "swarm-error-document";
-        public const string SwarmFeedIndexHeader = "swarm-feed-index";
-        public const string SwarmFeedIndexNextHeader = "swarm-feed-index-next";
-        public const string SwarmIndexDocumentHeader = "swarm-index-document";
-        public const string SwarmOnlyRootChunkHeader = "swarm-only-root-chunk";
-        public const string SwarmPinningHeader = "swarm-pin";
-        public const string SwarmPostageBatchIdHeader = "swarm-postage-batch-id";
-        public const string SwarmSocSignatureHeader = "swarm-soc-signature";
-        public const string SwarmTagHeader = "swarm-tag";
+        public const string SwarmCollectionHeader = "Swarm-Collection";
+        public const string SwarmErrorDocumentHeader = "Swarm-Error-Document";
+        public const string SwarmFeedIndexHeader = "Swarm-Feed-Index";
+        public const string SwarmFeedIndexNextHeader = "Swarm-Feed-Index-Next";
+        public const string SwarmIndexDocumentHeader = "Swarm-Index-Document";
+        public const string SwarmOnlyRootChunkHeader = "Swarm-Only-Root-Chunk";
+        public const string SwarmPinningHeader = "Swarm-Pin";
+        public const string SwarmPostageBatchIdHeader = "Swarm-Postage-Batch-Id";
+        public const string SwarmPostageStampHeader = "Swarm-Postage-Stamp";
+        public const string SwarmSocSignatureHeader = "Swarm-Soc-Signature";
+        public const string SwarmTagHeader = "Swarm-Tag";
     }
 }

@@ -92,10 +92,10 @@ namespace Etherna.BeeNet.Models
              * 
              * This doesn't access to swarm network, so it ignores chunks' timestamps.
              * It starts from an optional well known existing epoch index passed by user, and tries to find index of an existing starting chunk.
-             * Passed epoch index should be as near as possibile to the final chunk to maximize optimization.
-             * Process is tollerant to wrong initial passed index, even if in this case it is not optimized.
+             * Passed epoch index should be as near as possible to the final chunk to maximize optimization.
+             * Process is tolerant to wrong initial passed index, even if in this case it is not optimized.
              * 
-             * It tries to find common anchestor between date and existing previously known epoch, if passed.
+             * It tries to find common ancestor between date and existing previously known epoch, if passed.
              * If a previously known epoch is not passed, start at max level with epoch containing the date.
              * 
              * -> Input: optional known existing epoch index, near to searched date.
@@ -109,7 +109,7 @@ namespace Etherna.BeeNet.Models
              * If it doesn't exist, or if time stamp is subsequent to searched date,
              *   if epoch index is right, try to search on left,
              *   else if epoch index is left, try to search on parent.
-             * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
+             * Stops when a chunk with previous date is found, or when it reaches max level limit on left chunk.
              * 
              * -> Input: starting epoch index from phase 1.
              * <- Output: an existing chunk with prior date, or null if a chunk is not found. If null, skip phase 3.
@@ -117,12 +117,12 @@ namespace Etherna.BeeNet.Models
              * ------------
              * Phase 3) Find the existing chunk with timestamp nearest and prior to the searched date. (top->down)
              * 
-             * It starts from the output chunk of phase 2, and tries to get near as possibile to searched date, without pass it.
+             * It starts from the output chunk of phase 2, and tries to get near as possible to searched date, without pass it.
              * Is possible that, if the passed chunk is a left chunk, epoch index of passed chunk could not contain the "at" date.
              * In this case adjust the date as (chunk.Index.Right.Start - 1).
              * 
              * It tries to get child epoch at date from existing chunk. If chunk exists and is prior, make recursion on it.
-             * If it doesn't exist or it has timestamp subsequent to date.
+             * If it doesn't exist, or it has timestamp subsequent to date.
              *   If child is right, try to get left. Check again end eventually make recursion on it.
              *   If child is left return current chunk.
              * It stops when a valid chunk to continue recursion is not found, or when current chunk hit level 0 (max resolution).
@@ -213,8 +213,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Implement phase 2 of epoch chunk look up.
         /// </summary>
-        /// <param name="account">The SOC owner account</param>
-        /// <param name="topic">The SOC topic</param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="at">The searched date</param>
         /// <param name="epochIndex">The epoch to analyze containing current date</param>
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
