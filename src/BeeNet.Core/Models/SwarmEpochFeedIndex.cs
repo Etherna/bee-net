@@ -12,9 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using System;
+using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Models
 {
@@ -124,7 +124,8 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         public override Memory<byte> MarshalBinary()
         {
-            var epochBytes = Start.UnixDateTimeToByteArray();
+            var epochBytes = new byte[8];
+            BinaryPrimitives.WriteUInt64BigEndian(epochBytes, Start);
             var buffer = new byte[epochBytes.Length + 1];
             epochBytes.CopyTo(buffer, 0);
             buffer[epochBytes.Length] = Level;

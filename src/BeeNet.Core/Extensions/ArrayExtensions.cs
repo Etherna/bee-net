@@ -22,14 +22,20 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class ArrayExtensions
     {
-        public static ulong ByteArrayToUnixDateTime(this byte[] dateTimeByteArray)
+        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this byte[] unixTimeBytes) =>
+            NanosecondsUnixTimeToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
+        
+        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this Span<byte> unixTimeBytes) =>
+            NanosecondsUnixTimeToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes);
+        
+        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this ReadOnlySpan<byte> unixTimeBytes)
         {
-            ArgumentNullException.ThrowIfNull(dateTimeByteArray, nameof(dateTimeByteArray));
-
-            if (dateTimeByteArray.Length != SwarmFeedChunk.TimeStampSize)
-                throw new ArgumentOutOfRangeException(nameof(dateTimeByteArray), "Invalid date time byte array length");
-
-            return BinaryPrimitives.ReadUInt64BigEndian(dateTimeByteArray);
+            if (unixTimeBytes.Length != SwarmFeedChunk.TimeStampSize)
+                throw new ArgumentOutOfRangeException(nameof(unixTimeBytes), "Invalid unix time byte array length");
+            
+            var unixNanoseconds = BinaryPrimitives.ReadUInt64BigEndian(unixTimeBytes);
+            var unixMilliseconds = unixNanoseconds / 1000000;
+            return DateTimeOffset.FromUnixTimeMilliseconds((long)unixMilliseconds);
         }
 
         public static string FindCommonPrefix(this string x, string y)

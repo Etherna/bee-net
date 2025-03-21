@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,20 +12,21 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class LongExtensions
+    public static class DateTimeOffsetExtensions
     {
-        public static byte[] UnixDateTimeToByteArray(this long unixDateTime) =>
-            ((ulong)unixDateTime).UnixDateTimeToByteArray();
-        
-        public static byte[] UnixDateTimeToByteArray(this ulong unixDateTime)
+        public static byte[] ToUnixTimeNanosecondsByteArray(this DateTimeOffset dateTime)
         {
-            var buffer = new byte[8];
-            BinaryPrimitives.WriteUInt64BigEndian(buffer, unixDateTime);
-            return buffer;
+            var unixMilliseconds = (ulong)dateTime.ToUnixTimeMilliseconds();
+            var unixNanoseconds = unixMilliseconds * 1000000;
+            
+            var unixTimeByteArray = new byte[8];
+            BinaryPrimitives.WriteUInt64BigEndian(unixTimeByteArray, unixNanoseconds);
+            return unixTimeByteArray;
         }
     }
 }

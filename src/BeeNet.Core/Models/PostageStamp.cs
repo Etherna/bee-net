@@ -12,7 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
 {
@@ -22,24 +25,38 @@ namespace Etherna.BeeNet.Models
         DateTimeOffset timeStamp,
         byte[] signature)
     {
-        /// <summary>
-        /// Postage batch ID
-        /// </summary>
+        // Consts.
+        public const int StampSize = 113;
+        
+        // Static builders.
+        public static PostageStamp BuildFromByteArray(ReadOnlySpan<byte> bytes)
+        {
+            if (bytes.Length != StampSize)
+                throw new ArgumentOutOfRangeException(nameof(bytes), "Invalid stamp length");
+
+            var batchId = new PostageBatchId(bytes[..32].ToArray());
+            var stampBucketIndex = StampBucketIndex.BuildFromByteArray(bytes[32..40]);
+            var timeStamp = DateTimeOffset.FromUnixTimeSeconds((long)BinaryPrimitives.ReadUInt64BigEndian(bytes[40..48]));
+            var signature = bytes[48..].ToArray();
+
+            return new PostageStamp(batchId, stampBucketIndex, timeStamp, signature);
+        }
+        
+        // Properties.
         public PostageBatchId BatchId { get; } = batchId;
-
-        /// <summary>
-        /// Index of the batch
-        /// </summary>
         public StampBucketIndex StampBucketIndex { get; } = stampBucketIndex;
-
-        /// <summary>
-        /// To signal order when assigning the indexes to multiple chunks
-        /// </summary>
         public DateTimeOffset TimeStamp { get; } = timeStamp;
-
-        /// <summary>
-        /// common r[32]s[32]v[1]-style 65 byte ECDSA signature of batchID|index|address by owner or grantee
-        /// </summary>
         public ReadOnlyMemory<byte> Signature { get; } = signature;
+        
+        // Methods.
+        public byte[] ToByteArray()
+        {
+            List<byte> buffer = [];
+            buffer.AddRange(BatchId.ToByteArray());
+            buffer.AddRange(StampBucketIndex.ToByteArray());
+            buffer.AddRange(TimeStamp.ToUnixTimeNanosecondsByteArray());
+            buffer.AddRange(Signature.ToArray());
+            return buffer.ToArray();
+        }
     }
 }

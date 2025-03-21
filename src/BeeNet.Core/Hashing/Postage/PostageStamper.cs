@@ -92,8 +92,8 @@ namespace Etherna.BeeNet.Hashing.Postage
                 hasher.BlockUpdate(hash.ToByteArray(), 0, SwarmHash.HashSize);
                 hasher.BlockUpdate(batchId.ToByteArray(), 0, PostageBatchId.BatchIdSize);
                 hasher.BlockUpdate(stampBucketIndex.ToByteArray(), 0, StampBucketIndex.BucketIndexSize);
-                var unixDateTimeToByteArray = timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray();
-                hasher.BlockUpdate(unixDateTimeToByteArray, 0, unixDateTimeToByteArray.Length);
+                var unixTimeByteArray = timeStamp.ToUnixTimeNanosecondsByteArray();
+                hasher.BlockUpdate(unixTimeByteArray, 0, unixTimeByteArray.Length);
                 hasher.DoFinal(result, 0);
                 
                 /*

@@ -87,12 +87,12 @@ namespace Etherna.BeeNet.Models
         {
             var chunk = new SwarmFeedChunk(
                 new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
             var result = chunk.TimeStamp;
 
-            Assert.Equal(new DateTimeOffset(2107, 03, 04, 22, 02, 45, TimeSpan.Zero), result);
+            Assert.Equal(new DateTimeOffset(1972, 04, 20, 13, 17, 39, 790, TimeSpan.Zero), result);
         }
 
         [Fact]
@@ -114,9 +114,7 @@ namespace Etherna.BeeNet.Models
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload);
             Thread.Sleep(1000);
             var afterTimeStamp = DateTimeOffset.UtcNow;
-
-            var chunkUnixTimeStamp = chunkPayload.Take(SwarmFeedChunk.TimeStampSize).ToArray().ByteArrayToUnixDateTime();
-            var chunkTimeStamp = DateTimeOffset.FromUnixTimeSeconds((long)chunkUnixTimeStamp);
+            var chunkTimeStamp = chunkPayload.AsSpan()[..SwarmFeedChunk.TimeStampSize].NanosecondsUnixTimeToDateTimeOffset();
 
             Assert.InRange(chunkTimeStamp, beforeTimeStamp, afterTimeStamp);
             Assert.Equal(contentPayload, chunkPayload.Skip(SwarmFeedChunk.TimeStampSize));
