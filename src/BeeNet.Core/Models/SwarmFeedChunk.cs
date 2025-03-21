@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Models
         public SwarmFeedIndexBase Index { get; }
         public ReadOnlyMemory<byte> Payload => Data[TimeStampSize..];
         public DateTimeOffset TimeStamp =>
-            Data[..TimeStampSize].Span.NanosecondsUnixTimeToDateTimeOffset();
+            Data[..TimeStampSize].Span.UnixTimeNanosecondsToDateTimeOffset();
 
         // Methods.
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]

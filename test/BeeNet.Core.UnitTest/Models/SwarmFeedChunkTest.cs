@@ -114,7 +114,7 @@ namespace Etherna.BeeNet.Models
             var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload);
             Thread.Sleep(1000);
             var afterTimeStamp = DateTimeOffset.UtcNow;
-            var chunkTimeStamp = chunkPayload.AsSpan()[..SwarmFeedChunk.TimeStampSize].NanosecondsUnixTimeToDateTimeOffset();
+            var chunkTimeStamp = chunkPayload.AsSpan()[..SwarmFeedChunk.TimeStampSize].UnixTimeNanosecondsToDateTimeOffset();
 
             Assert.InRange(chunkTimeStamp, beforeTimeStamp, afterTimeStamp);
             Assert.Equal(contentPayload, chunkPayload.Skip(SwarmFeedChunk.TimeStampSize));

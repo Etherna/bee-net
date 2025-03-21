@@ -22,13 +22,13 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class ArrayExtensions
     {
-        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this byte[] unixTimeBytes) =>
-            NanosecondsUnixTimeToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
+        public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this byte[] unixTimeBytes) =>
+            UnixTimeNanosecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
         
-        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this Span<byte> unixTimeBytes) =>
-            NanosecondsUnixTimeToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes);
+        public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this Span<byte> unixTimeBytes) =>
+            UnixTimeNanosecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes);
         
-        public static DateTimeOffset NanosecondsUnixTimeToDateTimeOffset(this ReadOnlySpan<byte> unixTimeBytes)
+        public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this ReadOnlySpan<byte> unixTimeBytes)
         {
             if (unixTimeBytes.Length != SwarmFeedChunk.TimeStampSize)
                 throw new ArgumentOutOfRangeException(nameof(unixTimeBytes), "Invalid unix time byte array length");

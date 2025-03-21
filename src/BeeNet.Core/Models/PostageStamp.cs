@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Models
 
             var batchId = new PostageBatchId(bytes[..32].ToArray());
             var stampBucketIndex = StampBucketIndex.BuildFromByteArray(bytes[32..40]);
-            var timeStamp = DateTimeOffset.FromUnixTimeSeconds((long)BinaryPrimitives.ReadUInt64BigEndian(bytes[40..48]));
+            var timeStamp = bytes[40..48].UnixTimeNanosecondsToDateTimeOffset();
             var signature = bytes[48..].ToArray();
 
             return new PostageStamp(batchId, stampBucketIndex, timeStamp, signature);
