@@ -21,6 +21,18 @@ namespace Etherna.BeeNet.Models
     {
         // Consts.
         public const int BucketIndexSize = 8;
+        
+        // Static builders.
+        public static StampBucketIndex BuildFromByteArray(ReadOnlySpan<byte> bytes)
+        {
+            if (bytes.Length != BucketIndexSize)
+                throw new ArgumentOutOfRangeException(nameof(bytes), "Invalid bucket index length");
+
+            var bucketId = (ushort)BinaryPrimitives.ReadUInt32BigEndian(bytes);
+            var bucketCounter = BinaryPrimitives.ReadUInt32BigEndian(bytes[4..]);
+
+            return new StampBucketIndex(bucketId, bucketCounter);
+        }
 
         // Properties.
         public uint BucketCounter { get; } = bucketCounter;
