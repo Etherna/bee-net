@@ -18,7 +18,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class SwarmEpochFeedIndex : FeedIndexBase
+    public sealed class SwarmEpochFeedIndex : SwarmFeedIndexBase
     {
         // Consts.
         public const byte MaxLevel = 32; //valid from 01/01/1970 to 16/03/2242
@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Models
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
             ArgumentOutOfRangeException.ThrowIfGreaterThan(level, MaxLevel);
 
-            //normalize start clearing less relevent bits
+            //normalize start clearing less relevant bits
             start = start >> level << level;
 
             this.hasher = hasher;
@@ -125,14 +125,14 @@ namespace Etherna.BeeNet.Models
         public override Memory<byte> MarshalBinary()
         {
             var epochBytes = Start.UnixDateTimeToByteArray();
-            var newArray = new byte[epochBytes.Length + 1];
-            epochBytes.CopyTo(newArray, 0);
-            newArray[epochBytes.Length] = Level;
+            var buffer = new byte[epochBytes.Length + 1];
+            epochBytes.CopyTo(buffer, 0);
+            buffer[epochBytes.Length] = Level;
 
-            return hasher.ComputeHash(newArray);
+            return hasher.ComputeHash(buffer);
         }
 
-        public override FeedIndexBase GetNext(ulong at)
+        public override SwarmFeedIndexBase GetNext(ulong at)
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(at, Start);
 

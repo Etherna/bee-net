@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class TagIdJsonConverter : JsonConverter<TagId>
+    public sealed class TagIdJsonConverter : JsonConverter<TagId>
     {
         public override TagId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

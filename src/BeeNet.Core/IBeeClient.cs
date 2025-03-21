@@ -378,9 +378,9 @@ namespace Etherna.BeeNet
         Task<FileResponse> GetFeedAsync(
             EthAddress owner,
             string topic,
-            int? at = null,
-            int? after = null,
-            string? type = null,
+            DateTimeOffset? at = null,
+            ulong? after = null,
+            SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,

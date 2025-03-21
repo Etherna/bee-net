@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class EthAddressJsonConverter : JsonConverter<EthAddress>
+    public sealed class EthAddressJsonConverter : JsonConverter<EthAddress>
     {
         public override EthAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

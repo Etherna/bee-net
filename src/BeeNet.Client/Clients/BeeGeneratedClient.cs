@@ -404,7 +404,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, int? at = null, int? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -4342,7 +4342,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, int? at = null, int? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");

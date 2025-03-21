@@ -30,25 +30,27 @@ namespace Etherna.BeeNet.Manifest
         // Constructor.
         private ManifestEntry(
             SwarmHash hash,
+            bool isDirectory,
             IReadOnlyDictionary<string, string> metadata)
         {
             Hash = hash;
+            IsDirectory = isDirectory;
             Metadata = metadata;
         }
         
         // Static builders.
         public static ManifestEntry NewDirectory(
             IReadOnlyDictionary<string, string> metadata) =>
-            new(SwarmHash.Zero, metadata);
+            new(SwarmHash.Zero, true, metadata);
 
         public static ManifestEntry NewFile(
             SwarmHash fileHash,
             IReadOnlyDictionary<string, string> metadata) =>
-            new(fileHash, metadata);
+            new(fileHash, false, metadata);
         
         // Properties.
         public SwarmHash Hash { get; }
-        public bool IsDirectory => Hash == SwarmHash.Zero;
+        public bool IsDirectory { get; }
         public IReadOnlyDictionary<string, string> Metadata { get; }
     }
 }

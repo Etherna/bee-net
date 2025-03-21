@@ -29,9 +29,10 @@ namespace Etherna.BeeNet.Services
         
         Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore);
 
-        Task<UploadEvaluationResult> UploadFeedManifestAsync(
+        Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            IPostageStampIssuer? postageStampIssuer = null,
+            ushort compactLevel = 0,
+            IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null);
     }
 }

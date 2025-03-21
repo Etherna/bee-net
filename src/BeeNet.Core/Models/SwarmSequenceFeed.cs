@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
 
@@ -25,17 +26,17 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         public override Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            FeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(beeClient, contentPayload, knownNearIndex as SwarmSequenceFeedIndex);
+            return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmSequenceFeedIndex);
         }
         
         public Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
             SwarmSequenceFeedIndex? knownNearIndex)
         {
@@ -43,17 +44,17 @@ namespace Etherna.BeeNet.Models
         }
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             DateTimeOffset at,
-            FeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return TryFindFeedAtAsync(beeClient, at, knownNearIndex as SwarmSequenceFeedIndex);
+            return TryFindFeedAtAsync(chunkStore, at, knownNearIndex as SwarmSequenceFeedIndex);
         }
 
         public Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             DateTimeOffset at,
             SwarmSequenceFeedIndex? knownNearIndex)
         {

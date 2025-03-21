@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class PostageBatchIdJsonConverter : JsonConverter<PostageBatchId>
+    public sealed class PostageBatchIdJsonConverter : JsonConverter<PostageBatchId>
     {
         public override PostageBatchId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

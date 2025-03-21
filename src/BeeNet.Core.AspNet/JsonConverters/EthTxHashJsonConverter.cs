@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class EthTxHashJsonConverter : JsonConverter<EthTxHash>
+    public sealed class EthTxHashJsonConverter : JsonConverter<EthTxHash>
     {
         public override EthTxHash Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

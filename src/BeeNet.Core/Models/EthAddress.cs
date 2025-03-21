@@ -68,7 +68,9 @@ namespace Etherna.BeeNet.Models
             return value.Length == AddressSize;
         }
         public static bool IsValidAddress(string value) =>
-            value.IsValidEthereumAddressHexFormat();
+            //accept as valid both with "0x..." or not
+            value.IsHex() &&
+            value.IsValidEthereumAddressLength();
         
         // Operator methods.
         public static bool operator ==(EthAddress left, EthAddress right) => left.Equals(right);

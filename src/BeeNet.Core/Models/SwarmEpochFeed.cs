@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
 
@@ -26,24 +27,24 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         public override Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            FeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(beeClient, contentPayload, knownNearIndex as SwarmEpochFeedIndex);
+            return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmEpochFeedIndex);
         }
 
         public async Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
             SwarmEpochFeedIndex? knownNearIndex)
         {
             var at = DateTimeOffset.UtcNow;
 
             // Find last published chunk.
-            var lastEpochFeedChunk = await TryFindFeedAtAsync(beeClient, at, knownNearIndex).ConfigureAwait(false);
+            var lastEpochFeedChunk = await TryFindFeedAtAsync(chunkStore, at, knownNearIndex).ConfigureAwait(false);
 
             // Define next epoch index.
             SwarmEpochFeedIndex nextEpochIndex;
@@ -64,17 +65,17 @@ namespace Etherna.BeeNet.Models
         }
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             DateTimeOffset at,
-            FeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
-            return TryFindFeedAtAsync(beeClient, at, knownNearIndex as SwarmEpochFeedIndex);
+            return TryFindFeedAtAsync(chunkStore, at, knownNearIndex as SwarmEpochFeedIndex);
         }
 
         public async Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             DateTimeOffset at,
             SwarmEpochFeedIndex? knownNearEpochIndex)
         {
@@ -91,10 +92,10 @@ namespace Etherna.BeeNet.Models
              * 
              * This doesn't access to swarm network, so it ignores chunks' timestamps.
              * It starts from an optional well known existing epoch index passed by user, and tries to find index of an existing starting chunk.
-             * Passed epoch index should be as near as possibile to the final chunk to maximize optimization.
-             * Process is tollerant to wrong initial passed index, even if in this case it is not optimized.
+             * Passed epoch index should be as near as possible to the final chunk to maximize optimization.
+             * Process is tolerant to wrong initial passed index, even if in this case it is not optimized.
              * 
-             * It tries to find common anchestor between date and existing previously known epoch, if passed.
+             * It tries to find common ancestor between date and existing previously known epoch, if passed.
              * If a previously known epoch is not passed, start at max level with epoch containing the date.
              * 
              * -> Input: optional known existing epoch index, near to searched date.
@@ -108,7 +109,7 @@ namespace Etherna.BeeNet.Models
              * If it doesn't exist, or if time stamp is subsequent to searched date,
              *   if epoch index is right, try to search on left,
              *   else if epoch index is left, try to search on parent.
-             * Stops when a chunk with previous date is found, or when it reach max level limit on left chunk.
+             * Stops when a chunk with previous date is found, or when it reaches max level limit on left chunk.
              * 
              * -> Input: starting epoch index from phase 1.
              * <- Output: an existing chunk with prior date, or null if a chunk is not found. If null, skip phase 3.
@@ -116,12 +117,12 @@ namespace Etherna.BeeNet.Models
              * ------------
              * Phase 3) Find the existing chunk with timestamp nearest and prior to the searched date. (top->down)
              * 
-             * It starts from the output chunk of phase 2, and tries to get near as possibile to searched date, without pass it.
+             * It starts from the output chunk of phase 2, and tries to get near as possible to searched date, without pass it.
              * Is possible that, if the passed chunk is a left chunk, epoch index of passed chunk could not contain the "at" date.
              * In this case adjust the date as (chunk.Index.Right.Start - 1).
              * 
              * It tries to get child epoch at date from existing chunk. If chunk exists and is prior, make recursion on it.
-             * If it doesn't exist or it has timestamp subsequent to date.
+             * If it doesn't exist, or it has timestamp subsequent to date.
              *   If child is right, try to get left. Check again end eventually make recursion on it.
              *   If child is left return current chunk.
              * It stops when a valid chunk to continue recursion is not found, or when current chunk hit level 0 (max resolution).
@@ -135,7 +136,7 @@ namespace Etherna.BeeNet.Models
 
             // Phase 2)
             var startChunk = await TryFindStartingEpochChunkOnlineAsync(
-                beeClient,
+                chunkStore,
                 atUnixTime,
                 startEpoch).ConfigureAwait(false);
 
@@ -144,14 +145,14 @@ namespace Etherna.BeeNet.Models
 
             // Phase 3)
             return await FindLastEpochChunkBeforeDateAsync(
-                beeClient,
+                chunkStore,
                 atUnixTime,
                 startChunk).ConfigureAwait(false);
         }
 
         // Helpers.
         internal async Task<SwarmFeedChunk> FindLastEpochChunkBeforeDateAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             ulong at,
             SwarmFeedChunk currentChunk)
         {
@@ -166,16 +167,16 @@ namespace Etherna.BeeNet.Models
 
             // Try chunk on child epoch at date.
             var childIndexAtDate = currentIndex.GetChildAt(at);
-            var childChunkAtDate = await TryGetFeedChunkAsync(beeClient, childIndexAtDate).ConfigureAwait(false);
+            var childChunkAtDate = await TryGetFeedChunkAsync(chunkStore, childIndexAtDate).ConfigureAwait(false);
             if (childChunkAtDate != null && (ulong)childChunkAtDate.TimeStamp.ToUnixTimeSeconds() <= at)
-                return await FindLastEpochChunkBeforeDateAsync(beeClient, at, childChunkAtDate).ConfigureAwait(false);
+                return await FindLastEpochChunkBeforeDateAsync(chunkStore, at, childChunkAtDate).ConfigureAwait(false);
 
             // Try left brother if different.
             if (childIndexAtDate.IsRight)
             {
-                var childLeftChunk = await TryGetFeedChunkAsync(beeClient, childIndexAtDate.Left).ConfigureAwait(false);
+                var childLeftChunk = await TryGetFeedChunkAsync(chunkStore, childIndexAtDate.Left).ConfigureAwait(false);
                 if (childLeftChunk != null) //to check timestamp is superfluous in this case
-                    return await FindLastEpochChunkBeforeDateAsync(beeClient, at, childLeftChunk).ConfigureAwait(false);
+                    return await FindLastEpochChunkBeforeDateAsync(chunkStore, at, childLeftChunk).ConfigureAwait(false);
             }
 
             return currentChunk;
@@ -212,18 +213,17 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Implement phase 2 of epoch chunk look up.
         /// </summary>
-        /// <param name="account">The SOC owner account</param>
-        /// <param name="topic">The SOC topic</param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="at">The searched date</param>
         /// <param name="epochIndex">The epoch to analyze containing current date</param>
         /// <returns>A tuple with found chunk (if any) and updated "at" date</returns>
         internal async Task<SwarmFeedChunk?> TryFindStartingEpochChunkOnlineAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             ulong at,
             SwarmEpochFeedIndex epochIndex)
         {
             // Try to get chunk payload on network.
-            var chunk = await TryGetFeedChunkAsync(beeClient, epochIndex).ConfigureAwait(false);
+            var chunk = await TryGetFeedChunkAsync(chunkStore, epochIndex).ConfigureAwait(false);
 
             // If chunk exists and date is prior.
             if (chunk != null && (ulong)chunk.TimeStamp.ToUnixTimeSeconds() <= at)
@@ -231,9 +231,9 @@ namespace Etherna.BeeNet.Models
 
             // Else, if chunk is not found, or if chunk timestamp is later than target date.
             if (epochIndex.IsRight)                               //try left
-                return await TryFindStartingEpochChunkOnlineAsync(beeClient, at, epochIndex.Left).ConfigureAwait(false);
+                return await TryFindStartingEpochChunkOnlineAsync(chunkStore, at, epochIndex.Left).ConfigureAwait(false);
             else if (epochIndex.Level != SwarmEpochFeedIndex.MaxLevel) //try parent
-                return await TryFindStartingEpochChunkOnlineAsync(beeClient, at, epochIndex.Parent).ConfigureAwait(false);
+                return await TryFindStartingEpochChunkOnlineAsync(chunkStore, at, epochIndex.Parent).ConfigureAwait(false);
 
             return null;
         }

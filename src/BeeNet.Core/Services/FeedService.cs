@@ -86,19 +86,19 @@ namespace Etherna.BeeNet.Services
             return soc.Chunk;
         }
         
-        public async Task<UploadEvaluationResult> UploadFeedManifestAsync(
+        public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            IPostageStampIssuer? postageStampIssuer = null,
+            ushort compactLevel = 0,
+            IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
             ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
             
             // Init.
             chunkStore ??= new FakeChunkStore();
-            postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
-            var postageStamper = new PostageStamper(
+            postageStamper ??= new PostageStamper(
                 new FakeSigner(),
-                postageStampIssuer,
+                new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore());
 
             // Create manifest.
@@ -111,24 +111,20 @@ namespace Etherna.BeeNet.Services
                     0,
                     null,
                     readOnlyPipeline),
-                0);
-            
+                compactLevel);
+
             feedManifest.Add(
                 MantarayManifest.RootPath,
-                ManifestEntry.NewDirectory(new Dictionary<string, string>
-                {
-                    [FeedMetadataEntryOwner] = swarmFeed.Owner.ToString(),
-                    [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
-                    [FeedMetadataEntryType] = swarmFeed.Type.ToString()
-                }));
+                ManifestEntry.NewFile(
+                    SwarmHash.Zero,
+                    new Dictionary<string, string>
+                    {
+                        [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
+                        [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
+                        [FeedMetadataEntryType] = swarmFeed.Type.ToString()
+                    }));
 
-            var chunkHashingResult = await feedManifest.GetHashAsync().ConfigureAwait(false);
-            
-            // Return result.
-            return new UploadEvaluationResult(
-                chunkHashingResult,
-                0,
-                postageStampIssuer);
+            return await feedManifest.GetHashAsync().ConfigureAwait(false);
         }
     }
 }

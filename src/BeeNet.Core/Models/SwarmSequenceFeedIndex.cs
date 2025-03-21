@@ -13,19 +13,25 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmSequenceFeedIndex : FeedIndexBase
+    public class SwarmSequenceFeedIndex(ulong start)
+        : SwarmFeedIndexBase
     {
+        // Properties.
+        public ulong Start { get; } = start;
+
+        // Methods.
         public override Memory<byte> MarshalBinary()
         {
-            throw new NotImplementedException();
+            var buffer = new byte[8];
+            BinaryPrimitives.WriteUInt64BigEndian(buffer, Start);
+            return buffer;
         }
 
-        public override FeedIndexBase GetNext(ulong at)
-        {
-            throw new NotImplementedException();
-        }
+        public override SwarmFeedIndexBase GetNext(ulong at) =>
+            new SwarmSequenceFeedIndex(Start + 1);
     }
 }
