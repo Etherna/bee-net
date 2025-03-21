@@ -16,14 +16,19 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmSequenceFeedIndex : FeedIndexBase
+    public class SwarmSequenceFeedIndex : SwarmFeedIndexBase
     {
+        public SwarmSequenceFeedIndex(ulong start)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Memory<byte> MarshalBinary()
         {
             throw new NotImplementedException();
         }
 
-        public override FeedIndexBase GetNext(ulong at)
+        public override SwarmFeedIndexBase GetNext(ulong at)
         {
             throw new NotImplementedException();
         }

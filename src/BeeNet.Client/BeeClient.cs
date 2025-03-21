@@ -574,7 +574,7 @@ namespace Etherna.BeeNet
             EthAddress owner,
             string topic,
             DateTimeOffset? at = null,
-            long? after = null,
+            ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,

@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Models
 
         // Constructor.
         public SwarmFeedChunk(
-            FeedIndexBase index,
+            SwarmFeedIndexBase index,
             byte[] data,
             SwarmHash hash) :
             base(hash, data)
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public FeedIndexBase Index { get; }
+        public SwarmFeedIndexBase Index { get; }
         public ReadOnlyMemory<byte> Payload => Data[TimeStampSize..];
         public DateTimeOffset TimeStamp
         {
@@ -93,7 +93,7 @@ namespace Etherna.BeeNet.Models
             return chunkData;
         }
 
-        public static SwarmHash BuildHash(EthAddress owner, byte[] topic, FeedIndexBase index, IHasher hasher) =>
+        public static SwarmHash BuildHash(EthAddress owner, byte[] topic, SwarmFeedIndexBase index, IHasher hasher) =>
             BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
 
         public static SwarmHash BuildHash(EthAddress owner, byte[] identifier, IHasher hasher)
@@ -107,7 +107,7 @@ namespace Etherna.BeeNet.Models
             return hasher.ComputeHash(identifier.Concat(owner.ToByteArray()).ToArray());
         }
 
-        public static byte[] BuildIdentifier(byte[] topic, FeedIndexBase index, IHasher hasher)
+        public static byte[] BuildIdentifier(byte[] topic, SwarmFeedIndexBase index, IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(index, nameof(index));

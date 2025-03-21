@@ -16,13 +16,13 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public abstract class FeedIndexBase
+    public abstract class SwarmFeedIndexBase
     {
         // Methods.
-        public FeedIndexBase GetNext(DateTimeOffset at) =>
+        public SwarmFeedIndexBase GetNext(DateTimeOffset at) =>
             GetNext((ulong)at.ToUnixTimeSeconds());
 
-        public abstract FeedIndexBase GetNext(ulong at);
+        public abstract SwarmFeedIndexBase GetNext(ulong at);
         
         public abstract Memory<byte> MarshalBinary();
     }

@@ -12,11 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
@@ -46,40 +45,35 @@ namespace Etherna.BeeNet.Models
         
         // Methods.
         public abstract Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            FeedIndexBase? knownNearIndex);
+            SwarmFeedIndexBase? knownNearIndex);
 
         /// <summary>
         /// Try to find feed at a given time
         /// </summary>
-        /// <param name="beeClient">The bee client</param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="at">The time to search</param>
         /// <param name="knownNearIndex">Another known existing index, near to looked time. Helps to perform lookup quicker</param>
         /// <returns>The found feed chunk, or null</returns>
         public abstract Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IBeeClient beeClient,
+            IReadOnlyChunkStore chunkStore,
             DateTimeOffset at,
-            FeedIndexBase? knownNearIndex);
+            SwarmFeedIndexBase? knownNearIndex);
         
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(
-            IBeeClient beeClient,
-            FeedIndexBase index)
+            IReadOnlyChunkStore chunkStore,
+            SwarmFeedIndexBase index)
         {
-            ArgumentNullException.ThrowIfNull(beeClient, nameof(beeClient));
+            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
             
             var hash = SwarmFeedChunk.BuildHash(Owner, _topic, index, new Hasher());
-            try
-            {
-                using var chunkStream = await beeClient.GetChunkStreamAsync(hash).ConfigureAwait(false);
-                using var chunkMemoryStream = new MemoryStream();
-                await chunkStream.CopyToAsync(chunkMemoryStream).ConfigureAwait(false);
-                return new SwarmFeedChunk(index, chunkMemoryStream.ToArray(), hash);
-            }
-            catch (BeeNetApiException)
-            {
-                return null;
-            }
+            
+            var chunk = await chunkStore.TryGetAsync(hash).ConfigureAwait(false);
+            if (chunk == null)
+                return null; 
+            
+            return new SwarmFeedChunk(index, chunk.Data.ToArray(), hash);
         }
     }
 }

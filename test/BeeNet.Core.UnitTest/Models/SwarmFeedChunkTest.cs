@@ -26,13 +26,13 @@ namespace Etherna.BeeNet.Models
     {
         // Internal classes.
         public class VerifyConstructorArgumentsTestElement(
-            FeedIndexBase index,
+            SwarmFeedIndexBase index,
             byte[] payload,
             SwarmHash referenceHash,
             Type expectedExceptionType)
         {
             public Type ExpectedExceptionType { get; } = expectedExceptionType;
-            public FeedIndexBase Index { get; } = index;
+            public SwarmFeedIndexBase Index { get; } = index;
             public byte[] Payload { get; } = payload;
             public SwarmHash ReferenceHash { get; } = referenceHash;
         }
