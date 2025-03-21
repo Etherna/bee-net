@@ -13,12 +13,14 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.TypeConverters;
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(PostageStampTypeConverter))]
     public class PostageStamp(
         PostageBatchId batchId,
         StampBucketIndex stampBucketIndex,
