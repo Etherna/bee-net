@@ -28,5 +28,14 @@ namespace Etherna.BeeNet.Extensions
             BinaryPrimitives.WriteUInt64BigEndian(unixTimeByteArray, unixNanoseconds);
             return unixTimeByteArray;
         }
+        
+        public static byte[] ToUnixTimeSecondsByteArray(this DateTimeOffset dateTime)
+        {
+            var unixSeconds = (ulong)dateTime.ToUnixTimeSeconds();
+            
+            var unixTimeByteArray = new byte[8];
+            BinaryPrimitives.WriteUInt64BigEndian(unixTimeByteArray, unixSeconds);
+            return unixTimeByteArray;
+        }
     }
 }

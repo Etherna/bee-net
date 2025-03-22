@@ -20,7 +20,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Extensions
 {
-    public static class ArrayExtensions
+    public static class EnumerableExtensions
     {
         public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this byte[] unixTimeBytes) =>
             UnixTimeNanosecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
@@ -30,12 +30,27 @@ namespace Etherna.BeeNet.Extensions
         
         public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this ReadOnlySpan<byte> unixTimeBytes)
         {
-            if (unixTimeBytes.Length != SwarmFeedChunk.TimeStampSize)
+            if (unixTimeBytes.Length != sizeof(ulong))
                 throw new ArgumentOutOfRangeException(nameof(unixTimeBytes), "Invalid unix time byte array length");
             
             var unixNanoseconds = BinaryPrimitives.ReadUInt64BigEndian(unixTimeBytes);
             var unixMilliseconds = unixNanoseconds / 1000000;
             return DateTimeOffset.FromUnixTimeMilliseconds((long)unixMilliseconds);
+        }
+        
+        public static DateTimeOffset UnixTimeSecondsToDateTimeOffset(this byte[] unixTimeBytes) =>
+            UnixTimeSecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
+        
+        public static DateTimeOffset UnixTimeSecondsToDateTimeOffset(this Span<byte> unixTimeBytes) =>
+            UnixTimeSecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes);
+        
+        public static DateTimeOffset UnixTimeSecondsToDateTimeOffset(this ReadOnlySpan<byte> unixTimeBytes)
+        {
+            if (unixTimeBytes.Length != sizeof(ulong))
+                throw new ArgumentOutOfRangeException(nameof(unixTimeBytes), "Invalid unix time byte array length");
+            
+            var unixSeconds = BinaryPrimitives.ReadUInt64BigEndian(unixTimeBytes);
+            return DateTimeOffset.FromUnixTimeSeconds((long)unixSeconds);
         }
 
         public static string FindCommonPrefix(this string x, string y)

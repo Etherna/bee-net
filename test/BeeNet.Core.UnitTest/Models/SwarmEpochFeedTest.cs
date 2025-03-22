@@ -90,7 +90,7 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 0, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
@@ -110,13 +110,13 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
                     var childEpochIndex = new SwarmEpochFeedIndex(5, 0, new Hasher());
                     var childChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, childEpochIndex, new Hasher());
-                    var childChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var childChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var childChunkPayload = childChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var childChunk = new SwarmFeedChunk(childEpochIndex, childChunkPayload, childChunkReference);
 
@@ -139,7 +139,7 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
@@ -148,7 +148,7 @@ namespace Etherna.BeeNet.Models
 
                     var leftChildEpochIndex = new SwarmEpochFeedIndex(4, 0, new Hasher());
                     var leftChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftChildEpochIndex, new Hasher());
-                    var leftChildChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var leftChildChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var leftChildChunkPayload = leftChildChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var leftChildChunk = new SwarmFeedChunk(leftChildEpochIndex, leftChildChunkPayload, leftChildChunkReference);
 
@@ -178,7 +178,7 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
@@ -207,7 +207,7 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
@@ -243,7 +243,7 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 238, 107, 40, 0 }; //1970-01-01 00:00:04
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
 
@@ -252,7 +252,7 @@ namespace Etherna.BeeNet.Models
 
                     var rightChildEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
                     var rightChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, rightChildEpochIndex, new Hasher());
-                    var rightChildChunkTimestamp = new byte[] { 0, 0, 0, 1, 161, 59, 134, 0 }; //1970-01-01 00:00:07
+                    var rightChildChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
                     var rightChildChunkPayload = rightChildChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var rightChildChunk = new SwarmFeedChunk(rightChildEpochIndex, rightChildChunkPayload, rightChildChunkReference);
 
@@ -327,7 +327,7 @@ namespace Etherna.BeeNet.Models
                 // Chunk exists and is prior to date.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
-                    var chunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var chunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var payload = chunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var reference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
                 
@@ -366,7 +366,7 @@ namespace Etherna.BeeNet.Models
                 // Chunk exists but with successive date and index was left at max level.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, new Hasher());
-                    var chunkTimestamp = new byte[] { 0, 0, 0, 1, 161, 59, 134, 0 }; //1970-01-01 00:00:07
+                    var chunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
                     var payload = chunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                     var reference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
                 
@@ -392,7 +392,7 @@ namespace Etherna.BeeNet.Models
                 
                     var leftEpochIndex = startingEpochIndex.Left;
                     var leftChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftEpochIndex, new Hasher());
-                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var leftChunkPayload = leftChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
@@ -421,12 +421,12 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 1, 161, 59, 134, 0 }; //1970-01-01 00:00:07
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     var leftEpochIndex = startingEpochIndex.Left;
                     var leftChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftEpochIndex, new Hasher());
-                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var leftChunkPayload = leftChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
@@ -458,7 +458,7 @@ namespace Etherna.BeeNet.Models
                 
                     var parentEpochIndex = startingEpochIndex.Parent;
                     var parentChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, parentEpochIndex, new Hasher());
-                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
@@ -487,12 +487,12 @@ namespace Etherna.BeeNet.Models
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
                     var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 1, 161, 59, 134, 0 }; //1970-01-01 00:00:07
+                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
                     var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     var parentEpochIndex = startingEpochIndex.Parent;
                     var parentChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, parentEpochIndex, new Hasher());
-                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 1, 42, 5, 242, 0 }; //1970-01-01 00:00:05
+                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
                     var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(

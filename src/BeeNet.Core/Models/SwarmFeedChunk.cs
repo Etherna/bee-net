@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Models
         public SwarmFeedIndexBase Index { get; }
         public ReadOnlyMemory<byte> Payload => Data[TimeStampSize..];
         public DateTimeOffset TimeStamp =>
-            Data[..TimeStampSize].Span.UnixTimeNanosecondsToDateTimeOffset();
+            Data[..TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
 
         // Methods.
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
@@ -80,7 +80,7 @@ namespace Etherna.BeeNet.Models
                     $"Payload can't be longer than {MaxPayloadSize} bytes");
 
             var chunkData = new byte[TimeStampSize + payload.Length];
-            var timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeNanosecondsByteArray();
+            var timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
             timestampByteArray.CopyTo(chunkData, 0);
             payload.CopyTo(chunkData, TimeStampSize);
 
