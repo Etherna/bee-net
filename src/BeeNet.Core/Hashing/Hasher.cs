@@ -57,6 +57,17 @@ namespace Etherna.BeeNet.Hashing
             // ComputeHash(data, result);
             // return result;
         }
+        
+        public byte[] ComputeHash(params byte[][] dataArray)
+        {
+            ArgumentNullException.ThrowIfNull(dataArray, nameof(dataArray));
+            
+            var output = new byte[hasher.GetDigestSize()];
+            foreach (var data in dataArray)
+                hasher.BlockUpdate(data, 0, data.Length);
+            hasher.DoFinal(output, 0);
+            return output;
+        }
 
         public byte[] ComputeHash(string data) =>
             ComputeHash(Encoding.UTF8.GetBytes(data));

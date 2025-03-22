@@ -20,6 +20,7 @@ namespace Etherna.BeeNet.Hashing
         Nethereum.Util.HashProviders.IHashProvider
     {
         void ComputeHash(byte[] data, Span<byte> output);
+        byte[] ComputeHash(params byte[][] dataArray);
         byte[] ComputeHash(string data);
     }
 }

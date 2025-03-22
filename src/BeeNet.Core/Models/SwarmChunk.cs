@@ -46,6 +46,10 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (span.Length != SpanSize)
+                throw new ArgumentOutOfRangeException(nameof(span), $"Span size must be {SpanSize} bytes");
+            if (data.Length > DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Hash = hash;
             _span = span;

@@ -14,66 +14,78 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Bmt;
-using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
 {
     public class SingleOwnerChunk(
         byte[] id,
         byte[] signature,
-        byte[] owner,
-        SwarmChunk chunk)
+        EthAddress owner,
+        byte[] chunkData)
     {
         // Consts.
-        public const int MinChunkSize = SwarmHash.HashSize + SocSignatureSize + SwarmChunk.SpanSize;
+        public const int MaxSocDataSize = MinSocDataSize + SwarmChunk.DataSize;
+        public const int MinSocDataSize = SwarmHash.HashSize + SocSignatureSize + SwarmChunk.SpanSize;
         public const int SocSignatureSize = 65;
         
         // Properties.
         public ReadOnlyMemory<byte> Id { get; } = id;
         public ReadOnlyMemory<byte> Signature { get; } = signature;
-        public ReadOnlyMemory<byte> Owner { get; } = owner;
-        public SwarmChunk Chunk { get; } = chunk;
+        public EthAddress Owner { get; } = owner;
+        public ReadOnlyMemory<byte> ChunkData => chunkData;
         
         // Static methods.
-        public static SingleOwnerChunk DeserializeFromChunk(SwarmChunk chunk)
+        public static (SingleOwnerChunk soc, SwarmHash chunkHash) BuildFromBytes(
+            ReadOnlyMemory<byte> data,
+            IHasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-
-            var data = chunk.Data;
-            if (data.Length < MinChunkSize)
-                throw new ArgumentOutOfRangeException(nameof(chunk), "Chunk data length is too small");
+            if (data.Length < MinSocDataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), "Data length is too small");
 
             // Extract all fields.
             var cursor = 0;
-            var id = data.Slice(cursor, SwarmHash.HashSize).ToArray();
+            var id = data[cursor..SwarmHash.HashSize].ToArray();
             cursor += SwarmHash.HashSize;
 
-            var signature = data.Slice(cursor, SocSignatureSize);
+            var signature = data[cursor..SocSignatureSize].ToArray();
             cursor += SocSignatureSize;
+            
+            var chunkSpanAndData = data[cursor..];
+            var chunkHash = SwarmChunkBmtHasher.Hash(
+                chunkSpanAndData[..SwarmChunk.SpanSize].ToArray(),
+                chunkSpanAndData[SwarmChunk.SpanSize..].ToArray(),
+                hasher);
 
-            var hasher = new Hasher();
-            var containedChunkSpanAndData = data.Slice(cursor);
-            var containedChunk = SwarmChunk.BuildFromSpanAndData(
-                SwarmChunkBmtHasher.Hash(
-                    containedChunkSpanAndData[..SwarmChunk.SpanSize].ToArray(),
-                    containedChunkSpanAndData[SwarmChunk.SpanSize..].ToArray(),
-                    hasher),
-                containedChunkSpanAndData.Span);
-
-            var toSignDigest = hasher.ComputeHash(id.Concat(containedChunk.Hash.ToByteArray()).ToArray());
-
-            // recover owner information
+            // Recover owner information.
             var signer = new EthereumMessageSigner();
-            var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature.ToArray()));
+            var toSignDigest = hasher.ComputeHash(id, chunkHash.ToByteArray());
+            var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature));
 
-            return new SingleOwnerChunk(
-                id,
-                signature.ToArray(),
-                owner.HexToByteArray(),
-                containedChunk);
+            return (new SingleOwnerChunk(
+                    id,
+                    signature,
+                    owner,
+                    chunkSpanAndData.ToArray()),
+                chunkHash);
+        }
+        
+        // Methods.
+        public SwarmHash CalculateHash(IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            return hasher.ComputeHash(Id.ToArray(), Owner.ToByteArray());
+        }
+
+        public byte[] ToByteArray()
+        {
+            List<byte> buffer = [];
+            buffer.AddRange(Id.ToArray());
+            buffer.AddRange(Signature.ToArray());
+            buffer.AddRange(ChunkData.ToArray());
+            return buffer.ToArray();
         }
     }
 }
