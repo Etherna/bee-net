@@ -14,9 +14,14 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Bmt;
+using Etherna.BeeNet.Stores;
 using Nethereum.Signer;
+using Nethereum.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
@@ -31,6 +36,13 @@ namespace Etherna.BeeNet.Models
         public const int MinSocDataSize = SwarmHash.HashSize + SocSignatureSize + SwarmChunk.SpanSize;
         public const int SocSignatureSize = 65;
         
+        // Static properties.
+        /// <summary>
+        /// Ethereum Address for SOC owner of Dispersed Replicas
+        /// Generated from private key 0x0100000000000000000000000000000000000000000000000000000000000000
+        /// </summary>
+        public static EthAddress ReplicasOwner { get; } = new("dc5b20847f43d67928f49cd4f85d696b5a7617b5");
+        
         // Properties.
         public ReadOnlyMemory<byte> Id { get; } = id;
         public ReadOnlyMemory<byte> Signature { get; } = signature;
@@ -38,7 +50,7 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> ChunkData => chunkData;
         
         // Static methods.
-        public static (SingleOwnerChunk soc, SwarmHash chunkHash) BuildFromBytes(
+        public static (SingleOwnerChunk soc, SwarmHash innerChunkHash) BuildFromBytes(
             ReadOnlyMemory<byte> data,
             IHasher hasher)
         {
@@ -70,6 +82,49 @@ namespace Etherna.BeeNet.Models
                     owner,
                     chunkSpanAndData.ToArray()),
                 chunkHash);
+        }
+
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        public static bool IsValidChunk(SwarmChunk chunk, IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            
+            try
+            {
+                var (soc, innerChunkHash) = BuildFromBytes(chunk.Data, hasher);
+
+                //disperse replica validation
+                if (soc.Owner == ReplicasOwner &&
+                    !ByteArrayComparer.Current.Equals(innerChunkHash.ToByteArray()[1..32].ToArray(), soc.Id[1..32].ToArray()))
+                    return false;
+
+                return chunk.Hash == soc.CalculateHash(hasher);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static async Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+            
+            var (soc, chunkHash) = BuildFromBytes(chunk.Data, new Hasher());
+            
+            // Check if is legacy payload. Possible lengths:
+            if (soc.ChunkData.Length is
+                16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
+                16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
+            {
+                var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
+                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
+            }
+
+            return new SwarmChunk(
+                chunkHash,
+                soc.ChunkData.ToArray());
         }
         
         // Methods.

@@ -67,27 +67,6 @@ namespace Etherna.BeeNet.Services
                 return null;
             }
         }
-
-        public async Task<SwarmChunk> UnwrapChunkAsync(SwarmChunk chunk, IChunkStore chunkStore)
-        {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
-            
-            var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(chunk.Data, new Hasher());
-            
-            // Check if is legacy payload. Possible lengths:
-            if (soc.ChunkData.Length is
-                16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
-                16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
-            {
-                var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
-                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
-            }
-
-            return new SwarmChunk(
-                chunkHash,
-                soc.ChunkData.ToArray());
-        }
         
         public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
