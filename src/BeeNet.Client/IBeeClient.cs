@@ -367,27 +367,6 @@ namespace Etherna.BeeNet
             string peerAddress,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Find feed update</summary>
-        /// <param name="owner">Owner</param>
-        /// <param name="topic">Topic</param>
-        /// <param name="at">Timestamp of the update (default: now)</param>
-        /// <param name="after">Start index (default: 0)</param>
-        /// <param name="type">Feed indexing scheme (default: sequence)</param>
-        /// <returns>Latest feed update</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<FileResponse> GetFeedAsync(
-            EthAddress owner,
-            byte[] topic,
-            long? at = null,
-            ulong? after = null,
-            SwarmFeedType type = SwarmFeedType.Sequence,
-            bool? swarmOnlyRootChunk = null,
-            bool? swarmCache = null,
-            RedundancyStrategy? swarmRedundancyStrategy = null,
-            bool? swarmRedundancyFallbackMode = null,
-            string? swarmChunkRetrievalTimeout = null,
-            CancellationToken cancellationToken = default);
-
         /// <summary>Get file or index document from a collection of files</summary>
         /// <param name="address">Swarm address of content</param>
         /// <param name="swarmCache">Determines if the download data should be cached on the node. By default the download will be cached</param>
@@ -764,6 +743,27 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<string> TryConnectToPeerAsync(
             string peerId,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Find feed update</summary>
+        /// <param name="owner">Owner</param>
+        /// <param name="topic">Topic</param>
+        /// <param name="at">Timestamp of the update (default: now)</param>
+        /// <param name="after">Start index (default: 0)</param>
+        /// <param name="type">Feed indexing scheme (default: sequence)</param>
+        /// <returns>Latest feed update</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<FileResponse?> TryGetFeedAsync(
+            EthAddress owner,
+            byte[] topic,
+            long? at = null,
+            ulong? after = null,
+            SwarmFeedType type = SwarmFeedType.Sequence,
+            bool? swarmOnlyRootChunk = null,
+            bool? swarmCache = null,
+            RedundancyStrategy? swarmRedundancyStrategy = null,
+            bool? swarmRedundancyFallbackMode = null,
+            string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>

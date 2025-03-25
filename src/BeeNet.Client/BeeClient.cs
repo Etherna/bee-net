@@ -571,37 +571,6 @@ namespace Etherna.BeeNet
             BzzBalance.FromPlurString(
                 (await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
-        public async Task<FileResponse> GetFeedAsync(
-            EthAddress owner,
-            byte[] topic,
-            long? at = null,
-            ulong? after = null,
-            SwarmFeedType type = SwarmFeedType.Sequence,
-            bool? swarmOnlyRootChunk = null,
-            bool? swarmCache = null,
-            RedundancyStrategy? swarmRedundancyStrategy = null,
-            bool? swarmRedundancyFallbackMode = null,
-            string? swarmChunkRetrievalTimeout = null,
-            CancellationToken cancellationToken = default)
-        {
-            var response = await generatedClient.FeedsGetAsync(
-                owner: owner.ToString(),
-                topic: topic.ToHex(),
-                at: at,
-                after: after,
-                type: type.ToString(),
-                swarm_only_root_chunk: swarmOnlyRootChunk,
-                swarm_cache: swarmCache,
-                swarm_redundancy_strategy: (SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
-                swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
-                swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-            return new FileResponse(
-                response.ContentHeaders,
-                response.Headers,
-                response.Stream);
-        }
-
         public async Task<FileResponse> GetFileAsync(
             SwarmAddress address,
             bool? swarmCache = null,
@@ -1307,6 +1276,44 @@ namespace Etherna.BeeNet
             string peerId,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
+
+        public async Task<FileResponse?> TryGetFeedAsync(
+            EthAddress owner,
+            byte[] topic,
+            long? at = null,
+            ulong? after = null,
+            SwarmFeedType type = SwarmFeedType.Sequence,
+            bool? swarmOnlyRootChunk = null,
+            bool? swarmCache = null,
+            RedundancyStrategy? swarmRedundancyStrategy = null,
+            bool? swarmRedundancyFallbackMode = null,
+            string? swarmChunkRetrievalTimeout = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await generatedClient.FeedsGetAsync(
+                    owner: owner.ToString(),
+                    topic: topic.ToHex(),
+                    at: at,
+                    after: after,
+                    type: type.ToString(),
+                    swarm_only_root_chunk: swarmOnlyRootChunk,
+                    swarm_cache: swarmCache,
+                    swarm_redundancy_strategy: (SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
+                    swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                    swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
+                return new FileResponse(
+                    response.ContentHeaders,
+                    response.Headers,
+                    response.Stream);
+            }
+            catch (BeeNetApiException e) when (e.StatusCode == 404)
+            {
+                return null;
+            }
+        }
 
         public async Task<HttpContentHeaders?> TryGetFileHeadersAsync(
             SwarmAddress address,
