@@ -32,6 +32,8 @@ namespace Etherna.BeeNet.Hashing.Postage
         /// The batch stamps are issued from
         /// </summary>
         PostageBatch PostageBatch { get; }
+        
+        EthAddress? PostageBatchOwner { get; }
 
         // Methods.
         StampBucketIndex IncrementBucketCount(SwarmHash hash);

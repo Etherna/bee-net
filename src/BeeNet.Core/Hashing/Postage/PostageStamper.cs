@@ -12,34 +12,87 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using Org.BouncyCastle.Crypto.Digests;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Etherna.BeeNet.Hashing.Postage
 {
-    public sealed class PostageStamper(
-        ISigner signer,
-        IPostageStampIssuer stampIssuer,
-        IStampStore stampStore)
-        : IPostageStamper
+    public sealed class PostageStamper : IPostageStamper
     {
         // Fields.
-        private readonly KeccakDigest hasher = new(256);
+        private readonly Hasher hasher = new();
+        private readonly Dictionary<SwarmHash, PostageStamp> presignedPostageStamps;
+        private readonly bool storePresignedPostageStamps;
         
+        // Constructor.
+        public PostageStamper(
+            ISigner signer,
+            IPostageStampIssuer stampIssuer,
+            IStampStore stampStore,
+            IDictionary<SwarmHash, PostageStamp>? presignedPostageStamps = null,
+            bool storePresignedPostageStamps = false)
+        {
+            Signer = signer;
+            StampIssuer = stampIssuer;
+            StampStore = stampStore;
+            this.storePresignedPostageStamps = storePresignedPostageStamps;
+
+            this.presignedPostageStamps = (presignedPostageStamps ?? new Dictionary<SwarmHash, PostageStamp>())
+                .Where(s => s.Value.BatchId == stampIssuer.PostageBatch.Id)
+                .ToDictionary(s => s.Key, s => s.Value);
+        }
+
         // Properties.
-        public ISigner Signer { get; } = signer;
-        public IPostageStampIssuer StampIssuer { get; } = stampIssuer;
-        public IStampStore StampStore { get; } = stampStore;
+        public ISigner Signer { get; }
+        public IPostageStampIssuer StampIssuer { get; }
+        public IStampStore StampStore { get; }
 
         // Methods.
         public PostageStamp Stamp(SwarmHash hash)
         {
             StampStoreItem item;
 
+            // If match with a presigned chunk, verify and take it.
+            if (presignedPostageStamps.TryGetValue(hash, out var presignedStamp))
+            {
+                if (StampIssuer.PostageBatchOwner == null)
+                    throw new InvalidOperationException("Batch owner can't be null with presigned stamps");
+                
+                // Verify signer address.
+                EthAddress signerAddress;
+                lock (hasher)
+                {
+                    signerAddress = presignedStamp.RecoverBatchOwner(hash, hasher);
+                }
+                if (signerAddress != StampIssuer.PostageBatchOwner)
+                    throw new ArgumentException("Invalid postage stamp signature");
+                
+                // Store if required.
+                if (storePresignedPostageStamps)
+                {
+                    lock (StampStore)
+                    {
+                        if (StampStore.TryGet(StampStoreItem.BuildId(StampIssuer.PostageBatch.Id, hash), out var storedItem))
+                            item = storedItem;
+                        else
+                            item = new StampStoreItem(
+                                StampIssuer.PostageBatch.Id,
+                                hash,
+                                presignedStamp.BucketIndex);
+
+                        item.BucketTimestamp = DateTimeOffset.UtcNow;
+
+                        StampStore.Put(item);
+                    }
+                }
+
+                return presignedStamp;
+            }
+            
             lock (StampStore)
             {
                 if (StampStore.TryGet(StampStoreItem.BuildId(StampIssuer.PostageBatch.Id, hash), out var storedItem))
@@ -55,11 +108,16 @@ namespace Etherna.BeeNet.Hashing.Postage
                 StampStore.Put(item);
             }
 
-            var toSignDigest = ToSignDigest(
-                hash,
-                StampIssuer.PostageBatch.Id,
-                item.StampBucketIndex!,
-                item.BucketTimestamp.Value);
+            byte[] toSignDigest;
+            lock (hasher)
+            {
+                toSignDigest = PostageStamp.BuildSignDigest(
+                    hash,
+                    StampIssuer.PostageBatch.Id,
+                    item.StampBucketIndex,
+                    item.BucketTimestamp.Value,
+                    hasher);
+            }
 
             var signature = Signer.Sign(toSignDigest);
 
@@ -68,46 +126,6 @@ namespace Etherna.BeeNet.Hashing.Postage
                 item.StampBucketIndex!,
                 item.BucketTimestamp.Value,
                 signature);
-        }
-
-        // Helpers.
-        /// <summary>
-        /// Creates a digest to represent the stamp which is to be signed by the owner
-        /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="batchId"></param>
-        /// <param name="stampBucketIndex"></param>
-        /// <param name="timeStamp"></param>
-        /// <returns></returns>
-        private byte[] ToSignDigest(
-            SwarmHash hash,
-            PostageBatchId batchId,
-            StampBucketIndex stampBucketIndex,
-            DateTimeOffset timeStamp)
-        {
-            var result = new byte[SwarmHash.HashSize];
-
-            lock (hasher)
-            {
-                hasher.BlockUpdate(hash.ToByteArray(), 0, SwarmHash.HashSize);
-                hasher.BlockUpdate(batchId.ToByteArray(), 0, PostageBatchId.BatchIdSize);
-                hasher.BlockUpdate(stampBucketIndex.ToByteArray(), 0, StampBucketIndex.BucketIndexSize);
-                var unixTimeByteArray = timeStamp.ToUnixTimeNanosecondsByteArray();
-                hasher.BlockUpdate(unixTimeByteArray, 0, unixTimeByteArray.Length);
-                hasher.DoFinal(result, 0);
-                
-                /*
-                 * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
-                 * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
-                 */
-                // hasher.BlockUpdate(hash.ToByteArray());
-                // hasher.BlockUpdate(batchId.ToByteArray());
-                // hasher.BlockUpdate(stampBucketIndex.ToByteArray());
-                // hasher.BlockUpdate(timeStamp.ToUnixTimeMilliseconds().UnixDateTimeToByteArray());
-                // hasher.DoFinal(result);
-            }
-
-            return result;
         }
     }
 }

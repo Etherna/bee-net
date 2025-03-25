@@ -46,11 +46,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             if (!readOnly)
             {
                 // Stamp chunk and store stamp.
-                var stamp = postageStamper.Stamp(args.Hash.Value);
+                postageStamper.Stamp(args.Hash.Value);
             
                 // Store chunk.
                 var chunk = SwarmChunk.BuildFromSpanAndData(args.Hash.Value, args.Data.Span);
-                chunk.PostageStamp = stamp;
                 await chunkStore.AddAsync(chunk).ConfigureAwait(false);
             }
 

@@ -13,7 +13,9 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.TypeConverters;
+using Nethereum.Signer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,7 +25,7 @@ namespace Etherna.BeeNet.Models
     [TypeConverter(typeof(PostageStampTypeConverter))]
     public class PostageStamp(
         PostageBatchId batchId,
-        StampBucketIndex stampBucketIndex,
+        StampBucketIndex bucketIndex,
         DateTimeOffset timeStamp,
         byte[] signature)
     {
@@ -46,19 +48,53 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public PostageBatchId BatchId { get; } = batchId;
-        public StampBucketIndex StampBucketIndex { get; } = stampBucketIndex;
+        public StampBucketIndex BucketIndex { get; } = bucketIndex;
         public DateTimeOffset TimeStamp { get; } = timeStamp;
         public ReadOnlyMemory<byte> Signature { get; } = signature;
         
+        // Static methods.
+        public static byte[] BuildSignDigest(
+            SwarmHash hash,
+            PostageBatchId batchId,
+            StampBucketIndex stampBucketIndex,
+            DateTimeOffset timeStamp,
+            IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(stampBucketIndex, nameof(stampBucketIndex));
+            
+            return hasher.ComputeHash(
+                hash.ToByteArray(),
+                batchId.ToByteArray(),
+                stampBucketIndex.ToByteArray(),
+                timeStamp.ToUnixTimeNanosecondsByteArray());
+        }
+        
         // Methods.
+        /// <summary>
+        /// Returns ethereum address that signed postage batch
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <param name="hasher"></param>
+        /// <returns></returns>
+        public EthAddress RecoverBatchOwner(SwarmHash hash, IHasher hasher)
+        {
+            var signer = new EthereumMessageSigner();
+            var toSign = ToSignDigest(hash, hasher);
+            return signer.EcRecover(toSign, new EthECDSASignature(signature));
+        }
+        
         public byte[] ToByteArray()
         {
             List<byte> buffer = [];
             buffer.AddRange(BatchId.ToByteArray());
-            buffer.AddRange(StampBucketIndex.ToByteArray());
+            buffer.AddRange(BucketIndex.ToByteArray());
             buffer.AddRange(TimeStamp.ToUnixTimeNanosecondsByteArray());
             buffer.AddRange(Signature.ToArray());
             return buffer.ToArray();
         }
+
+        public byte[] ToSignDigest(SwarmHash hash, IHasher hasher) =>
+            BuildSignDigest(hash, BatchId, BucketIndex, TimeStamp, hasher);
     }
 }

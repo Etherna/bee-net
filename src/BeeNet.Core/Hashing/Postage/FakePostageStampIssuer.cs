@@ -22,6 +22,7 @@ namespace Etherna.BeeNet.Hashing.Postage
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; }
         public PostageBatch PostageBatch => PostageBatch.MaxDepthInstance;
+        public EthAddress? PostageBatchOwner { get; }
         public uint MaxBucketCollisions { get; }
         public long TotalChunks { get; }
 

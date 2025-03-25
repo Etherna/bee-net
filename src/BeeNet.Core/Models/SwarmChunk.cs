@@ -72,7 +72,6 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public SwarmHash Hash { get; }
         public ReadOnlyMemory<byte> Data => _data;
-        public PostageStamp? PostageStamp { get; set; }
         public ReadOnlyMemory<byte> Span => _span;
         
         // Methods.

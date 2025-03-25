@@ -25,6 +25,7 @@ namespace Etherna.BeeNet.Hashing.Postage
         // Constructor.
         public PostageStampIssuer(
             PostageBatch postageBatch,
+            EthAddress? postageBatchOwner = null,
             PostageBuckets? buckets = null)
         {
             ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
@@ -32,6 +33,7 @@ namespace Etherna.BeeNet.Hashing.Postage
             _buckets = buckets ?? new PostageBuckets();
             BucketUpperBound = (uint)1 << (postageBatch.Depth - PostageBatch.BucketDepth);
             PostageBatch = postageBatch;
+            PostageBatchOwner = postageBatchOwner;
         }
 
         // Properties.
@@ -39,6 +41,7 @@ namespace Etherna.BeeNet.Hashing.Postage
         public uint BucketUpperBound { get; }
         public bool HasSaturated { get; private set; }
         public PostageBatch PostageBatch { get; }
+        public EthAddress? PostageBatchOwner { get; }
 
         // Methods.
         public StampBucketIndex IncrementBucketCount(SwarmHash hash)
