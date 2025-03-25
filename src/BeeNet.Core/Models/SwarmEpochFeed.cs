@@ -66,12 +66,12 @@ namespace Etherna.BeeNet.Models
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
-            DateTimeOffset at,
+            long at,
             SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
-            return TryFindFeedAtAsync(chunkStore, at, knownNearIndex as SwarmEpochFeedIndex);
+            return TryFindFeedAtAsync(chunkStore, DateTimeOffset.FromUnixTimeSeconds(at), knownNearIndex as SwarmEpochFeedIndex);
         }
 
         public async Task<SwarmFeedChunk?> TryFindFeedAtAsync(

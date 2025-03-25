@@ -19,6 +19,7 @@ using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services;
 using Etherna.BeeNet.Stores;
 using Etherna.BeeNet.Tools;
+using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -177,22 +178,22 @@ namespace Etherna.BeeNet
 
         public async Task<SwarmHash> CreateFeedAsync(
             EthAddress owner,
-            string topic,
+            byte[] topic,
             PostageBatchId batchId,
-            string? type = null,
+            SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmPin = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.FeedsPostAsync(
-                owner.ToString(),
-                topic,
-                type,
-                swarmPin,
-                batchId.ToString(),
-                swarmAct,
-                swarmActHistoryAddress,
-                cancellationToken).ConfigureAwait(false)).Reference;
+                owner: owner.ToString(),
+                topic: topic.ToHex(),
+                type: type.ToString(),
+                swarm_pin: swarmPin,
+                swarm_postage_batch_id: batchId.ToString(),
+                swarm_act: swarmAct,
+                swarm_act_history_address: swarmActHistoryAddress,
+                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
 
         public Task CreatePinAsync(
             SwarmHash hash,
@@ -1369,24 +1370,6 @@ namespace Etherna.BeeNet
                     null,
                 cancellationToken: cancellationToken);
 
-        public async Task<SwarmHash> UploadChunkAsync(PostageBatchId batchId,
-            Stream chunkData,
-            bool swarmPin = false,
-            bool swarmDeferredUpload = true,
-            TagId? tagId = null,
-            string? swarmPostageStamp = null,
-            bool? swarmAct = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default) =>
-            (await generatedClient.ChunksPostAsync(
-                tagId?.Value,
-                batchId.ToString(),
-                swarmPostageStamp,
-                swarmAct,
-                swarmActHistoryAddress,
-                chunkData,
-                cancellationToken).ConfigureAwait(false)).Reference;
-
         public async Task<SwarmHash> UploadBytesAsync(
             PostageBatchId batchId,
             Stream body,
@@ -1405,6 +1388,24 @@ namespace Etherna.BeeNet
                 swarm_redundancy_level: (int)swarmRedundancyLevel,
                 body: body,
                 cancellationToken).ConfigureAwait(false)).Reference;
+
+        public async Task<SwarmHash> UploadChunkAsync(
+            Stream chunkData,
+            PostageBatchId? batchId,
+            bool pinChunk = false,
+            TagId? tagId = null,
+            PostageStamp? presignedPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.ChunksPostAsync(
+                swarm_tag: tagId?.Value,
+                swarm_postage_batch_id: batchId?.ToString(),
+                swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),
+                swarm_act: swarmAct,
+                swarm_act_history_address: swarmActHistoryAddress,
+                body: chunkData,
+                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
 
         public async Task<SwarmHash> UploadDirectoryAsync(
             PostageBatchId batchId,
@@ -1475,24 +1476,48 @@ namespace Etherna.BeeNet
                 swarm_redundancy_level: (SwarmRedundancyLevel2)swarmRedundancyLevel,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
+        
+        public async Task<SwarmHash> UploadSocAsync(
+            EthAddress owner,
+            byte[] id,
+            string signature,
+            PostageBatchId? batchId,
+            byte[] body,
+            PostageStamp? presignedPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default)
+        {
+            using var bodyMemoryStream = new MemoryStream(body);
+            return await UploadSocAsync(
+                owner: owner,
+                id: id,
+                signature: signature,
+                batchId: batchId,
+                body: bodyMemoryStream,
+                presignedPostageStamp: presignedPostageStamp,
+                swarmAct: swarmAct,
+                swarmActHistoryAddress: swarmActHistoryAddress,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
 
         public async Task<SwarmHash> UploadSocAsync(
             EthAddress owner,
-            string id,
-            string sig,
-            PostageBatchId batchId,
+            byte[] id,
+            string signature,
+            PostageBatchId? batchId,
             Stream body,
-            string? swarmPostageStamp = null,
+            PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.SocPostAsync(
                 owner: owner.ToString(),
-                id: id,
-                sig: sig,
-                swarm_postage_batch_id: batchId.ToString(),
+                id: id.ToHex(),
+                sig: signature,
+                swarm_postage_batch_id: batchId?.ToString(),
                 body: body,
-                swarm_postage_stamp: swarmPostageStamp,
+                swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),
                 swarm_act: swarmAct,
                 swarm_act_history_address: swarmActHistoryAddress,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;

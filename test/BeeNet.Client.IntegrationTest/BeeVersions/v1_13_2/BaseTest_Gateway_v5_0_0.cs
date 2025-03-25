@@ -49,12 +49,10 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
             await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 
-
             // Act 
-            var reference = await beeNodeClient.UploadChunkAsync(batch, fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.UploadChunkAsync(fs, batch);
 
             return reference;
         }
-
     }
 }

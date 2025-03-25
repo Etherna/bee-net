@@ -109,9 +109,9 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> CreateFeedAsync(
             EthAddress owner,
-            string topic,
+            byte[] topic,
             PostageBatchId batchId,
-            string? type = null,
+            SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmPin = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
@@ -817,19 +817,18 @@ namespace Etherna.BeeNet
         /// <summary>Upload Chunk</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="chunkData"></param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
+        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.
         ///     <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
+        /// <param name="tagId">Associate upload with an existing Tag UID</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmHash> UploadChunkAsync(PostageBatchId batchId,
+        Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
-            bool swarmPin = false,
-            bool swarmDeferredUpload = true,
+            PostageBatchId? batchId,
+            bool pinChunk = false,
             TagId? tagId = null,
-            string? swarmPostageStamp = null,
+            PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
@@ -919,18 +918,37 @@ namespace Etherna.BeeNet
         /// <summary>Upload single owner chunk</summary>
         /// <param name="owner">Owner</param>
         /// <param name="id">Id</param>
-        /// <param name="sig">Signature</param>
+        /// <param name="signature">Signature</param>
         /// <param name="batchId"></param>
         /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadSocAsync(
             EthAddress owner,
-            string id,
-            string sig,
-            PostageBatchId batchId,
+            byte[] id,
+            string signature,
+            PostageBatchId? batchId,
+            byte[] body,
+            PostageStamp? presignedPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Upload single owner chunk</summary>
+        /// <param name="owner">Owner</param>
+        /// <param name="id">Id</param>
+        /// <param name="signature">Signature</param>
+        /// <param name="batchId"></param>
+        /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
+        /// <returns>Reference hash</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<SwarmHash> UploadSocAsync(
+            EthAddress owner,
+            byte[] id,
+            string signature,
+            PostageBatchId? batchId,
             Stream body,
-            string? swarmPostageStamp = null,
+            PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);

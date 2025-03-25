@@ -1261,7 +1261,6 @@ paths:
         - in: header
           name: swarm-postage-batch-id
           schema: *a5
-          required: true
         - *a34
         - *a20
         - *a4

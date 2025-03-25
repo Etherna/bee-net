@@ -356,7 +356,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, string swarm_postage_batch_id, System.IO.Stream body, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3902,7 +3902,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, string swarm_postage_batch_id, System.IO.Stream body, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -3923,9 +3923,8 @@ namespace Etherna.BeeNet.Clients
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
 
-                    if (swarm_postage_batch_id == null)
-                        throw new System.ArgumentNullException("swarm_postage_batch_id");
-                    request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
+                    if (swarm_postage_batch_id != null)
+                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_postage_stamp != null)
                         request_.Headers.TryAddWithoutValidation("swarm-postage-stamp", ConvertToString(swarm_postage_stamp, System.Globalization.CultureInfo.InvariantCulture));

@@ -58,7 +58,7 @@ namespace Etherna.BeeNet.Models
         /// <returns>The found feed chunk, or null</returns>
         public abstract Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
-            DateTimeOffset at,
+            long at,
             SwarmFeedIndexBase? knownNearIndex);
         
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(

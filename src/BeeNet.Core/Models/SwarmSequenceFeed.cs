@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Models
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
-            DateTimeOffset at,
+            long at,
             SwarmFeedIndexBase? knownNearIndex)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
@@ -55,7 +55,7 @@ namespace Etherna.BeeNet.Models
 
         public Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
-            DateTimeOffset at,
+            long at,
             SwarmSequenceFeedIndex? knownNearIndex)
         {
             throw new NotImplementedException();
