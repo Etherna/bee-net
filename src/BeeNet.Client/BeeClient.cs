@@ -573,8 +573,8 @@ namespace Etherna.BeeNet
 
         public async Task<FileResponse> GetFeedAsync(
             EthAddress owner,
-            string topic,
-            DateTimeOffset? at = null,
+            byte[] topic,
+            long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
@@ -586,8 +586,8 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.FeedsGetAsync(
                 owner: owner.ToString(),
-                topic: topic,
-                at: at?.ToUnixTimeSeconds(),
+                topic: topic.ToHex(),
+                at: at,
                 after: after,
                 type: type.ToString(),
                 swarm_only_root_chunk: swarmOnlyRootChunk,

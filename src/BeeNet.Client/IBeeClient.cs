@@ -377,8 +377,8 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<FileResponse> GetFeedAsync(
             EthAddress owner,
-            string topic,
-            DateTimeOffset? at = null,
+            byte[] topic,
+            long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
