@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,10 @@ namespace Etherna.BeeNet.Stores
                 return await GetAsync(hash, cacheChunk, cancellationToken).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
+            {
+                return null;
+            }
+            catch (OperationCanceledException)
             {
                 return null;
             }
