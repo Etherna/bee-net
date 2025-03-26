@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
@@ -24,7 +25,9 @@ namespace Etherna.BeeNet.Stores
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
             Task.FromResult(false);
         
-        protected override Task<SwarmChunk> LoadChunkAsync(SwarmHash hash) =>
+        protected override Task<SwarmChunk> LoadChunkAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default) =>
             throw new KeyNotFoundException("Chunk get on a fake chunk store");
 
         protected override Task<bool> SaveChunkAsync(SwarmChunk chunk) =>

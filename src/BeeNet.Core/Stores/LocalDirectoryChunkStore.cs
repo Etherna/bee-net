@@ -18,6 +18,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
@@ -80,7 +81,9 @@ namespace Etherna.BeeNet.Stores
             return Task.FromResult(true);
         }
 
-        protected override async Task<SwarmChunk> LoadChunkAsync(SwarmHash hash)
+        protected override async Task<SwarmChunk> LoadChunkAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default)
         {
             var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
             
@@ -90,7 +93,7 @@ namespace Etherna.BeeNet.Stores
             var buffer = new byte[SwarmChunk.SpanAndDataSize];
             var fileStream = File.OpenRead(chunkPath);
             await using var stream = fileStream.ConfigureAwait(false);
-            var readBytes = await fileStream.ReadAsync(buffer).ConfigureAwait(false);
+            var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
 
             var chunk = SwarmChunk.BuildFromSpanAndData(hash, buffer.AsSpan()[..readBytes]);
             return chunk;

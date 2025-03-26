@@ -19,6 +19,7 @@ using System;
 using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
@@ -77,13 +78,14 @@ namespace Etherna.BeeNet.Models
         
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
-            SwarmFeedIndexBase index)
+            SwarmFeedIndexBase index,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
             
             var hash = BuildHash(index, new Hasher());
             
-            var chunk = await chunkStore.TryGetAsync(hash).ConfigureAwait(false);
+            var chunk = await chunkStore.TryGetAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
             if (chunk == null)
                 return null; 
             

@@ -18,6 +18,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -102,7 +103,8 @@ namespace Etherna.BeeNet.Models
                         _ => { },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Never()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Never()),
                         startingChunk));
                 }
 
@@ -127,11 +129,13 @@ namespace Etherna.BeeNet.Models
                         ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
                                 childChunkReference,
-                                It.IsAny<bool>()))
+                                It.IsAny<bool>(),
+                                It.IsAny<CancellationToken>()))
                             .ReturnsAsync(new SwarmChunk(childChunkReference, childChunkPayload)),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Once()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Once()),
                         childChunk));
                 }
 
@@ -161,16 +165,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     rightChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(leftChildChunkReference, leftChildChunkPayload));
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         leftChildChunk));
                 }
 
@@ -194,12 +201,14 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Once()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Once()),
                         startingChunk));
                 }
 
@@ -226,16 +235,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     rightChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         startingChunk));
                 }
 
@@ -265,16 +277,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     rightChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(rightChildChunkReference, rightChildChunkPayload));
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChildChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         startingChunk));
                 }
 
@@ -338,11 +353,13 @@ namespace Etherna.BeeNet.Models
                         ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
                                 reference,
-                                It.IsAny<bool>()))
+                                It.IsAny<bool>(),
+                                It.IsAny<CancellationToken>()))
                             .ReturnsAsync(new SwarmChunk(reference, payload)),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Once()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Once()),
                         new SwarmFeedChunk(startingEpochIndex, payload, reference)));
                 };
 
@@ -355,11 +372,13 @@ namespace Etherna.BeeNet.Models
                         ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
                                 It.IsAny<SwarmHash>(),
-                                It.IsAny<bool>()))
+                                It.IsAny<bool>(),
+                                It.IsAny<CancellationToken>()))
                             .ReturnsAsync((SwarmChunk?)null),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Once()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Once()),
                         null));
                 }
                 
@@ -377,11 +396,13 @@ namespace Etherna.BeeNet.Models
                         ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
                                 reference,
-                                It.IsAny<bool>()))
+                                It.IsAny<bool>(),
+                                It.IsAny<CancellationToken>()))
                             .ReturnsAsync(new SwarmChunk(reference, payload)),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Once()),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Once()),
                         null));
                 }
                 
@@ -404,16 +425,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     startingChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(leftChunkReference, leftChunkPayload));
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         new SwarmFeedChunk(leftEpochIndex, leftChunkPayload, leftChunkReference)));
                 }
                 
@@ -438,16 +462,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     startingChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(startingChunkReference, startingChunkPayload));
                             gateMock.Setup(g => g.TryGetAsync(
                                     leftChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(leftChunkReference, leftChunkPayload));
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         new SwarmFeedChunk(leftEpochIndex, leftChunkPayload, leftChunkReference)));
                 }
                 
@@ -470,16 +497,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     startingChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
                                     parentChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(parentChunkReference, parentChunkPayload));
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         new SwarmFeedChunk(parentEpochIndex, parentChunkPayload, parentChunkReference)));
                 }
                 
@@ -504,16 +534,19 @@ namespace Etherna.BeeNet.Models
                         {
                             gateMock.Setup(g => g.TryGetAsync(
                                     startingChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(startingChunkReference, startingChunkPayload));
                             gateMock.Setup(g => g.TryGetAsync(
                                     parentChunkReference,
-                                    It.IsAny<bool>()))
+                                    It.IsAny<bool>(),
+                                    It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new SwarmChunk(parentChunkReference, parentChunkPayload));
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
-                            It.IsAny<bool>()), Times.Exactly(2)),
+                            It.IsAny<bool>(),
+                            It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         new SwarmFeedChunk(parentEpochIndex, parentChunkPayload, parentChunkReference)));
                 }
 
@@ -569,12 +602,14 @@ namespace Etherna.BeeNet.Models
             if (chunkExists)
                 chunkStoreMock.Setup(c => c.TryGetAsync(
                         referenceHash,
-                        It.IsAny<bool>()))
+                        It.IsAny<bool>(),
+                        It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new SwarmChunk(referenceHash, data));
             else
                 chunkStoreMock.Setup(c => c.TryGetAsync(
                         referenceHash,
-                        It.IsAny<bool>()))
+                        It.IsAny<bool>(),
+                        It.IsAny<CancellationToken>()))
                     .ReturnsAsync((SwarmChunk?)null);
 
             // Act.

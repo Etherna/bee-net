@@ -16,6 +16,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
@@ -29,7 +30,9 @@ namespace Etherna.BeeNet.Stores
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
             Task.FromResult(chunks.Remove(hash, out _));
 
-        protected override Task<SwarmChunk> LoadChunkAsync(SwarmHash hash) =>
+        protected override Task<SwarmChunk> LoadChunkAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default) =>
             Task.FromResult(chunks[hash]);
 
         protected override Task<bool> SaveChunkAsync(SwarmChunk chunk)
