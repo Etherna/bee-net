@@ -58,8 +58,8 @@ namespace Etherna.BeeNet.Models
                 nextEpochIndex = (SwarmEpochFeedIndex)lastEpochFeedChunk.Index.GetNext(at);
 
             // Create new chunk.
-            var chunkPayload = SwarmFeedChunk.BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
-            var chunkHash = SwarmFeedChunk.BuildHash(Owner, _topic, nextEpochIndex, new Hasher());
+            var chunkPayload = BuildChunkPayload(contentPayload, (ulong)at.ToUnixTimeSeconds());
+            var chunkHash = BuildHash(Owner, _topic, nextEpochIndex, new Hasher());
 
             return new SwarmFeedChunk(nextEpochIndex, chunkPayload, chunkHash);
         }

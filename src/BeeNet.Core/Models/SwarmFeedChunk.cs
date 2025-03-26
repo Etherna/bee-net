@@ -13,24 +13,19 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
-using Etherna.BeeNet.Hashing;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
     public class SwarmFeedChunk : SwarmChunk
     {
         // Consts.
-        public const int IdentifierSize = 32;
-        public const int IndexSize = 32;
         public const int MaxChunkSize = MinChunkSize + DataSize;
         public const int MaxPayloadSize = DataSize - TimeStampSize; //creation timestamp
         public const int MinChunkSize = SwarmHash.HashSize + SwarmSignature.SignatureSize + SpanSize;
         public const int MinDataSize = TimeStampSize;
         public const int TimeStampSize = sizeof(ulong);
-        public const int TopicSize = 32;
 
         // Constructor.
         public SwarmFeedChunk(
@@ -69,52 +64,5 @@ namespace Etherna.BeeNet.Models
             _data.GetHashCode() ^
             Index.GetHashCode() ^
             _span.GetHashCode();
-
-        // Static helpers.
-        public static byte[] BuildChunkPayload(byte[] payload, ulong? timestamp = null)
-        {
-            ArgumentNullException.ThrowIfNull(payload, nameof(payload));
-
-            if (payload.Length > MaxPayloadSize)
-                throw new ArgumentOutOfRangeException(nameof(payload),
-                    $"Payload can't be longer than {MaxPayloadSize} bytes");
-
-            var chunkData = new byte[TimeStampSize + payload.Length];
-            var timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
-            timestampByteArray.CopyTo(chunkData, 0);
-            payload.CopyTo(chunkData, TimeStampSize);
-
-            return chunkData;
-        }
-
-        public static SwarmHash BuildHash(EthAddress owner, byte[] topic, SwarmFeedIndexBase index, IHasher hasher) =>
-            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
-
-        public static SwarmHash BuildHash(EthAddress owner, byte[] identifier, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
-
-            if (identifier.Length != IdentifierSize)
-                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
-            
-            return hasher.ComputeHash(identifier.Concat(owner.ToByteArray()).ToArray());
-        }
-
-        public static byte[] BuildIdentifier(byte[] topic, SwarmFeedIndexBase index, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(index, nameof(index));
-            ArgumentNullException.ThrowIfNull(topic, nameof(topic));
-
-            if (topic.Length != TopicSize)
-                throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
-
-            var newArray = new byte[TopicSize + IndexSize];
-            topic.CopyTo(newArray, 0);
-            index.MarshalBinary().CopyTo(newArray.AsMemory()[topic.Length..]);
-
-            return hasher.ComputeHash(newArray);
-        }
     }
 }
