@@ -29,7 +29,6 @@ namespace Etherna.BeeNet.Models
     {
         // Consts.
         public const int IdentifierSize = 32;
-        public const int IndexSize = 32;
         public const int TopicSize = 32;
         
         // Fields.
@@ -142,11 +141,7 @@ namespace Etherna.BeeNet.Models
             if (topic.Length != TopicSize)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
 
-            var newArray = new byte[TopicSize + IndexSize];
-            topic.CopyTo(newArray, 0);
-            index.MarshalBinary().CopyTo(newArray.AsMemory()[topic.Length..]);
-
-            return hasher.ComputeHash(newArray);
+            return hasher.ComputeHash(topic, index.MarshalBinary().ToArray());
         }
     }
 }

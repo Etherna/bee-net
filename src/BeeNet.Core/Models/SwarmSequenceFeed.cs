@@ -16,6 +16,7 @@ using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,14 +28,6 @@ namespace Etherna.BeeNet.Models
         // Consts.
         private const int DefaultSearchLevels = 8;
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
-
-        // Private classes.
-        private class ChunkGetResult
-        {
-            public required SwarmChunk? Chunk { get; init; }
-            public int Level { get; set; }
-            public required SwarmSequenceFeedIndex Index { get; init; }
-        }
 
         // Properties.
         public override SwarmFeedType Type => SwarmFeedType.Sequence;
@@ -82,35 +75,29 @@ namespace Etherna.BeeNet.Models
             // If chunk exists, start a recursive concurrent lookup.
             return await RunLookupsAsync(
                 chunkStore: chunkStore,
-                baseIndex: startIndex,
-                minSearchLevel: 0,
                 maxSearchLevel: DefaultSearchLevels,
-                bestFoundResult: new ChunkGetResult
-                {
-                    Chunk = chunk,
-                    Index = startIndex,
-                    Level = 0
-                },
-                lowestNotFoundLevel: DefaultSearchLevels + 1,
+                bestFoundChunk: chunk,
                 requestsCustomTimeout: requestsCustomTimeout).ConfigureAwait(false);
         }
 
         // Helpers.
         [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
+        [SuppressMessage("ReSharper", "MethodSupportsCancellation")]
         private async Task<SwarmFeedChunk?> RunLookupsAsync(
             IReadOnlyChunkStore chunkStore,
-            SwarmSequenceFeedIndex baseIndex,
-            int minSearchLevel,
             int maxSearchLevel,
-            ChunkGetResult bestFoundResult,
-            int lowestNotFoundLevel,
+            SwarmFeedChunk bestFoundChunk,
             TimeSpan? requestsCustomTimeout = null)
         {
             using var semaphore = new SemaphoreSlim(1, 1);
             var tasks = new List<Task>();
+
+            SwarmSequenceFeedIndex baseIndex = (SwarmSequenceFeedIndex)bestFoundChunk.Index;
+            int bestFoundLevel = 0;
+            List<int> notFoundLevels = [DefaultSearchLevels + 1];
             SwarmFeedChunk? feedChunkResult = null;
             
-            for (var l = minSearchLevel; l <= maxSearchLevel; l++)
+            for (var l = 1; l <= maxSearchLevel; l++)
             {
                 var level = l;
                 tasks.Add(Task.Run(async () =>
@@ -127,28 +114,33 @@ namespace Etherna.BeeNet.Models
                     // Evaluate result. Use semaphore on evaluation because of concurrent requests.
                     try //catch timeout exception
                     {
-                        await semaphore.WaitAsync(timeoutCancellationTokenSource.Token).ConfigureAwait(false);
+                        await semaphore.WaitAsync().ConfigureAwait(false);
                         try
                         {
-                            //if a result is found, terminate other parallel evaluations
-                            if (feedChunkResult != null)
+                            //if bestFoundLevel is higher than current level, this result can be skipped
+                            if (level < bestFoundLevel)
                                 return;
                             
-                            //skip results external to current best edges
-                            if ((chunk == null && lowestNotFoundLevel < level) ||    //can't lower not found level
-                                (chunk != null && level < bestFoundResult.Level))    //can't higher found level
-                                return;
-
-                            //update edge results
+                            //try update edge results
                             if (chunk == null)
-                                lowestNotFoundLevel = level;
+                            {
+                                //keep trace to try recover in case this could be a lookup error
+                                notFoundLevels.Add(level);
+                                
+                                //skip if level can't lower not found minimum level
+                                if (notFoundLevels.Min() < level)
+                                    return;
+                            }
                             else
-                                bestFoundResult = new ChunkGetResult
-                                {
-                                    Chunk = chunk,
-                                    Index = index,
-                                    Level = level,
-                                };
+                            {
+                                //report best result
+                                bestFoundChunk = chunk;
+                                bestFoundLevel = level;
+                                
+                                //adjust not found levels. If any previous result have failed to lookup
+                                //for an existing chunk, remove wrong levels
+                                notFoundLevels.RemoveAll(nfl => nfl < bestFoundLevel);
+                            }
                             
                             // Check ending/recursion conditions.
                             
@@ -158,47 +150,25 @@ namespace Etherna.BeeNet.Models
                                 level == maxSearchLevel &&
                                 maxSearchLevel < DefaultSearchLevels)
                             {
-                                feedChunkResult = new SwarmFeedChunk(
-                                    index,
-                                    chunk.Data.ToArray(),
-                                    chunk.Hash);
+                                feedChunkResult = chunk;
                                 return;
                             }
                             
                             //if current interval is completed
-                            if (bestFoundResult.Level + 1 == lowestNotFoundLevel)
+                            if (bestFoundLevel + 1 == notFoundLevels.Min())
                             {
-                                //if already had max resolution (lowest level)
-                                if (bestFoundResult.Level == 0)
+                                //if best found result was from previous recursion (level == 0)
+                                if (bestFoundLevel == 0)
                                 {
-                                    feedChunkResult = new SwarmFeedChunk(
-                                        bestFoundResult.Index,
-                                        bestFoundResult.Chunk!.Data.ToArray(),
-                                        bestFoundResult.Chunk.Hash);
+                                    feedChunkResult = bestFoundChunk;
                                     return;
                                 }
 
                                 //else, go more in deep with better interval
                                 feedChunkResult = await RunLookupsAsync(
                                     chunkStore: chunkStore,
-                                    baseIndex: bestFoundResult.Index,
-                                    minSearchLevel: 0,
-                                    maxSearchLevel: bestFoundResult.Level,
-                                    bestFoundResult: bestFoundResult,
-                                    lowestNotFoundLevel: lowestNotFoundLevel).ConfigureAwait(false);
-                                return;
-                            }
-                            
-                            //if results are inconsistent, retry from best level ahead
-                            if (bestFoundResult.Level >= lowestNotFoundLevel)
-                            {
-                                feedChunkResult = await RunLookupsAsync(
-                                    chunkStore: chunkStore,
-                                    baseIndex: bestFoundResult.Index,
-                                    minSearchLevel: bestFoundResult.Level,
-                                    maxSearchLevel: maxSearchLevel,
-                                    bestFoundResult: bestFoundResult,
-                                    lowestNotFoundLevel: maxSearchLevel).ConfigureAwait(false);
+                                    maxSearchLevel: bestFoundLevel,
+                                    bestFoundChunk: bestFoundChunk).ConfigureAwait(false);
                             }
                         }
                         finally
