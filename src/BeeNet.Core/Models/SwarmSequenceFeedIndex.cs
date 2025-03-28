@@ -17,21 +17,21 @@ using System.Buffers.Binary;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmSequenceFeedIndex(ulong index)
+    public class SwarmSequenceFeedIndex(ulong value)
         : SwarmFeedIndexBase
     {
         // Properties.
-        public ulong Index { get; } = index;
+        public ulong Value { get; } = value;
 
         // Methods.
         public override Memory<byte> MarshalBinary()
         {
             var buffer = new byte[8];
-            BinaryPrimitives.WriteUInt64BigEndian(buffer, Index);
+            BinaryPrimitives.WriteUInt64BigEndian(buffer, Value);
             return buffer;
         }
 
         public override SwarmFeedIndexBase GetNext(ulong at) =>
-            new SwarmSequenceFeedIndex(Index + 1);
+            new SwarmSequenceFeedIndex(Value + 1);
     }
 }
