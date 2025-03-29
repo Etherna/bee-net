@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Models
     {
         // Internal classes.
         public class FindLastEpochChunkBeforeDateTestElement(
-            byte[] owner,
+            EthAddress owner,
             ulong at,
             SwarmFeedChunk startingChunk,
             byte[] topic,
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Models
             Action<Mock<IReadOnlyChunkStore>> asserts,
             SwarmFeedChunk expectedResult)
         {
-            public byte[] Owner { get; } = owner;
+            public EthAddress Owner { get; } = owner;
             public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
             public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
             public ulong At { get; } = at;
@@ -56,7 +56,7 @@ namespace Etherna.BeeNet.Models
         }
 
         public class TryFindStartingEpochChunkOnlineTestElement(
-            byte[] owner,
+            EthAddress owner,
             ulong at,
             SwarmEpochFeedIndex epochIndex,
             byte[] topic,
@@ -64,7 +64,7 @@ namespace Etherna.BeeNet.Models
             Action<Mock<IReadOnlyChunkStore>> asserts,
             SwarmFeedChunk? expectedResult)
         {
-            public byte[] Owner { get; } = owner;
+            public EthAddress Owner { get; } = owner;
             public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
             public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
             public ulong At { get; } = at;
@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Consts.
-        private static readonly byte[] ChunkOwner = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+        private static readonly EthAddress ChunkOwner = EthAddress.FromByteArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
         private static readonly byte[] ChunkTopic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
         // Fields.
