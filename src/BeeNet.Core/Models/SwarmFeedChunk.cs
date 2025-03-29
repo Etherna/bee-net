@@ -13,8 +13,11 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
@@ -64,5 +67,29 @@ namespace Etherna.BeeNet.Models
             _data.GetHashCode() ^
             Index.GetHashCode() ^
             _span.GetHashCode();
+        
+        public async Task<SwarmChunk> GetUnwrappedChunkAsync(
+            IChunkStore chunkStore,
+            IHasher? hasher = null)
+        {
+            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+
+            hasher ??= new Hasher();
+            
+            var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(_data, hasher);
+            
+            // Check if is legacy payload. Possible lengths:
+            if (soc.ChunkData.Length is
+                16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
+                16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
+            {
+                var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
+                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
+            }
+
+            return new SwarmChunk(
+                chunkHash,
+                soc.ChunkData.ToArray());
+        }
     }
 }
