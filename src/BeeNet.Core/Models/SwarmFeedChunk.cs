@@ -46,8 +46,7 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public SwarmFeedIndexBase Index { get; }
         public ReadOnlyMemory<byte> Payload => Data[TimeStampSize..];
-        public DateTimeOffset TimeStamp =>
-            Data[..TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
+        public DateTimeOffset TimeStamp => Data[..TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
 
         // Methods.
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
@@ -68,7 +67,7 @@ namespace Etherna.BeeNet.Models
             Index.GetHashCode() ^
             _span.GetHashCode();
         
-        public async Task<SwarmChunk> GetUnwrappedChunkAsync(
+        public async Task<(SwarmChunk, SingleOwnerChunk)> UnwrapChunkAndSocAsync(
             IChunkStore chunkStore,
             IHasher? hasher = null)
         {
@@ -84,12 +83,12 @@ namespace Etherna.BeeNet.Models
                 16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
             {
                 var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
-                return await chunkStore.GetAsync(hash).ConfigureAwait(false);
+                return (await chunkStore.GetAsync(hash).ConfigureAwait(false), soc);
             }
 
-            return new SwarmChunk(
+            return (new SwarmChunk(
                 chunkHash,
-                soc.ChunkData.ToArray());
+                soc.ChunkData.ToArray()), soc);
         }
     }
 }

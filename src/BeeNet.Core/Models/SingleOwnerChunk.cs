@@ -14,14 +14,12 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Bmt;
-using Etherna.BeeNet.Stores;
 using Nethereum.Signer;
 using Nethereum.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
@@ -52,10 +50,12 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static (SingleOwnerChunk soc, SwarmHash innerChunkHash) BuildFromBytes(
             ReadOnlyMemory<byte> data,
-            IHasher hasher)
+            IHasher? hasher = null)
         {
             if (data.Length < MinSocDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), "Data length is too small");
+
+            hasher ??= new Hasher();
 
             // Extract all fields.
             var cursor = 0;
