@@ -54,7 +54,8 @@ namespace Etherna.BeeNet.Chunks
             }
 
             //file cached
-            using (var writeDataStream = File.OpenWrite(fileCachePath))
+            var writeDataStream = File.OpenWrite(fileCachePath);
+            await using (writeDataStream.ConfigureAwait(false))
             {
                 await GetJoinedChunkDataHelperAsync(
                     rootChunkReference,
@@ -67,16 +68,82 @@ namespace Etherna.BeeNet.Chunks
             return File.OpenRead(fileCachePath);
         }
 
+        /// <summary>
+        /// Get data stream from chunks
+        /// </summary>
+        /// <param name="rootChunk">The root chunk</param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useRecursiveEncryption"></param>
+        /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
+        /// <param name="cancellationToken">Optional cancellation token</param>
+        /// <returns>The data stream</returns>
+        public async Task<Stream> GetJoinedChunkDataAsync(
+            SwarmChunk rootChunk,
+            XorEncryptKey? encryptionKey,
+            bool useRecursiveEncryption,
+            string? fileCachePath = null,
+            CancellationToken? cancellationToken = null)
+        {
+            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
+
+            //in memory
+            if (fileCachePath is null)
+            {
+                var dataStream = new MemoryStream();
+                
+                await GetJoinedChunkDataHelperAsync(
+                    rootChunk,
+                    encryptionKey,
+                    useRecursiveEncryption,
+                    dataStream,
+                    cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+                
+                dataStream.Position = 0;
+                return dataStream;
+            }
+
+            //file cached
+            var writeDataStream = File.OpenWrite(fileCachePath);
+            await using (writeDataStream.ConfigureAwait(false))
+            {
+                await GetJoinedChunkDataHelperAsync(
+                    rootChunk,
+                    encryptionKey,
+                    useRecursiveEncryption,
+                    writeDataStream,
+                    cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+                    
+                await writeDataStream.FlushAsync().ConfigureAwait(false);
+            }
+
+            return File.OpenRead(fileCachePath);
+        }
+        
         // Helpers.
         private async Task GetJoinedChunkDataHelperAsync(
             SwarmChunkReference chunkReference,
             Stream dataStream,
             CancellationToken cancellationToken)
         {
-            // Read and decrypt chunk data.
+            // Get root chunk and join data.
             var chunk = await chunkStore.GetAsync(chunkReference.Hash, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await GetJoinedChunkDataHelperAsync(
+                chunk,
+                chunkReference.EncryptionKey,
+                chunkReference.UseRecursiveEncryption,
+                dataStream,
+                cancellationToken).ConfigureAwait(false);
+        }
+        
+        private async Task GetJoinedChunkDataHelperAsync(
+            SwarmChunk chunk,
+            XorEncryptKey? encryptionKey,
+            bool useRecursiveEncryption,
+            Stream dataStream,
+            CancellationToken cancellationToken)
+        {
             var dataArray = chunk.Data.ToArray();
-            chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
+            encryptionKey?.EncryptDecrypt(dataArray);
             
             // Determine if is a data chunk, or an intermediate chunk.
             var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
@@ -97,7 +164,7 @@ namespace Etherna.BeeNet.Chunks
                 
                 //read encryption key
                 XorEncryptKey? childEncryptionKey = null;
-                if (chunkReference.UseRecursiveEncryption)
+                if (useRecursiveEncryption)
                 {
                     childEncryptionKey = new XorEncryptKey(dataArray[i..(i + XorEncryptKey.KeySize)]);
                     i += XorEncryptKey.KeySize;
@@ -108,7 +175,7 @@ namespace Etherna.BeeNet.Chunks
                     new SwarmChunkReference(
                         childHash,
                         childEncryptionKey,
-                        chunkReference.UseRecursiveEncryption),
+                        useRecursiveEncryption),
                     dataStream,
                     cancellationToken).ConfigureAwait(false);
             }
