@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
@@ -43,12 +44,24 @@ namespace Etherna.BeeNet.Models
             return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmSequenceFeedIndex);
         }
 
-        public Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
+        public async Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
             SwarmSequenceFeedIndex? knownNearIndex)
         {
-            throw new NotImplementedException();
+            // Find last published chunk.
+            var lastSequenceFeedChunk = await TryFindFeedAtAsync(chunkStore, knownNearIndex).ConfigureAwait(false);
+
+            // Define next sequence index.
+            var nextSequenceIndex = lastSequenceFeedChunk is null ?
+                new SwarmSequenceFeedIndex(0) :
+                (SwarmSequenceFeedIndex)lastSequenceFeedChunk.Index.GetNext(0);
+
+            // Create new chunk.
+            var chunkPayload = BuildChunkPayload(contentPayload);
+            var chunkHash = BuildHash(Owner, _topic, nextSequenceIndex, new Hasher());
+
+            return new SwarmFeedChunk(nextSequenceIndex, chunkPayload, chunkHash);
         }
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
