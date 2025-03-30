@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Bmt;
 using Nethereum.Signer;
 using Nethereum.Util;
 using System;
@@ -52,6 +51,8 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> data,
             IHasher hasher)
         {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            
             if (data.Length < MinSocDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), "Data length is too small");
 
@@ -64,10 +65,10 @@ namespace Etherna.BeeNet.Models
             cursor += SocSignatureSize;
             
             var chunkSpanAndData = data[cursor..];
-            var chunkHash = SwarmChunkBmtHasher.Hash(
+            var chunkBmt = new SwarmChunkBmt(hasher);
+            var chunkHash = chunkBmt.Hash(
                 chunkSpanAndData[..SwarmChunk.SpanSize].ToArray(),
-                chunkSpanAndData[SwarmChunk.SpanSize..].ToArray(),
-                hasher);
+                chunkSpanAndData[SwarmChunk.SpanSize..].ToArray());
 
             // Recover owner information.
             var signer = new EthereumMessageSigner();

@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Bmt;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
@@ -54,10 +53,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
             // Create an instance for this specific task. Hasher is not thread safe.
-            var plainChunkHash = SwarmChunkBmtHasher.Hash(
+            var chunkBmt = new SwarmChunkBmt(args.Hasher);
+            var plainChunkHash = chunkBmt.Hash(
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
-                args.Data[SwarmChunk.SpanSize..].ToArray(),
-                args.Hasher);
+                args.Data[SwarmChunk.SpanSize..].ToArray());
             if (compactLevel == 0)
             {
                 /* If no chunk compaction is involved, simply calculate the chunk hash and proceed. */
@@ -192,10 +191,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     EncryptDecryptChunkData(chunkKey, encryptedData);
                     
                     // Calculate hash, bucket id, and save in cache.
-                    var encryptedHash = SwarmChunkBmtHasher.Hash(
+                    var chunkBmt = new SwarmChunkBmt(args.Hasher);
+                    var encryptedHash = chunkBmt.Hash(
                         encryptedData[..SwarmChunk.SpanSize],
-                        encryptedData[SwarmChunk.SpanSize..],
-                        args.Hasher);
+                        encryptedData[SwarmChunk.SpanSize..]);
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
 
                     // Check key collisions.

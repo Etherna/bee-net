@@ -18,8 +18,9 @@ using Nethereum.Merkle.StrategyOptions.PairingConcat;
 using Nethereum.Util.ByteArrayConvertors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Etherna.BeeNet.Hashing.Bmt
+namespace Etherna.BeeNet.Hashing
 {
     internal sealed class SwarmChunkBmt(IHasher hasher)
         : MerkleTree<byte[]>(
@@ -55,6 +56,30 @@ namespace Etherna.BeeNet.Hashing.Bmt
         
         // Static fields.
         private static readonly ChunkBmtByteArrayConvertor byteArrayConvertor = new();
+        
+        // Methods.
+        public SwarmHash Hash(byte[] span, byte[] data)
+        {
+            ArgumentNullException.ThrowIfNull(span, nameof(span));
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            
+            if (data.Length > SwarmChunk.DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
+            
+            // Split input data into leaf segments.
+            var segments = new List<byte[]>();
+            for (var start = 0; start < data.Length; start += SegmentSize)
+            {
+                var end = Math.Min(start + SegmentSize, data.Length);
+                segments.Add(data[start..end]);
+            }
+            
+            // Build the merkle tree.
+            BuildTree(segments);
+            
+            return hasher.ComputeHash(span.Concat(Root.Hash).ToArray());
+        }
         
         // Protected override methods.
         protected override MerkleTreeNode CreateMerkleTreeNode(byte[] item) =>
