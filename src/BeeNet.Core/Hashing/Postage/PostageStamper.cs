@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Hashing.Postage
     public sealed class PostageStamper : IPostageStamper
     {
         // Fields.
-        private readonly Hasher hasher = new();
+        private readonly IHasher hasher;
         private readonly Dictionary<SwarmHash, PostageStamp> presignedPostageStamps;
         private readonly bool storePresignedPostageStamps;
         
@@ -33,12 +33,14 @@ namespace Etherna.BeeNet.Hashing.Postage
             ISigner signer,
             IPostageStampIssuer stampIssuer,
             IStampStore stampStore,
+            IHasher hasher,
             IDictionary<SwarmHash, PostageStamp>? presignedPostageStamps = null,
             bool storePresignedPostageStamps = false)
         {
             Signer = signer;
             StampIssuer = stampIssuer;
             StampStore = stampStore;
+            this.hasher = hasher;
             this.storePresignedPostageStamps = storePresignedPostageStamps;
 
             this.presignedPostageStamps = (presignedPostageStamps ?? new Dictionary<SwarmHash, PostageStamp>())

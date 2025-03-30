@@ -152,8 +152,10 @@ namespace Etherna.BeeNet.Manifest
         }
 
         public async Task ComputeHashAsync(
+            IHasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
             
             if (_hash != null)
@@ -161,13 +163,13 @@ namespace Etherna.BeeNet.Manifest
 
             // Recursively compute hash for each fork nodes.
             foreach (var fork in _forks.Values)
-                await fork.Node.ComputeHashAsync(hasherPipelineBuilder).ConfigureAwait(false);
+                await fork.Node.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
             if (CompactLevel == 0)
                 ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
             else
-                ObfuscationKey = await GetBestObfuscationKeyAsync(hasherPipelineBuilder).ConfigureAwait(false);
+                ObfuscationKey = await GetBestObfuscationKeyAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             
             var byteArray = ToByteArray(ObfuscationKey.Value);
             using var hasherPipeline = hasherPipelineBuilder(false);
@@ -202,6 +204,7 @@ namespace Etherna.BeeNet.Manifest
         }
         
         private async Task<XorEncryptKey> GetBestObfuscationKeyAsync(
+            IHasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
             /*
@@ -232,7 +235,6 @@ namespace Etherna.BeeNet.Manifest
             // Search best chunk key.
             uint bestCollisions = 0;
             var bestKey = XorEncryptKey.Zero;
-            var hasher = new Hasher();
 
             for (ushort i = 0; i < CompactLevel; i++)
             {

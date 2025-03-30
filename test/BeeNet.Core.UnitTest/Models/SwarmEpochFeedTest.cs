@@ -558,10 +558,14 @@ namespace Etherna.BeeNet.Models
         [Theory, MemberData(nameof(FindLastEpochChunkBeforeDateTests))]
         public async Task FindLastEpochChunkBeforeDate(FindLastEpochChunkBeforeDateTestElement test)
         {
-            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic, new Hasher());
+            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic);
             test.ArrangeAction(chunkStoreMock);
 
-            var result = await epochFeed.FindLastEpochChunkBeforeDateAsync(chunkStoreMock.Object, test.At, test.StartingChunk);
+            var result = await epochFeed.FindLastEpochChunkBeforeDateAsync(
+                chunkStoreMock.Object,
+                test.At,
+                test.StartingChunk,
+                new Hasher());
 
             Assert.Equal(test.ExpectedResult, result);
             test.Asserts(chunkStoreMock);
@@ -570,8 +574,7 @@ namespace Etherna.BeeNet.Models
         [Theory, MemberData(nameof(FindStartingEpochOfflineTests))]
         public void FindStartingEpochOffline(FindStartingEpochOfflineTestElement test)
         {
-            var epochFeed = new SwarmEpochFeed(ChunkOwner, ChunkTopic, new Hasher());
-            var result = epochFeed.FindStartingEpochOffline(test.KnownNearEpoch, test.At);
+            var result = SwarmEpochFeed.FindStartingEpochOffline(test.KnownNearEpoch, test.At, new Hasher());
 
             Assert.Equal(test.ExpectedResult, result);
         }
@@ -579,10 +582,14 @@ namespace Etherna.BeeNet.Models
         [Theory, MemberData(nameof(TryFindStartingEpochChunkOnlineTests))]
         public async Task TryFindStartingEpochChunkOnline(TryFindStartingEpochChunkOnlineTestElement test)
         {
-            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic, new Hasher());
+            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic);
             test.ArrangeAction(chunkStoreMock);
 
-            var result = await epochFeed.TryFindStartingEpochChunkOnlineAsync(chunkStoreMock.Object, test.At, test.EpochIndex);
+            var result = await epochFeed.TryFindStartingEpochChunkOnlineAsync(
+                chunkStoreMock.Object,
+                test.At,
+                test.EpochIndex,
+                new Hasher());
 
             Assert.Equal(test.ExpectedResult, result);
             test.Asserts(chunkStoreMock);
@@ -594,7 +601,7 @@ namespace Etherna.BeeNet.Models
         public async Task TryGetFeedChunkAsync(bool chunkExists)
         {
             // Arrange.
-            var epochFeed = new SwarmEpochFeed(ChunkOwner, ChunkTopic, new Hasher());
+            var epochFeed = new SwarmEpochFeed(ChunkOwner, ChunkTopic);
             var index = new SwarmEpochFeedIndex(2, 1, new Hasher());
             var referenceHash = "81633ef0b822119ac464b955a3ae520a72b87e9332a67e25610e9b3ee7373c91";
             var data = new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -613,7 +620,10 @@ namespace Etherna.BeeNet.Models
                     .ReturnsAsync((SwarmChunk?)null);
 
             // Act.
-            var result = await epochFeed.TryGetFeedChunkAsync(chunkStoreMock.Object, index);
+            var result = await epochFeed.TryGetFeedChunkAsync(
+                chunkStoreMock.Object,
+                index,
+                new Hasher());
 
             // Assert.
             if (chunkExists)

@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Fields.
         private readonly SemaphoreSlim chunkConcurrencySemaphore;
-        private readonly ConcurrentQueue<SemaphoreSlim> chunkSemaphorePool;
+        private readonly ConcurrentQueue<(SemaphoreSlim Semaphore, IHasher Hasher)> chunkResourcesPool;
         private readonly IHasherPipelineStage nextStage;
         private readonly List<Task> nextStageTasks = new();
         
@@ -42,13 +42,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public ChunkFeederPipelineStage(
             IHasherPipelineStage nextStage,
+            Func<IHasher> hasherBuilder,
             int? chunkConcurrency = null)
         {
             chunkConcurrency ??= Environment.ProcessorCount;
             
             this.nextStage = nextStage;
             chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
-            chunkSemaphorePool = new ConcurrentQueue<SemaphoreSlim>();
+            chunkResourcesPool = new ConcurrentQueue<(SemaphoreSlim Semaphore, IHasher Hasher)>();
             
             //init semaphore pool
             /*
@@ -69,7 +70,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * has completed and released concurrency.
              */
             for (int i = 0; i < chunkConcurrency * 2; i++)
-                chunkSemaphorePool.Enqueue(new SemaphoreSlim(1, 1));
+                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), hasherBuilder()));
         }
 
         // Dispose.
@@ -77,8 +78,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             nextStage.Dispose();
             chunkConcurrencySemaphore.Dispose();
-            while (chunkSemaphorePool.TryDequeue(out var semaphore))
-                semaphore.Dispose();
+            while (chunkResourcesPool.TryDequeue(out var resources))
+                resources.Semaphore.Dispose();
         }
         
         // Properties.
@@ -131,15 +132,16 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     //control concurrency
                     await chunkConcurrencySemaphore.WaitAsync().ConfigureAwait(false);
                     
-                    //initialize chunk semaphore, receiving from semaphore pool
+                    //initialize chunk semaphore, receiving from resources pool
 #pragma warning disable CA2000
-                    if (!chunkSemaphorePool.TryDequeue(out var chunkSemaphore))
-                        throw new InvalidOperationException("Semaphore pool exhausted");
+                    if (!chunkResourcesPool.TryDequeue(out var chunkResources))
+                        throw new InvalidOperationException("Chunk resources pool exhausted");
 #pragma warning restore CA2000
-                    await chunkSemaphore.WaitAsync().ConfigureAwait(false);
+                    await chunkResources.Semaphore.WaitAsync().ConfigureAwait(false);
                     
                     //build args
                     var feedArgs = new HasherPipelineFeedArgs(
+                        hasher: chunkResources.Hasher,
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
                         numberId: chunkNumberId,
@@ -156,8 +158,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             finally
                             {
                                 //release and restore chunk semaphore in pool
-                                chunkSemaphore.Release();
-                                chunkSemaphorePool.Enqueue(chunkSemaphore);
+                                chunkResources.Semaphore.Release();
+                                chunkResourcesPool.Enqueue(chunkResources);
                                 
                                 //release task for next chunk
                                 chunkConcurrencySemaphore.Release();
@@ -165,7 +167,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         }));
                     
                     //set current chunk semaphore as prev for next chunk
-                    prevChunkSemaphore = chunkSemaphore;
+                    prevChunkSemaphore = chunkResources.Semaphore;
                     
                     passedBytes += chunkReadSize;
                 }
@@ -174,7 +176,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Wait the end of all chunk computation.
             await Task.WhenAll(nextStageTasks).ConfigureAwait(false);
 
-            return await nextStage.SumAsync().ConfigureAwait(false);
+            // Extract an unused chunk's hasher and sum.
+            chunkResourcesPool.TryDequeue(out var resourceTuple);
+            return await nextStage.SumAsync(resourceTuple.Hasher).ConfigureAwait(false);
         }
 
         // Helpers.

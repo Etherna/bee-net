@@ -50,12 +50,10 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static (SingleOwnerChunk soc, SwarmHash innerChunkHash) BuildFromBytes(
             ReadOnlyMemory<byte> data,
-            IHasher? hasher = null)
+            IHasher hasher)
         {
             if (data.Length < MinSocDataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), "Data length is too small");
-
-            hasher ??= new Hasher();
 
             // Extract all fields.
             var cursor = 0;
@@ -98,7 +96,7 @@ namespace Etherna.BeeNet.Models
                     !ByteArrayComparer.Current.Equals(innerChunkHash.ToByteArray()[1..32].ToArray(), soc.Id[1..32].ToArray()))
                     return false;
 
-                return chunk.Hash == soc.CalculateHash(hasher);
+                return chunk.Hash == soc.BuildHash(hasher);
             }
             catch
             {
@@ -107,7 +105,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Methods.
-        public SwarmHash CalculateHash(IHasher hasher)
+        public SwarmHash BuildHash(IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             return hasher.ComputeHash(Id.ToArray(), Owner.ToByteArray());

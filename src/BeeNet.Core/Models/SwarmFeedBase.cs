@@ -61,7 +61,8 @@ namespace Etherna.BeeNet.Models
         public abstract Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            SwarmFeedIndexBase? knownNearIndex);
+            SwarmFeedIndexBase? knownNearIndex,
+            Func<IHasher> hasherBuilder);
 
         /// <summary>
         /// Try to find feed at a given time
@@ -69,20 +70,23 @@ namespace Etherna.BeeNet.Models
         /// <param name="chunkStore">The chunk store</param>
         /// <param name="at">The time to search</param>
         /// <param name="knownNearIndex">Another known existing index, near to looked time. Helps to perform lookup quicker</param>
+        /// <param name="hasherBuilder"></param>
         /// <returns>The found feed chunk, or null</returns>
         public abstract Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
             long at,
-            SwarmFeedIndexBase? knownNearIndex);
+            SwarmFeedIndexBase? knownNearIndex,
+            Func<IHasher> hasherBuilder);
         
         public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             SwarmFeedIndexBase index,
+            IHasher hasher,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
             
-            var hash = BuildHash(index, new Hasher());
+            var hash = BuildHash(index, hasher);
             
             var chunk = await chunkStore.TryGetAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
             if (chunk == null)
