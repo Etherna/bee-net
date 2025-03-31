@@ -26,6 +26,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Static builders.
         public static IHasherPipeline BuildNewHasherPipeline(
             IChunkStore chunkStore,
+            Func<IHasher> hasherBuilder,
             IPostageStamper postageStamper,
             RedundancyLevel redundancyLevel,
             bool isEncrypted,
@@ -33,6 +34,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             int? chunkConcurrency,
             bool readOnly = false)
         {
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
             
             if (redundancyLevel != RedundancyLevel.None)
@@ -65,7 +67,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage);
             }
             
-            return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);
+            return new ChunkFeederPipelineStage(bmtStage, hasherBuilder, chunkConcurrency);
         }
     }
 }

@@ -40,12 +40,13 @@ namespace Etherna.BeeNet.Hashing
             // hasher.DoFinal(output);
         }
         
-        public byte[] ComputeHash(byte[] data)
+        public byte[] ComputeHash(params byte[][] dataArray)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            ArgumentNullException.ThrowIfNull(dataArray, nameof(dataArray));
             
             var output = new byte[hasher.GetDigestSize()];
-            hasher.BlockUpdate(data, 0, data.Length);
+            foreach (var data in dataArray)
+                hasher.BlockUpdate(data, 0, data.Length);
             hasher.DoFinal(output, 0);
             return output;
             
@@ -56,17 +57,6 @@ namespace Etherna.BeeNet.Hashing
             // var result = new byte[SwarmHash.HashSize];
             // ComputeHash(data, result);
             // return result;
-        }
-        
-        public byte[] ComputeHash(params byte[][] dataArray)
-        {
-            ArgumentNullException.ThrowIfNull(dataArray, nameof(dataArray));
-            
-            var output = new byte[hasher.GetDigestSize()];
-            foreach (var data in dataArray)
-                hasher.BlockUpdate(data, 0, data.Length);
-            hasher.DoFinal(output, 0);
-            return output;
         }
 
         public byte[] ComputeHash(string data) =>

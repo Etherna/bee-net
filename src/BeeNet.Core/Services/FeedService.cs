@@ -37,8 +37,7 @@ namespace Etherna.BeeNet.Services
         // Methods.
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public async Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
-            ReferencedMantarayManifest manifest,
-            IHasher hasher)
+            ReferencedMantarayManifest manifest)
         {
             ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
             
@@ -57,7 +56,7 @@ namespace Etherna.BeeNet.Services
 
                 return Enum.Parse<SwarmFeedType>(strType, true) switch
                 {
-                    SwarmFeedType.Epoch => new SwarmEpochFeed(owner, topic, hasher),
+                    SwarmFeedType.Epoch => new SwarmEpochFeed(owner, topic),
                     SwarmFeedType.Sequence => new SwarmSequenceFeed(owner, topic),
                     _ => throw new InvalidOperationException()
                 };
@@ -70,10 +69,12 @@ namespace Etherna.BeeNet.Services
         
         public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
+            Func<IHasher> hasherBuilder,
             ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
             
             // Init.
@@ -81,12 +82,15 @@ namespace Etherna.BeeNet.Services
             postageStamper ??= new PostageStamper(
                 new FakeSigner(),
                 new PostageStampIssuer(PostageBatch.MaxDepthInstance),
-                new MemoryStampStore());
+                new MemoryStampStore(),
+                hasherBuilder());
 
             // Create manifest.
             var feedManifest = new MantarayManifest(
+                hasherBuilder(),
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
+                    hasherBuilder,
                     postageStamper,
                     RedundancyLevel.None,
                     false,

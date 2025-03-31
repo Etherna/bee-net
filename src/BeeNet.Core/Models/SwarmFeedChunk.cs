@@ -69,11 +69,9 @@ namespace Etherna.BeeNet.Models
         
         public async Task<(SwarmChunk, SingleOwnerChunk)> UnwrapChunkAndSocAsync(
             IChunkStore chunkStore,
-            IHasher? hasher = null)
+            IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
-
-            hasher ??= new Hasher();
             
             var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(_data, hasher);
             

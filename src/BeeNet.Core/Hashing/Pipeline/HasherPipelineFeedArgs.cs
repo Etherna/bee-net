@@ -26,6 +26,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         // Constructor.
         public HasherPipelineFeedArgs(
+            ISwarmChunkBmt swarmChunkBmt,
             byte[] data,
             byte[]? span = null,
             long numberId = 0,
@@ -43,6 +44,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             _data = data;
             _span = span;
+            SwarmChunkBmt = swarmChunkBmt;
             NumberId = numberId;
             PrevChunkSemaphore = prevChunkSemaphore;
         }
@@ -68,11 +70,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public SwarmHash? Hash { get; set; }
 
         /// <summary>
-        /// Always unecrypted span uint64
-        /// </summary>
-        public ReadOnlyMemory<byte> Span => _span;
-        
-        /// <summary>
         /// Ordered id, from 0 to n with the last chunk
         /// </summary>
         public long NumberId { get; }
@@ -81,5 +78,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         /// Previous chunk semaphore. Occuped resource until chunk is processing.
         /// </summary>
         public SemaphoreSlim? PrevChunkSemaphore { get; }
+
+        /// <summary>
+        /// Always unecrypted span uint64
+        /// </summary>
+        public ReadOnlyMemory<byte> Span => _span;
+
+        public ISwarmChunkBmt SwarmChunkBmt { get; }
     }
 }

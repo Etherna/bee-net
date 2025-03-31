@@ -17,6 +17,7 @@ using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
+using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -24,11 +25,11 @@ namespace Etherna.BeeNet.Services
     public interface IFeedService
     {
         Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
-            ReferencedMantarayManifest manifest,
-            IHasher hasher);
+            ReferencedMantarayManifest manifest);
 
         Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
+            Func<IHasher> hasherBuilder,
             ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null);

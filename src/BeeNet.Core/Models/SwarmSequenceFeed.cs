@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -29,6 +30,9 @@ namespace Etherna.BeeNet.Models
         // Consts.
         private const int DefaultSearchLevels = 8;
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
+        
+        // Fields.
+        ConcurrentQueue<IHasher> hashersPool = new();
 
         // Properties.
         public override SwarmFeedType Type => SwarmFeedType.Sequence;
@@ -37,20 +41,24 @@ namespace Etherna.BeeNet.Models
         public override Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            SwarmFeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex,
+            Func<IHasher> hasherBuilder)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmSequenceFeedIndex);
+            return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmSequenceFeedIndex, hasherBuilder);
         }
 
         public async Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             byte[] contentPayload,
-            SwarmSequenceFeedIndex? knownNearIndex)
+            SwarmSequenceFeedIndex? knownNearIndex,
+            Func<IHasher> hasherBuilder)
         {
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            
             // Find last published chunk.
-            var lastSequenceFeedChunk = await TryFindFeedAtAsync(chunkStore, knownNearIndex).ConfigureAwait(false);
+            var lastSequenceFeedChunk = await TryFindFeedAtAsync(chunkStore, knownNearIndex, hasherBuilder).ConfigureAwait(false);
 
             // Define next sequence index.
             var nextSequenceIndex = lastSequenceFeedChunk is null ?
@@ -59,7 +67,7 @@ namespace Etherna.BeeNet.Models
 
             // Create new chunk.
             var chunkPayload = BuildChunkPayload(contentPayload);
-            var chunkHash = BuildHash(Owner, _topic, nextSequenceIndex, new Hasher());
+            var chunkHash = BuildHash(Owner, _topic, nextSequenceIndex, hasherBuilder());
 
             return new SwarmFeedChunk(nextSequenceIndex, chunkPayload, chunkHash);
         }
@@ -67,30 +75,35 @@ namespace Etherna.BeeNet.Models
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
             long at,
-            SwarmFeedIndexBase? knownNearIndex)
+            SwarmFeedIndexBase? knownNearIndex,
+            Func<IHasher> hasherBuilder)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return TryFindFeedAtAsync(chunkStore, knownNearIndex as SwarmSequenceFeedIndex);
+            return TryFindFeedAtAsync(chunkStore, knownNearIndex as SwarmSequenceFeedIndex, hasherBuilder);
         }
 
         public async Task<SwarmFeedChunk?> TryFindFeedAtAsync(
             IReadOnlyChunkStore chunkStore,
             SwarmSequenceFeedIndex? knownNearIndex,
+            Func<IHasher> hasherBuilder,
             TimeSpan? requestsCustomTimeout = null)
         {
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            
             // First lookup at the knownNearIndex, or default index(0).
             var startIndex = knownNearIndex ?? new SwarmSequenceFeedIndex(0);
-            var chunk = await TryGetFeedChunkAsync(chunkStore, startIndex).ConfigureAwait(false);
+            var chunk = await TryGetFeedChunkAsync(chunkStore, startIndex, hasherBuilder()).ConfigureAwait(false);
             if (chunk == null)
                 return null;
 
             // If chunk exists, start a recursive concurrent lookup.
             return await RunLookupsAsync(
-                chunkStore: chunkStore,
-                maxSearchLevel: DefaultSearchLevels,
-                bestFoundChunk: chunk,
-                requestsCustomTimeout: requestsCustomTimeout).ConfigureAwait(false);
+                chunkStore,
+                DefaultSearchLevels,
+                chunk,
+                hasherBuilder,
+                requestsCustomTimeout).ConfigureAwait(false);
         }
 
         // Helpers.
@@ -100,6 +113,7 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             int maxSearchLevel,
             SwarmFeedChunk bestFoundChunk,
+            Func<IHasher> hasherBuilder,
             TimeSpan? requestsCustomTimeout = null)
         {
             using var semaphore = new SemaphoreSlim(1, 1);
@@ -115,13 +129,17 @@ namespace Etherna.BeeNet.Models
                 var level = l;
                 tasks.Add(Task.Run(async () =>
                 {
-                    // Exec lookup.
+                    // Init.
+                    if (!hashersPool.TryDequeue(out var hasher))
+                        hasher = hasherBuilder();
                     using var timeoutCancellationTokenSource = new CancellationTokenSource(requestsCustomTimeout ?? DefaultTimeout);
-
+                    
+                    // Exec lookup.
                     var index = new SwarmSequenceFeedIndex(baseIndex.Value + ((ulong)1 << level) - 1);
                     var chunk = await TryGetFeedChunkAsync(
                         chunkStore,
                         index,
+                        hasher,
                         timeoutCancellationTokenSource.Token).ConfigureAwait(false);
                     
                     // Evaluate result. Use semaphore on evaluation because of concurrent requests.
@@ -181,12 +199,14 @@ namespace Etherna.BeeNet.Models
                                 feedChunkResult = await RunLookupsAsync(
                                     chunkStore: chunkStore,
                                     maxSearchLevel: bestFoundLevel,
-                                    bestFoundChunk: bestFoundChunk).ConfigureAwait(false);
+                                    bestFoundChunk: bestFoundChunk,
+                                    hasherBuilder).ConfigureAwait(false);
                             }
                         }
                         finally
                         {
                             semaphore.Release();
+                            hashersPool.Enqueue(hasher);
                         }
                     }
                     catch (OperationCanceledException) { }

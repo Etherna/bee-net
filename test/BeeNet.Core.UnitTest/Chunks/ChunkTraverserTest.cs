@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Manifest;
@@ -521,8 +522,10 @@ namespace Etherna.BeeNet.Chunks
             
             // Build manifest.
             var dirManifest = new MantarayManifest(
+                new Hasher(),
                 _ => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
+                    () => new Hasher(),
                     postageStamper,
                     RedundancyLevel.None,
                     false,
@@ -532,6 +535,7 @@ namespace Etherna.BeeNet.Chunks
 
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
+                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,
@@ -556,6 +560,7 @@ namespace Etherna.BeeNet.Chunks
 
             var fileBHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
+                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,
@@ -575,6 +580,7 @@ namespace Etherna.BeeNet.Chunks
 
             var fileCHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
+                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,

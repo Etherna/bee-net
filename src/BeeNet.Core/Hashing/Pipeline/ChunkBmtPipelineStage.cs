@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Bmt;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
@@ -53,13 +52,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             if (args.Data.Length > SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
-            // Create an instance for this specific task. Hasher is not thread safe.
-            var hasher = new Hasher();
-
-            var plainChunkHash = SwarmChunkBmtHasher.Hash(
+            // Hash chunk and clear chunk bmt for next uses.
+            var plainChunkHash = args.SwarmChunkBmt.Hash(
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
-                args.Data[SwarmChunk.SpanSize..].ToArray(),
-                hasher);
+                args.Data[SwarmChunk.SpanSize..].ToArray());
+            args.SwarmChunkBmt.Clear();
+            
+            // Decide to compact chunk or not.
             if (compactLevel == 0)
             {
                 /* If no chunk compaction is involved, simply calculate the chunk hash and proceed. */
@@ -68,7 +67,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             else
             {
                 // Search best chunk key.
-                var bestChunkResult = await GetBestChunkAsync(args, plainChunkHash, hasher).ConfigureAwait(false);
+                var bestChunkResult = await GetBestChunkAsync(args, plainChunkHash).ConfigureAwait(false);
                 
                 args.ChunkKey = bestChunkResult.ChunkKey;
                 args.Data = bestChunkResult.EncryptedData;
@@ -78,7 +77,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
 
-        public Task<SwarmChunkReference> SumAsync() => nextStage.SumAsync();
+        public Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
         
         // Helpers.
         private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, byte[] data)
@@ -89,8 +88,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         private async Task<CompactedChunkAttemptResult> GetBestChunkAsync(
             HasherPipelineFeedArgs args,
-            SwarmHash plainChunkHash,
-            Hasher hasher)
+            SwarmHash plainChunkHash)
         {
             /*
              * If chunk compaction is involved, use optimistic calculation.
@@ -128,7 +126,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Run optimistically before prev chunk completion.
             var encryptionCache = new Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult>();
             var (bestKeyAttempt, expectedCollisions, wasAlreadyStamped) =
-                SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+                SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
 
             // If there isn't any prev chunk to wait, proceed with result.
             if (args.PrevChunkSemaphore == null)
@@ -154,7 +152,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
                 // If it has been invalidated, do it again.
                 _missedOptimisticHashing++;
-                var (newBestKeyAttempt, _, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash, hasher);
+                var (newBestKeyAttempt, _, _) = SearchFirstBestChunkKey(args, encryptionCache, plainChunkHash);
                 return encryptionCache[newBestKeyAttempt];
             }
             finally
@@ -167,8 +165,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private (ushort bestKeyAttempt, uint expectedCollisions, bool wasAlreadyStamped) SearchFirstBestChunkKey(
             HasherPipelineFeedArgs args,
             Dictionary<ushort /*attempt*/, CompactedChunkAttemptResult> optimisticCache,
-            SwarmHash plainChunkHash,
-            Hasher hasher)
+            SwarmHash plainChunkHash)
         {
             // Init.
             ushort bestAttempt = 0;
@@ -189,18 +186,20 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 {
                     // Create key.
                     BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
-                    var chunkKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
+                    var chunkKey = new XorEncryptKey(args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
                     var encryptedData = args.Data.ToArray();
                     EncryptDecryptChunkData(chunkKey, encryptedData);
                     
                     // Calculate hash, bucket id, and save in cache.
-                    var encryptedHash = SwarmChunkBmtHasher.Hash(
+                    var encryptedHash = args.SwarmChunkBmt.Hash(
                         encryptedData[..SwarmChunk.SpanSize],
-                        encryptedData[SwarmChunk.SpanSize..],
-                        hasher);
+                        encryptedData[SwarmChunk.SpanSize..]);
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
+                    
+                    // Clear chunk bmt for next uses.
+                    args.SwarmChunkBmt.Clear();
 
                     // Check key collisions.
                     collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());

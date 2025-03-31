@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Models;
 using System;
@@ -22,7 +23,8 @@ namespace Etherna.BeeNet.Manifest
     public delegate IHasherPipeline BuildHasherPipeline(bool readOnlyPipeline);
     
     public class MantarayManifest(
-        BuildHasherPipeline hasherBuilder,
+        IHasher hasher,
+        BuildHasherPipeline hasherPipelineBuilder,
         MantarayNode rootNode)
         : IReadOnlyMantarayManifest
     {
@@ -31,9 +33,11 @@ namespace Etherna.BeeNet.Manifest
 
         // Constructors.
         public MantarayManifest(
-            BuildHasherPipeline hasherBuilder,
+            IHasher hasher,
+            BuildHasherPipeline hasherPipelineBuilder,
             ushort compactLevel)
-            : this(hasherBuilder,
+            : this(hasher,
+                hasherPipelineBuilder,
                 new MantarayNode(
                     compactLevel,
                     compactLevel > 0
@@ -55,7 +59,7 @@ namespace Etherna.BeeNet.Manifest
 
         public async Task<SwarmChunkReference> GetHashAsync()
         {
-            await rootNode.ComputeHashAsync(hasherBuilder).ConfigureAwait(false);
+            await rootNode.ComputeHashAsync(hasher,hasherPipelineBuilder).ConfigureAwait(false);
             return new SwarmChunkReference(rootNode.Hash, null, false);
         }
     }

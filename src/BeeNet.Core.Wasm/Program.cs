@@ -1,3 +1,4 @@
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Services;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -24,7 +25,8 @@ public partial class BeeNetWasmUtil
         var result = await calculatorService.UploadSingleFileAsync(
             data,
             fileContentType,
-            fileName).ConfigureAwait(false);
+            fileName,
+            () => new Hasher()).ConfigureAwait(false);
         return result.ChunkReference.Hash.ToString();
     }
 }

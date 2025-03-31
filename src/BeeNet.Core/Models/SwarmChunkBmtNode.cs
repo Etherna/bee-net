@@ -12,14 +12,21 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Nethereum.Util;
 using System;
 
-namespace Etherna.BeeNet.Hashing
+namespace Etherna.BeeNet.Models
 {
-    public interface IHasher
+    public class SwarmChunkBmtNode(Memory<byte> hash)
     {
-        void ComputeHash(byte[] data, Span<byte> output);
-        byte[] ComputeHash(params byte[][] dataArray);
-        byte[] ComputeHash(string data);
+        public Memory<byte> Hash { get; set; } = hash;
+
+        public int Compare(Memory<byte> hashOther) =>
+            ByteArrayComparer.Current.Compare(Hash.ToArray(), hashOther.ToArray());
+
+        public bool Matches(Memory<byte> hashOther) =>
+            Compare(hashOther) == 0;
+
+        public SwarmChunkBmtNode Clone() => new(Hash);
     }
 }

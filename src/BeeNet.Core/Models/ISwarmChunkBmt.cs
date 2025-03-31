@@ -12,14 +12,22 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
+using Etherna.BeeNet.Hashing;
+using System.Collections.Generic;
 
-namespace Etherna.BeeNet.Hashing
+namespace Etherna.BeeNet.Models
 {
-    public interface IHasher
+    public interface ISwarmChunkBmt
     {
-        void ComputeHash(byte[] data, Span<byte> output);
-        byte[] ComputeHash(params byte[][] dataArray);
-        byte[] ComputeHash(string data);
+        // Properties.
+        IHasher Hasher { get; }
+        SwarmChunkBmtNode? Root { get; }
+
+        // Methods.
+        void Clear();
+        IReadOnlyCollection<byte[]> GetProof(byte[] chunkSegment);
+        IReadOnlyCollection<byte[]> GetProof(int index);
+        SwarmHash Hash(byte[] span, byte[] data);
+        bool VerifyProof(IEnumerable<byte[]> proof, byte[] chunkSegment);
     }
 }
