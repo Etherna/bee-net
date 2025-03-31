@@ -16,8 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Hashing
 {
-    public interface IHasher :
-        Nethereum.Util.HashProviders.IHashProvider
+    public interface IHasher
     {
         void ComputeHash(byte[] data, Span<byte> output);
         byte[] ComputeHash(params byte[][] dataArray);

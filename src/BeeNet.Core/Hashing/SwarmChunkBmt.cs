@@ -14,8 +14,6 @@
 
 using Etherna.BeeNet.Models;
 using Nethereum.Merkle;
-using Nethereum.Merkle.StrategyOptions.PairingConcat;
-using Nethereum.Util.ByteArrayConvertors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,46 +21,62 @@ using System.Linq;
 namespace Etherna.BeeNet.Hashing
 {
     internal sealed class SwarmChunkBmt(IHasher hasher)
-        : MerkleTree<byte[]>(
-            hasher,
-            byteArrayConvertor,
-            PairingConcatType.Normal)
     {
-        // Classes.
-        private sealed class ChunkBmtByteArrayConvertor : IByteArrayConvertor<byte[]>
-        {
-            /// <summary>
-            /// Verify that chunk segment data has right size
-            /// </summary>
-            /// <param name="data">Input raw data</param>
-            /// <returns>Leaf data</returns>
-            public byte[] ConvertToByteArray(byte[] data)
-            {
-                ArgumentNullException.ThrowIfNull(data, nameof(data));
-
-                if (data.Length == SegmentSize)
-                    return data;
-                if (data.Length > SegmentSize)
-                    throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {SegmentSize}");
-            
-                Array.Resize(ref data, SegmentSize);
-                return data;
-            }
-        }
-        
         // Consts.
         public const int SegmentsCount = SwarmChunk.DataSize / SegmentSize;
         public const int SegmentSize = SwarmHash.HashSize;
         
-        // Static fields.
-        private static readonly ChunkBmtByteArrayConvertor byteArrayConvertor = new();
+        // Fields.
+        private List<List<MerkleTreeNode>> layers = [];
+        private List<MerkleTreeNode> leaves = [];
+        private readonly Queue<MerkleTreeNode> merkleTreeNodesPool = new();
+        private MerkleTreeNode? root;
         
+        // Properties.
+        public MerkleTreeNode? Root => root;
+
         // Methods.
+        public void Clear()
+        {
+            foreach (var merkleTreeNode in layers.SelectMany(l => l))
+                merkleTreeNodesPool.Enqueue(merkleTreeNode);
+            layers.Clear();
+            leaves.Clear();
+            root = null;
+        }
+        
+        public List<byte[]> GetProof(byte[] chunkSegment)
+        {
+            var hashLeaf = hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment));
+
+            for (var i = 0; i < leaves.Count; i++)
+                if (leaves[i].Matches(hashLeaf))
+                    return GetProof(i);
+
+            throw new KeyNotFoundException("Leaf not found");
+        }
+
+        public List<byte[]> GetProof(int index)
+        {
+            var proofs = new List<byte[]>();
+            for (var i = 0; i < layers.Count; i++)
+            {
+                var isRightNode = index % 2 == 1;
+                var pairIndex = isRightNode ? index - 1 : index + 1;
+                var currentLayer = layers[i];
+                if (pairIndex < currentLayer.Count)
+                    proofs.Add(currentLayer[pairIndex].Hash);
+
+                index = (index / 2) | 0;
+            }
+
+            return proofs;
+        }
+
         public SwarmHash Hash(byte[] span, byte[] data)
         {
             ArgumentNullException.ThrowIfNull(span, nameof(span));
             ArgumentNullException.ThrowIfNull(data, nameof(data));
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             
             if (data.Length > SwarmChunk.DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
@@ -75,25 +89,105 @@ namespace Etherna.BeeNet.Hashing
                 segments.Add(data[start..end]);
             }
             
-            // Build the merkle tree.
-            BuildTree(segments);
+            // Build the merkle tree leaves.
+            leaves = segments.Select(segment => 
+            {
+                var leafByteArray = ChunkSegmentToLeafByteArray(segment);
+                if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
+                    merkleTreeNode.Hash = leafByteArray;
+                else
+                    merkleTreeNode = new MerkleTreeNode(leafByteArray);
+                
+                return merkleTreeNode;
+            }).ToList();
+
+            //add missing empty leaves
+            while (leaves.Count < SegmentsCount)
+            {
+                if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
+                    merkleTreeNode.Hash = new byte[SegmentSize];
+                else
+                    merkleTreeNode = new MerkleTreeNode(new byte[SegmentSize]);
+                
+                leaves.Add(merkleTreeNode);
+            }
             
-            return hasher.ComputeHash(span.Concat(Root.Hash).ToArray());
+            // Build layers and hash.
+            layers = [leaves];
+            var layerNodes = leaves;
+            while (layerNodes.Count > 1)
+            {
+                var layerIndex = layers.Count;
+                layers.Insert(layerIndex, new List<MerkleTreeNode>());
+                for (var i = 0; i < layerNodes.Count; i += 2)
+                {
+                    if (i + 1 == layerNodes.Count &&
+                        layerNodes.Count % 2 == 1)
+                    {
+                        layers[layerIndex].Add(layerNodes[i].Clone());
+                        continue;
+                    }
+                    
+                    var left = layerNodes[i];
+                    var right = i + 1 == layerNodes.Count ? left : layerNodes[i + 1];
+                    var hash = ConcatAndHashPair(left.Hash, right.Hash, hasher);
+
+                    if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
+                        merkleTreeNode.Hash = hash;
+                    else
+                        merkleTreeNode = new MerkleTreeNode(hash);
+                    
+                    layers[layerIndex].Add(merkleTreeNode);
+                }
+                layerNodes = layers[layerIndex];
+            }
+            root =  layerNodes[0];
+            
+            return hasher.ComputeHash(span.Concat(root.Hash).ToArray());
+        }
+
+        public bool VerifyProof(IEnumerable<byte[]> proof, byte[] chunkSegment)
+        {
+            if (Root is null)
+                throw new InvalidOperationException("Hash hasn't been calculated");
+            
+            return VerifyProof(proof, Root.Hash, hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment)), hasher);
+        }
+
+        // Public static methods.
+        public static byte[] ConcatAndHashPair(byte[] left, byte[] right, IHasher hasher) =>
+            hasher.ComputeHash(left.Concat(right).ToArray());
+        
+        public static bool VerifyProof(
+            IEnumerable<byte[]> proof,
+            byte[] rootHash,
+            byte[] itemHash,
+            IHasher hasher)
+        {
+            var hash = itemHash;
+            foreach (var proofHash in proof)
+                hash = ConcatAndHashPair(proofHash, hash, hasher);
+            
+            return hash.SequenceEqual(rootHash);
         }
         
-        // Protected override methods.
-        protected override MerkleTreeNode CreateMerkleTreeNode(byte[] item) =>
-            new(byteArrayConvertor.ConvertToByteArray(item));
-
-        protected override void InitialiseLeavesAndLayersAndBuildTree(List<MerkleTreeNode> leaves)
+        // Helpers.
+        /// <summary>
+        /// Verify that chunk segment data has right size
+        /// </summary>
+        /// <param name="data">Input raw data</param>
+        /// <returns>Leaf data</returns>
+        private static byte[] ChunkSegmentToLeafByteArray(byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(leaves, nameof(leaves));
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+
+            if (data.Length == SegmentSize)
+                return data;
+            if (data.Length > SegmentSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {SegmentSize}");
             
-            // Add missing empty leaves.
-            while (leaves.Count < SegmentsCount)
-                leaves.Add(new MerkleTreeNode(new byte[SegmentSize]));
-            
-            base.InitialiseLeavesAndLayersAndBuildTree(leaves);
+            Array.Resize(ref data, SegmentSize);
+            return data;
         }
     }
 }
