@@ -12,21 +12,23 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Models;
-using System;
-using System.Threading.Tasks;
+using Etherna.BeeNet.Hashing;
+using Nethereum.Merkle;
+using System.Collections.Generic;
 
-namespace Etherna.BeeNet.Hashing.Pipeline
+namespace Etherna.BeeNet.Models
 {
-    public interface IHasherPipelineStage : IDisposable
+    public interface ISwarmChunkBmt
     {
         // Properties.
-        long MissedOptimisticHashing { get; }
-        IPostageStamper PostageStamper { get; }
-        
+        IHasher Hasher { get; }
+        MerkleTreeNode? Root { get; }
+
         // Methods.
-        Task FeedAsync(HasherPipelineFeedArgs args);
-        Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt);
+        void Clear();
+        IReadOnlyCollection<byte[]> GetProof(byte[] chunkSegment);
+        IReadOnlyCollection<byte[]> GetProof(int index);
+        SwarmHash Hash(byte[] span, byte[] data);
+        bool VerifyProof(IEnumerable<byte[]> proof, byte[] chunkSegment);
     }
 }

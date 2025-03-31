@@ -52,11 +52,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             if (args.Data.Length > SwarmChunk.SpanAndDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
-            // Create an instance for this specific task. Hasher is not thread safe.
-            var chunkBmt = new SwarmChunkBmt(args.Hasher);
-            var plainChunkHash = chunkBmt.Hash(
+            // Hash chunk and clear chunk bmt for next uses.
+            var plainChunkHash = args.SwarmChunkBmt.Hash(
                 args.Data[..SwarmChunk.SpanSize].ToArray(),
                 args.Data[SwarmChunk.SpanSize..].ToArray());
+            args.SwarmChunkBmt.Clear();
+            
+            // Decide to compact chunk or not.
             if (compactLevel == 0)
             {
                 /* If no chunk compaction is involved, simply calculate the chunk hash and proceed. */
@@ -75,7 +77,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
 
-        public Task<SwarmChunkReference> SumAsync(IHasher hasher) => nextStage.SumAsync(hasher);
+        public Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
         
         // Helpers.
         private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, byte[] data)
@@ -184,18 +186,20 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 {
                     // Create key.
                     BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
-                    var chunkKey = new XorEncryptKey(args.Hasher.ComputeHash(plainChunkHashArray));
+                    var chunkKey = new XorEncryptKey(args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
                     var encryptedData = args.Data.ToArray();
                     EncryptDecryptChunkData(chunkKey, encryptedData);
                     
                     // Calculate hash, bucket id, and save in cache.
-                    var chunkBmt = new SwarmChunkBmt(args.Hasher);
-                    var encryptedHash = chunkBmt.Hash(
+                    var encryptedHash = args.SwarmChunkBmt.Hash(
                         encryptedData[..SwarmChunk.SpanSize],
                         encryptedData[SwarmChunk.SpanSize..]);
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
+                    
+                    // Clear chunk bmt for next uses.
+                    args.SwarmChunkBmt.Clear();
 
                     // Check key collisions.
                     collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());

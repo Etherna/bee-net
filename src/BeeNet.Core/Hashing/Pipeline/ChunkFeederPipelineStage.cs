@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Fields.
         private readonly SemaphoreSlim chunkConcurrencySemaphore;
-        private readonly ConcurrentQueue<(SemaphoreSlim Semaphore, IHasher Hasher)> chunkResourcesPool;
+        private readonly ConcurrentQueue<(SemaphoreSlim Semaphore, ISwarmChunkBmt SwarmChunkBmt)> chunkResourcesPool;
         private readonly IHasherPipelineStage nextStage;
         private readonly List<Task> nextStageTasks = new();
         
@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             this.nextStage = nextStage;
             chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
-            chunkResourcesPool = new ConcurrentQueue<(SemaphoreSlim Semaphore, IHasher Hasher)>();
+            chunkResourcesPool = new ConcurrentQueue<(SemaphoreSlim Semaphore, ISwarmChunkBmt SwarmChunkBmt)>();
             
             //init semaphore pool
             /*
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * has completed and released concurrency.
              */
             for (int i = 0; i < chunkConcurrency * 2; i++)
-                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), hasherBuilder()));
+                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), new SwarmChunkBmt(hasherBuilder())));
         }
 
         // Dispose.
@@ -141,7 +141,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     
                     //build args
                     var feedArgs = new HasherPipelineFeedArgs(
-                        hasher: chunkResources.Hasher,
+                        swarmChunkBmt: chunkResources.SwarmChunkBmt,
                         span: chunkData[..SwarmChunk.SpanSize],
                         data: chunkData,
                         numberId: chunkNumberId,
@@ -178,7 +178,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
             // Extract an unused chunk's hasher and sum.
             chunkResourcesPool.TryDequeue(out var resourceTuple);
-            return await nextStage.SumAsync(resourceTuple.Hasher).ConfigureAwait(false);
+            return await nextStage.SumAsync(resourceTuple.SwarmChunkBmt).ConfigureAwait(false);
         }
 
         // Helpers.

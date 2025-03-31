@@ -12,15 +12,15 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Hashing;
 using Nethereum.Merkle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Etherna.BeeNet.Hashing
+namespace Etherna.BeeNet.Models
 {
-    internal sealed class SwarmChunkBmt(IHasher hasher)
+    public sealed class SwarmChunkBmt(IHasher hasher) : ISwarmChunkBmt
     {
         // Consts.
         public const int SegmentsCount = SwarmChunk.DataSize / SegmentSize;
@@ -33,6 +33,7 @@ namespace Etherna.BeeNet.Hashing
         private MerkleTreeNode? root;
         
         // Properties.
+        public IHasher Hasher => hasher;
         public MerkleTreeNode? Root => root;
 
         // Methods.
@@ -45,7 +46,7 @@ namespace Etherna.BeeNet.Hashing
             root = null;
         }
         
-        public List<byte[]> GetProof(byte[] chunkSegment)
+        public IReadOnlyCollection<byte[]> GetProof(byte[] chunkSegment)
         {
             var hashLeaf = hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment));
 
@@ -56,7 +57,7 @@ namespace Etherna.BeeNet.Hashing
             throw new KeyNotFoundException("Leaf not found");
         }
 
-        public List<byte[]> GetProof(int index)
+        public IReadOnlyCollection<byte[]> GetProof(int index)
         {
             var proofs = new List<byte[]>();
             for (var i = 0; i < layers.Count; i++)
@@ -155,15 +156,20 @@ namespace Etherna.BeeNet.Hashing
         }
 
         // Public static methods.
-        public static byte[] ConcatAndHashPair(byte[] left, byte[] right, IHasher hasher) =>
-            hasher.ComputeHash(left.Concat(right).ToArray());
-        
+        public static byte[] ConcatAndHashPair(byte[] left, byte[] right, IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            return hasher.ComputeHash(left.Concat(right).ToArray());
+        }
+
         public static bool VerifyProof(
             IEnumerable<byte[]> proof,
             byte[] rootHash,
             byte[] itemHash,
             IHasher hasher)
         {
+            ArgumentNullException.ThrowIfNull(proof, nameof(proof));
+            
             var hash = itemHash;
             foreach (var proofHash in proof)
                 hash = ConcatAndHashPair(proofHash, hash, hasher);

@@ -57,7 +57,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
         
-        public Task<SwarmChunkReference> SumAsync(IHasher hasher) =>
-            nextStage?.SumAsync(hasher) ?? throw new InvalidOperationException();
+        public Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt) =>
+            nextStage?.SumAsync(swarmChunkBmt) ?? throw new InvalidOperationException();
     }
 }

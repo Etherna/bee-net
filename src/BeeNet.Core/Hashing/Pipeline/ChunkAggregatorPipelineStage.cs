@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             processingChunk.Span,
                             processingChunk.ChunkKey,
                             false),
-                        args.Hasher).ConfigureAwait(false);
+                        args.SwarmChunkBmt).ConfigureAwait(false);
                 }
             }
             finally
@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmChunkReference> SumAsync(IHasher hasher)
+        public async Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt)
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         break;
                     
                     default:
-                        await WrapFullLevelAsync(i, hasher).ConfigureAwait(false);
+                        await WrapFullLevelAsync(i, swarmChunkBmt).ConfigureAwait(false);
                         break;
                 }
             }
@@ -126,7 +126,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
 
         // Helpers.
-        private async Task AddChunkToLevelAsync(int level, ChunkHeader chunkHeader, IHasher hasher)
+        private async Task AddChunkToLevelAsync(int level, ChunkHeader chunkHeader, ISwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(chunkHeader, nameof(chunkHeader));
 
@@ -134,7 +134,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             levelChunks.Add(chunkHeader);
             
             if (levelChunks.Count == maxChildrenChunks)
-                await WrapFullLevelAsync(level, hasher).ConfigureAwait(false);
+                await WrapFullLevelAsync(level, swarmChunkBmt).ConfigureAwait(false);
         }
 
         private List<ChunkHeader> GetLevelChunks(int level)
@@ -144,7 +144,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             return chunkLevels[level];
         }
         
-        private async Task WrapFullLevelAsync(int level, IHasher hasher)
+        private async Task WrapFullLevelAsync(int level, ISwarmChunkBmt swarmChunkBmt)
         {
             var levelChunks = GetLevelChunks(level);
 
@@ -163,7 +163,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 .ToArray();
 
             // Run hashing on the new chunk, and add it to next level.
-            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalData, hasher).ConfigureAwait(false);
+            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
@@ -171,15 +171,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     totalSpan,
                     hashingResult.EncryptionKey,
                     false),
-                hasher).ConfigureAwait(false);
+                swarmChunkBmt).ConfigureAwait(false);
             
             levelChunks.Clear();
         }
         
         // Helpers.
-        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(byte[] span, byte[] data, IHasher hasher)
+        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(byte[] span, byte[] data, ISwarmChunkBmt swarmChunkBmt)
         {
-            var args = new HasherPipelineFeedArgs(hasher: hasher, span: span, data: data);
+            var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, data: data);
             await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
             return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
         }
