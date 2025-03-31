@@ -67,21 +67,25 @@ namespace Etherna.BeeNet.Models
             Index.GetHashCode() ^
             _span.GetHashCode();
         
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
         public async Task<(SwarmChunk, SingleOwnerChunk)> UnwrapChunkAndSocAsync(
-            IChunkStore chunkStore,
-            IHasher hasher)
+            bool resolveLegacyPayload,
+            IHasher hasher,
+            IChunkStore? chunkStore = null)
         {
-            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+            if (resolveLegacyPayload && chunkStore == null)
+                throw new ArgumentNullException(nameof(chunkStore));
             
             var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(_data, hasher);
             
             // Check if is legacy payload. Possible lengths:
-            if (soc.ChunkData.Length is
+            if (resolveLegacyPayload &&
+                soc.ChunkData.Length is
                 16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
                 16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
             {
                 var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
-                return (await chunkStore.GetAsync(hash).ConfigureAwait(false), soc);
+                return (await chunkStore!.GetAsync(hash).ConfigureAwait(false), soc);
             }
 
             return (new SwarmChunk(

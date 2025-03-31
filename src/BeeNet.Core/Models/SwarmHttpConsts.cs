@@ -22,6 +22,7 @@ namespace Etherna.BeeNet.Models
         public const string SwarmErrorDocumentHeader = "Swarm-Error-Document";
         public const string SwarmFeedIndexHeader = "Swarm-Feed-Index";
         public const string SwarmFeedIndexNextHeader = "Swarm-Feed-Index-Next";
+        public const string SwarmFeedLegacyResolveHeader = "Swarm-Feed-Legacy-Resolve";
         public const string SwarmIndexDocumentHeader = "Swarm-Index-Document";
         public const string SwarmOnlyRootChunkHeader = "Swarm-Only-Root-Chunk";
         public const string SwarmPinningHeader = "Swarm-Pin";
