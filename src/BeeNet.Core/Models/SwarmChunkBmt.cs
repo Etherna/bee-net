@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
-using Nethereum.Merkle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +26,14 @@ namespace Etherna.BeeNet.Models
         public const int SegmentSize = SwarmHash.HashSize;
         
         // Fields.
-        private List<List<MerkleTreeNode>> layers = [];
-        private List<MerkleTreeNode> leaves = [];
-        private readonly Queue<MerkleTreeNode> merkleTreeNodesPool = new();
-        private MerkleTreeNode? root;
+        private List<List<SwarmChunkBmtNode>> layers = [];
+        private List<SwarmChunkBmtNode> leaves = [];
+        private readonly Queue<SwarmChunkBmtNode> merkleTreeNodesPool = new();
+        private SwarmChunkBmtNode? root;
         
         // Properties.
         public IHasher Hasher => hasher;
-        public MerkleTreeNode? Root => root;
+        public SwarmChunkBmtNode? Root => root;
 
         // Methods.
         public void Clear()
@@ -48,7 +47,7 @@ namespace Etherna.BeeNet.Models
         
         public IReadOnlyCollection<byte[]> GetProof(byte[] chunkSegment)
         {
-            var hashLeaf = hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment));
+            var hashLeaf = hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment).ToArray());
 
             for (var i = 0; i < leaves.Count; i++)
                 if (leaves[i].Matches(hashLeaf))
@@ -66,7 +65,7 @@ namespace Etherna.BeeNet.Models
                 var pairIndex = isRightNode ? index - 1 : index + 1;
                 var currentLayer = layers[i];
                 if (pairIndex < currentLayer.Count)
-                    proofs.Add(currentLayer[pairIndex].Hash);
+                    proofs.Add(currentLayer[pairIndex].Hash.ToArray());
 
                 index = (index / 2) | 0;
             }
@@ -83,11 +82,11 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
             
             // Split input data into leaf segments.
-            var segments = new List<byte[]>();
+            var segments = new List<Memory<byte>>();
             for (var start = 0; start < data.Length; start += SegmentSize)
             {
                 var end = Math.Min(start + SegmentSize, data.Length);
-                segments.Add(data[start..end]);
+                segments.Add(data.AsMemory()[start..end]);
             }
             
             // Build the merkle tree leaves.
@@ -97,7 +96,7 @@ namespace Etherna.BeeNet.Models
                 if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
                     merkleTreeNode.Hash = leafByteArray;
                 else
-                    merkleTreeNode = new MerkleTreeNode(leafByteArray);
+                    merkleTreeNode = new SwarmChunkBmtNode(leafByteArray);
                 
                 return merkleTreeNode;
             }).ToList();
@@ -108,7 +107,7 @@ namespace Etherna.BeeNet.Models
                 if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
                     merkleTreeNode.Hash = new byte[SegmentSize];
                 else
-                    merkleTreeNode = new MerkleTreeNode(new byte[SegmentSize]);
+                    merkleTreeNode = new SwarmChunkBmtNode(new byte[SegmentSize]);
                 
                 leaves.Add(merkleTreeNode);
             }
@@ -119,7 +118,7 @@ namespace Etherna.BeeNet.Models
             while (layerNodes.Count > 1)
             {
                 var layerIndex = layers.Count;
-                layers.Insert(layerIndex, new List<MerkleTreeNode>());
+                layers.Insert(layerIndex, new List<SwarmChunkBmtNode>());
                 for (var i = 0; i < layerNodes.Count; i += 2)
                 {
                     if (i + 1 == layerNodes.Count &&
@@ -131,12 +130,12 @@ namespace Etherna.BeeNet.Models
                     
                     var left = layerNodes[i];
                     var right = i + 1 == layerNodes.Count ? left : layerNodes[i + 1];
-                    var hash = ConcatAndHashPair(left.Hash, right.Hash, hasher);
+                    var hash = hasher.ComputeHash(left.Hash.ToArray(), right.Hash.ToArray());
 
                     if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
                         merkleTreeNode.Hash = hash;
                     else
-                        merkleTreeNode = new MerkleTreeNode(hash);
+                        merkleTreeNode = new SwarmChunkBmtNode(hash);
                     
                     layers[layerIndex].Add(merkleTreeNode);
                 }
@@ -144,7 +143,7 @@ namespace Etherna.BeeNet.Models
             }
             root =  layerNodes[0];
             
-            return hasher.ComputeHash(span.Concat(root.Hash).ToArray());
+            return hasher.ComputeHash(span, root.Hash.ToArray());
         }
 
         public bool VerifyProof(IEnumerable<byte[]> proof, byte[] chunkSegment)
@@ -152,27 +151,26 @@ namespace Etherna.BeeNet.Models
             if (Root is null)
                 throw new InvalidOperationException("Hash hasn't been calculated");
             
-            return VerifyProof(proof, Root.Hash, hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment)), hasher);
+            return VerifyProof(
+                proof,
+                Root.Hash.ToArray(),
+                hasher.ComputeHash(ChunkSegmentToLeafByteArray(chunkSegment).ToArray()),
+                hasher);
         }
 
         // Public static methods.
-        public static byte[] ConcatAndHashPair(byte[] left, byte[] right, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            return hasher.ComputeHash(left.Concat(right).ToArray());
-        }
-
         public static bool VerifyProof(
             IEnumerable<byte[]> proof,
             byte[] rootHash,
             byte[] itemHash,
             IHasher hasher)
         {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(proof, nameof(proof));
             
             var hash = itemHash;
             foreach (var proofHash in proof)
-                hash = ConcatAndHashPair(proofHash, hash, hasher);
+                hash = hasher.ComputeHash(proofHash, hash);
             
             return hash.SequenceEqual(rootHash);
         }
@@ -183,17 +181,16 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="data">Input raw data</param>
         /// <returns>Leaf data</returns>
-        private static byte[] ChunkSegmentToLeafByteArray(byte[] data)
+        private static Memory<byte> ChunkSegmentToLeafByteArray(Memory<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-
             if (data.Length == SegmentSize)
                 return data;
             if (data.Length > SegmentSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {SegmentSize}");
-            
-            Array.Resize(ref data, SegmentSize);
-            return data;
+
+            var newData = new byte[SegmentSize];
+            data.CopyTo(newData);
+            return newData;
         }
     }
 }
