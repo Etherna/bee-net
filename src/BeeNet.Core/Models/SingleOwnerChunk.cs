@@ -72,7 +72,7 @@ namespace Etherna.BeeNet.Models
 
             // Recover owner information.
             var signer = new EthereumMessageSigner();
-            var toSignDigest = hasher.ComputeHash(id, chunkHash.ToByteArray());
+            var toSignDigest = hasher.ComputeHash([id, chunkHash.ToReadOnlyMemory()]);
             var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature));
 
             return (new SingleOwnerChunk(
@@ -109,7 +109,7 @@ namespace Etherna.BeeNet.Models
         public SwarmHash BuildHash(IHasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            return hasher.ComputeHash(Id.ToArray(), Owner.ToByteArray());
+            return hasher.ComputeHash([Id, Owner.ToReadOnlyMemory()]);
         }
 
         public byte[] ToByteArray()

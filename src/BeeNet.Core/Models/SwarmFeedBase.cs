@@ -133,7 +133,7 @@ namespace Etherna.BeeNet.Models
             if (identifier.Length != IdentifierSize)
                 throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
             
-            return hasher.ComputeHash(identifier.Concat(owner.ToByteArray()).ToArray());
+            return hasher.ComputeHash([identifier, owner.ToReadOnlyMemory()]);
         }
 
         public static byte[] BuildIdentifier(byte[] topic, SwarmFeedIndexBase index, IHasher hasher)
@@ -145,7 +145,7 @@ namespace Etherna.BeeNet.Models
             if (topic.Length != TopicSize)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
 
-            return hasher.ComputeHash(topic, index.MarshalBinary().ToArray());
+            return hasher.ComputeHash([topic, index.MarshalBinary()]);
         }
     }
 }

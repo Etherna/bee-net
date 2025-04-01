@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
+using System;
 using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
@@ -25,9 +26,9 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         void Clear();
-        IReadOnlyCollection<byte[]> GetProof(byte[] chunkSegment);
+        IReadOnlyCollection<byte[]> GetProof(ReadOnlyMemory<byte> chunkSegment);
         IReadOnlyCollection<byte[]> GetProof(int index);
         SwarmHash Hash(byte[] span, byte[] data);
-        bool VerifyProof(IEnumerable<byte[]> proof, byte[] chunkSegment);
+        bool VerifyProof(IEnumerable<ReadOnlyMemory<byte>> proof, ReadOnlyMemory<byte> chunkSegment);
     }
 }

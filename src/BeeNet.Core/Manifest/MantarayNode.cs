@@ -28,8 +28,8 @@ namespace Etherna.BeeNet.Manifest
     {
         // Consts.
         public const int ForksIndexSize = 32;
-        public static readonly byte[] Version02Hash = new Hasher().ComputeHash(
-            "mantaray:0.2"u8.ToArray()).Take(VersionHashSize).ToArray();
+        public static readonly byte[] Version02Hash = new Hasher().ComputeHash("mantaray:0.2")
+            .Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
         
         // Fields.

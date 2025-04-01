@@ -21,10 +21,10 @@ namespace Etherna.BeeNet.Models
     {
         public Memory<byte> Hash { get; set; } = hash;
 
-        public int Compare(Memory<byte> hashOther) =>
+        public int Compare(ReadOnlyMemory<byte> hashOther) =>
             ByteArrayComparer.Current.Compare(Hash.ToArray(), hashOther.ToArray());
 
-        public bool Matches(Memory<byte> hashOther) =>
+        public bool Matches(ReadOnlyMemory<byte> hashOther) =>
             Compare(hashOther) == 0;
 
         public SwarmChunkBmtNode Clone() => new(Hash);

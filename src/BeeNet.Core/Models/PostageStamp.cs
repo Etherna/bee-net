@@ -62,14 +62,16 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(stampBucketIndex, nameof(stampBucketIndex));
-            
+
             return hasher.ComputeHash(
-                hash.ToByteArray(),
-                batchId.ToByteArray(),
+            [
+                hash.ToReadOnlyMemory(),
+                batchId.ToReadOnlyMemory(),
                 stampBucketIndex.ToByteArray(),
-                timeStamp.ToUnixTimeNanosecondsByteArray());
+                timeStamp.ToUnixTimeNanosecondsByteArray()
+            ]);
         }
-        
+
         // Methods.
         /// <summary>
         /// Returns ethereum address that signed postage batch

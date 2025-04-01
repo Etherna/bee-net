@@ -18,8 +18,11 @@ namespace Etherna.BeeNet.Hashing
 {
     public interface IHasher
     {
-        void ComputeHash(byte[] data, Span<byte> output);
-        byte[] ComputeHash(params byte[][] dataArray);
         byte[] ComputeHash(string data);
+        byte[] ComputeHash(ReadOnlySpan<byte> data);
+        byte[] ComputeHash(ReadOnlyMemory<byte>[] dataArray);
+        void ComputeHash(string data, Span<byte> output);
+        void ComputeHash(ReadOnlySpan<byte> data, Span<byte> output);
+        void ComputeHash(ReadOnlyMemory<byte>[] dataArray, Span<byte> output);
     }
 }

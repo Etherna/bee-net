@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Models;
 using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Text;
@@ -27,39 +28,34 @@ namespace Etherna.BeeNet.Hashing
         private readonly KeccakDigest hasher = new(256);
         
         // Methods.
-        public void ComputeHash(byte[] data, Span<byte> output)
+        public byte[] ComputeHash(string data) => ComputeHash(Encoding.UTF8.GetBytes(data));
+        public byte[] ComputeHash(ReadOnlySpan<byte> data)
         {
-            var hash = ComputeHash(data);
-            hash.CopyTo(output);
-
-            /*
-             * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
-             * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
-             */
-            // hasher.BlockUpdate(data);
-            // hasher.DoFinal(output);
+            var result = new byte[SwarmHash.HashSize];
+            ComputeHash(data, result);
+            return result;
         }
-        
-        public byte[] ComputeHash(params byte[][] dataArray)
+        public byte[] ComputeHash(ReadOnlyMemory<byte>[] dataArray)
+        {
+            var result = new byte[SwarmHash.HashSize];
+            ComputeHash(dataArray, result);
+            return result;
+        }
+        public void ComputeHash(string data, Span<byte> output) =>
+            ComputeHash(Encoding.UTF8.GetBytes(data), output);
+        public void ComputeHash(ReadOnlySpan<byte> data, Span<byte> output)
+        {
+            hasher.BlockUpdate(data);
+            hasher.DoFinal(output);
+        }
+        public void ComputeHash(ReadOnlyMemory<byte>[] dataArray, Span<byte> output)
         {
             ArgumentNullException.ThrowIfNull(dataArray, nameof(dataArray));
+            ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, SwarmHash.HashSize);
             
-            var output = new byte[hasher.GetDigestSize()];
             foreach (var data in dataArray)
-                hasher.BlockUpdate(data, 0, data.Length);
-            hasher.DoFinal(output, 0);
-            return output;
-            
-            /*
-             * With BouncyCastle >= 2.0.0. Downgrade required by Nethereum.
-             * See: https://github.com/Nethereum/Nethereum/releases/tag/4.27.1
-             */
-            // var result = new byte[SwarmHash.HashSize];
-            // ComputeHash(data, result);
-            // return result;
+                hasher.BlockUpdate(data.Span);
+            hasher.DoFinal(output);
         }
-
-        public byte[] ComputeHash(string data) =>
-            ComputeHash(Encoding.UTF8.GetBytes(data));
     }
 }

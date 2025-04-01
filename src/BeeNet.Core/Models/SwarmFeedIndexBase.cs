@@ -24,6 +24,6 @@ namespace Etherna.BeeNet.Models
 
         public abstract SwarmFeedIndexBase GetNext(ulong at);
         
-        public abstract Memory<byte> MarshalBinary();
+        public abstract byte[] MarshalBinary();
     }
 }

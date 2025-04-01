@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Models
         public ulong Value { get; } = value;
 
         // Methods.
-        public override Memory<byte> MarshalBinary()
+        public override byte[] MarshalBinary()
         {
             var buffer = new byte[8];
             BinaryPrimitives.WriteUInt64BigEndian(buffer, Value);

@@ -122,7 +122,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Index representation as keccak256 hash
         /// </summary>
-        public override Memory<byte> MarshalBinary()
+        public override byte[] MarshalBinary()
         {
             var epochBytes = new byte[8];
             BinaryPrimitives.WriteUInt64BigEndian(epochBytes, Start);
