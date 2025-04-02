@@ -24,12 +24,6 @@ namespace Etherna.BeeNet.Models
         public const int SpanAndDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
-        // Fields.
-#pragma warning disable CA1051
-        protected ReadOnlyMemory<byte> _data;
-        protected ReadOnlyMemory<byte> _span;
-#pragma warning restore CA1051
-        
         // Constructors.
         public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> data)
         {
@@ -37,8 +31,8 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Hash = hash;
-            _span = LengthToSpan((ulong)data.Length);
-            _data = data;
+            Span = LengthToSpan((ulong)data.Length);
+            Data = data;
         }
 
         public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
@@ -49,8 +43,8 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Hash = hash;
-            _span = span;
-            _data = data;
+            Span = span;
+            Data = data;
         }
         
         // Static builders.
@@ -68,13 +62,13 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public SwarmHash Hash { get; }
-        public ReadOnlyMemory<byte> Data => _data;
-        public ReadOnlyMemory<byte> Span => _span;
+        public ReadOnlyMemory<byte> Span { get; }
+        public ReadOnlyMemory<byte> Data { get; }
         
         // Methods.
         public byte[] GetSpanAndData()
         {
-            var spanAndData = new byte[SpanSize + _data.Length];
+            var spanAndData = new byte[SpanSize + Data.Length];
             Span.CopyTo(spanAndData.AsMemory()[..SpanSize]);
             Data.CopyTo(spanAndData.AsMemory()[SpanSize..]);
             return spanAndData;

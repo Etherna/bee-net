@@ -40,18 +40,18 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public override Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
-            byte[] contentPayload,
+            ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             Func<IHasher> hasherBuilder)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(chunkStore, contentPayload, knownNearIndex as SwarmSequenceFeedIndex, hasherBuilder);
+            return BuildNextFeedChunkAsync(chunkStore, contentData, knownNearIndex as SwarmSequenceFeedIndex, hasherBuilder);
         }
 
         public async Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
-            byte[] contentPayload,
+            ReadOnlyMemory<byte> contentData,
             SwarmSequenceFeedIndex? knownNearIndex,
             Func<IHasher> hasherBuilder)
         {
@@ -66,10 +66,7 @@ namespace Etherna.BeeNet.Models
                 (SwarmSequenceFeedIndex)lastSequenceFeedChunk.Index.GetNext(0);
 
             // Create new chunk.
-            var chunkPayload = BuildChunkPayload(contentPayload);
-            var chunkHash = BuildHash(Owner, _topic, nextSequenceIndex, hasherBuilder());
-
-            return new SwarmFeedChunk(nextSequenceIndex, chunkPayload, chunkHash);
+            return SwarmFeedChunk.BuildFromFeed(this, nextSequenceIndex, contentData, hasherBuilder());
         }
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(

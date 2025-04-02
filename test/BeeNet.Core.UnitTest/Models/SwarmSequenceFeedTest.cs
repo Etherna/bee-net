@@ -203,7 +203,7 @@ namespace Etherna.BeeNet.Models
             
             foreach (var index in test.ExpectedIndexLookups)
             {
-                var hash = SwarmFeedBase.BuildHash(ChunkOwner, ChunkTopic,
+                var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic,
                     new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
@@ -214,7 +214,7 @@ namespace Etherna.BeeNet.Models
             
             foreach (var index in test.ExpectedOptionalIndexLookups)
             {
-                var hash = SwarmFeedBase.BuildHash(ChunkOwner, ChunkTopic,
+                var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic,
                     new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
@@ -228,7 +228,7 @@ namespace Etherna.BeeNet.Models
         private static SwarmFeedChunk BuildSequenceFeedChunk(ulong i)
         {
             var index = new SwarmSequenceFeedIndex(i);
-            var hash = SwarmFeedBase.BuildHash(ChunkOwner, ChunkTopic, index, new Hasher());
+            var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, index, new Hasher());
             var data = BitConverter.GetBytes(i);
             return new SwarmFeedChunk(index, data, hash);
         }

@@ -12,13 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
-using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,40 +24,33 @@ namespace Etherna.BeeNet.Models
     [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     public abstract class SwarmFeedBase
     {
-        // Consts.
-        public const int IdentifierSize = 32;
-        public const int TopicSize = 32;
-        
-        // Fields.
-        protected readonly byte[] _topic;
-
         // Constructors.
         protected SwarmFeedBase(EthAddress owner, byte[] topic)
         {
             ArgumentNullException.ThrowIfNull(topic, nameof(topic));
 
-            if (topic.Length != TopicSize)
+            if (topic.Length != SwarmFeedChunk.TopicSize)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
             
             Owner = owner;
-            _topic = topic;
+            Topic = topic;
         }
 
         // Properties.
         public EthAddress Owner { get; }
-        public ReadOnlyMemory<byte> Topic => _topic.AsMemory();
+        public ReadOnlyMemory<byte> Topic { get; }
         public abstract SwarmFeedType Type { get; }
         
         // Methods.
         public SwarmHash BuildHash(SwarmFeedIndexBase index, IHasher hasher) =>
-            BuildHash(Owner, BuildIdentifier(index, hasher), hasher);
+            SwarmFeedChunk.BuildHash(Owner, Topic, index, hasher);
 
         public byte[] BuildIdentifier(SwarmFeedIndexBase index, IHasher hasher) =>
-            BuildIdentifier(_topic, index, hasher);
+            SwarmFeedChunk.BuildIdentifier(Topic, index, hasher);
         
         public abstract Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
-            byte[] contentPayload,
+            ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             Func<IHasher> hasherBuilder);
 
@@ -93,59 +83,6 @@ namespace Etherna.BeeNet.Models
                 return null; 
             
             return new SwarmFeedChunk(index, chunk.Data, hash);
-        }
-        
-        // Static methods.
-        public static byte[] BuildChunkPayload(byte[] payload, ulong? timestamp = null)
-        {
-            ArgumentNullException.ThrowIfNull(payload, nameof(payload));
-
-            if (payload.Length > SwarmFeedChunk.MaxPayloadSize)
-                throw new ArgumentOutOfRangeException(nameof(payload),
-                    $"Payload can't be longer than {SwarmFeedChunk.MaxPayloadSize} bytes");
-
-            var chunkData = new byte[SwarmFeedChunk.TimeStampSize + payload.Length];
-            
-            byte[] timestampByteArray;
-            if (timestamp.HasValue)
-            {
-                timestampByteArray = new byte[SwarmFeedChunk.TimeStampSize];
-                BinaryPrimitives.WriteUInt64BigEndian(timestampByteArray, timestamp.Value);
-            }
-            else
-            {
-                timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
-            }
-            timestampByteArray.CopyTo(chunkData, 0);
-            payload.CopyTo(chunkData, SwarmFeedChunk.TimeStampSize);
-
-            return chunkData;
-        }
-        
-        public static SwarmHash BuildHash(EthAddress owner, byte[] topic, SwarmFeedIndexBase index, IHasher hasher) =>
-            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
-
-        public static SwarmHash BuildHash(EthAddress owner, byte[] identifier, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
-
-            if (identifier.Length != IdentifierSize)
-                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
-            
-            return hasher.ComputeHash([identifier, owner.ToReadOnlyMemory()]);
-        }
-
-        public static byte[] BuildIdentifier(byte[] topic, SwarmFeedIndexBase index, IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(index, nameof(index));
-            ArgumentNullException.ThrowIfNull(topic, nameof(topic));
-
-            if (topic.Length != TopicSize)
-                throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
-
-            return hasher.ComputeHash([topic, index.MarshalBinary()]);
         }
     }
 }

@@ -16,6 +16,7 @@ using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -24,23 +25,43 @@ namespace Etherna.BeeNet.Models
     public class SwarmFeedChunk : SwarmChunk
     {
         // Consts.
+        public const int IdentifierSize = 32;
         public const int MaxChunkSize = MinChunkSize + DataSize;
         public const int MaxPayloadSize = DataSize - TimeStampSize; //creation timestamp
         public const int MinChunkSize = SwarmHash.HashSize + SwarmSignature.SignatureSize + SpanSize;
         public const int MinDataSize = TimeStampSize;
         public const int TimeStampSize = sizeof(ulong);
+        public const int TopicSize = 32;
 
         // Constructor.
         public SwarmFeedChunk(
             SwarmFeedIndexBase index,
-            ReadOnlyMemory<byte> data,
+            ReadOnlyMemory<byte> feedChunkPayload,
             SwarmHash hash) :
-            base(hash, data)
+            base(hash, feedChunkPayload)
         {
-            if (data.Length < MinDataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be shorter than {TimeStampSize} bytes");
+            if (feedChunkPayload.Length < MinDataSize)
+                throw new ArgumentOutOfRangeException(
+                    nameof(feedChunkPayload),
+                    $"Feed chunk payload can't be shorter than {TimeStampSize} bytes");
             
             Index = index ?? throw new ArgumentNullException(nameof(index));
+        }
+        
+        // Static builders.
+        public static SwarmFeedChunk BuildFromFeed(
+            SwarmFeedBase feed,
+            SwarmFeedIndexBase index,
+            ReadOnlyMemory<byte> contentData,
+            IHasher hasher,
+            ulong? timestamp = null)
+        {
+            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            
+            var chunkPayload = BuildFeedChunkPayload(contentData, timestamp);
+            var chunkHash = BuildHash(feed.Owner, feed.Topic, index, hasher);
+
+            return new SwarmFeedChunk(index, chunkPayload, chunkHash);
         }
 
         // Properties.
@@ -63,9 +84,9 @@ namespace Etherna.BeeNet.Models
         
         public override int GetHashCode() =>
             Hash.GetHashCode() ^
-            _data.GetHashCode() ^
+            Data.GetHashCode() ^
             Index.GetHashCode() ^
-            _span.GetHashCode();
+            Span.GetHashCode();
         
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
         public async Task<(SwarmChunk, SingleOwnerChunk)> UnwrapChunkAndSocAsync(
@@ -76,7 +97,7 @@ namespace Etherna.BeeNet.Models
             if (resolveLegacyPayload && chunkStore == null)
                 throw new ArgumentNullException(nameof(chunkStore));
             
-            var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(_data, hasher);
+            var (soc, chunkHash) = SingleOwnerChunk.BuildFromBytes(Data, hasher);
             
             // Check if is legacy payload. Possible lengths:
             if (resolveLegacyPayload &&
@@ -91,6 +112,59 @@ namespace Etherna.BeeNet.Models
             return (new SwarmChunk(
                 chunkHash,
                 soc.ChunkData), soc);
+        }
+        
+        // Static methods.
+        public static byte[] BuildFeedChunkPayload(ReadOnlyMemory<byte> payload, ulong? timestamp = null)
+        {
+            if (payload.Length > MaxPayloadSize)
+                throw new ArgumentOutOfRangeException(nameof(payload),
+                    $"Payload can't be longer than {MaxPayloadSize} bytes");
+
+            var chunkData = new byte[TimeStampSize + payload.Length];
+            
+            byte[] timestampByteArray;
+            if (timestamp.HasValue)
+            {
+                timestampByteArray = new byte[TimeStampSize];
+                BinaryPrimitives.WriteUInt64BigEndian(timestampByteArray, timestamp.Value);
+            }
+            else
+            {
+                timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
+            }
+            timestampByteArray.CopyTo(chunkData, 0);
+            payload.CopyTo(chunkData.AsMemory()[TimeStampSize..]);
+
+            return chunkData;
+        }
+        
+        public static SwarmHash BuildHash(
+            EthAddress owner,
+            ReadOnlyMemory<byte> topic,
+            SwarmFeedIndexBase index,
+            IHasher hasher) =>
+            BuildHash(owner, BuildIdentifier(topic, index, hasher), hasher);
+
+        public static SwarmHash BuildHash(EthAddress owner, ReadOnlyMemory<byte> identifier, IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+
+            if (identifier.Length != IdentifierSize)
+                throw new ArgumentOutOfRangeException(nameof(identifier), "Invalid identifier length");
+            
+            return hasher.ComputeHash([identifier, owner.ToReadOnlyMemory()]);
+        }
+        
+        public static byte[] BuildIdentifier(ReadOnlyMemory<byte> topic, SwarmFeedIndexBase index, IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(index, nameof(index));
+
+            if (topic.Length != TopicSize)
+                throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
+
+            return hasher.ComputeHash([topic, index.MarshalBinary()]);
         }
     }
 }
