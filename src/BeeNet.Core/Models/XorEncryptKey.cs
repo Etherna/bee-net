@@ -28,12 +28,11 @@ namespace Etherna.BeeNet.Models
         public const int KeySize = 32;
         
         // Fields.
-        private readonly byte[] byteKey;
+        private readonly ReadOnlyMemory<byte> byteKey;
 
         // Constructor.
-        public XorEncryptKey(byte[] key)
+        public XorEncryptKey(ReadOnlyMemory<byte> key)
         {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
             if (!IsValidKey(key))
                 throw new ArgumentOutOfRangeException(nameof(key));
             
@@ -78,23 +77,19 @@ namespace Etherna.BeeNet.Models
         public void EncryptDecrypt(Span<byte> data)
         {
             for (var i = 0; i < data.Length; i++)
-                data[i] = (byte)(data[i] ^ byteKey[i % byteKey.Length]);
+                data[i] = (byte)(data[i] ^ byteKey.Span[i % byteKey.Length]);
         }
-        public bool Equals(XorEncryptKey other) => ByteArrayComparer.Current.Equals(byteKey, other.byteKey);
+        public bool Equals(XorEncryptKey other) => byteKey.Span.SequenceEqual(other.byteKey.Span);
         public override bool Equals(object? obj) => obj is XorEncryptKey other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteKey);
-        public byte[] ToByteArray() => (byte[])byteKey.Clone();
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteKey.ToArray());
+        public byte[] ToByteArray() => byteKey.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteKey;
-        public override string ToString() => byteKey.ToHex();
+        public override string ToString() => byteKey.ToArray().ToHex();
         
         // Static methods.
         public static XorEncryptKey FromByteArray(byte[] value) => new(value);
         public static XorEncryptKey FromString(string value) => new(value);
-        public static bool IsValidKey(byte[] value)
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            return value.Length == KeySize;
-        }
+        public static bool IsValidKey(ReadOnlyMemory<byte> value) => value.Length == KeySize;
         public static bool IsValidKey(string value)
         {
             try

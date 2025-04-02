@@ -26,14 +26,13 @@ namespace Etherna.BeeNet.Models
         
         // Fields.
 #pragma warning disable CA1051
-        protected readonly byte[] _data;
-        protected readonly byte[] _span;
+        protected ReadOnlyMemory<byte> _data;
+        protected ReadOnlyMemory<byte> _span;
 #pragma warning restore CA1051
         
         // Constructors.
-        public SwarmChunk(SwarmHash hash, byte[] data)
+        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (data.Length > DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
@@ -42,10 +41,8 @@ namespace Etherna.BeeNet.Models
             _data = data;
         }
 
-        public SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
+        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(span, nameof(span));
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
             if (span.Length != SpanSize)
                 throw new ArgumentOutOfRangeException(nameof(span), $"Span size must be {SpanSize} bytes");
             if (data.Length > DataSize)
@@ -57,7 +54,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Static builders.
-        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlySpan<byte> spanAndData)
+        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlyMemory<byte> spanAndData)
         {
             if (spanAndData.Length > SpanAndDataSize)
                 throw new ArgumentOutOfRangeException(nameof(spanAndData),
@@ -66,7 +63,7 @@ namespace Etherna.BeeNet.Models
             var spanSlice = spanAndData[..SpanSize];
             var dataSlice = spanAndData[SpanSize..];
 
-            return new SwarmChunk(hash, spanSlice.ToArray(), dataSlice.ToArray());
+            return new SwarmChunk(hash, spanSlice, dataSlice);
         }
 
         // Properties.

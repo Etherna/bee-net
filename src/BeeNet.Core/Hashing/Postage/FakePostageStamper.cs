@@ -26,6 +26,6 @@ namespace Etherna.BeeNet.Hashing.Postage
         public IStampStore StampStore { get; } = new MemoryStampStore();
 
         public PostageStamp Stamp(SwarmHash hash) =>
-            new(StampIssuer.PostageBatch.Id, new StampBucketIndex(0, 0), DateTimeOffset.Now, []);
+            new(StampIssuer.PostageBatch.Id, new StampBucketIndex(0, 0), DateTimeOffset.Now, Array.Empty<byte>());
     }
 }

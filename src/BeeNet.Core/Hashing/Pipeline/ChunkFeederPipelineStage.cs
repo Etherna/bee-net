@@ -142,7 +142,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     //build args
                     var feedArgs = new HasherPipelineFeedArgs(
                         swarmChunkBmt: chunkResources.SwarmChunkBmt,
-                        span: chunkData[..SwarmChunk.SpanSize],
+                        span: chunkData.AsMemory()[..SwarmChunk.SpanSize],
                         data: chunkData,
                         numberId: chunkNumberId,
                         prevChunkSemaphore: prevChunkSemaphore);

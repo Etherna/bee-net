@@ -86,7 +86,7 @@ namespace Etherna.BeeNet.Manifest
             var readIndex = 0;
             
             // Get obfuscation key and de-obfuscate.
-            _obfuscationKey = new XorEncryptKey(data[..XorEncryptKey.KeySize]);
+            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
             _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
             readIndex += XorEncryptKey.KeySize;
             
@@ -95,7 +95,7 @@ namespace Etherna.BeeNet.Manifest
             readIndex += MantarayNode.VersionHashSize;
             
             if (versionHash.Span.SequenceEqual(MantarayNode.Version02Hash))
-                DecodeVersion02(data.AsSpan()[readIndex..]);
+                DecodeVersion02(data.AsMemory()[readIndex..]);
             else
                 throw new InvalidOperationException("Manifest version not recognized");
             
@@ -195,17 +195,17 @@ namespace Etherna.BeeNet.Manifest
         }
         
         // Helpers.
-        private void DecodeVersion02(ReadOnlySpan<byte> data)
+        private void DecodeVersion02(ReadOnlyMemory<byte> data)
         {
             var readIndex = 0;
             
             // Read last entry hash.
-            var entryHashSize = data[readIndex];
+            var entryHashSize = data.Span[readIndex];
             readIndex++;
             
             if (entryHashSize != 0)
             {
-                _entryHash = new SwarmHash(data[readIndex..(readIndex + entryHashSize)].ToArray());
+                _entryHash = new SwarmHash(data[readIndex..(readIndex + entryHashSize)]);
                 readIndex += entryHashSize;
             }
             
@@ -217,22 +217,22 @@ namespace Etherna.BeeNet.Manifest
             var forksKeys = new List<char>();
             for (int i = 0; i < MantarayNode.ForksIndexSize * 8; i++)
             {
-                if ((forksIndex[i / 8] & (byte)(1 << (i % 8))) != 0)
+                if ((forksIndex.Span[i / 8] & (byte)(1 << (i % 8))) != 0)
                     forksKeys.Add((char)i);
             }
             
             //forks
             foreach (var key in forksKeys)
             {
-                var childNodeTypeFlags = (NodeType)data[readIndex++];
-                var prefixLength = data[readIndex++];
+                var childNodeTypeFlags = (NodeType)data.Span[readIndex++];
+                var prefixLength = data.Span[readIndex++];
                 
                 //read prefix
-                var prefix = Encoding.UTF8.GetString(data[readIndex..(readIndex + MantarayNodeFork.PrefixMaxSize)])[..prefixLength];
+                var prefix = Encoding.UTF8.GetString(data.Span[readIndex..(readIndex + MantarayNodeFork.PrefixMaxSize)])[..prefixLength];
                 readIndex += MantarayNodeFork.PrefixMaxSize;
 
                 //read child node hash
-                var childNodeHash = new SwarmHash(data[readIndex..(readIndex + SwarmHash.HashSize)].ToArray());
+                var childNodeHash = new SwarmHash(data[readIndex..(readIndex + SwarmHash.HashSize)]);
                 readIndex += SwarmHash.HashSize;
                 
                 //read metadata
@@ -240,14 +240,14 @@ namespace Etherna.BeeNet.Manifest
                 if (childNodeTypeFlags.HasFlag(NodeType.WithMetadata))
                 {
                     var metadataBytesLength = BinaryPrimitives.ReadUInt16BigEndian(
-                        data[readIndex..(readIndex + MantarayNodeFork.MetadataBytesSize)]);
+                        data.Span[readIndex..(readIndex + MantarayNodeFork.MetadataBytesSize)]);
                     readIndex += MantarayNodeFork.MetadataBytesSize;
 
                     var metadataBytes = data[readIndex..(readIndex + metadataBytesLength)];
                     readIndex += metadataBytesLength;
 
                     childNodeMetadata = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                        Encoding.UTF8.GetString(metadataBytes));
+                        Encoding.UTF8.GetString(metadataBytes.Span));
                     
                     //skip padding
                     var metadataTotalSize = metadataBytes.Length + MantarayNodeFork.MetadataBytesSize;

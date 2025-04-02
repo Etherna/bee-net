@@ -54,8 +54,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             // Hash chunk and clear chunk bmt for next uses.
             var plainChunkHash = args.SwarmChunkBmt.Hash(
-                args.Data[..SwarmChunk.SpanSize].ToArray(),
-                args.Data[SwarmChunk.SpanSize..].ToArray());
+                args.Data[..SwarmChunk.SpanSize],
+                args.Data[SwarmChunk.SpanSize..]);
             args.SwarmChunkBmt.Clear();
             
             // Decide to compact chunk or not.
@@ -80,10 +80,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
         
         // Helpers.
-        private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, byte[] data)
+        private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, Span<byte> data)
         {
             // Don't encrypt span, otherwise knowing the chunk length, we could reconstruct the key.
-            chunkKey.EncryptDecrypt(data.AsSpan()[SwarmChunk.SpanSize..]);
+            chunkKey.EncryptDecrypt(data[SwarmChunk.SpanSize..]);
         }
         
         private async Task<CompactedChunkAttemptResult> GetBestChunkAsync(
@@ -194,8 +194,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(
-                        encryptedData[..SwarmChunk.SpanSize],
-                        encryptedData[SwarmChunk.SpanSize..]);
+                        encryptedData.AsMemory()[..SwarmChunk.SpanSize],
+                        encryptedData.AsMemory()[SwarmChunk.SpanSize..]);
                     optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
                     
                     // Clear chunk bmt for next uses.

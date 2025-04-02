@@ -14,19 +14,17 @@
 
 using Etherna.BeeNet.Hashing;
 using Nethereum.Signer;
-using Nethereum.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
     public class SingleOwnerChunk(
-        byte[] id,
-        byte[] signature,
+        ReadOnlyMemory<byte> id,
+        ReadOnlyMemory<byte> signature,
         EthAddress owner,
-        byte[] chunkData)
+        ReadOnlyMemory<byte> chunkData)
     {
         // Consts.
         public const int MaxSocDataSize = MinSocDataSize + SwarmChunk.DataSize;
@@ -58,28 +56,28 @@ namespace Etherna.BeeNet.Models
 
             // Extract all fields.
             var cursor = 0;
-            var id = data[cursor..SwarmHash.HashSize].ToArray();
+            var id = data[cursor..SwarmHash.HashSize];
             cursor += SwarmHash.HashSize;
 
-            var signature = data[cursor..SocSignatureSize].ToArray();
+            var signature = data[cursor..SocSignatureSize];
             cursor += SocSignatureSize;
             
             var chunkSpanAndData = data[cursor..];
             var chunkBmt = new SwarmChunkBmt(hasher);
             var chunkHash = chunkBmt.Hash(
-                chunkSpanAndData[..SwarmChunk.SpanSize].ToArray(),
-                chunkSpanAndData[SwarmChunk.SpanSize..].ToArray());
+                chunkSpanAndData[..SwarmChunk.SpanSize],
+                chunkSpanAndData[SwarmChunk.SpanSize..]);
 
             // Recover owner information.
             var signer = new EthereumMessageSigner();
             var toSignDigest = hasher.ComputeHash([id, chunkHash.ToReadOnlyMemory()]);
-            var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature));
+            var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature.ToArray()));
 
             return (new SingleOwnerChunk(
                     id,
                     signature,
                     owner,
-                    chunkSpanAndData.ToArray()),
+                    chunkSpanAndData),
                 chunkHash);
         }
 
@@ -94,7 +92,7 @@ namespace Etherna.BeeNet.Models
 
                 //disperse replica validation
                 if (soc.Owner == ReplicasOwner &&
-                    !ByteArrayComparer.Current.Equals(innerChunkHash.ToByteArray()[1..32].ToArray(), soc.Id[1..32].ToArray()))
+                    !innerChunkHash.ToReadOnlyMemory()[1..32].Span.SequenceEqual(soc.Id[1..32].Span))
                     return false;
 
                 return chunk.Hash == soc.BuildHash(hasher);
@@ -115,9 +113,9 @@ namespace Etherna.BeeNet.Models
         public byte[] ToByteArray()
         {
             List<byte> buffer = [];
-            buffer.AddRange(Id.ToArray());
-            buffer.AddRange(Signature.ToArray());
-            buffer.AddRange(ChunkData.ToArray());
+            buffer.AddRange(Id.Span);
+            buffer.AddRange(Signature.Span);
+            buffer.AddRange(ChunkData.Span);
             return buffer.ToArray();
         }
     }

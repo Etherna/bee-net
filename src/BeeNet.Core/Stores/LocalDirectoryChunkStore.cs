@@ -95,7 +95,7 @@ namespace Etherna.BeeNet.Stores
             await using var stream = fileStream.ConfigureAwait(false);
             var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
 
-            var chunk = SwarmChunk.BuildFromSpanAndData(hash, buffer.AsSpan()[..readBytes]);
+            var chunk = SwarmChunk.BuildFromSpanAndData(hash, buffer.AsMemory()[..readBytes]);
             return chunk;
         }
 

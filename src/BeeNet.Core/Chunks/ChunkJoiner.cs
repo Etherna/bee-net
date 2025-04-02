@@ -159,14 +159,14 @@ namespace Etherna.BeeNet.Chunks
             for (int i = 0; i < dataArray.Length;)
             {
                 //read hash
-                var childHash = new SwarmHash(dataArray[i..(i + SwarmHash.HashSize)]);
+                var childHash = new SwarmHash(dataArray.AsMemory()[i..(i + SwarmHash.HashSize)]);
                 i += SwarmHash.HashSize;
                 
                 //read encryption key
                 XorEncryptKey? childEncryptionKey = null;
                 if (useRecursiveEncryption)
                 {
-                    childEncryptionKey = new XorEncryptKey(dataArray[i..(i + XorEncryptKey.KeySize)]);
+                    childEncryptionKey = new XorEncryptKey(dataArray.AsMemory()[i..(i + XorEncryptKey.KeySize)]);
                     i += XorEncryptKey.KeySize;
                 }
 

@@ -26,9 +26,9 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         void Clear();
-        IReadOnlyCollection<byte[]> GetProof(ReadOnlyMemory<byte> chunkSegment);
-        IReadOnlyCollection<byte[]> GetProof(int index);
-        SwarmHash Hash(byte[] span, byte[] data);
+        IReadOnlyCollection<ReadOnlyMemory<byte>> GetProof(ReadOnlyMemory<byte> chunkSegment);
+        IReadOnlyCollection<ReadOnlyMemory<byte>> GetProof(int index);
+        SwarmHash Hash(ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data);
         bool VerifyProof(IEnumerable<ReadOnlyMemory<byte>> proof, ReadOnlyMemory<byte> chunkSegment);
     }
 }

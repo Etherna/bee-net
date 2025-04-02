@@ -156,11 +156,22 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
-            var totalData = totalSpan.Concat(
-                levelChunks.SelectMany(c => useRecursiveEncryption
-                    ? c.Hash.ToByteArray().Concat(c.ChunkKey!.Value.ToByteArray())
-                    : c.Hash.ToByteArray()))
-                .ToArray();
+            var totalDataLength = SwarmChunk.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
+            var totalData = new byte[totalDataLength];
+            var totalDataIndex = 0;
+            
+            totalSpan.CopyTo(totalData, totalDataIndex);
+            totalDataIndex += SwarmChunk.SpanSize;
+            foreach (var chunk in levelChunks)
+            {
+                chunk.Hash.ToReadOnlyMemory().CopyTo(totalData.AsMemory()[totalDataIndex..]);
+                totalDataIndex += SwarmHash.HashSize;
+                if (useRecursiveEncryption)
+                {
+                    chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalData.AsMemory()[totalDataIndex..]);
+                    totalDataIndex += XorEncryptKey.KeySize;
+                }
+            }
 
             // Run hashing on the new chunk, and add it to next level.
             var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalData, swarmChunkBmt).ConfigureAwait(false);

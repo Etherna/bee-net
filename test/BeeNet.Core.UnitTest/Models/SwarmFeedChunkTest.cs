@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Models
         {
             var chunk = new SwarmFeedChunk(
                 new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
+                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
             var result = chunk.Payload;
@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.Models
         {
             var chunk = new SwarmFeedChunk(
                 new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                [0, 0, 0, 1, 2, 3, 4, 5, 6, 7],
+                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
                 "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
 
             var result = chunk.TimeStamp;

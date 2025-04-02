@@ -28,12 +28,11 @@ namespace Etherna.BeeNet.Models
         public const int HashSize = 32;
         
         // Fields.
-        private readonly byte[] byteHash;
+        private readonly ReadOnlyMemory<byte> byteHash;
 
         // Constructors.
-        public SwarmHash(byte[] hash)
+        public SwarmHash(ReadOnlyMemory<byte> hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
             
@@ -61,22 +60,18 @@ namespace Etherna.BeeNet.Models
         public static SwarmHash Zero { get; } = new byte[HashSize];
 
         // Methods.
-        public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
+        public bool Equals(SwarmHash other) => byteHash.Span.SequenceEqual(other.byteHash.Span);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
-        public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.AsSpan()[..2]);
-        public byte[] ToByteArray() => (byte[])byteHash.Clone();
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash.ToArray());
+        public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.Span[..2]);
+        public byte[] ToByteArray() => byteHash.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;
-        public override string ToString() => byteHash.ToHex();
+        public override string ToString() => byteHash.ToArray().ToHex();
         
         // Static methods.
         public static SwarmHash FromByteArray(byte[] value) => new(value);
         public static SwarmHash FromString(string value) => new(value);
-        public static bool IsValidHash(byte[] value)
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            return value.Length == HashSize;
-        }
+        public static bool IsValidHash(ReadOnlyMemory<byte> value) => value.Length == HashSize;
         public static bool IsValidHash(string value)
         {
             try

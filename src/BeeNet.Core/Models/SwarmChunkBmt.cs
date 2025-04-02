@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Models
             root = null;
         }
         
-        public IReadOnlyCollection<byte[]> GetProof(ReadOnlyMemory<byte> chunkSegment)
+        public IReadOnlyCollection<ReadOnlyMemory<byte>> GetProof(ReadOnlyMemory<byte> chunkSegment)
         {
             var leafByteArray = new byte[SegmentSize];
             ChunkSegmentToLeafByteArray(chunkSegment, leafByteArray);
@@ -58,16 +58,16 @@ namespace Etherna.BeeNet.Models
             throw new KeyNotFoundException("Leaf not found");
         }
 
-        public IReadOnlyCollection<byte[]> GetProof(int index)
+        public IReadOnlyCollection<ReadOnlyMemory<byte>> GetProof(int index)
         {
-            var proofs = new List<byte[]>();
+            var proofs = new List<ReadOnlyMemory<byte>>();
             for (var i = 0; i < layers.Count; i++)
             {
                 var isRightNode = index % 2 == 1;
                 var pairIndex = isRightNode ? index - 1 : index + 1;
                 var currentLayer = layers[i];
                 if (pairIndex < currentLayer.Count)
-                    proofs.Add(currentLayer[pairIndex].Hash.ToArray());
+                    proofs.Add(currentLayer[pairIndex].Hash);
 
                 index = (index / 2) | 0;
             }
@@ -75,20 +75,17 @@ namespace Etherna.BeeNet.Models
             return proofs;
         }
 
-        public SwarmHash Hash(byte[] span, byte[] data)
+        public SwarmHash Hash(ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
         {
-            ArgumentNullException.ThrowIfNull(span, nameof(span));
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-            
             if (data.Length > SwarmChunk.DataSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
             
             // Split input data into leaf segments.
-            var segments = new List<Memory<byte>>();
+            var segments = new List<ReadOnlyMemory<byte>>();
             for (var start = 0; start < data.Length; start += SegmentSize)
             {
                 var end = Math.Min(start + SegmentSize, data.Length);
-                segments.Add(data.AsMemory()[start..end]);
+                segments.Add(data[start..end]);
             }
             
             // Build the merkle tree leaves.

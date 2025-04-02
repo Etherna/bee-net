@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
         // Constructor.
         public SwarmFeedChunk(
             SwarmFeedIndexBase index,
-            byte[] data,
+            ReadOnlyMemory<byte> data,
             SwarmHash hash) :
             base(hash, data)
         {
@@ -84,13 +84,13 @@ namespace Etherna.BeeNet.Models
                 16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
                 16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
             {
-                var hash = new SwarmHash(soc.ChunkData[16..].ToArray());
+                var hash = new SwarmHash(soc.ChunkData[16..]);
                 return (await chunkStore!.GetAsync(hash).ConfigureAwait(false), soc);
             }
 
             return (new SwarmChunk(
                 chunkHash,
-                soc.ChunkData.ToArray()), soc);
+                soc.ChunkData), soc);
         }
     }
 }

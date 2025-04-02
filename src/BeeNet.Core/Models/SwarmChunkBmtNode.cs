@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Nethereum.Util;
 using System;
 
 namespace Etherna.BeeNet.Models
@@ -22,7 +21,7 @@ namespace Etherna.BeeNet.Models
         public Memory<byte> Hash { get; set; } = hash;
 
         public int Compare(ReadOnlyMemory<byte> hashOther) =>
-            ByteArrayComparer.Current.Compare(Hash.ToArray(), hashOther.ToArray());
+            Hash.Span.SequenceCompareTo(hashOther.Span);
 
         public bool Matches(ReadOnlyMemory<byte> hashOther) =>
             Compare(hashOther) == 0;

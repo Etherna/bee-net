@@ -92,7 +92,7 @@ namespace Etherna.BeeNet.Models
             if (chunk == null)
                 return null; 
             
-            return new SwarmFeedChunk(index, chunk.Data.ToArray(), hash);
+            return new SwarmFeedChunk(index, chunk.Data, hash);
         }
         
         // Static methods.

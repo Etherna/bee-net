@@ -27,21 +27,21 @@ namespace Etherna.BeeNet.Models
         PostageBatchId batchId,
         StampBucketIndex bucketIndex,
         DateTimeOffset timeStamp,
-        byte[] signature)
+        ReadOnlyMemory<byte> signature)
     {
         // Consts.
         public const int StampSize = 113;
         
         // Static builders.
-        public static PostageStamp BuildFromByteArray(ReadOnlySpan<byte> bytes)
+        public static PostageStamp BuildFromByteArray(ReadOnlyMemory<byte> bytes)
         {
             if (bytes.Length != StampSize)
                 throw new ArgumentOutOfRangeException(nameof(bytes), "Invalid stamp length");
 
-            var batchId = new PostageBatchId(bytes[..32].ToArray());
-            var stampBucketIndex = StampBucketIndex.BuildFromByteArray(bytes[32..40]);
-            var timeStamp = bytes[40..48].UnixTimeNanosecondsToDateTimeOffset();
-            var signature = bytes[48..].ToArray();
+            var batchId = new PostageBatchId(bytes[..32]);
+            var stampBucketIndex = StampBucketIndex.BuildFromByteArray(bytes.Span[32..40]);
+            var timeStamp = bytes.Span[40..48].UnixTimeNanosecondsToDateTimeOffset();
+            var signature = bytes[48..];
 
             return new PostageStamp(batchId, stampBucketIndex, timeStamp, signature);
         }
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Models
         public PostageBatchId BatchId { get; } = batchId;
         public StampBucketIndex BucketIndex { get; } = bucketIndex;
         public DateTimeOffset TimeStamp { get; } = timeStamp;
-        public ReadOnlyMemory<byte> Signature { get; } = signature;
+        public ReadOnlyMemory<byte> Signature => signature;
         
         // Static methods.
         public static byte[] BuildSignDigest(
@@ -83,16 +83,16 @@ namespace Etherna.BeeNet.Models
         {
             var signer = new EthereumMessageSigner();
             var toSign = ToSignDigest(hash, hasher);
-            return signer.EcRecover(toSign, new EthECDSASignature(signature));
+            return signer.EcRecover(toSign, new EthECDSASignature(signature.ToArray()));
         }
         
         public byte[] ToByteArray()
         {
             List<byte> buffer = [];
-            buffer.AddRange(BatchId.ToByteArray());
+            buffer.AddRange(BatchId.ToReadOnlyMemory().Span);
             buffer.AddRange(BucketIndex.ToByteArray());
             buffer.AddRange(TimeStamp.ToUnixTimeNanosecondsByteArray());
-            buffer.AddRange(Signature.ToArray());
+            buffer.AddRange(Signature.Span);
             return buffer.ToArray();
         }
 
