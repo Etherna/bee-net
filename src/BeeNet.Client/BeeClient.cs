@@ -176,24 +176,26 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
-        public async Task<SwarmHash> CreateFeedAsync(
-            EthAddress owner,
-            byte[] topic,
+        public async Task<SwarmHash> CreateFeedManifestAsync(
+            SwarmFeedBase feed,
             PostageBatchId batchId,
-            SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmPin = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default) =>
-            (await generatedClient.FeedsPostAsync(
-                owner: owner.ToString(),
-                topic: topic.ToHex(),
-                type: type.ToString(),
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            
+            return (await generatedClient.FeedsPostAsync(
+                owner: feed.Owner.ToString(),
+                topic: feed.Topic.ToArray().ToHex(),
+                type: feed.Type.ToString(),
                 swarm_pin: swarmPin,
                 swarm_postage_batch_id: batchId.ToString(),
                 swarm_act: swarmAct,
                 swarm_act_history_address: swarmActHistoryAddress,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+        }
 
         public Task CreatePinAsync(
             SwarmHash hash,

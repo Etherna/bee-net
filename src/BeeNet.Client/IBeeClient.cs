@@ -99,19 +99,15 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Create an initial feed root manifest</summary>
-        /// <param name="owner">Owner</param>
-        /// <param name="topic">Topic</param>
+        /// <param name="feed">Feed</param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="type">Feed indexing scheme (default: sequence)</param>
         /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
         /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmHash> CreateFeedAsync(
-            EthAddress owner,
-            byte[] topic,
+        Task<SwarmHash> CreateFeedManifestAsync(
+            SwarmFeedBase feed,
             PostageBatchId batchId,
-            SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmPin = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
