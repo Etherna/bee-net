@@ -58,6 +58,13 @@ namespace Etherna.BeeNet.Models
         public byte[] ToByteArray() => (byte[])byteAddress.Clone();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteAddress.AsMemory();
         public override string ToString() => byteAddress.ConvertToEthereumChecksumAddress();
+        public string ToString(bool withHexPrefix)
+        {
+            var address = ToString();
+            if (!withHexPrefix)
+                address = address.RemoveHexPrefix();
+            return address;
+        }
         
         // Static methods.
         public static EthAddress FromByteArray(byte[] value) => new(value);

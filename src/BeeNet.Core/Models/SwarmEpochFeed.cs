@@ -30,20 +30,27 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
-            Func<IHasher> hasherBuilder)
+            Func<IHasher> hasherBuilder,
+            DateTimeOffset? timestamp = null)
         {
             ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
-            return BuildNextFeedChunkAsync(chunkStore, contentData, knownNearIndex as SwarmEpochFeedIndex, hasherBuilder());
+            return BuildNextFeedChunkAsync(
+                chunkStore,
+                contentData,
+                knownNearIndex as SwarmEpochFeedIndex,
+                hasherBuilder(),
+                timestamp);
         }
 
         public async Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
             ReadOnlyMemory<byte> contentData,
             SwarmEpochFeedIndex? knownNearIndex,
-            IHasher hasher)
+            IHasher hasher,
+            DateTimeOffset? timestamp = null)
         {
             var at = DateTimeOffset.UtcNow;
 
@@ -62,7 +69,7 @@ namespace Etherna.BeeNet.Models
                 nextEpochIndex = (SwarmEpochFeedIndex)lastEpochFeedChunk.Index.GetNext(at);
 
             // Create new chunk.
-            return SwarmFeedChunk.BuildFromFeed(this, nextEpochIndex, contentData, hasher);
+            return SwarmFeedChunk.BuildFromFeed(this, nextEpochIndex, contentData, hasher, timestamp);
         }
 
         public override Task<SwarmFeedChunk?> TryFindFeedAtAsync(

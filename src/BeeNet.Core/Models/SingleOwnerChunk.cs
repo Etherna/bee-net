@@ -13,16 +13,19 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Stores;
+using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
     public class SingleOwnerChunk(
         ReadOnlyMemory<byte> id,
-        ReadOnlyMemory<byte> signature,
+        ReadOnlyMemory<byte>? signature,
         EthAddress owner,
         ReadOnlyMemory<byte> chunkData)
     {
@@ -31,20 +34,7 @@ namespace Etherna.BeeNet.Models
         public const int MinSocDataSize = SwarmHash.HashSize + SocSignatureSize + SwarmChunk.SpanSize;
         public const int SocSignatureSize = 65;
         
-        // Static properties.
-        /// <summary>
-        /// Ethereum Address for SOC owner of Dispersed Replicas
-        /// Generated from private key 0x0100000000000000000000000000000000000000000000000000000000000000
-        /// </summary>
-        public static EthAddress ReplicasOwner { get; } = new("dc5b20847f43d67928f49cd4f85d696b5a7617b5");
-        
-        // Properties.
-        public ReadOnlyMemory<byte> Id { get; } = id;
-        public ReadOnlyMemory<byte> Signature { get; } = signature;
-        public EthAddress Owner { get; } = owner;
-        public ReadOnlyMemory<byte> ChunkData => chunkData;
-        
-        // Static methods.
+        // Static builders.
         public static (SingleOwnerChunk soc, SwarmHash innerChunkHash) BuildFromBytes(
             ReadOnlyMemory<byte> data,
             IHasher hasher)
@@ -81,6 +71,81 @@ namespace Etherna.BeeNet.Models
                 chunkHash);
         }
 
+        public static async Task<SingleOwnerChunk> BuildNextSocFromFeedAsync(
+            IReadOnlyChunkStore chunkStore,
+            ReadOnlyMemory<byte> contentData,
+            SwarmFeedBase feed,
+            SwarmFeedIndexBase? knownNearIndex,
+            Func<IHasher> hasherBuilder,
+            DateTimeOffset? timestamp = null)
+        {
+            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            
+            var feedChunk = await feed.BuildNextFeedChunkAsync(
+                chunkStore,
+                contentData,
+                knownNearIndex,
+                hasherBuilder,
+                timestamp).ConfigureAwait(false);
+            var feedId = feed.BuildIdentifier(feedChunk.Index, hasherBuilder());
+            
+            return new SingleOwnerChunk(feedId, null, feed.Owner, feedChunk.GetSpanAndData());
+        }
+        
+        // Properties.
+        public ReadOnlyMemory<byte> Id => id;
+        public ReadOnlyMemory<byte>? Signature { get; set; } = signature;
+        public EthAddress Owner => owner;
+        public ReadOnlyMemory<byte> ChunkData => chunkData;
+        
+        // Static properties.
+        /// <summary>
+        /// Ethereum Address for SOC owner of Dispersed Replicas
+        /// Generated from private key 0x0100000000000000000000000000000000000000000000000000000000000000
+        /// </summary>
+        public static EthAddress ReplicasOwner { get; } = new("dc5b20847f43d67928f49cd4f85d696b5a7617b5");
+        
+        // Methods.
+        public SwarmHash BuildHash(IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            return hasher.ComputeHash([Id, Owner.ToReadOnlyMemory()]);
+        }
+
+        public byte[] ToByteArray()
+        {
+            if (!Signature.HasValue)
+                throw new InvalidOperationException("SOC has not been signed");
+            
+            List<byte> buffer = [];
+            buffer.AddRange(Id.Span);
+            buffer.AddRange(Signature.Value.Span);
+            buffer.AddRange(ChunkData.Span);
+            return buffer.ToArray();
+        }
+
+        public void SignWithPrivateKey(EthECKey privateKey, IHasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            
+            if (Owner != privateKey.GetPublicAddress())
+                throw new ArgumentException("Invalid private key owner", nameof(privateKey));
+            
+            var chunkBmt = new SwarmChunkBmt(hasher);
+            var innerChunkHash = chunkBmt.Hash(
+                ChunkData[..SwarmChunk.SpanSize],
+                ChunkData[SwarmChunk.SpanSize..]);
+            var toSignDigest = hasher.ComputeHash([Id, innerChunkHash.ToReadOnlyMemory()]);
+
+            var signer = new EthereumMessageSigner();
+            var signature = signer.Sign(toSignDigest, privateKey);
+
+            Signature = signature.HexToByteArray();
+        }
+
+        // Static methods.
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public static bool IsValidChunk(SwarmChunk chunk, IHasher hasher)
         {
@@ -101,22 +166,6 @@ namespace Etherna.BeeNet.Models
             {
                 return false;
             }
-        }
-        
-        // Methods.
-        public SwarmHash BuildHash(IHasher hasher)
-        {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            return hasher.ComputeHash([Id, Owner.ToReadOnlyMemory()]);
-        }
-
-        public byte[] ToByteArray()
-        {
-            List<byte> buffer = [];
-            buffer.AddRange(Id.Span);
-            buffer.AddRange(Signature.Span);
-            buffer.AddRange(ChunkData.Span);
-            return buffer.ToArray();
         }
     }
 }

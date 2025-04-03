@@ -98,21 +98,6 @@ namespace Etherna.BeeNet
             string peerAddress,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Create an initial feed root manifest</summary>
-        /// <param name="feed">Feed</param>
-        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <returns>Reference hash</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmHash> CreateFeedManifestAsync(
-            SwarmFeedBase feed,
-            PostageBatchId batchId,
-            bool? swarmPin = null,
-            bool? swarmAct = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default);
-
         /// <summary>Pin the root hash with the given reference</summary>
         /// <param name="hash">Swarm reference of the root hash</param>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
@@ -878,6 +863,21 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
+        /// <summary>Upload feed root manifest</summary>
+        /// <param name="feed">Feed</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
+        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <returns>Reference hash</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<SwarmHash> UploadFeedManifestAsync(
+            SwarmFeedBase feed,
+            PostageBatchId batchId,
+            bool swarmPin = false,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Upload a file</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="content">Input file content</param>
@@ -912,38 +912,13 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload single owner chunk</summary>
-        /// <param name="owner">Owner</param>
-        /// <param name="id">Id</param>
-        /// <param name="signature">Signature</param>
+        /// <param name="soc">Single owner chunk</param>
         /// <param name="batchId"></param>
-        /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadSocAsync(
-            EthAddress owner,
-            byte[] id,
-            string signature,
+            SingleOwnerChunk soc,
             PostageBatchId? batchId,
-            byte[] body,
-            PostageStamp? presignedPostageStamp = null,
-            bool? swarmAct = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>Upload single owner chunk</summary>
-        /// <param name="owner">Owner</param>
-        /// <param name="id">Id</param>
-        /// <param name="signature">Signature</param>
-        /// <param name="batchId"></param>
-        /// <param name="body">The SOC binary data is composed of the span (8 bytes) and the at most 4KB payload.</param>
-        /// <returns>Reference hash</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmHash> UploadSocAsync(
-            EthAddress owner,
-            byte[] id,
-            string signature,
-            PostageBatchId? batchId,
-            Stream body,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,

@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Models
             SwarmFeedIndexBase index,
             ReadOnlyMemory<byte> contentData,
             IHasher hasher,
-            ulong? timestamp = null)
+            DateTimeOffset? timestamp = null)
         {
             ArgumentNullException.ThrowIfNull(feed, nameof(feed));
             
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Static methods.
-        public static byte[] BuildFeedChunkPayload(ReadOnlyMemory<byte> payload, ulong? timestamp = null)
+        public static byte[] BuildFeedChunkPayload(ReadOnlyMemory<byte> payload, DateTimeOffset? timestamp = null)
         {
             if (payload.Length > MaxPayloadSize)
                 throw new ArgumentOutOfRangeException(nameof(payload),
@@ -123,17 +123,11 @@ namespace Etherna.BeeNet.Models
 
             var chunkData = new byte[TimeStampSize + payload.Length];
             
-            byte[] timestampByteArray;
-            if (timestamp.HasValue)
-            {
-                timestampByteArray = new byte[TimeStampSize];
-                BinaryPrimitives.WriteUInt64BigEndian(timestampByteArray, timestamp.Value);
-            }
-            else
-            {
-                timestampByteArray = DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
-            }
+            var timestampByteArray = timestamp.HasValue ?
+                timestamp.Value.ToUnixTimeSecondsByteArray() :
+                DateTimeOffset.UtcNow.ToUnixTimeSecondsByteArray();
             timestampByteArray.CopyTo(chunkData, 0);
+            
             payload.CopyTo(chunkData.AsMemory()[TimeStampSize..]);
 
             return chunkData;

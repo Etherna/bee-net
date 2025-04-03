@@ -176,27 +176,6 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
-        public async Task<SwarmHash> CreateFeedManifestAsync(
-            SwarmFeedBase feed,
-            PostageBatchId batchId,
-            bool? swarmPin = null,
-            bool? swarmAct = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
-            
-            return (await generatedClient.FeedsPostAsync(
-                owner: feed.Owner.ToString(),
-                topic: feed.Topic.ToArray().ToHex(),
-                type: feed.Type.ToString(),
-                swarm_pin: swarmPin,
-                swarm_postage_batch_id: batchId.ToString(),
-                swarm_act: swarmAct,
-                swarm_act_history_address: swarmActHistoryAddress,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-        }
-
         public Task CreatePinAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
@@ -1457,6 +1436,27 @@ namespace Etherna.BeeNet
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
 
+        public async Task<SwarmHash> UploadFeedManifestAsync(
+            SwarmFeedBase feed,
+            PostageBatchId batchId,
+            bool swarmPin = false,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            
+            return (await generatedClient.FeedsPostAsync(
+                owner: feed.Owner.ToString(),
+                topic: feed.Topic.ToArray().ToHex(),
+                type: feed.Type.ToString(),
+                swarm_pin: swarmPin,
+                swarm_postage_batch_id: batchId.ToString(),
+                swarm_act: swarmAct,
+                swarm_act_history_address: swarmActHistoryAddress,
+                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+        }
+
         public async Task<SwarmHash> UploadFileAsync(
             PostageBatchId batchId,
             Stream content,
@@ -1485,51 +1485,31 @@ namespace Etherna.BeeNet
                 swarm_redundancy_level: (SwarmRedundancyLevel2)swarmRedundancyLevel,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
-        
+
         public async Task<SwarmHash> UploadSocAsync(
-            EthAddress owner,
-            byte[] id,
-            string signature,
+            SingleOwnerChunk soc,
             PostageBatchId? batchId,
-            byte[] body,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            using var bodyMemoryStream = new MemoryStream(body);
-            return await UploadSocAsync(
-                owner: owner,
-                id: id,
-                signature: signature,
-                batchId: batchId,
-                body: bodyMemoryStream,
-                presignedPostageStamp: presignedPostageStamp,
-                swarmAct: swarmAct,
-                swarmActHistoryAddress: swarmActHistoryAddress,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-        }
+            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            if (!soc.Signature.HasValue)
+                throw new InvalidOperationException("SOC is not signed");
 
-        public async Task<SwarmHash> UploadSocAsync(
-            EthAddress owner,
-            byte[] id,
-            string signature,
-            PostageBatchId? batchId,
-            Stream body,
-            PostageStamp? presignedPostageStamp = null,
-            bool? swarmAct = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default) =>
-            (await generatedClient.SocPostAsync(
-                owner: owner.ToString(),
-                id: id.ToHex(),
-                sig: signature,
+            using var bodyMemoryStream = new MemoryStream(soc.ChunkData.ToArray());
+            return (await generatedClient.SocPostAsync(
+                owner: soc.Owner.ToString(false),
+                id: soc.Id.ToArray().ToHex(),
+                sig: soc.Signature.Value.ToArray().ToHex(),
                 swarm_postage_batch_id: batchId?.ToString(),
-                body: body,
+                body: bodyMemoryStream,
                 swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),
                 swarm_act: swarmAct,
                 swarm_act_history_address: swarmActHistoryAddress,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+        }
 
         public async Task<string> WalletWithdrawAsync(
             BzzBalance amount,

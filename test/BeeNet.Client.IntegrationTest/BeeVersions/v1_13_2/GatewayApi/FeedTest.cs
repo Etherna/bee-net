@@ -33,7 +33,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             var feed = new SwarmSequenceFeed(addresses.Ethereum, topic.HexToByteArray());
 
             // Act 
-            var result = await beeNodeClient.CreateFeedManifestAsync(feed, batch);
+            var result = await beeNodeClient.UploadFeedManifestAsync(feed, batch);
         }
 
         /*

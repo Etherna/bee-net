@@ -52,7 +52,8 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
-            Func<IHasher> hasherBuilder);
+            Func<IHasher> hasherBuilder,
+            DateTimeOffset? timestamp = null);
 
         /// <summary>
         /// Try to find feed at a given time
