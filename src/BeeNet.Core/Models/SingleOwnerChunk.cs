@@ -46,10 +46,10 @@ namespace Etherna.BeeNet.Models
 
             // Extract all fields.
             var cursor = 0;
-            var id = data[cursor..SwarmHash.HashSize];
+            var id = data[..SwarmHash.HashSize];
             cursor += SwarmHash.HashSize;
 
-            var signature = data[cursor..SocSignatureSize];
+            var signature = data[cursor..(cursor + SocSignatureSize)];
             cursor += SocSignatureSize;
             
             var chunkSpanAndData = data[cursor..];
@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Models
             // Recover owner information.
             var signer = new EthereumMessageSigner();
             var toSignDigest = hasher.ComputeHash([id, chunkHash.ToReadOnlyMemory()]);
-            var owner = signer.EcRecover(toSignDigest, new EthECDSASignature(signature.ToArray()));
+            var owner = signer.EcRecover(toSignDigest, signature.ToArray().ToHex());
 
             return (new SingleOwnerChunk(
                     id,
@@ -153,7 +153,7 @@ namespace Etherna.BeeNet.Models
             
             try
             {
-                var (soc, innerChunkHash) = BuildFromBytes(chunk.Data, hasher);
+                var (soc, innerChunkHash) = BuildFromBytes(chunk.SpanData, hasher);
 
                 //disperse replica validation
                 if (soc.Owner == ReplicasOwner &&
