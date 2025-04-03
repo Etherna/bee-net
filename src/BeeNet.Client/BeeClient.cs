@@ -492,8 +492,8 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false);
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
-            var spanAndData = memoryStream.ToArray();
-            return SwarmChunk.BuildFromSpanAndData(hash, spanAndData);
+            var spanData = memoryStream.ToArray();
+            return new SwarmChunk(hash, spanData);
         }
 
         public async Task<Stream> GetChunkStreamAsync(
@@ -1498,7 +1498,7 @@ namespace Etherna.BeeNet
             if (!soc.Signature.HasValue)
                 throw new InvalidOperationException("SOC is not signed");
 
-            using var bodyMemoryStream = new MemoryStream(soc.ChunkData.ToArray());
+            using var bodyMemoryStream = new MemoryStream(soc.ChunkSpanData.ToArray());
             return (await generatedClient.SocPostAsync(
                 owner: soc.Owner.ToString(false),
                 id: soc.Id.ToArray().ToHex(),

@@ -49,11 +49,9 @@ namespace Etherna.BeeNet.Tools
         }
         
         public async Task SendChunkAsync(
-            byte[] chunkPayload,
+            ReadOnlyMemory<byte> chunkPayload,
             CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(chunkPayload, nameof(chunkPayload));
-            
             await webSocket.SendAsync(chunkPayload, WebSocketMessageType.Binary, true, cancellationToken).ConfigureAwait(false);
             var response = await webSocket.ReceiveAsync(responseBuffer, CancellationToken.None).ConfigureAwait(false);
 
@@ -67,7 +65,7 @@ namespace Etherna.BeeNet.Tools
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            return SendChunkAsync(chunk.GetSpanAndData(), cancellationToken);
+            return SendChunkAsync(chunk.SpanData, cancellationToken);
         }
 
         public async Task SendChunkBatchAsync(

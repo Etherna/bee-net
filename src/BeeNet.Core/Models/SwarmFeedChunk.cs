@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Models
             SwarmFeedIndexBase index,
             ReadOnlyMemory<byte> feedChunkPayload,
             SwarmHash hash) :
-            base(hash, feedChunkPayload)
+            base(hash, LengthToSpan((ulong)feedChunkPayload.Length), feedChunkPayload)
         {
             if (feedChunkPayload.Length < MinDataSize)
                 throw new ArgumentOutOfRangeException(
@@ -101,17 +101,15 @@ namespace Etherna.BeeNet.Models
             
             // Check if is legacy payload. Possible lengths:
             if (resolveLegacyPayload &&
-                soc.ChunkData.Length is
+                soc.ChunkSpanData.Length is
                 16 + SwarmHash.HashSize or   // unencrypted ref: span+timestamp+ref => 8+8+32=48
                 16 + SwarmHash.HashSize * 2) // encrypted ref: span+timestamp+ref+decryptKey => 8+8+64=80
             {
-                var hash = new SwarmHash(soc.ChunkData[16..]);
+                var hash = new SwarmHash(soc.ChunkSpanData[16..]);
                 return (await chunkStore!.GetAsync(hash).ConfigureAwait(false), soc);
             }
 
-            return (new SwarmChunk(
-                chunkHash,
-                soc.ChunkData), soc);
+            return (BuildFromData(chunkHash, soc.ChunkSpanData), soc);
         }
         
         // Static methods.

@@ -21,20 +21,23 @@ namespace Etherna.BeeNet.Models
     {
         // Consts.
         public const int DataSize = 4096;
-        public const int SpanAndDataSize = SpanSize + DataSize;
+        public const int SpanDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
         // Constructors.
-        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> data)
+        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> spanData)
         {
-            if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
+            if (spanData.Length < SpanSize)
+                throw new ArgumentOutOfRangeException(nameof(spanData),
+                    $"Data with span can't be shorter than {SpanSize} bytes");
+            if (spanData.Length > SpanDataSize)
+                throw new ArgumentOutOfRangeException(nameof(spanData),
+                    $"Data with span can't be longer than {SpanDataSize} bytes");
             
             Hash = hash;
-            Span = LengthToSpan((ulong)data.Length);
-            Data = data;
+            SpanData = spanData;
         }
-
+        
         public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
         {
             if (span.Length != SpanSize)
@@ -43,49 +46,44 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
             
             Hash = hash;
-            Span = span;
-            Data = data;
+            
+            var spanDataBuffer = new byte[SpanSize + data.Length];
+            span.CopyTo(spanDataBuffer);
+            data.CopyTo(spanDataBuffer.AsMemory(SpanSize));
+            SpanData = spanDataBuffer;
         }
         
         // Static builders.
-        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlyMemory<byte> spanAndData)
+        public static SwarmChunk BuildFromData(SwarmHash hash, ReadOnlyMemory<byte> data)
         {
-            if (spanAndData.Length > SpanAndDataSize)
-                throw new ArgumentOutOfRangeException(nameof(spanAndData),
-                    $"Data with span can't be longer than {SpanAndDataSize} bytes");
+            if (data.Length > DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
+            
+            var spanDataBuffer = new byte[SpanSize + data.Length];
+            LengthToSpan((ulong)data.Length).CopyTo(spanDataBuffer, 0);
+            data.CopyTo(spanDataBuffer.AsMemory(SpanSize));
 
-            var spanSlice = spanAndData[..SpanSize];
-            var dataSlice = spanAndData[SpanSize..];
-
-            return new SwarmChunk(hash, spanSlice, dataSlice);
+            return new(hash, spanDataBuffer);
         }
 
         // Properties.
         public SwarmHash Hash { get; }
-        public ReadOnlyMemory<byte> Span { get; }
-        public ReadOnlyMemory<byte> Data { get; }
-        
-        // Methods.
-        public byte[] GetSpanAndData()
-        {
-            var spanAndData = new byte[SpanSize + Data.Length];
-            Span.CopyTo(spanAndData.AsMemory()[..SpanSize]);
-            Data.CopyTo(spanAndData.AsMemory()[SpanSize..]);
-            return spanAndData;
-        }
+        public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
+        public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
+        public ReadOnlyMemory<byte> SpanData { get; }
         
         // Static methods.
         public static byte[] LengthToSpan(ulong length)
         {
             var span = new byte[SpanSize];
-            WriteSpan(span, length);
+            WriteSpan(length, span);
             return span;
         }
 
         public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
             BinaryPrimitives.ReadUInt64LittleEndian(span);
 
-        public static void WriteSpan(Span<byte> span, ulong length) =>
-            BinaryPrimitives.WriteUInt64LittleEndian(span, length);
+        public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
+            BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);
     }
 }

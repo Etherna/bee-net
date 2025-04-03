@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Tools
         Task CloseAsync();
 
         Task SendChunkAsync(
-            byte[] chunkPayload,
+            ReadOnlyMemory<byte> chunkPayload,
             CancellationToken cancellationToken);
 
         Task SendChunkAsync(

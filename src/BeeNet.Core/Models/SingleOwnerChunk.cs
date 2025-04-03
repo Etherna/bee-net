@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Models
         ReadOnlyMemory<byte> id,
         ReadOnlyMemory<byte>? signature,
         EthAddress owner,
-        ReadOnlyMemory<byte> chunkData)
+        ReadOnlyMemory<byte> chunkSpanData)
     {
         // Consts.
         public const int MaxSocDataSize = MinSocDataSize + SwarmChunk.DataSize;
@@ -90,14 +90,14 @@ namespace Etherna.BeeNet.Models
                 timestamp).ConfigureAwait(false);
             var feedId = feed.BuildIdentifier(feedChunk.Index, hasherBuilder());
             
-            return new SingleOwnerChunk(feedId, null, feed.Owner, feedChunk.GetSpanAndData());
+            return new SingleOwnerChunk(feedId, null, feed.Owner, feedChunk.SpanData);
         }
         
         // Properties.
         public ReadOnlyMemory<byte> Id => id;
         public ReadOnlyMemory<byte>? Signature { get; set; } = signature;
         public EthAddress Owner => owner;
-        public ReadOnlyMemory<byte> ChunkData => chunkData;
+        public ReadOnlyMemory<byte> ChunkSpanData => chunkSpanData;
         
         // Static properties.
         /// <summary>
@@ -121,7 +121,7 @@ namespace Etherna.BeeNet.Models
             List<byte> buffer = [];
             buffer.AddRange(Id.Span);
             buffer.AddRange(Signature.Value.Span);
-            buffer.AddRange(ChunkData.Span);
+            buffer.AddRange(ChunkSpanData.Span);
             return buffer.ToArray();
         }
 
@@ -135,8 +135,8 @@ namespace Etherna.BeeNet.Models
             
             var chunkBmt = new SwarmChunkBmt(hasher);
             var innerChunkHash = chunkBmt.Hash(
-                ChunkData[..SwarmChunk.SpanSize],
-                ChunkData[SwarmChunk.SpanSize..]);
+                ChunkSpanData[..SwarmChunk.SpanSize],
+                ChunkSpanData[SwarmChunk.SpanSize..]);
             var toSignDigest = hasher.ComputeHash([Id, innerChunkHash.ToReadOnlyMemory()]);
 
             var signer = new EthereumMessageSigner();

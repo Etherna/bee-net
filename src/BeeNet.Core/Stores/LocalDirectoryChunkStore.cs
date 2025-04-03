@@ -90,13 +90,12 @@ namespace Etherna.BeeNet.Stores
             if (!File.Exists(chunkPath))
                 throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
 
-            var buffer = new byte[SwarmChunk.SpanAndDataSize];
+            var buffer = new byte[SwarmChunk.SpanDataSize];
             var fileStream = File.OpenRead(chunkPath);
             await using var stream = fileStream.ConfigureAwait(false);
             var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
 
-            var chunk = SwarmChunk.BuildFromSpanAndData(hash, buffer.AsMemory()[..readBytes]);
-            return chunk;
+            return new SwarmChunk(hash, buffer.AsMemory()[..readBytes]);
         }
 
         protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
@@ -115,7 +114,7 @@ namespace Etherna.BeeNet.Stores
                 //write tmp file, and complete writing.
                 using (var fileStream = File.Create(tmpChunkPath))
                 {
-                    await fileStream.WriteAsync(chunk.GetSpanAndData()).ConfigureAwait(false);
+                    await fileStream.WriteAsync(chunk.SpanData).ConfigureAwait(false);
                     await fileStream.FlushAsync().ConfigureAwait(false);
                 }
                 

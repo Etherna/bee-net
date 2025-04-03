@@ -47,15 +47,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
-            if (args.Data.Length < SwarmChunk.SpanSize)
+            if (args.SpanData.Length < SwarmChunk.SpanSize)
                 throw new InvalidOperationException("Data can't be shorter than span size here");
-            if (args.Data.Length > SwarmChunk.SpanAndDataSize)
+            if (args.SpanData.Length > SwarmChunk.SpanDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
             // Hash chunk and clear chunk bmt for next uses.
             var plainChunkHash = args.SwarmChunkBmt.Hash(
-                args.Data[..SwarmChunk.SpanSize],
-                args.Data[SwarmChunk.SpanSize..]);
+                args.SpanData[..SwarmChunk.SpanSize],
+                args.SpanData[SwarmChunk.SpanSize..]);
             args.SwarmChunkBmt.Clear();
             
             // Decide to compact chunk or not.
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 var bestChunkResult = await GetBestChunkAsync(args, plainChunkHash).ConfigureAwait(false);
                 
                 args.ChunkKey = bestChunkResult.ChunkKey;
-                args.Data = bestChunkResult.EncryptedData;
+                args.SpanData = bestChunkResult.EncryptedSpanData;
                 args.Hash = bestChunkResult.Hash;
             }
 
@@ -189,14 +189,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     var chunkKey = new XorEncryptKey(args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
-                    var encryptedData = args.Data.ToArray();
-                    EncryptDecryptChunkData(chunkKey, encryptedData);
+                    var encryptedSpanData = args.SpanData.ToArray();
+                    EncryptDecryptChunkData(chunkKey, encryptedSpanData);
                     
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(
-                        encryptedData.AsMemory()[..SwarmChunk.SpanSize],
-                        encryptedData.AsMemory()[SwarmChunk.SpanSize..]);
-                    optimisticCache[i] = new(chunkKey, encryptedData, encryptedHash);
+                        encryptedSpanData.AsMemory()[..SwarmChunk.SpanSize],
+                        encryptedSpanData.AsMemory()[SwarmChunk.SpanSize..]);
+                    optimisticCache[i] = new(chunkKey, encryptedSpanData, encryptedHash);
                     
                     // Clear chunk bmt for next uses.
                     args.SwarmChunkBmt.Clear();

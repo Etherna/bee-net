@@ -124,9 +124,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize));
                     
                     // Write chunk span.
-                    SwarmChunk.WriteSpan(
-                        chunkData.AsSpan(0, SwarmChunk.SpanSize),
-                        (ulong)chunkReadSize);
+                    SwarmChunk.WriteSpan((ulong)chunkReadSize, chunkData.AsSpan(0, SwarmChunk.SpanSize));
                 
                     // Invoke next stage with parallelism on chunks.
                     //control concurrency
@@ -143,7 +141,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     var feedArgs = new HasherPipelineFeedArgs(
                         swarmChunkBmt: chunkResources.SwarmChunkBmt,
                         span: chunkData.AsMemory()[..SwarmChunk.SpanSize],
-                        data: chunkData,
+                        spanData: chunkData,
                         numberId: chunkNumberId,
                         prevChunkSemaphore: prevChunkSemaphore);
                     

@@ -1,4 +1,5 @@
 using Etherna.BeeNet.Models;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Hashing.Pipeline
@@ -6,11 +7,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays")]
     public class CompactedChunkAttemptResult(
         XorEncryptKey chunkKey,
-        byte[] encryptedData,
+        ReadOnlyMemory<byte> encryptedSpanData,
         SwarmHash hash)
     {
         public XorEncryptKey ChunkKey { get; } = chunkKey;
-        public byte[] EncryptedData { get; } = encryptedData;
+        public ReadOnlyMemory<byte> EncryptedSpanData { get; } = encryptedSpanData;
         public SwarmHash Hash { get; } = hash;
     }
 }

@@ -157,24 +157,24 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
             var totalDataLength = SwarmChunk.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
-            var totalData = new byte[totalDataLength];
+            var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             
-            totalSpan.CopyTo(totalData, totalDataIndex);
+            totalSpan.CopyTo(totalSpanData, totalDataIndex);
             totalDataIndex += SwarmChunk.SpanSize;
             foreach (var chunk in levelChunks)
             {
-                chunk.Hash.ToReadOnlyMemory().CopyTo(totalData.AsMemory()[totalDataIndex..]);
+                chunk.Hash.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
                 totalDataIndex += SwarmHash.HashSize;
                 if (useRecursiveEncryption)
                 {
-                    chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalData.AsMemory()[totalDataIndex..]);
+                    chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
                     totalDataIndex += XorEncryptKey.KeySize;
                 }
             }
 
             // Run hashing on the new chunk, and add it to next level.
-            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalData, swarmChunkBmt).ConfigureAwait(false);
+            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
@@ -188,9 +188,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
         
         // Helpers.
-        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(byte[] span, byte[] data, ISwarmChunkBmt swarmChunkBmt)
+        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(
+            ReadOnlyMemory<byte> span,
+            ReadOnlyMemory<byte> spanData,
+            ISwarmChunkBmt swarmChunkBmt)
         {
-            var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, data: data);
+            var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
             await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
             return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
         }
