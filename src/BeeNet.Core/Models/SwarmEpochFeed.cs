@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmEpochFeed(EthAddress owner, byte[] topic)
+    public class SwarmEpochFeed(EthAddress owner, ReadOnlyMemory<byte> topic)
         : SwarmFeedBase(owner, topic)
     {
         // Properties.

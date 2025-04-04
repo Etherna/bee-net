@@ -25,10 +25,8 @@ namespace Etherna.BeeNet.Models
     public abstract class SwarmFeedBase
     {
         // Constructors.
-        protected SwarmFeedBase(EthAddress owner, byte[] topic)
+        protected SwarmFeedBase(EthAddress owner, ReadOnlyMemory<byte> topic)
         {
-            ArgumentNullException.ThrowIfNull(topic, nameof(topic));
-
             if (topic.Length != SwarmFeedChunk.TopicSize)
                 throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
             

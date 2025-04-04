@@ -42,7 +42,10 @@ namespace Etherna.BeeNet.Manifest
             if (!_rootNode.IsDecoded)
                 await _rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await RootNode.GetResourceMetadataAsync(path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
+            return await RootNode.GetResourceMetadataAsync(
+                path == SwarmAddress.Separator.ToString() ?
+                    path :
+                    path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
         }
 
         public async Task<bool> HasPathPrefixAsync(string path)

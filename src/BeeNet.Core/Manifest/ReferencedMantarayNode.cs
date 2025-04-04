@@ -107,19 +107,9 @@ namespace Etherna.BeeNet.Manifest
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
-            // If the path is empty
-            if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
-            {
-                //try to lookup for index document suffix
-                if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
-                    rootFork.Prefix != SwarmAddress.Separator.ToString())
-                    throw new KeyNotFoundException($"Final path {path} can't be found");
-                
-                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
-                    throw new KeyNotFoundException($"Index document can't be found");
-
-                path = indexDocPat;
-            }
+            // If the path is empty, return current node metadata
+            if (path.Length == 0)
+                return _metadata;
 
             // Find the child fork.
             if (!_forks.TryGetValue(path[0], out var fork) ||

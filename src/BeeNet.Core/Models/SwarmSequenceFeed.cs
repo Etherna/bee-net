@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmSequenceFeed(EthAddress owner, byte[] topic)
+    public class SwarmSequenceFeed(EthAddress owner, ReadOnlyMemory<byte> topic)
         : SwarmFeedBase(owner, topic)
     {
         // Consts.
