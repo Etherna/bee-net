@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
         
         // Fields.
-        ConcurrentQueue<IHasher> hashersPool = new();
+        private readonly ConcurrentQueue<IHasher> hasherPool = new();
 
         // Properties.
         public override SwarmFeedType Type => SwarmFeedType.Sequence;
@@ -134,7 +134,7 @@ namespace Etherna.BeeNet.Models
                 tasks.Add(Task.Run(async () =>
                 {
                     // Init.
-                    if (!hashersPool.TryDequeue(out var hasher))
+                    if (!hasherPool.TryDequeue(out var hasher))
                         hasher = hasherBuilder();
                     using var timeoutCancellationTokenSource = new CancellationTokenSource(requestsCustomTimeout ?? DefaultTimeout);
                     
@@ -210,7 +210,7 @@ namespace Etherna.BeeNet.Models
                         finally
                         {
                             semaphore.Release();
-                            hashersPool.Enqueue(hasher);
+                            hasherPool.Enqueue(hasher);
                         }
                     }
                     catch (OperationCanceledException) { }
