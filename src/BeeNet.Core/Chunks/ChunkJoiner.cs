@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>The data stream</returns>
         public async Task<Stream> GetJoinedChunkDataAsync(
-            SwarmChunk rootChunk,
+            SwarmCac rootChunk,
             XorEncryptKey? encryptionKey,
             bool useRecursiveEncryption,
             string? fileCachePath = null,
@@ -127,8 +127,11 @@ namespace Etherna.BeeNet.Chunks
         {
             // Get root chunk and join data.
             var chunk = await chunkStore.GetAsync(chunkReference.Hash, cancellationToken: cancellationToken).ConfigureAwait(false);
+            if (chunk is not SwarmCac cac)
+                throw new InvalidOperationException($"Chunk {chunkReference.Hash} is not a Content Addressed Chunk.");
+            
             await GetJoinedChunkDataHelperAsync(
-                chunk,
+                cac,
                 chunkReference.EncryptionKey,
                 chunkReference.UseRecursiveEncryption,
                 dataStream,
@@ -136,7 +139,7 @@ namespace Etherna.BeeNet.Chunks
         }
         
         private async Task GetJoinedChunkDataHelperAsync(
-            SwarmChunk chunk,
+            SwarmCac chunk,
             XorEncryptKey? encryptionKey,
             bool useRecursiveEncryption,
             Stream dataStream,
@@ -146,10 +149,10 @@ namespace Etherna.BeeNet.Chunks
             encryptionKey?.EncryptDecrypt(dataArray);
             
             // Determine if is a data chunk, or an intermediate chunk.
-            var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
+            var totalDataLength = SwarmCac.SpanToLength(chunk.Span.Span);
             
             //if is data leaf chunk
-            if (totalDataLength <= SwarmChunk.DataSize)
+            if (totalDataLength <= SwarmCac.DataSize)
             {
                 await dataStream.WriteAsync(dataArray, cancellationToken).ConfigureAwait(false);
                 return;

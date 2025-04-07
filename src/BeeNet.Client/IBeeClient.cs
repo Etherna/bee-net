@@ -308,7 +308,7 @@ namespace Etherna.BeeNet
         /// <param name="hash">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmChunk> GetChunkAsync(
+        Task<SwarmCac> GetChunkAsync(
             SwarmHash hash,
             int maxRetryAttempts = 10,
             bool? swarmCache = null,
@@ -736,7 +736,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<FileResponse?> TryGetFeedAsync(
             EthAddress owner,
-            byte[] topic,
+            SwarmFeedTopic topic,
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
@@ -917,7 +917,7 @@ namespace Etherna.BeeNet
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadSocAsync(
-            SingleOwnerChunk soc,
+            SwarmSoc soc,
             PostageBatchId? batchId,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,

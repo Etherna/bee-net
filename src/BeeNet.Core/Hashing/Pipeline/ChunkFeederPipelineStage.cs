@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public ChunkFeederPipelineStage(
             IHasherPipelineStage nextStage,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             int? chunkConcurrency = null)
         {
             chunkConcurrency ??= Environment.ProcessorCount;
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * has completed and released concurrency.
              */
             for (int i = 0; i < chunkConcurrency * 2; i++)
-                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), new SwarmChunkBmt(hasherBuilder())));
+                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), bmtBuilder()));
         }
 
         // Dispose.
@@ -107,7 +107,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             IsUsable = false;
             
             // Slicing the stream permits to avoid to load all the stream in memory at the same time.
-            var chunkBuffer = new byte[SwarmChunk.DataSize];
+            var chunkBuffer = new byte[SwarmCac.DataSize];
             bool isEndOfStream = false;
             SemaphoreSlim? prevChunkSemaphore = null;
             while (!isEndOfStream)
@@ -117,14 +117,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 if (chunkReadSize > 0 || //write only chunks with data
                     passedBytes == 0)    //or accept also edge case trying to hash an empty stream
                 {
-                    var chunkNumberId = passedBytes / SwarmChunk.DataSize;
+                    var chunkNumberId = passedBytes / SwarmCac.DataSize;
                     
                     // Copy read data from buffer to a new chunk data byte[]. Include also span
-                    var chunkData = new byte[SwarmChunk.SpanSize + chunkReadSize];
-                    chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(chunkData.AsSpan(SwarmChunk.SpanSize));
+                    var chunkData = new byte[SwarmCac.SpanSize + chunkReadSize];
+                    chunkBuffer.AsSpan(0, chunkReadSize).CopyTo(chunkData.AsSpan(SwarmCac.SpanSize));
                     
                     // Write chunk span.
-                    SwarmChunk.WriteSpan((ulong)chunkReadSize, chunkData.AsSpan(0, SwarmChunk.SpanSize));
+                    SwarmCac.WriteSpan((ulong)chunkReadSize, chunkData.AsSpan(0, SwarmCac.SpanSize));
                 
                     // Invoke next stage with parallelism on chunks.
                     //control concurrency
@@ -140,7 +140,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     //build args
                     var feedArgs = new HasherPipelineFeedArgs(
                         swarmChunkBmt: chunkResources.SwarmChunkBmt,
-                        span: chunkData.AsMemory()[..SwarmChunk.SpanSize],
+                        span: chunkData.AsMemory()[..SwarmCac.SpanSize],
                         spanData: chunkData,
                         numberId: chunkNumberId,
                         prevChunkSemaphore: prevChunkSemaphore);

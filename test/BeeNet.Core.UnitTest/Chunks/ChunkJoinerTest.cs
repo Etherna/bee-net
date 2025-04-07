@@ -54,12 +54,12 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = new MemoryChunkStore();
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                         chunkStore,
-                        () => new Hasher(),
                         new FakePostageStamper(),
                         RedundancyLevel.None,
                         false,
                         0,
-                        null);
+                        null,
+                        () => new SwarmChunkBmt(new Hasher()));
                     using var dataStream = new MemoryStream(data);
                     
                     var task = fileHasherPipeline.HashDataAsync(dataStream);
@@ -77,12 +77,12 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = new MemoryChunkStore();
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                         chunkStore,
-                        () => new Hasher(),
                         new FakePostageStamper(),
                         RedundancyLevel.None,
                         false,
                         65535,
-                        null);
+                        null,
+                        () => new SwarmChunkBmt(new Hasher()));
                     using var dataStream = new MemoryStream(data);
                     
                     var task = fileHasherPipeline.HashDataAsync(dataStream);

@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Models
     public sealed class SwarmChunkBmt(IHasher hasher) : ISwarmChunkBmt
     {
         // Consts.
-        public const int SegmentsCount = SwarmChunk.DataSize / SegmentSize;
+        public const int SegmentsCount = SwarmCac.DataSize / SegmentSize;
         public const int SegmentSize = SwarmHash.HashSize;
         
         // Fields.
@@ -77,8 +77,8 @@ namespace Etherna.BeeNet.Models
 
         public SwarmHash Hash(ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
         {
-            if (data.Length > SwarmChunk.DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmChunk.DataSize} bytes");
+            if (data.Length > SwarmCac.DataSize)
+                throw new ArgumentOutOfRangeException(nameof(data), $"Max writable data is {SwarmCac.DataSize} bytes");
             
             // Split input data into leaf segments.
             var segments = new List<ReadOnlyMemory<byte>>();

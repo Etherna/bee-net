@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.Tools
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            return SendChunkAsync(chunk.SpanData, cancellationToken);
+            return SendChunkAsync(chunk.GetFullPayload(), cancellationToken);
         }
 
         public async Task SendChunkBatchAsync(

@@ -47,7 +47,7 @@ namespace Etherna.BeeNet.Services
         public long ConsumedSize =>
             PostageStampIssuer.Buckets.MaxBucketCollisions *
             (long)Math.Pow(2, PostageBatch.BucketDepth) *
-            SwarmChunk.DataSize;
+            SwarmCac.DataSize;
         
         /// <summary>
         /// Available postage batch space after the upload, with minimum batch depth
@@ -58,6 +58,6 @@ namespace Etherna.BeeNet.Services
         /// Minimum required postage batch byte size
         /// </summary>
         public long RequiredPostageBatchByteSize =>
-            (long)(Math.Pow(2, PostageStampIssuer.Buckets.RequiredPostageBatchDepth) * SwarmChunk.DataSize);
+            (long)(Math.Pow(2, PostageStampIssuer.Buckets.RequiredPostageBatchDepth) * SwarmCac.DataSize);
     }
 }

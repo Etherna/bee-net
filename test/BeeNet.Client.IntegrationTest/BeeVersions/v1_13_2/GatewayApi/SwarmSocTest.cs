@@ -1,4 +1,4 @@
-// Copyright 2021-present Etherna SA
+﻿// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,13 +12,22 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System.Diagnostics.CodeAnalysis;
-
-namespace Etherna.BeeNet.Models
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
-    [SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable")]
-    public class SwarmSignature
+    public class SwarmSocTest : BaseTest_Gateway_v5_0_0
     {
-        public const int SignatureSize = 65;
+        /*
+        [Fact]
+        public async Task SendPssAsync()
+        {
+            // Arrange 
+            var addresses = await beeNodeClient.GetAddressesAsync();
+
+            // Act 
+            await beeNodeClient.UploadSocAsync(addresses.Ethereum.Replace("0x", ""), "cf880b8eeac5093fa27b0825906c600685", "cf880b8eeac5093fa27b0825906c600685");
+
+
+            // Assert 
+        }*/
     }
 }

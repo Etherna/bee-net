@@ -47,8 +47,8 @@ namespace Etherna.BeeNet
     {
         // Consts.
         public const int ChunkStreamWSInternalBufferSize = 2 * ChunkStreamWSReceiveBufferSize + ChunkStreamWSSendBufferSize + 256 + 20;
-        public const int ChunkStreamWSReceiveBufferSize = SwarmFeedChunk.MaxChunkSize;
-        public const int ChunkStreamWSSendBufferSize = SwarmFeedChunk.MaxChunkSize;
+        public const int ChunkStreamWSReceiveBufferSize = SwarmSoc.MaxSocSize;
+        public const int ChunkStreamWSSendBufferSize = SwarmSoc.MaxSocSize;
         public const int DefaultPort = 1633;
         public readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
 
@@ -473,7 +473,7 @@ namespace Etherna.BeeNet
                     payout: BzzBalance.FromPlurString(response.Lastsent.Payout)) : null);
         }
 
-        public async Task<SwarmChunk> GetChunkAsync(
+        public async Task<SwarmCac> GetChunkAsync(
             SwarmHash hash,
             int maxRetryAttempts = 10,
             bool? swarmCache = null,
@@ -493,7 +493,7 @@ namespace Etherna.BeeNet
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
             var spanData = memoryStream.ToArray();
-            return new SwarmChunk(hash, spanData);
+            return new SwarmCac(hash, spanData);
         }
 
         public async Task<Stream> GetChunkStreamAsync(
@@ -1260,7 +1260,7 @@ namespace Etherna.BeeNet
 
         public async Task<FileResponse?> TryGetFeedAsync(
             EthAddress owner,
-            byte[] topic,
+            SwarmFeedTopic topic,
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
@@ -1275,7 +1275,7 @@ namespace Etherna.BeeNet
             {
                 var response = await generatedClient.FeedsGetAsync(
                     owner: owner.ToString(),
-                    topic: topic.ToHex(),
+                    topic: topic.ToString(),
                     at: at,
                     after: after,
                     type: type.ToString(),
@@ -1448,7 +1448,7 @@ namespace Etherna.BeeNet
             
             return (await generatedClient.FeedsPostAsync(
                 owner: feed.Owner.ToString(),
-                topic: feed.Topic.ToArray().ToHex(),
+                topic: feed.Topic.ToString(),
                 type: feed.Type.ToString(),
                 swarm_pin: swarmPin,
                 swarm_postage_batch_id: batchId.ToString(),
@@ -1487,7 +1487,7 @@ namespace Etherna.BeeNet
         }
 
         public async Task<SwarmHash> UploadSocAsync(
-            SingleOwnerChunk soc,
+            SwarmSoc soc,
             PostageBatchId? batchId,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
@@ -1498,11 +1498,11 @@ namespace Etherna.BeeNet
             if (!soc.Signature.HasValue)
                 throw new InvalidOperationException("SOC is not signed");
 
-            using var bodyMemoryStream = new MemoryStream(soc.ChunkSpanData.ToArray());
+            using var bodyMemoryStream = new MemoryStream(soc.InnerChunk.SpanData.ToArray());
             return (await generatedClient.SocPostAsync(
                 owner: soc.Owner.ToString(false),
-                id: soc.Id.ToArray().ToHex(),
-                sig: soc.Signature.Value.ToArray().ToHex(),
+                id: soc.Identifier.ToString(),
+                sig: soc.Signature.Value.ToString(),
                 swarm_postage_batch_id: batchId?.ToString(),
                 body: bodyMemoryStream,
                 swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),

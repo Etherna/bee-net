@@ -525,22 +525,22 @@ namespace Etherna.BeeNet.Chunks
                 new Hasher(),
                 _ => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
-                    () => new Hasher(),
                     postageStamper,
                     RedundancyLevel.None,
                     false,
                     0,
-                    null),
+                    null,
+                    () => new SwarmChunkBmt(new Hasher())),
                 0);
 
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,
                 0,
-                null);
+                null,
+                () => new SwarmChunkBmt(new Hasher()));
             var fileAEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",
@@ -560,12 +560,12 @@ namespace Etherna.BeeNet.Chunks
 
             var fileBHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,
                 0,
-                null);
+                null,
+                () => new SwarmChunkBmt(new Hasher()));
             var fileBEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",
@@ -580,12 +580,12 @@ namespace Etherna.BeeNet.Chunks
 
             var fileCHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                () => new Hasher(),
                 postageStamper,
                 RedundancyLevel.None,
                 false,
                 0,
-                null);
+                null,
+                () => new SwarmChunkBmt(new Hasher()));
             var fileCEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",

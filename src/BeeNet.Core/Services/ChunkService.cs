@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.Services
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
             string directoryPath,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             string? indexFilename = null,
             string? errorFilename = null,
             ushort compactLevel = 0,
@@ -82,7 +82,7 @@ namespace Etherna.BeeNet.Services
             return UploadDirectoryAsync(
                 files.Select(f => Path.GetRelativePath(directoryPath, f)).ToArray(),
                 f =>  File.OpenRead(Path.Combine(directoryPath, f)),
-                hasherBuilder,
+                bmtBuilder,
                 indexFilename,
                 errorFilename,
                 compactLevel,
@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Services
         public async Task<UploadEvaluationResult> UploadDirectoryAsync(
             string[] fileNames,
             Func<string, Stream> getFileStream,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             string? indexFilename = null,
             string? errorFilename = null,
             ushort compactLevel = 0,
@@ -107,9 +107,9 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null)
         {
             // Checks.
+            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
             ArgumentNullException.ThrowIfNull(fileNames, nameof(fileNames));
             ArgumentNullException.ThrowIfNull(getFileStream, nameof(getFileStream));
-            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             
             if (fileNames.Length == 0)
                 throw new ArgumentException("No files in directory", nameof(fileNames));
@@ -132,7 +132,7 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore(),
-                hasherBuilder());
+                bmtBuilder().Hasher);
             long totalMissedOptimisticHashing = 0;
             
             // Try set index document.
@@ -141,15 +141,15 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var dirManifest = new MantarayManifest(
-                hasherBuilder(),
+                bmtBuilder().Hasher,
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
-                    hasherBuilder,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
                     chunkCuncorrency,
+                    bmtBuilder,
                     readOnlyPipeline),
                 compactLevel);
 
@@ -158,12 +158,12 @@ namespace Etherna.BeeNet.Services
             {
                 using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
-                    hasherBuilder,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     compactLevel,
-                    chunkCuncorrency);
+                    chunkCuncorrency,
+                    bmtBuilder);
                 
                 var fileContentType = FileContentTypeProvider.GetContentType(file);
                 var fileName = Path.GetFileName(file);
@@ -221,7 +221,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
@@ -234,7 +234,7 @@ namespace Etherna.BeeNet.Services
                 stream,
                 fileContentType,
                 fileName,
-                hasherBuilder,
+                bmtBuilder,
                 compactLevel,
                 encrypt,
                 redundancyLevel,
@@ -247,7 +247,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
@@ -255,7 +255,7 @@ namespace Etherna.BeeNet.Services
             int? chunkCuncorrency = null, 
             IChunkStore? chunkStore = null)
         {
-            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
             
             // Checks.
             if (fileName?.Contains(SwarmAddress.Separator, StringComparison.InvariantCulture) == true)
@@ -269,17 +269,17 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore(),
-                hasherBuilder());
+                bmtBuilder().Hasher);
             
             // Get file hash.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                hasherBuilder,
                 postageStamper,
                 redundancyLevel,
                 encrypt,
                 compactLevel,
-                chunkCuncorrency);
+                chunkCuncorrency,
+                bmtBuilder);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // If file name is null or empty, use the file hash as name.
@@ -288,15 +288,15 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var manifest = new MantarayManifest(
-                hasherBuilder(),
+                bmtBuilder().Hasher,
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
-                    hasherBuilder,
                     postageStamper,
                     redundancyLevel,
                     encrypt,
                     0,
                     chunkCuncorrency,
+                    bmtBuilder,
                     readOnlyPipeline),
                 compactLevel);
 
@@ -336,7 +336,7 @@ namespace Etherna.BeeNet.Services
         public Task<SwarmHash> WriteDataChunksAsync(
             IChunkStore chunkStore,
             byte[] data,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             IPostageStampIssuer? postageStampIssuer = null,
             ushort compactLevel = 0,
             bool encrypt = false,
@@ -347,7 +347,7 @@ namespace Etherna.BeeNet.Services
             return WriteDataChunksAsync(
                 chunkStore,
                 stream,
-                hasherBuilder,
+                bmtBuilder,
                 postageStampIssuer,
                 compactLevel,
                 encrypt,
@@ -358,31 +358,31 @@ namespace Etherna.BeeNet.Services
         public async Task<SwarmHash> WriteDataChunksAsync(
             IChunkStore chunkStore,
             Stream stream,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             IPostageStampIssuer? postageStampIssuer = null,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null)
         {
-            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
             
             postageStampIssuer ??= new PostageStampIssuer(PostageBatch.MaxDepthInstance);
             var postageStamper = new PostageStamper(
                 new FakeSigner(),
                 postageStampIssuer,
                 new MemoryStampStore(),
-                hasherBuilder());
+                bmtBuilder().Hasher);
             
             // Create chunks and get file hash.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
-                hasherBuilder,
                 postageStamper,
                 redundancyLevel,
                 encrypt,
                 compactLevel,
-                chunkCuncorrency);
+                chunkCuncorrency,
+                bmtBuilder);
             var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // Return file hash.

@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using Moq;
@@ -28,21 +29,19 @@ namespace Etherna.BeeNet.Models
     {
         // Internal classes.
         public class FindLastEpochChunkBeforeDateTestElement(
-            EthAddress owner,
+            SwarmEpochFeed feed,
             ulong at,
-            SwarmFeedChunk startingChunk,
-            byte[] topic,
+            SwarmEpochFeedChunk startingChunk,
             Action<Mock<IReadOnlyChunkStore>> arrangeAction,
             Action<Mock<IReadOnlyChunkStore>> asserts,
-            SwarmFeedChunk expectedResult)
+            SwarmEpochFeedChunk expectedResult)
         {
-            public EthAddress Owner { get; } = owner;
+            public SwarmEpochFeed Feed { get; } = feed;
             public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
             public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
             public ulong At { get; } = at;
-            public SwarmFeedChunk ExpectedResult { get; } = expectedResult;
-            public SwarmFeedChunk StartingChunk { get; } = startingChunk;
-            public byte[] Topic { get; } = topic;
+            public SwarmEpochFeedChunk ExpectedResult { get; } = expectedResult;
+            public SwarmEpochFeedChunk StartingChunk { get; } = startingChunk;
         }
 
         public class FindStartingEpochOfflineTestElement(
@@ -56,27 +55,26 @@ namespace Etherna.BeeNet.Models
         }
 
         public class TryFindStartingEpochChunkOnlineTestElement(
-            EthAddress owner,
+            SwarmEpochFeed feed,
             ulong at,
             SwarmEpochFeedIndex epochIndex,
-            byte[] topic,
             Action<Mock<IReadOnlyChunkStore>> arrangeAction,
             Action<Mock<IReadOnlyChunkStore>> asserts,
-            SwarmFeedChunk? expectedResult)
+            SwarmEpochFeedChunk? expectedResult)
         {
-            public EthAddress Owner { get; } = owner;
+            public SwarmEpochFeed Feed { get; } = feed;
             public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
             public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
             public ulong At { get; } = at;
             public SwarmEpochFeedIndex EpochIndex { get; } = epochIndex;
-            public SwarmFeedChunk? ExpectedResult { get; } = expectedResult;
-            public byte[] Topic { get; } = topic;
+            public SwarmEpochFeedChunk? ExpectedResult { get; } = expectedResult;
         }
 
         // Consts.
-        private static readonly EthAddress ChunkOwner = EthAddress.FromByteArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
-        private static readonly byte[] ChunkTopic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-
+        private static readonly SwarmEpochFeed EpochFeed = new(
+            new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 },
+            new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 });
+        
         // Fields.
         private readonly Mock<IReadOnlyChunkStore> chunkStoreMock = new();
 
@@ -89,17 +87,17 @@ namespace Etherna.BeeNet.Models
 
                 // Starting chunk epoch index is at max resolution (level 0).
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 0, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 0, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingChunk,
-                        ChunkTopic,
                         _ => { },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
@@ -110,69 +108,72 @@ namespace Etherna.BeeNet.Models
 
                 // Chunk with child epoch at date is valid and at max resolution.
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
-                    var childEpochIndex = new SwarmEpochFeedIndex(5, 0, new Hasher());
-                    var childChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, childEpochIndex, new Hasher());
-                    var childChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var childChunkPayload = childChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var childChunk = new SwarmFeedChunk(childEpochIndex, childChunkPayload, childChunkReference);
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 1, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                
+                    var childChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(5, 0, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var childChunkHash = childChunk.BuildHash(new Hasher());
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingChunk,
-                        ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
-                                childChunkReference,
+                                childChunkHash,
                                 It.IsAny<bool>(),
                                 It.IsAny<CancellationToken>()))
-                            .ReturnsAsync(SwarmChunk.BuildFromData(childChunkReference, childChunkPayload)),
+                            .ReturnsAsync(childChunk),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Once()),
                         childChunk));
                 }
-
+                
                 // Chunk with left brother of child epoch at date is valid and at max resolution.
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
-                    var rightChildEpochIndex = new SwarmEpochFeedIndex(5, 0, new Hasher());
-                    var rightChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, rightChildEpochIndex, new Hasher());
-
-                    var leftChildEpochIndex = new SwarmEpochFeedIndex(4, 0, new Hasher());
-                    var leftChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftChildEpochIndex, new Hasher());
-                    var leftChildChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var leftChildChunkPayload = leftChildChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var leftChildChunk = new SwarmFeedChunk(leftChildEpochIndex, leftChildChunkPayload, leftChildChunkReference);
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 1, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                
+                    var rightChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(5, 0, new Hasher()), new Hasher());
+                
+                    var leftChildChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 0, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                    var leftChildChunkHash = leftChildChunk.BuildHash(new Hasher());
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         5,
                         startingChunk,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    rightChildChunkReference,
+                                    rightChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChildChunkReference,
+                                    leftChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(leftChildChunkReference, leftChildChunkPayload));
+                                .ReturnsAsync(leftChildChunk);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
@@ -180,27 +181,26 @@ namespace Etherna.BeeNet.Models
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         leftChildChunk));
                 }
-
+                
                 // Chunk on child at date epoch is left and doesn't exist.
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
-                    var leftChildEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var leftChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftChildEpochIndex, new Hasher());
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 2, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                
+                    var leftChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(4, 1, new Hasher()), new Hasher());
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         5,
                         startingChunk,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChildChunkReference,
+                                    leftChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
@@ -211,35 +211,33 @@ namespace Etherna.BeeNet.Models
                             It.IsAny<CancellationToken>()), Times.Once()),
                         startingChunk));
                 }
-
+                
                 // Chunks on child at date and its left brother epochs don't exist.
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
-                    var rightChildEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
-                    var rightChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, rightChildEpochIndex, new Hasher());
-
-                    var leftChildEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var leftChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftChildEpochIndex, new Hasher());
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 2, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                
+                    var rightChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(6, 1, new Hasher()), new Hasher());
+                
+                    var leftChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(4, 1, new Hasher()), new Hasher());
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingChunk,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    rightChildChunkReference,
+                                    rightChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChildChunkReference,
+                                    leftChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
@@ -250,38 +248,39 @@ namespace Etherna.BeeNet.Models
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
                         startingChunk));
                 }
-
+                
                 // Chunk on child at date (right) is successive to date, and chunk on its left brother epoch doesn't exist.
                 {
-                    var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 4 }; //1970-01-01 00:00:04
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var startingChunk = new SwarmFeedChunk(startingEpochIndex, startingChunkPayload, startingChunkReference);
-
-                    var leftChildEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var leftChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftChildEpochIndex, new Hasher());
-
-                    var rightChildEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
-                    var rightChildChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, rightChildEpochIndex, new Hasher());
-                    var rightChildChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
-                    var rightChildChunkPayload = rightChildChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var rightChildChunk = new SwarmFeedChunk(rightChildEpochIndex, rightChildChunkPayload, rightChildChunkReference);
-
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(4, 2, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
+                
+                    var leftChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(4, 1, new Hasher()), new Hasher());
+                
+                    var rightChildChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        new SwarmEpochFeedIndex(6, 1, new Hasher()),
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
+                    var rightChildChunkHash = rightChildChunk.BuildHash(new Hasher());
+                
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingChunk,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    rightChildChunkReference,
+                                    rightChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(rightChildChunkReference, rightChildChunkPayload));
+                                .ReturnsAsync(rightChildChunk);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChildChunkReference,
+                                    leftChildChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
@@ -338,38 +337,41 @@ namespace Etherna.BeeNet.Models
             get
             {
                 var tests = new List<TryFindStartingEpochChunkOnlineTestElement>();
-
+        
                 // Chunk exists and is prior to date.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 2, new Hasher());
-                    var chunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var payload = chunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var reference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
+
+                    var expectedResult = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var hash = expectedResult.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
-                                reference,
+                                hash,
                                 It.IsAny<bool>(),
                                 It.IsAny<CancellationToken>()))
-                            .ReturnsAsync(SwarmChunk.BuildFromData(reference, payload)),
+                            .ReturnsAsync(expectedResult),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Once()),
-                        new SwarmFeedChunk(startingEpochIndex, payload, reference)));
+                        expectedResult));
                 };
-
+        
                 // Chunk not exists and index was left at max level.
                 {
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, new Hasher()),
-                        ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
                                 It.IsAny<SwarmHash>(),
                                 It.IsAny<bool>(),
@@ -385,20 +387,24 @@ namespace Etherna.BeeNet.Models
                 // Chunk exists but with successive date and index was left at max level.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(0, SwarmEpochFeedIndex.MaxLevel, new Hasher());
-                    var chunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
-                    var payload = chunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
-                    var reference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
+                    
+                    var epochChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
+                    var hash = epochChunk.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock => gateMock.Setup(g => g.TryGetAsync(
-                                reference,
+                                hash,
                                 It.IsAny<bool>(),
                                 It.IsAny<CancellationToken>()))
-                            .ReturnsAsync(SwarmChunk.BuildFromData(reference, payload)),
+                            .ReturnsAsync(epochChunk),
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
@@ -409,159 +415,200 @@ namespace Etherna.BeeNet.Models
                 // Valid chunk is found at left, starting chunk is not found.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
+                    var startingChunkHash = EpochFeed.BuildHash(startingEpochIndex, new Hasher());
                 
-                    var leftEpochIndex = startingEpochIndex.Left;
-                    var leftChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftEpochIndex, new Hasher());
-                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var leftChunkPayload = leftChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var leftChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex.Left,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var leftChunkHash = leftChunk.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    startingChunkReference,
+                                    startingChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChunkReference,
+                                    leftChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(leftChunkReference, leftChunkPayload));
+                                .ReturnsAsync(leftChunk);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
-                        new SwarmFeedChunk(leftEpochIndex, leftChunkPayload, leftChunkReference)));
+                        leftChunk));
                 }
                 
                 // Valid chunk is found at left, starting chunk is successive to date.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(6, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
+                    var startingChunkHash = startingChunk.BuildHash(new Hasher());
                 
-                    var leftEpochIndex = startingEpochIndex.Left;
-                    var leftChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, leftEpochIndex, new Hasher());
-                    var leftChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var leftChunkPayload = leftChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var leftChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex.Left,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var leftChunkHash = leftChunk.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    startingChunkReference,
+                                    startingChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(startingChunkReference, startingChunkPayload));
+                                .ReturnsAsync(startingChunk);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    leftChunkReference,
+                                    leftChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(leftChunkReference, leftChunkPayload));
+                                .ReturnsAsync(leftChunk);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
-                        new SwarmFeedChunk(leftEpochIndex, leftChunkPayload, leftChunkReference)));
+                        leftChunk));
                 }
                 
                 // Chunk valid is found at parent, starting chunk is not found.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
+                    var startingChunkHash = EpochFeed.BuildHash(startingEpochIndex, new Hasher());
                 
-                    var parentEpochIndex = startingEpochIndex.Parent;
-                    var parentChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, parentEpochIndex, new Hasher());
-                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var parentChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex.Parent,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var parentChunkHash = parentChunk.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    startingChunkReference,
+                                    startingChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
                                 .ReturnsAsync((SwarmChunk?)null);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    parentChunkReference,
+                                    parentChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(parentChunkReference, parentChunkPayload));
+                                .ReturnsAsync(parentChunk);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
-                        new SwarmFeedChunk(parentEpochIndex, parentChunkPayload, parentChunkReference)));
+                        parentChunk));
                 }
                 
                 // Chunk valid is found at parent, starting chunk is successive to date.
                 {
                     var startingEpochIndex = new SwarmEpochFeedIndex(4, 1, new Hasher());
-                    var startingChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, startingEpochIndex, new Hasher());
-                    var startingChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 7 }; //1970-01-01 00:00:07
-                    var startingChunkPayload = startingChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var startingChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
+                    var startingChunkHash = startingChunk.BuildHash(new Hasher());
                 
-                    var parentEpochIndex = startingEpochIndex.Parent;
-                    var parentChunkReference = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, parentEpochIndex, new Hasher());
-                    var parentChunkTimestamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 5 }; //1970-01-01 00:00:05
-                    var parentChunkPayload = parentChunkTimestamp.Concat(new byte[] { 1, 2, 3 }).ToArray(); //arbitrary content payload
+                    var parentChunk = SwarmEpochFeedChunk.BuildNew(
+                        EpochFeed,
+                        startingEpochIndex.Parent,
+                        new byte[] { 1, 2, 3 },
+                        new SwarmChunkBmt(new Hasher()),
+                        new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
+                    var parentChunkHash = parentChunk.BuildHash(new Hasher());
                 
                     tests.Add(new TryFindStartingEpochChunkOnlineTestElement(
-                        ChunkOwner,
+                        EpochFeed,
                         6,
                         startingEpochIndex,
-                        ChunkTopic,
                         gateMock =>
                         {
                             gateMock.Setup(g => g.TryGetAsync(
-                                    startingChunkReference,
+                                    startingChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(startingChunkReference, startingChunkPayload));
+                                .ReturnsAsync(startingChunk);
                             gateMock.Setup(g => g.TryGetAsync(
-                                    parentChunkReference,
+                                    parentChunkHash,
                                     It.IsAny<bool>(),
                                     It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(SwarmChunk.BuildFromData(parentChunkReference, parentChunkPayload));
+                                .ReturnsAsync(parentChunk);
                         },
                         gateMock => gateMock.Verify(g => g.TryGetAsync(
                             It.IsAny<SwarmHash>(),
                             It.IsAny<bool>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2)),
-                        new SwarmFeedChunk(parentEpochIndex, parentChunkPayload, parentChunkReference)));
+                        parentChunk));
                 }
-
+        
                 return tests.Select(t => new object[] { t });
             }
         }
         
         // Tests.
+        [Fact]
+        public void BuildInnerChunkVerifyMaxDataSize()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                SwarmEpochFeedChunk.BuildInnerChunk(
+                    new byte[SwarmEpochFeedChunk.MaxDataSize + 1],
+                    null,
+                    new SwarmChunkBmt(new Hasher())));
+        }
+        
+        [Fact]
+        public void BuildInnerChunkSetDefaultTimestamp()
+        {
+            var data = new byte[] { 4, 2, 0 };
+
+            var beforeTimeStamp = DateTimeOffset.UtcNow;
+            Thread.Sleep(1000);
+            var innerChunk = SwarmEpochFeedChunk.BuildInnerChunk(data, null, new SwarmChunkBmt(new Hasher()));
+            Thread.Sleep(1000);
+            var afterTimeStamp = DateTimeOffset.UtcNow;
+            var chunkTimeStamp = innerChunk.Data[..SwarmEpochFeedChunk.TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
+
+            Assert.InRange(chunkTimeStamp, beforeTimeStamp, afterTimeStamp);
+            Assert.Equal(data, innerChunk.Data[SwarmEpochFeedChunk.TimeStampSize..]);
+        }
+        
         [Theory, MemberData(nameof(FindLastEpochChunkBeforeDateTests))]
         public async Task FindLastEpochChunkBeforeDate(FindLastEpochChunkBeforeDateTestElement test)
         {
-            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic);
             test.ArrangeAction(chunkStoreMock);
 
-            var result = await epochFeed.FindLastEpochChunkBeforeDateAsync(
+            var result = await test.Feed.FindLastEpochChunkBeforeDateAsync(
                 chunkStoreMock.Object,
                 test.At,
                 test.StartingChunk,
@@ -578,19 +625,50 @@ namespace Etherna.BeeNet.Models
 
             Assert.Equal(test.ExpectedResult, result);
         }
+        
+        [Fact]
+        public void GetContentData()
+        {
+            var chunk = new SwarmEpochFeedChunk(
+                new Hasher().ComputeHash("topic"),
+                new SwarmEpochFeedIndex(0, 0, new Hasher()),
+                new Hasher().ComputeHash("identifier"),
+                EthAddress.Zero,
+                SwarmCac.BuildFromData(SwarmHash.Zero, new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 }),
+                null);
+
+            var result = chunk.Data;
+
+            Assert.Equal(new byte[] { 6, 7 }, result);
+        }
+
+        [Fact]
+        public void GetTimeStamp()
+        {
+            var chunk = new SwarmEpochFeedChunk(
+                new Hasher().ComputeHash("topic"),
+                new SwarmEpochFeedIndex(0, 0, new Hasher()),
+                new Hasher().ComputeHash("identifier"),
+                EthAddress.Zero,
+                SwarmCac.BuildFromData(SwarmHash.Zero, new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 }),
+                null);
+
+            var result = chunk.TimeStamp;
+
+            Assert.Equal(new DateTimeOffset(2107, 03, 04, 22, 02, 45, TimeSpan.Zero), result);
+        }
 
         [Theory, MemberData(nameof(TryFindStartingEpochChunkOnlineTests))]
         public async Task TryFindStartingEpochChunkOnline(TryFindStartingEpochChunkOnlineTestElement test)
         {
-            var epochFeed = new SwarmEpochFeed(test.Owner, test.Topic);
             test.ArrangeAction(chunkStoreMock);
-
-            var result = await epochFeed.TryFindStartingEpochChunkOnlineAsync(
+        
+            var result = await test.Feed.TryFindStartingEpochChunkOnlineAsync(
                 chunkStoreMock.Object,
                 test.At,
                 test.EpochIndex,
                 new Hasher());
-
+        
             Assert.Equal(test.ExpectedResult, result);
             test.Asserts(chunkStoreMock);
         }
@@ -601,42 +679,49 @@ namespace Etherna.BeeNet.Models
         public async Task TryGetFeedChunkAsync(bool chunkExists)
         {
             // Arrange.
-            var epochFeed = new SwarmEpochFeed(ChunkOwner, ChunkTopic);
             var index = new SwarmEpochFeedIndex(2, 1, new Hasher());
-            var referenceHash = "81633ef0b822119ac464b955a3ae520a72b87e9332a67e25610e9b3ee7373c91";
-            var data = new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 };
-
+            var epochChunk = SwarmEpochFeedChunk.BuildNew(
+                EpochFeed,
+                index,
+                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
+                new SwarmChunkBmt(new Hasher()));
+            var hash = epochChunk.BuildHash(new Hasher());
+        
             if (chunkExists)
                 chunkStoreMock.Setup(c => c.TryGetAsync(
-                        referenceHash,
+                        hash,
                         It.IsAny<bool>(),
                         It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(SwarmChunk.BuildFromData(referenceHash, data));
+                    .ReturnsAsync(epochChunk);
             else
                 chunkStoreMock.Setup(c => c.TryGetAsync(
-                        referenceHash,
+                        hash,
                         It.IsAny<bool>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync((SwarmChunk?)null);
-
+        
             // Act.
-            var result = await epochFeed.TryGetFeedChunkAsync(
-                chunkStoreMock.Object,
+            var result = await EpochFeed.TryGetFeedChunkAsync(
                 index,
+                chunkStoreMock.Object,
                 new Hasher());
-
+        
             // Assert.
             if (chunkExists)
-            {
-                Assert.NotNull(result);
-                Assert.Equal(index, result.Index);
-                Assert.Equal(data, result.Data);
-                Assert.Equal(referenceHash, result.Hash);
-            }
+                Assert.Equal(epochChunk, result);
             else
-            {
                 Assert.Null(result);
-            }
+        }
+        
+        [Fact]
+        public void VerifyMaxDataSize()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => SwarmEpochFeedChunk.BuildNew(
+                    new SwarmEpochFeed(EthAddress.Zero, new Hasher().ComputeHash("")),
+                    new SwarmEpochFeedIndex(0, 0, new Hasher()),
+                    new byte[SwarmEpochFeedChunk.MaxDataSize + 1],
+                    new SwarmChunkBmt(new Hasher())));
         }
     }
 }

@@ -149,19 +149,19 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             var levelChunks = GetLevelChunks(level);
 
             // Calculate total span of all not parity chunks in level.
-            var totalSpan = SwarmChunk.LengthToSpan(
+            var totalSpan = SwarmCac.LengthToSpan(
                 levelChunks.Where(c => !c.IsParityChunk) //don't add span of parity chunks to the common
-                    .Select(c => SwarmChunk.SpanToLength(c.Span.Span))
+                    .Select(c => SwarmCac.SpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
-            var totalDataLength = SwarmChunk.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
+            var totalDataLength = SwarmCac.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             
             totalSpan.CopyTo(totalSpanData, totalDataIndex);
-            totalDataIndex += SwarmChunk.SpanSize;
+            totalDataIndex += SwarmCac.SpanSize;
             foreach (var chunk in levelChunks)
             {
                 chunk.Hash.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);

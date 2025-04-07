@@ -25,9 +25,9 @@ namespace Etherna.BeeNet.Stores
         : ReadOnlyChunkStoreBase(chunksCache)
     {
         // Methods.
-        protected override Task<SwarmChunk> LoadChunkAsync(
+        protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            beeClient.GetChunkAsync(hash, cancellationToken: cancellationToken);
+            await beeClient.GetChunkAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

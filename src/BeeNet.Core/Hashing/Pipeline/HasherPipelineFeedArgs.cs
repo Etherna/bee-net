@@ -28,9 +28,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             long numberId = 0,
             SemaphoreSlim? prevChunkSemaphore = null)
         {
-            if (span.Length != SwarmChunk.SpanSize)
-                throw new ArgumentOutOfRangeException(nameof(span), $"Span must have length of {SwarmChunk.SpanSize}");
-            if (spanData.Length < SwarmChunk.SpanSize)
+            if (span.Length != SwarmCac.SpanSize)
+                throw new ArgumentOutOfRangeException(nameof(span), $"Span must have length of {SwarmCac.SpanSize}");
+            if (spanData.Length < SwarmCac.SpanSize)
                 throw new InvalidOperationException("Data must contain also span, if present");
             
             Span = span;

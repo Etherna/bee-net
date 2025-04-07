@@ -12,165 +12,36 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Xunit;
 
 namespace Etherna.BeeNet.Models
 {
     public class SwarmFeedChunkTest
     {
-        // Internal classes.
-        public class VerifyConstructorArgumentsTestElement(
-            SwarmFeedIndexBase index,
-            byte[] payload,
-            SwarmHash referenceHash,
-            Type expectedExceptionType)
-        {
-            public Type ExpectedExceptionType { get; } = expectedExceptionType;
-            public SwarmFeedIndexBase Index { get; } = index;
-            public byte[] Payload { get; } = payload;
-            public SwarmHash ReferenceHash { get; } = referenceHash;
-        }
-
-        // Data.
-        public static IEnumerable<object[]> VerifyConstructorArgumentsTests
-        {
-            get
-            {
-                var tests = new List<VerifyConstructorArgumentsTestElement>
-                {
-                    // Shorter payload.
-                    new(new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                        new byte[SwarmFeedChunk.MinDataSize - 1],
-                        "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
-                        typeof(ArgumentOutOfRangeException)),
-
-                    // Longer payload.
-                    new(new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                        new byte[SwarmChunk.DataSize + 1],
-                        "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592",
-                        typeof(ArgumentOutOfRangeException))
-                };
-
-                return tests.Select(t => new object[] { t });
-            }
-        }
-
         // Tests.
-        [Theory, MemberData(nameof(VerifyConstructorArgumentsTests))]
-        public void VerifyConstructorArguments(VerifyConstructorArgumentsTestElement test)
-        {
-            Assert.Throws(test.ExpectedExceptionType,
-                () => new SwarmFeedChunk(test.Index, test.Payload, test.ReferenceHash));
-        }
-
-        [Fact]
-        public void GetContentPayload()
-        {
-            var chunk = new SwarmFeedChunk(
-                new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
-                "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
-
-            var result = chunk.Payload;
-
-            Assert.Equal(new byte[] { 6, 7 }, result);
-        }
-
-        [Fact]
-        public void GetTimeStamp()
-        {
-            var chunk = new SwarmFeedChunk(
-                new SwarmEpochFeedIndex(0, 0, new Hasher()),
-                new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
-                "aeef03dde6685d5a1c9ae5af374cce84b25aab391222801d8c4dc5d108929592");
-
-            var result = chunk.TimeStamp;
-
-            Assert.Equal(new DateTimeOffset(2107, 03, 04, 22, 02, 45, TimeSpan.Zero), result);
-        }
-
-        [Fact]
-        public void BuildChunkPayloadVerifyContentPayload()
-        {
-            var contentPayload = new byte[SwarmFeedChunk.MaxPayloadSize + 1];
-
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildFeedChunkPayload(contentPayload));
-        }
-
-        [Fact]
-        public void BuildChunkPayload()
-        {
-            var contentPayload = new byte[] { 4, 2, 0 };
-
-            var beforeTimeStamp = DateTimeOffset.UtcNow;
-            Thread.Sleep(1000);
-            var chunkPayload = SwarmFeedChunk.BuildFeedChunkPayload(contentPayload);
-            Thread.Sleep(1000);
-            var afterTimeStamp = DateTimeOffset.UtcNow;
-            var chunkTimeStamp = chunkPayload.AsSpan()[..SwarmFeedChunk.TimeStampSize].UnixTimeSecondsToDateTimeOffset();
-
-            Assert.InRange(chunkTimeStamp, beforeTimeStamp, afterTimeStamp);
-            Assert.Equal(contentPayload, chunkPayload.Skip(SwarmFeedChunk.TimeStampSize));
-        }
-
-        [Fact]
-        public void BuildIdentifierVerifyTopic()
-        {
-            var topic = new byte[] { 1, 2, 3 };
-            var index = new SwarmEpochFeedIndex(0, 0, new Hasher());
-
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildIdentifier(topic, index, new Hasher()));
-        }
 
         [Fact]
         public void BuildIdentifier()
         {
-            var topic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+            SwarmFeedTopic topic = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
             var index = new SwarmEpochFeedIndex(2, 1, new Hasher());
 
-            var result = SwarmFeedChunk.BuildIdentifier(topic, index, new Hasher());
+            var result = SwarmFeedChunkBase.BuildIdentifier(topic, index, new Hasher());
 
             Assert.Equal(
                 new byte[] { 229, 116, 252, 141, 32, 73, 147, 48, 181, 92, 124, 96, 74, 217, 20, 163, 90, 16, 124, 66, 174, 221, 76, 184, 135, 58, 193, 210, 235, 104, 138, 215 },
                 result);
         }
-
-        [Fact]
-        public void BuildHashVerifyAccount()
-        {
-            var account = new byte[] { 0, 1, 2, 3 };
-            var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier, new Hasher()));
-        }
-
-        [Fact]
-        public void BuildHashVerifyIdentifier()
-        {
-            var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-            var identifier = new byte[] { 0, 1, 2, 3 };
-
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                SwarmFeedChunk.BuildHash(account, identifier, new Hasher()));
-        }
-
+        
         [Fact]
         public void BuildHash()
         {
-            var account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-            var identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-
-            var result = SwarmFeedChunk.BuildHash(account, identifier, new Hasher());
-
+            EthAddress account = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+            SwarmSocIdentifier identifier = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+        
+            var result = SwarmSoc.BuildHash(identifier, account, new Hasher());
+        
             Assert.Equal(
                 "854f1dd0c708a544e282b25b9f9c1d353dca28e352656993ab3c2c17b384a86f",
                 result);

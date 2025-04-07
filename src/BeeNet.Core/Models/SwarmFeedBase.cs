@@ -15,73 +15,64 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
-    public abstract class SwarmFeedBase
+    public abstract class SwarmFeedBase(EthAddress owner, SwarmFeedTopic topic)
     {
-        // Constructors.
-        protected SwarmFeedBase(EthAddress owner, ReadOnlyMemory<byte> topic)
-        {
-            if (topic.Length != SwarmFeedChunk.TopicSize)
-                throw new ArgumentOutOfRangeException(nameof(topic), "Invalid topic length");
-            
-            Owner = owner;
-            Topic = topic;
-        }
-
+        // Consts.
+        protected static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
+        
         // Properties.
-        public EthAddress Owner { get; }
-        public ReadOnlyMemory<byte> Topic { get; }
+        public EthAddress Owner { get; } = owner;
+        public SwarmFeedTopic Topic { get; } = topic;
         public abstract SwarmFeedType Type { get; }
         
         // Methods.
         public SwarmHash BuildHash(SwarmFeedIndexBase index, IHasher hasher) =>
-            SwarmFeedChunk.BuildHash(Owner, Topic, index, hasher);
+            SwarmFeedChunkBase.BuildHash(Topic, index, Owner, hasher);
 
-        public byte[] BuildIdentifier(SwarmFeedIndexBase index, IHasher hasher) =>
-            SwarmFeedChunk.BuildIdentifier(Topic, index, hasher);
+        public SwarmSocIdentifier BuildIdentifier(SwarmFeedIndexBase index, IHasher hasher) =>
+            SwarmFeedChunkBase.BuildIdentifier(Topic, index, hasher);
         
-        public abstract Task<SwarmFeedChunk> BuildNextFeedChunkAsync(
-            IReadOnlyChunkStore chunkStore,
+        public abstract Task<SwarmFeedChunkBase> BuildNextFeedChunkAsync(
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
-            Func<IHasher> hasherBuilder,
+            IReadOnlyChunkStore chunkStore,
+            Func<ISwarmChunkBmt> bmtBuilder,
             DateTimeOffset? timestamp = null);
 
         /// <summary>
         /// Try to find feed at a given time
         /// </summary>
-        /// <param name="chunkStore">The chunk store</param>
         /// <param name="at">The time to search</param>
         /// <param name="knownNearIndex">Another known existing index, near to looked time. Helps to perform lookup quicker</param>
-        /// <param name="hasherBuilder"></param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <returns>The found feed chunk, or null</returns>
-        public abstract Task<SwarmFeedChunk?> TryFindFeedAtAsync(
-            IReadOnlyChunkStore chunkStore,
+        public abstract Task<SwarmFeedChunkBase?> TryFindFeedChunkAtAsync(
             long at,
             SwarmFeedIndexBase? knownNearIndex,
-            Func<IHasher> hasherBuilder);
-        
-        public async Task<SwarmFeedChunk?> TryGetFeedChunkAsync(
             IReadOnlyChunkStore chunkStore,
+            Func<IHasher> hasherBuilder);
+
+        public async Task<SwarmFeedChunkBase?> TryGetFeedChunkAsync(
             SwarmFeedIndexBase index,
+            IReadOnlyChunkStore chunkStore,
             IHasher hasher,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
-            
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+
             var hash = BuildHash(index, hasher);
-            
+
             var chunk = await chunkStore.TryGetAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
-            if (chunk == null)
-                return null; 
-            
-            return new SwarmFeedChunk(index, chunk.Data, hash);
+            if (chunk is not SwarmFeedChunkBase feedChunk)
+                return null;
+
+            return feedChunk;
         }
     }
 }

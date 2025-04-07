@@ -13,77 +13,30 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmChunk
+    public abstract class SwarmChunk
     {
-        // Consts.
-        public const int DataSize = 4096;
-        public const int SpanDataSize = SpanSize + DataSize;
-        public const int SpanSize = 8;
-        
-        // Constructors.
-        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> spanData)
-        {
-            if (spanData.Length < SpanSize)
-                throw new ArgumentOutOfRangeException(nameof(spanData),
-                    $"Data with span can't be shorter than {SpanSize} bytes");
-            if (spanData.Length > SpanDataSize)
-                throw new ArgumentOutOfRangeException(nameof(spanData),
-                    $"Data with span can't be longer than {SpanDataSize} bytes");
-            
-            Hash = hash;
-            SpanData = spanData;
-        }
-        
-        public SwarmChunk(SwarmHash hash, ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
-        {
-            if (span.Length != SpanSize)
-                throw new ArgumentOutOfRangeException(nameof(span), $"Span size must be {SpanSize} bytes");
-            if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
-            
-            Hash = hash;
-            
-            var spanDataBuffer = new byte[SpanSize + data.Length];
-            span.CopyTo(spanDataBuffer);
-            data.CopyTo(spanDataBuffer.AsMemory(SpanSize));
-            SpanData = spanDataBuffer;
-        }
-        
-        // Static builders.
-        public static SwarmChunk BuildFromData(SwarmHash hash, ReadOnlyMemory<byte> data)
-        {
-            if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
-            
-            var spanDataBuffer = new byte[SpanSize + data.Length];
-            LengthToSpan((ulong)data.Length).CopyTo(spanDataBuffer, 0);
-            data.CopyTo(spanDataBuffer.AsMemory(SpanSize));
-
-            return new(hash, spanDataBuffer);
-        }
-
         // Properties.
-        public SwarmHash Hash { get; }
-        public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
-        public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
-        public ReadOnlyMemory<byte> SpanData { get; }
+        public abstract SwarmHash Hash { get; }
         
-        // Static methods.
-        public static byte[] LengthToSpan(ulong length)
+        // Methods.
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
+        public override bool Equals(object? obj)
         {
-            var span = new byte[SpanSize];
-            WriteSpan(length, span);
-            return span;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is not SwarmChunk objChunk) return false;
+            return GetType() == obj.GetType() &&
+                   Hash.Equals(objChunk.Hash) &&
+                   GetFullPayload().Span.SequenceEqual(objChunk.GetFullPayload().Span);
         }
 
-        public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
-            BinaryPrimitives.ReadUInt64LittleEndian(span);
+        public abstract ReadOnlyMemory<byte> GetFullPayload();
 
-        public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
-            BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);
+        public override int GetHashCode() =>
+            Hash.GetHashCode() ^
+            GetFullPayload().GetHashCode();
     }
 }

@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Models
         public class LookupSequenceFeedTestElement(
             SwarmSequenceFeedIndex? knownNearIndex,
             Action<Mock<IReadOnlyChunkStore>> setupChunkStore,
-            SwarmFeedChunk? expectedResult,
+            SwarmSequenceFeedChunk? expectedResult,
             ulong[] expectedIndexLookups,
             ulong[] expectedOptionalIndexLookups)
         {
@@ -39,12 +39,13 @@ namespace Etherna.BeeNet.Models
             public Action<Mock<IReadOnlyChunkStore>> SetupChunkStore { get; } = setupChunkStore;
             public ulong[] ExpectedIndexLookups { get; } = expectedIndexLookups;
             public ulong[] ExpectedOptionalIndexLookups { get; } = expectedOptionalIndexLookups;
-            public SwarmFeedChunk? ExpectedResult { get; } = expectedResult;
+            public SwarmSequenceFeedChunk? ExpectedResult { get; } = expectedResult;
         }
         
         // Consts.
-        private static readonly EthAddress ChunkOwner = EthAddress.FromByteArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
-        private static readonly byte[] ChunkTopic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+        private static readonly SwarmSequenceFeed SequenceFeed = new(
+            new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 },
+            new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 });
 
         // Fields.
         private readonly Mock<IReadOnlyChunkStore> chunkStoreMock = new();
@@ -179,13 +180,12 @@ namespace Etherna.BeeNet.Models
         {
             // Setup.
             var hasher = new Hasher();
-            var sequenceFeed = new SwarmSequenceFeed(ChunkOwner, ChunkTopic);
             test.SetupChunkStore(chunkStoreMock);
 
             // Act.
-            var result = await sequenceFeed.TryFindFeedAtAsync(
-                chunkStoreMock.Object,
+            var result = await SequenceFeed.TryFindLastFeedChunkAsync(
                 test.KnownNearIndex,
+                chunkStoreMock.Object,
                 () => new Hasher(),
                 requestsCustomTimeout: null);
 
@@ -203,8 +203,7 @@ namespace Etherna.BeeNet.Models
             
             foreach (var index in test.ExpectedIndexLookups)
             {
-                var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic,
-                    new SwarmSequenceFeedIndex(index), hasher);
+                var hash = SequenceFeed.BuildHash(new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
                         It.IsAny<bool>(),
@@ -214,8 +213,7 @@ namespace Etherna.BeeNet.Models
             
             foreach (var index in test.ExpectedOptionalIndexLookups)
             {
-                var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic,
-                    new SwarmSequenceFeedIndex(index), hasher);
+                var hash = SequenceFeed.BuildHash(new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
                         It.IsAny<bool>(),
@@ -225,12 +223,15 @@ namespace Etherna.BeeNet.Models
         }
         
         // Helpers.
-        private static SwarmFeedChunk BuildSequenceFeedChunk(ulong i)
+        private static SwarmSequenceFeedChunk BuildSequenceFeedChunk(ulong i)
         {
-            var index = new SwarmSequenceFeedIndex(i);
-            var hash = SwarmFeedChunk.BuildHash(ChunkOwner, ChunkTopic, index, new Hasher());
-            var data = BitConverter.GetBytes(i);
-            return new SwarmFeedChunk(index, data, hash);
+            var chunk = SwarmSequenceFeedChunk.BuildNew(
+                SequenceFeed,
+                new SwarmSequenceFeedIndex(i),
+                BitConverter.GetBytes(i),
+                new SwarmChunkBmt(new Hasher()));
+            chunk.BuildHash(new Hasher());
+            return chunk;
         }
     }
 }

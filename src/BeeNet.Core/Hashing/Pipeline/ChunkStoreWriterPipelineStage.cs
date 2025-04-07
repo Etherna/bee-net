@@ -49,7 +49,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 postageStamper.Stamp(args.Hash.Value);
             
                 // Store chunk.
-                var chunk = new SwarmChunk(args.Hash.Value, args.SpanData);
+                var chunk = new SwarmCac(args.Hash.Value, args.SpanData);
                 await chunkStore.AddAsync(chunk).ConfigureAwait(false);
             }
 

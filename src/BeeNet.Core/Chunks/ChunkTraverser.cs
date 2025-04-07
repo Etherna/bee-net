@@ -122,10 +122,10 @@ namespace Etherna.BeeNet.Chunks
             visitedHashes.Add(chunkReference.Hash);
             
             // Read and decrypt chunk data.
-            SwarmChunk chunk;
+            SwarmCac chunk;
             try
             {
-                chunk = await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
+                chunk = (SwarmCac)await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
             }
 #pragma warning disable CA1031
             catch
@@ -141,8 +141,8 @@ namespace Etherna.BeeNet.Chunks
             chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
             
             // Determine if is a data chunk, or an intermediate chunk.
-            var totalDataLength = SwarmChunk.SpanToLength(chunk.Span.Span);
-            if (totalDataLength <= SwarmChunk.DataSize)
+            var totalDataLength = SwarmCac.SpanToLength(chunk.Span.Span);
+            if (totalDataLength <= SwarmCac.DataSize)
                 return;
             
             for (int i = 0; i < dataArray.Length;)

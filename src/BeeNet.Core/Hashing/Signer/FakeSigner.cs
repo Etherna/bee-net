@@ -18,6 +18,6 @@ namespace Etherna.BeeNet.Hashing.Signer
 {
     public class FakeSigner : ISigner
     {
-        public byte[] Sign(byte[] toSign) => new byte[SwarmSignature.SignatureSize];
+        public byte[] Sign(byte[] toSign) => new byte[SwarmSocSignature.SignatureSize];
     }
 }

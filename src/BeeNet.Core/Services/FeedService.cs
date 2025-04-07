@@ -69,12 +69,12 @@ namespace Etherna.BeeNet.Services
         
         public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            Func<IHasher> hasherBuilder,
+            Func<ISwarmChunkBmt> bmtBuilder,
             ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
-            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
+            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
             ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
             
             // Init.
@@ -83,19 +83,19 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore(),
-                hasherBuilder());
+                bmtBuilder().Hasher);
 
             // Create manifest.
             var feedManifest = new MantarayManifest(
-                hasherBuilder(),
+                bmtBuilder().Hasher,
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
-                    hasherBuilder,
                     postageStamper,
                     RedundancyLevel.None,
                     false,
                     0,
                     null,
+                    bmtBuilder,
                     readOnlyPipeline),
                 compactLevel);
 
@@ -106,7 +106,7 @@ namespace Etherna.BeeNet.Services
                     new Dictionary<string, string>
                     {
                         [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
-                        [FeedMetadataEntryTopic] = swarmFeed.Topic.ToArray().ToHex(),
+                        [FeedMetadataEntryTopic] = swarmFeed.Topic.ToString(),
                         [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                     }));
 

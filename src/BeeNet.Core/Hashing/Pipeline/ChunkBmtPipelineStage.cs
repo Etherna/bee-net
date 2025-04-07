@@ -47,15 +47,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
-            if (args.SpanData.Length < SwarmChunk.SpanSize)
+            if (args.SpanData.Length < SwarmCac.SpanSize)
                 throw new InvalidOperationException("Data can't be shorter than span size here");
-            if (args.SpanData.Length > SwarmChunk.SpanDataSize)
+            if (args.SpanData.Length > SwarmCac.SpanDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
             // Hash chunk and clear chunk bmt for next uses.
             var plainChunkHash = args.SwarmChunkBmt.Hash(
-                args.SpanData[..SwarmChunk.SpanSize],
-                args.SpanData[SwarmChunk.SpanSize..]);
+                args.SpanData[..SwarmCac.SpanSize],
+                args.SpanData[SwarmCac.SpanSize..]);
             args.SwarmChunkBmt.Clear();
             
             // Decide to compact chunk or not.
@@ -83,7 +83,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, Span<byte> data)
         {
             // Don't encrypt span, otherwise knowing the chunk length, we could reconstruct the key.
-            chunkKey.EncryptDecrypt(data[SwarmChunk.SpanSize..]);
+            chunkKey.EncryptDecrypt(data[SwarmCac.SpanSize..]);
         }
         
         private async Task<CompactedChunkAttemptResult> GetBestChunkAsync(
@@ -194,8 +194,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(
-                        encryptedSpanData.AsMemory()[..SwarmChunk.SpanSize],
-                        encryptedSpanData.AsMemory()[SwarmChunk.SpanSize..]);
+                        encryptedSpanData.AsMemory()[..SwarmCac.SpanSize],
+                        encryptedSpanData.AsMemory()[SwarmCac.SpanSize..]);
                     optimisticCache[i] = new(chunkKey, encryptedSpanData, encryptedHash);
                     
                     // Clear chunk bmt for next uses.

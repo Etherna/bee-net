@@ -1,4 +1,5 @@
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -26,7 +27,7 @@ public partial class BeeNetWasmUtil
             data,
             fileContentType,
             fileName,
-            () => new Hasher()).ConfigureAwait(false);
+            () => new SwarmChunkBmt(new Hasher())).ConfigureAwait(false);
         return result.ChunkReference.Hash.ToString();
     }
 }

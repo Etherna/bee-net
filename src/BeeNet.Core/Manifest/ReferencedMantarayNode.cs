@@ -81,8 +81,10 @@ namespace Etherna.BeeNet.Manifest
             var chunk = await chunkStore.GetAsync(
                 Hash,
                 useChunkStoreCache).ConfigureAwait(false);
+            if (chunk is not SwarmCac cac)
+                throw new InvalidOperationException("Chunk is not a Content Addressed Chunk");
             
-            var data = chunk.Data.ToArray();
+            var data = cac.Data.ToArray();
             var readIndex = 0;
             
             // Get obfuscation key and de-obfuscate.
