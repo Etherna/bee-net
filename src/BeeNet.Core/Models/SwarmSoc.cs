@@ -24,6 +24,7 @@ namespace Etherna.BeeNet.Models
         SwarmSocIdentifier identifier,
         EthAddress owner,
         SwarmCac innerChunk,
+        SwarmHash? hash,
         SwarmSocSignature? signature)
         : SwarmChunk
     {
@@ -32,10 +33,11 @@ namespace Etherna.BeeNet.Models
         public const int MinSocSize = SwarmSocIdentifier.IdentifierSize + SwarmSocSignature.SignatureSize + SwarmCac.SpanSize;
         
         // Fields.
-        private SwarmHash? hash;
+        private SwarmHash? hash = hash;
 
         // Static builders.
         public static SwarmSoc BuildFromBytes(
+            SwarmHash? hash,
             ReadOnlyMemory<byte> data,
             SwarmChunkBmt swarmChunkBmt)
         {
@@ -64,7 +66,7 @@ namespace Etherna.BeeNet.Models
             var toSignDigest = BuildToSignDigest(identifier, innerChunkHash, swarmChunkBmt.Hasher);
             var owner = signature.RecoverOwner(toSignDigest);
 
-            return new SwarmSoc(identifier, owner, innerChunk, signature);
+            return new SwarmSoc(identifier, owner, innerChunk, hash, signature);
         }
         
         // Properties.
@@ -86,8 +88,7 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             
-            if (!hash.HasValue)
-                hash = BuildHash(Identifier, Owner, hasher);
+            hash = BuildHash(Identifier, Owner, hasher);
             return hash.Value;
         }
 
@@ -105,6 +106,11 @@ namespace Etherna.BeeNet.Models
         
         public bool IsValidSoc(Hasher hasher)
         {
+            // Verify hash.
+            if (hash != null &&
+                hash != BuildHash(Identifier, Owner, hasher))
+                return false;
+            
             // Verify signature.
             if (!Signature.HasValue ||
                 Signature.Value.RecoverOwner(ToSignDigest(hasher)) != Owner)

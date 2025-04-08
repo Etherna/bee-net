@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Models
         EthAddress owner,
         SwarmCac innerChunk,
         SwarmSocSignature? signature)
-        : SwarmSoc(identifier, owner, innerChunk, signature)
+        : SwarmSoc(identifier, owner, innerChunk, null, signature)
     {
         // Properties.
         public ReadOnlyMemory<byte> FeedPayload => InnerChunk.Data;
