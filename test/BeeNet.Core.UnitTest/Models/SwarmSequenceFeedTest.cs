@@ -229,7 +229,7 @@ namespace Etherna.BeeNet.Models
                 SequenceFeed,
                 new SwarmSequenceFeedIndex(i),
                 BitConverter.GetBytes(i),
-                new SwarmChunkBmt(new Hasher()));
+                new SwarmChunkBmt());
             chunk.BuildHash(new Hasher());
             return chunk;
         }

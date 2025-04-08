@@ -91,7 +91,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 0, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                 
                     tests.Add(new FindLastEpochChunkBeforeDateTestElement(
@@ -112,14 +112,14 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 1, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                 
                     var childChunk = SwarmEpochFeedChunk.BuildNew(
                         EpochFeed,
                         new SwarmEpochFeedIndex(5, 0, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var childChunkHash = childChunk.BuildHash(new Hasher());
                 
@@ -145,7 +145,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 1, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                 
                     var rightChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(5, 0, new Hasher()), new Hasher());
@@ -154,7 +154,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 0, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                     var leftChildChunkHash = leftChildChunk.BuildHash(new Hasher());
                 
@@ -188,7 +188,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 2, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                 
                     var leftChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(4, 1, new Hasher()), new Hasher());
@@ -218,7 +218,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 2, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                 
                     var rightChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(6, 1, new Hasher()), new Hasher());
@@ -255,7 +255,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(4, 2, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 4, TimeSpan.Zero));
                 
                     var leftChildChunkHash = EpochFeed.BuildHash(new SwarmEpochFeedIndex(4, 1, new Hasher()), new Hasher());
@@ -264,7 +264,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         new SwarmEpochFeedIndex(6, 1, new Hasher()),
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
                     var rightChildChunkHash = rightChildChunk.BuildHash(new Hasher());
                 
@@ -346,7 +346,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var hash = expectedResult.BuildHash(new Hasher());
                 
@@ -392,7 +392,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
                     var hash = epochChunk.BuildHash(new Hasher());
                 
@@ -421,7 +421,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex.Left,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var leftChunkHash = leftChunk.BuildHash(new Hasher());
                 
@@ -456,7 +456,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
                     var startingChunkHash = startingChunk.BuildHash(new Hasher());
                 
@@ -464,7 +464,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex.Left,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var leftChunkHash = leftChunk.BuildHash(new Hasher());
                 
@@ -501,7 +501,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex.Parent,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var parentChunkHash = parentChunk.BuildHash(new Hasher());
                 
@@ -536,7 +536,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 7, TimeSpan.Zero));
                     var startingChunkHash = startingChunk.BuildHash(new Hasher());
                 
@@ -544,7 +544,7 @@ namespace Etherna.BeeNet.Models
                         EpochFeed,
                         startingEpochIndex.Parent,
                         new byte[] { 1, 2, 3 },
-                        new SwarmChunkBmt(new Hasher()),
+                        new SwarmChunkBmt(),
                         new DateTimeOffset(1970, 1, 1, 0, 0, 5, TimeSpan.Zero));
                     var parentChunkHash = parentChunk.BuildHash(new Hasher());
                 
@@ -584,7 +584,7 @@ namespace Etherna.BeeNet.Models
                 SwarmEpochFeedChunk.BuildInnerChunk(
                     new byte[SwarmEpochFeedChunk.MaxDataSize + 1],
                     null,
-                    new SwarmChunkBmt(new Hasher())));
+                    new SwarmChunkBmt()));
         }
         
         [Fact]
@@ -594,7 +594,7 @@ namespace Etherna.BeeNet.Models
 
             var beforeTimeStamp = DateTimeOffset.UtcNow;
             Thread.Sleep(1000);
-            var innerChunk = SwarmEpochFeedChunk.BuildInnerChunk(data, null, new SwarmChunkBmt(new Hasher()));
+            var innerChunk = SwarmEpochFeedChunk.BuildInnerChunk(data, null, new SwarmChunkBmt());
             Thread.Sleep(1000);
             var afterTimeStamp = DateTimeOffset.UtcNow;
             var chunkTimeStamp = innerChunk.Data[..SwarmEpochFeedChunk.TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
@@ -684,7 +684,7 @@ namespace Etherna.BeeNet.Models
                 EpochFeed,
                 index,
                 new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 },
-                new SwarmChunkBmt(new Hasher()));
+                new SwarmChunkBmt());
             var hash = epochChunk.BuildHash(new Hasher());
         
             if (chunkExists)
@@ -721,7 +721,7 @@ namespace Etherna.BeeNet.Models
                     new SwarmEpochFeed(EthAddress.Zero, new Hasher().ComputeHash("")),
                     new SwarmEpochFeedIndex(0, 0, new Hasher()),
                     new byte[SwarmEpochFeedChunk.MaxDataSize + 1],
-                    new SwarmChunkBmt(new Hasher())));
+                    new SwarmChunkBmt()));
         }
     }
 }

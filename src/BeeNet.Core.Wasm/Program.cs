@@ -27,7 +27,7 @@ public partial class BeeNetWasmUtil
             data,
             fileContentType,
             fileName,
-            () => new SwarmChunkBmt(new Hasher())).ConfigureAwait(false);
+            () => new SwarmChunkBmt()).ConfigureAwait(false);
         return result.ChunkReference.Hash.ToString();
     }
 }

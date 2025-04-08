@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class SwarmChunkBmt(IHasher hasher) : ISwarmChunkBmt
+    public sealed class SwarmChunkBmt : ISwarmChunkBmt
     {
         // Consts.
         public const int SegmentsCount = SwarmCac.DataSize / SegmentSize;
@@ -30,9 +30,21 @@ namespace Etherna.BeeNet.Models
         private List<SwarmChunkBmtNode> leaves = [];
         private readonly Queue<SwarmChunkBmtNode> merkleTreeNodesPool = new();
         private SwarmChunkBmtNode? root;
-        
+
+        // Constructor.
+        public SwarmChunkBmt(IHasher? hasher = null)
+        {
+            /*
+             * It's acceptable to instantiate a new hasher here by default, because often ChunkBmt
+             * is already cached by itself, and in that case it will need its own hasher instance.
+             * In cases where hasher needs to be reused with a throw-away chunk bmt instance,
+             * it can be passed as argument.
+             */
+            Hasher = hasher ?? new Hasher();
+        }
+
         // Properties.
-        public IHasher Hasher => hasher;
+        public IHasher Hasher { get; }
         public SwarmChunkBmtNode? Root => root;
 
         // Methods.
@@ -49,7 +61,7 @@ namespace Etherna.BeeNet.Models
         {
             var leafByteArray = new byte[SegmentSize];
             ChunkSegmentToLeafByteArray(chunkSegment, leafByteArray);
-            var hashLeaf = hasher.ComputeHash(leafByteArray);
+            var hashLeaf = Hasher.ComputeHash(leafByteArray);
 
             for (var i = 0; i < leaves.Count; i++)
                 if (leaves[i].Matches(hashLeaf))
@@ -134,9 +146,9 @@ namespace Etherna.BeeNet.Models
                     var right = i + 1 == layerNodes.Count ? left : layerNodes[i + 1];
 
                     if (merkleTreeNodesPool.TryDequeue(out var merkleTreeNode))
-                        hasher.ComputeHash([left.Hash, right.Hash], merkleTreeNode.Hash.Span);
+                        Hasher.ComputeHash([left.Hash, right.Hash], merkleTreeNode.Hash.Span);
                     else
-                        merkleTreeNode = new SwarmChunkBmtNode(hasher.ComputeHash([left.Hash, right.Hash]));
+                        merkleTreeNode = new SwarmChunkBmtNode(Hasher.ComputeHash([left.Hash, right.Hash]));
                     
                     layers[layerIndex].Add(merkleTreeNode);
                 }
@@ -144,7 +156,7 @@ namespace Etherna.BeeNet.Models
             }
             root =  layerNodes[0];
             
-            return hasher.ComputeHash([span, root.Hash]);
+            return Hasher.ComputeHash([span, root.Hash]);
         }
 
         public bool VerifyProof(IEnumerable<ReadOnlyMemory<byte>> proof, ReadOnlyMemory<byte> chunkSegment)
@@ -157,8 +169,8 @@ namespace Etherna.BeeNet.Models
             return VerifyProof(
                 proof,
                 Root.Hash,
-                hasher.ComputeHash(leafData),
-                hasher);
+                Hasher.ComputeHash(leafData),
+                Hasher);
         }
 
         // Public static methods.
