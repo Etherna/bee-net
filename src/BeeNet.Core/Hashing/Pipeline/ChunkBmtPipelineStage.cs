@@ -77,7 +77,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             await nextStage.FeedAsync(args).ConfigureAwait(false);
         }
 
-        public Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
+        public Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
         
         // Helpers.
         private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, Span<byte> data)

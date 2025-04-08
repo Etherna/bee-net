@@ -30,7 +30,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            ISwarmChunkBmt chunkBmt,
+            SwarmChunkBmt chunkBmt,
             DateTimeOffset? timestamp = null)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmEpochFeedIndex? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.Models
             long at,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            IHasher hasher)
+            Hasher hasher)
         {
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
@@ -100,7 +100,7 @@ namespace Etherna.BeeNet.Models
             DateTimeOffset at,
             SwarmEpochFeedIndex? knownNearEpochIndex,
             IReadOnlyChunkStore chunkStore,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             
@@ -182,7 +182,7 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             ulong at,
             SwarmEpochFeedChunk currentChunk,
-            IHasher hasher)
+            Hasher hasher)
         {
             // If currentChunk is at max resolution, return it.
             var currentIndex = (SwarmEpochFeedIndex)currentChunk.Index;
@@ -221,7 +221,7 @@ namespace Etherna.BeeNet.Models
         internal static SwarmEpochFeedIndex FindStartingEpochOffline(
             SwarmEpochFeedIndex? knownNearEpoch,
             ulong at,
-            IHasher hasher)
+            Hasher hasher)
         {
             var startEpoch = knownNearEpoch;
             if (startEpoch is not null)
@@ -254,7 +254,7 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             ulong at,
             SwarmEpochFeedIndex epochIndex,
-            IHasher hasher)
+            Hasher hasher)
         {
             // Try to get chunk payload on network.
             var chunk = await TryGetFeedChunkAsync(epochIndex, chunkStore, hasher).ConfigureAwait(false);

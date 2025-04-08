@@ -27,13 +27,13 @@ namespace Etherna.BeeNet.Models
         public const ulong MinUnixTimeStamp = 0;
 
         // Fields.
-        private readonly IHasher hasher;
+        private readonly Hasher hasher;
         
         // Constructor.
         /// <param name="start">Epoch start in seconds</param>
         /// <param name="level">Epoch level</param>
         /// <param name="hasher">The hash provider</param>
-        public SwarmEpochFeedIndex(ulong start, byte level, IHasher hasher)
+        public SwarmEpochFeedIndex(ulong start, byte level, Hasher hasher)
         {
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(start, (ulong)1 << MaxLevel + 1);
             ArgumentOutOfRangeException.ThrowIfGreaterThan(level, MaxLevel);
@@ -149,7 +149,7 @@ namespace Etherna.BeeNet.Models
         /// Calculates the lowest common ancestor epoch given two unix times
         /// </summary>
         /// <returns>Lowest common ancestor epoch index</returns>
-        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, IHasher hasher)
+        public static SwarmEpochFeedIndex LowestCommonAncestor(ulong t0, ulong t1, Hasher hasher)
         {
             byte level = 0;
             while (t0 >> level != t1 >> level)

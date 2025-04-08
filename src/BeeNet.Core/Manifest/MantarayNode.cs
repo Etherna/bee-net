@@ -152,7 +152,7 @@ namespace Etherna.BeeNet.Manifest
         }
 
         public async Task ComputeHashAsync(
-            IHasher hasher,
+            Hasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
@@ -204,7 +204,7 @@ namespace Etherna.BeeNet.Manifest
         }
         
         private async Task<XorEncryptKey> GetBestObfuscationKeyAsync(
-            IHasher hasher,
+            Hasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
             /*

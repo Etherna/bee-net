@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Models
         // Static builders.
         public static SwarmSoc BuildFromBytes(
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             
@@ -82,7 +82,7 @@ namespace Etherna.BeeNet.Models
         public static EthAddress ReplicasOwner { get; } = new("dc5b20847f43d67928f49cd4f85d696b5a7617b5");
         
         // Methods.
-        public SwarmHash BuildHash(IHasher hasher)
+        public SwarmHash BuildHash(Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             
@@ -103,7 +103,7 @@ namespace Etherna.BeeNet.Models
             return buffer.ToArray();
         }
         
-        public bool IsValidSoc(IHasher hasher)
+        public bool IsValidSoc(Hasher hasher)
         {
             // Verify signature.
             if (!Signature.HasValue ||
@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Models
             return true;
         }
 
-        public void SignWithPrivateKey(EthECKey privateKey, IHasher hasher)
+        public void SignWithPrivateKey(EthECKey privateKey, Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
@@ -130,13 +130,13 @@ namespace Etherna.BeeNet.Models
             Signature = signer.Sign(ToSignDigest(hasher), privateKey).HexToByteArray();
         }
 
-        public byte[] ToSignDigest(IHasher hasher) => BuildToSignDigest(Identifier, InnerChunk.Hash, hasher);
+        public byte[] ToSignDigest(Hasher hasher) => BuildToSignDigest(Identifier, InnerChunk.Hash, hasher);
         
         // Static methods.
         public static SwarmHash BuildHash(
             SwarmSocIdentifier identifier,
             EthAddress owner,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Models
         public static byte[] BuildToSignDigest(
             SwarmSocIdentifier identifier,
             SwarmHash innerChunkHash,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             

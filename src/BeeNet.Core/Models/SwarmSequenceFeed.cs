@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Models
          * We can initialize new hashers here because hashers inside the pool are not reusable,
          * and we are not interested into injecting mocked hashers with tests.
          */
-        private readonly ResourcePool<IHasher> hasherPool = new(() => new Hasher());
+        private readonly ResourcePool<Hasher> hasherPool = new(() => new Hasher());
 
         // Properties.
         public override SwarmFeedType Type => SwarmFeedType.Sequence;
@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            ISwarmChunkBmt chunkBmt,
+            SwarmChunkBmt chunkBmt,
             DateTimeOffset? timestamp = null)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
@@ -62,7 +62,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmSequenceFeedIndex? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            ISwarmChunkBmt chunkBmt)
+            SwarmChunkBmt chunkBmt)
         {
             ArgumentNullException.ThrowIfNull(chunkBmt, nameof(chunkBmt));
             
@@ -88,7 +88,7 @@ namespace Etherna.BeeNet.Models
             long at,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            IHasher hasher)
+            Hasher hasher)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
                 throw new ArgumentException("Feed index bust be null or sequence index", nameof(knownNearIndex));

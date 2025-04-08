@@ -27,6 +27,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         // Methods.
         Task FeedAsync(HasherPipelineFeedArgs args);
-        Task<SwarmChunkReference> SumAsync(ISwarmChunkBmt swarmChunkBmt);
+        Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt);
     }
 }

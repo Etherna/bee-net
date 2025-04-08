@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Hashing
     /// <summary>
     /// Hasher service, not thread safe
     /// </summary>
-    public class Hasher : IHasher
+    public class Hasher
     {
         // Fields.
         private readonly KeccakDigest hasher = new(256);

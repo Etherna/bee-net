@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
             SwarmEpochFeed feed,
             SwarmEpochFeedIndex index,
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
             ArgumentNullException.ThrowIfNull(feed, nameof(feed));
@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Models
             SwarmEpochFeedIndex index,
             EthAddress owner,
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
@@ -74,12 +74,12 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public override Task<SwarmCac> UnwrapDataChunkAsync(
             bool resolveLegacyPayload,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             IChunkStore? chunkStore = null) =>
             Task.FromResult(UnwrapDataChunk(swarmChunkBmt));
         
         public SwarmCac UnwrapDataChunk(
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             
@@ -92,7 +92,7 @@ namespace Etherna.BeeNet.Models
         public static SwarmCac BuildInnerChunk(
             ReadOnlyMemory<byte> data,
             DateTimeOffset? timestamp,
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             if (data.Length > MaxDataSize)

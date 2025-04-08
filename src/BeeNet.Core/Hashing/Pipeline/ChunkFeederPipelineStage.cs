@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Fields.
         private readonly SemaphoreSlim chunkConcurrencySemaphore;
-        private readonly ConcurrentQueue<(SemaphoreSlim Semaphore, ISwarmChunkBmt SwarmChunkBmt)> chunkResourcesPool;
+        private readonly ConcurrentQueue<(SemaphoreSlim Semaphore, SwarmChunkBmt SwarmChunkBmt)> chunkResourcesPool;
         private readonly IHasherPipelineStage nextStage;
         private readonly List<Task> nextStageTasks = new();
         
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             this.nextStage = nextStage;
             chunkConcurrencySemaphore = new(chunkConcurrency.Value, chunkConcurrency.Value);
-            chunkResourcesPool = new ConcurrentQueue<(SemaphoreSlim Semaphore, ISwarmChunkBmt SwarmChunkBmt)>();
+            chunkResourcesPool = new ConcurrentQueue<(SemaphoreSlim Semaphore, SwarmChunkBmt SwarmChunkBmt)>();
             
             //init semaphore pool
             /*

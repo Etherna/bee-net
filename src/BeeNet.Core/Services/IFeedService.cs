@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Services
 
         Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            IHasher hasher,
+            Hasher hasher,
             ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null);

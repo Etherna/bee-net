@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Hashing.Postage
     public sealed class PostageStamper : IPostageStamper
     {
         // Fields.
-        private readonly IHasher hasher = new Hasher(); //init hasher instance, because it will always need its own
+        private readonly Hasher hasher = new Hasher(); //init hasher instance, because stamper will always need its own
         private readonly Dictionary<SwarmHash, PostageStamp> presignedPostageStamps;
         private readonly bool storePresignedPostageStamps;
         

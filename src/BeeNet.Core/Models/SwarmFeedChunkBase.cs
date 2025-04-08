@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public abstract Task<SwarmCac> UnwrapDataChunkAsync(
             bool resolveLegacyPayload,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             IChunkStore? chunkStore = null);
         
         // Static methods.
@@ -44,13 +44,13 @@ namespace Etherna.BeeNet.Models
             SwarmFeedTopic topic,
             SwarmFeedIndexBase index,
             EthAddress owner,
-            IHasher hasher) =>
+            Hasher hasher) =>
             BuildHash(BuildIdentifier(topic, index, hasher), owner, hasher);
         
         public static SwarmSocIdentifier BuildIdentifier(
             SwarmFeedTopic topic,
             SwarmFeedIndexBase index,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(index, nameof(index));

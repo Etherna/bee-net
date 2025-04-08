@@ -58,7 +58,7 @@ namespace Etherna.BeeNet.Models
             PostageBatchId batchId,
             StampBucketIndex stampBucketIndex,
             DateTimeOffset timeStamp,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(stampBucketIndex, nameof(stampBucketIndex));
@@ -79,7 +79,7 @@ namespace Etherna.BeeNet.Models
         /// <param name="hash"></param>
         /// <param name="hasher"></param>
         /// <returns></returns>
-        public EthAddress RecoverBatchOwner(SwarmHash hash, IHasher hasher)
+        public EthAddress RecoverBatchOwner(SwarmHash hash, Hasher hasher)
         {
             var signer = new EthereumMessageSigner();
             var toSign = ToSignDigest(hash, hasher);
@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Models
             return buffer.ToArray();
         }
 
-        public byte[] ToSignDigest(SwarmHash hash, IHasher hasher) =>
+        public byte[] ToSignDigest(SwarmHash hash, Hasher hasher) =>
             BuildSignDigest(hash, BatchId, BucketIndex, TimeStamp, hasher);
     }
 }

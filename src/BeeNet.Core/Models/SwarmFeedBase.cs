@@ -31,17 +31,17 @@ namespace Etherna.BeeNet.Models
         public abstract SwarmFeedType Type { get; }
         
         // Methods.
-        public SwarmHash BuildHash(SwarmFeedIndexBase index, IHasher hasher) =>
+        public SwarmHash BuildHash(SwarmFeedIndexBase index, Hasher hasher) =>
             SwarmFeedChunkBase.BuildHash(Topic, index, Owner, hasher);
 
-        public SwarmSocIdentifier BuildIdentifier(SwarmFeedIndexBase index, IHasher hasher) =>
+        public SwarmSocIdentifier BuildIdentifier(SwarmFeedIndexBase index, Hasher hasher) =>
             SwarmFeedChunkBase.BuildIdentifier(Topic, index, hasher);
         
         public abstract Task<SwarmFeedChunkBase> BuildNextFeedChunkAsync(
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            ISwarmChunkBmt chunkBmt,
+            SwarmChunkBmt chunkBmt,
             DateTimeOffset? timestamp = null);
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace Etherna.BeeNet.Models
             long at,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            IHasher hasher);
+            Hasher hasher);
 
         public async Task<SwarmFeedChunkBase?> TryGetFeedChunkAsync(
             SwarmFeedIndexBase index,
             IReadOnlyChunkStore chunkStore,
-            IHasher hasher,
+            Hasher hasher,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));

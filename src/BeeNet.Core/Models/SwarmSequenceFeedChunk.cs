@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Models
             SwarmSequenceFeed feed,
             SwarmSequenceFeedIndex index,
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(feed, nameof(feed));
             return BuildNew(feed.Topic, index, feed.Owner, data, swarmChunkBmt);
@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Models
             SwarmSequenceFeedIndex index,
             EthAddress owner,
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
 
@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public override Task<SwarmCac> UnwrapDataChunkAsync(
             bool resolveLegacyPayload,
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             IChunkStore? chunkStore = null) =>
             UnwrapDataChunkAsync(resolveLegacyPayload, chunkStore);
         
@@ -100,7 +100,7 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static SwarmCac BuildInnerChunk(
             ReadOnlyMemory<byte> data,
-            ISwarmChunkBmt swarmChunkBmt)
+            SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             

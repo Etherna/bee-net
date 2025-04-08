@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.Services
         /// <returns>The upload evaluation result</returns>
         Task<UploadEvaluationResult> UploadDirectoryAsync(
             string directoryPath,
-            IHasher hasher,
+            Hasher hasher,
             string? indexFilename = null,
             string? errorFilename = null,
             ushort compactLevel = 0,
@@ -92,7 +92,7 @@ namespace Etherna.BeeNet.Services
         Task<UploadEvaluationResult> UploadDirectoryAsync(
             string[] fileNames,
             Func<string, Stream> getFileStream,
-            IHasher hasher,
+            Hasher hasher,
             string? indexFilename = null,
             string? errorFilename = null,
             ushort compactLevel = 0,
@@ -119,7 +119,7 @@ namespace Etherna.BeeNet.Services
             byte[] data,
             string fileContentType,
             string? fileName,
-            IHasher hasher,
+            Hasher hasher,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
@@ -144,7 +144,7 @@ namespace Etherna.BeeNet.Services
             Stream stream,
             string fileContentType,
             string? fileName,
-            IHasher hasher,
+            Hasher hasher,
             ushort compactLevel = 0,
             bool encrypt = false,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,

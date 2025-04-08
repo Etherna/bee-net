@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class SwarmChunkBmt : ISwarmChunkBmt
+    public sealed class SwarmChunkBmt
     {
         // Consts.
         public const int SegmentsCount = SwarmCac.DataSize / SegmentSize;
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
         private SwarmChunkBmtNode? root;
 
         // Constructor.
-        public SwarmChunkBmt(IHasher? hasher = null)
+        public SwarmChunkBmt(Hasher? hasher = null)
         {
             /*
              * It's acceptable to instantiate a new hasher here by default, because often ChunkBmt
@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public IHasher Hasher { get; }
+        public Hasher Hasher { get; }
         public SwarmChunkBmtNode? Root => root;
 
         // Methods.
@@ -178,7 +178,7 @@ namespace Etherna.BeeNet.Models
             IEnumerable<ReadOnlyMemory<byte>> proof,
             ReadOnlyMemory<byte> rootHash,
             ReadOnlyMemory<byte> itemHash,
-            IHasher hasher)
+            Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
             ArgumentNullException.ThrowIfNull(proof, nameof(proof));

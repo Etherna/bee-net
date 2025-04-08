@@ -22,7 +22,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     {
         // Constructor.
         public HasherPipelineFeedArgs(
-            ISwarmChunkBmt swarmChunkBmt,
+            SwarmChunkBmt swarmChunkBmt,
             ReadOnlyMemory<byte> span,
             ReadOnlyMemory<byte> spanData,
             long numberId = 0,
@@ -71,6 +71,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         /// </summary>
         public ReadOnlyMemory<byte> SpanData { get; internal set; }
 
-        public ISwarmChunkBmt SwarmChunkBmt { get; }
+        public SwarmChunkBmt SwarmChunkBmt { get; }
     }
 }

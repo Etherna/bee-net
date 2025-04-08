@@ -55,7 +55,7 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmChunkReference> GetHashAsync(IHasher hasher)
+        public async Task<SwarmChunkReference> GetHashAsync(Hasher hasher)
         {
             await rootNode.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             return new SwarmChunkReference(rootNode.Hash, null, false);
