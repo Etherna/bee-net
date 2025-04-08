@@ -74,6 +74,7 @@ namespace Etherna.BeeNet.Models
         
         // Methods.
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
+        public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 
         // Static methods.
         public static byte[] LengthToSpan(ulong length)

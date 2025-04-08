@@ -92,18 +92,29 @@ namespace Etherna.BeeNet.Models
             return hash.Value;
         }
 
-        public override ReadOnlyMemory<byte> GetFullPayload()
+        public override ReadOnlyMemory<byte> GetFullPayload() => GetFullPayloadToByteArray();
+        
+        public override byte[] GetFullPayloadToByteArray()
         {
             if (!Signature.HasValue)
                 throw new InvalidOperationException("SOC has not been signed");
+
+            var buffer = new byte[SwarmSocIdentifier.IdentifierSize +
+                                  SwarmSocSignature.SignatureSize +
+                                  InnerChunk.SpanData.Length];
+            var cursor = 0;
             
-            List<byte> buffer = [];
-            buffer.AddRange(Identifier.ToReadOnlyMemory().Span);
-            buffer.AddRange(Signature.Value.ToReadOnlyMemory().Span);
-            buffer.AddRange(InnerChunk.SpanData.Span);
-            return buffer.ToArray();
+            Identifier.ToReadOnlyMemory().CopyTo(buffer);
+            cursor += SwarmSocIdentifier.IdentifierSize;
+            
+            Signature.Value.ToReadOnlyMemory().CopyTo(buffer.AsMemory(cursor));
+            cursor += SwarmSocSignature.SignatureSize;
+            
+            InnerChunk.SpanData.CopyTo(buffer.AsMemory(cursor));
+            
+            return buffer;
         }
-        
+
         public bool IsValidSoc(Hasher hasher)
         {
             // Verify hash.

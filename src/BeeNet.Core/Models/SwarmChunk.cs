@@ -32,9 +32,8 @@ namespace Etherna.BeeNet.Models
                    Hash.Equals(objChunk.Hash) &&
                    GetFullPayload().Span.SequenceEqual(objChunk.GetFullPayload().Span);
         }
-
         public abstract ReadOnlyMemory<byte> GetFullPayload();
-
+        public abstract byte[] GetFullPayloadToByteArray();
         public override int GetHashCode() =>
             Hash.GetHashCode() ^
             GetFullPayload().GetHashCode();
