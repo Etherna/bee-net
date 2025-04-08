@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,25 +12,28 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Manifest;
-using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Stores;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Concurrent;
 
-namespace Etherna.BeeNet.Services
+namespace Etherna.BeeNet.Models
 {
-    public interface IFeedService
+    public sealed class ResourcePool<TResource>(Func<TResource> resourceBuilder)
     {
-        Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
-            ReferencedMantarayManifest manifest);
+        // Fields.
+        private readonly ConcurrentQueue<TResource> pool = new();
+        
+        // Methods.
+        public TResource GetResource()
+        {
+            if (!pool.TryDequeue(out var resource))
+                resource = resourceBuilder();
+            return resource;
+        }
 
-        Task<SwarmChunkReference> UploadFeedManifestAsync(
-            SwarmFeedBase swarmFeed,
-            IHasher hasher,
-            ushort compactLevel = 0,
-            IPostageStamper? postageStamper = null,
-            IChunkStore? chunkStore = null);
+        public void ReturnResource(TResource resource)
+        {
+            ArgumentNullException.ThrowIfNull(resource, nameof(resource));
+            pool.Enqueue(resource);
+        }
     }
 }

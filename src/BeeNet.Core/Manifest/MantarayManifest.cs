@@ -23,7 +23,6 @@ namespace Etherna.BeeNet.Manifest
     public delegate IHasherPipeline BuildHasherPipeline(bool readOnlyPipeline);
     
     public class MantarayManifest(
-        IHasher hasher,
         BuildHasherPipeline hasherPipelineBuilder,
         MantarayNode rootNode)
         : IReadOnlyMantarayManifest
@@ -33,10 +32,9 @@ namespace Etherna.BeeNet.Manifest
 
         // Constructors.
         public MantarayManifest(
-            IHasher hasher,
             BuildHasherPipeline hasherPipelineBuilder,
             ushort compactLevel)
-            : this(hasher,
+            : this(
                 hasherPipelineBuilder,
                 new MantarayNode(
                     compactLevel,
@@ -57,9 +55,9 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmChunkReference> GetHashAsync()
+        public async Task<SwarmChunkReference> GetHashAsync(IHasher hasher)
         {
-            await rootNode.ComputeHashAsync(hasher,hasherPipelineBuilder).ConfigureAwait(false);
+            await rootNode.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             return new SwarmChunkReference(rootNode.Hash, null, false);
         }
     }

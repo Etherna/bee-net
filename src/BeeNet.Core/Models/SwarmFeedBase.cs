@@ -42,7 +42,6 @@ namespace Etherna.BeeNet.Models
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
             ISwarmChunkBmt chunkBmt,
-            Func<IHasher> hasherBuilder,
             DateTimeOffset? timestamp = null);
 
         /// <summary>
@@ -56,7 +55,7 @@ namespace Etherna.BeeNet.Models
             long at,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            Func<IHasher> hasherBuilder);
+            IHasher hasher);
 
         public async Task<SwarmFeedChunkBase?> TryGetFeedChunkAsync(
             SwarmFeedIndexBase index,

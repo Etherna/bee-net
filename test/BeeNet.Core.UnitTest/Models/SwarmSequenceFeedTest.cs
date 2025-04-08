@@ -186,7 +186,6 @@ namespace Etherna.BeeNet.Models
             var result = await SequenceFeed.TryFindLastFeedChunkAsync(
                 test.KnownNearIndex,
                 chunkStoreMock.Object,
-                () => new Hasher(),
                 requestsCustomTimeout: null);
 
             // Assert.

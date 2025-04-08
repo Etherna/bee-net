@@ -522,7 +522,6 @@ namespace Etherna.BeeNet.Chunks
             
             // Build manifest.
             var dirManifest = new MantarayManifest(
-                new Hasher(),
                 _ => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
@@ -595,7 +594,7 @@ namespace Etherna.BeeNet.Chunks
                     fileCEntryMetadata));
 
             // Build manifest chunks.
-            await dirManifest.GetHashAsync().ConfigureAwait(false);
+            await dirManifest.GetHashAsync(new Hasher()).ConfigureAwait(false);
 
             return chunkStore;
         }

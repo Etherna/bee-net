@@ -26,7 +26,7 @@ public partial class BeeNetWasmUtil
             data,
             fileContentType,
             fileName,
-            () => new Hasher()).ConfigureAwait(false);
+            new Hasher()).ConfigureAwait(false);
         return result.ChunkReference.Hash.ToString();
     }
 }
