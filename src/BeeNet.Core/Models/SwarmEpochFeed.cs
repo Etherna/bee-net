@@ -30,11 +30,10 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            Func<ISwarmChunkBmt> bmtBuilder,
+            ISwarmChunkBmt chunkBmt,
+            Func<IHasher> hasherBuilder,
             DateTimeOffset? timestamp = null)
         {
-            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
-            
             if (knownNearIndex is not (null or SwarmEpochFeedIndex))
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
             
@@ -42,7 +41,7 @@ namespace Etherna.BeeNet.Models
                 contentData,
                 knownNearIndex as SwarmEpochFeedIndex,
                 chunkStore,
-                bmtBuilder(),
+                chunkBmt,
                 timestamp).ConfigureAwait(false);
         }
 

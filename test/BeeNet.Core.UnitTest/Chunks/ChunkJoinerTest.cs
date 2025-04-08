@@ -58,8 +58,7 @@ namespace Etherna.BeeNet.Chunks
                         RedundancyLevel.None,
                         false,
                         0,
-                        null,
-                        () => new SwarmChunkBmt());
+                        null);
                     using var dataStream = new MemoryStream(data);
                     
                     var task = fileHasherPipeline.HashDataAsync(dataStream);
@@ -81,8 +80,7 @@ namespace Etherna.BeeNet.Chunks
                         RedundancyLevel.None,
                         false,
                         65535,
-                        null,
-                        () => new SwarmChunkBmt());
+                        null);
                     using var dataStream = new MemoryStream(data);
                     
                     var task = fileHasherPipeline.HashDataAsync(dataStream);

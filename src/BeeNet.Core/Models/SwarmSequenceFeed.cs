@@ -41,7 +41,8 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            Func<ISwarmChunkBmt> bmtBuilder,
+            ISwarmChunkBmt chunkBmt,
+            Func<IHasher> hasherBuilder,
             DateTimeOffset? timestamp = null)
         {
             if (knownNearIndex is not (null or SwarmSequenceFeedIndex))
@@ -51,20 +52,23 @@ namespace Etherna.BeeNet.Models
                 contentData,
                 knownNearIndex as SwarmSequenceFeedIndex,
                 chunkStore,
-                bmtBuilder).ConfigureAwait(false);
+                chunkBmt,
+                hasherBuilder).ConfigureAwait(false);
         }
 
         public async Task<SwarmSequenceFeedChunk> BuildNextFeedChunkAsync(
             ReadOnlyMemory<byte> contentData,
             SwarmSequenceFeedIndex? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            Func<ISwarmChunkBmt> bmtBuilder)
+            ISwarmChunkBmt chunkBmt,
+            Func<IHasher> hasherBuilder)
         {
-            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
+            ArgumentNullException.ThrowIfNull(chunkBmt, nameof(chunkBmt));
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             
             // Find last published chunk.
             var lastFeedChunk = await TryFindLastFeedChunkAsync(
-                knownNearIndex, chunkStore, () => bmtBuilder().Hasher).ConfigureAwait(false);
+                knownNearIndex, chunkStore, hasherBuilder).ConfigureAwait(false);
 
             // Define next sequence index.
             var nextSequenceIndex = lastFeedChunk is null ?
@@ -72,13 +76,12 @@ namespace Etherna.BeeNet.Models
                 (SwarmSequenceFeedIndex)lastFeedChunk.Index.GetNext(0);
 
             // Create new chunk.
-            var swarmChunkBmt = bmtBuilder();
             return new SwarmSequenceFeedChunk(
                 Topic,
                 nextSequenceIndex,
-                BuildIdentifier(nextSequenceIndex, swarmChunkBmt.Hasher),
+                BuildIdentifier(nextSequenceIndex, chunkBmt.Hasher),
                 Owner,
-                SwarmSequenceFeedChunk.BuildInnerChunk(contentData, swarmChunkBmt),
+                SwarmSequenceFeedChunk.BuildInnerChunk(contentData, chunkBmt),
                 null);
         }
 

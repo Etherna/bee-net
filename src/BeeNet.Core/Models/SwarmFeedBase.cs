@@ -41,7 +41,8 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> contentData,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
-            Func<ISwarmChunkBmt> bmtBuilder,
+            ISwarmChunkBmt chunkBmt,
+            Func<IHasher> hasherBuilder,
             DateTimeOffset? timestamp = null);
 
         /// <summary>

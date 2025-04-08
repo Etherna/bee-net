@@ -69,12 +69,12 @@ namespace Etherna.BeeNet.Services
         
         public async Task<SwarmChunkReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
-            Func<ISwarmChunkBmt> bmtBuilder,
+            Func<IHasher> hasherBuilder,
             ushort compactLevel = 0,
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
-            ArgumentNullException.ThrowIfNull(bmtBuilder, nameof(bmtBuilder));
+            ArgumentNullException.ThrowIfNull(hasherBuilder, nameof(hasherBuilder));
             ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
             
             // Init.
@@ -83,11 +83,11 @@ namespace Etherna.BeeNet.Services
                 new FakeSigner(),
                 new PostageStampIssuer(PostageBatch.MaxDepthInstance),
                 new MemoryStampStore(),
-                bmtBuilder().Hasher);
+                hasherBuilder());
 
             // Create manifest.
             var feedManifest = new MantarayManifest(
-                bmtBuilder().Hasher,
+                hasherBuilder(),
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
@@ -95,7 +95,6 @@ namespace Etherna.BeeNet.Services
                     false,
                     0,
                     null,
-                    bmtBuilder,
                     readOnlyPipeline),
                 compactLevel);
 

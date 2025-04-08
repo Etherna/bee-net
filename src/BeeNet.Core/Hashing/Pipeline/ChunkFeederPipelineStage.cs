@@ -42,7 +42,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public ChunkFeederPipelineStage(
             IHasherPipelineStage nextStage,
-            Func<ISwarmChunkBmt> bmtBuilder,
             int? chunkConcurrency = null)
         {
             chunkConcurrency ??= Environment.ProcessorCount;
@@ -69,8 +68,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
              * with contained elements, so a prev chunk's semaphore can't be reused until it's direct next
              * has completed and released concurrency.
              */
+            /*
+             * We can initialize new ChunkBmts because they are not reusable with different chunk resource pools,
+             * and we are not interested into inject mocked ChunkBmts in tests.
+             */
             for (int i = 0; i < chunkConcurrency * 2; i++)
-                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), bmtBuilder()));
+                chunkResourcesPool.Enqueue((new SemaphoreSlim(1, 1), new SwarmChunkBmt()));
         }
 
         // Dispose.

@@ -1,10 +1,9 @@
-using Etherna.BeeNet.Hashing;
-using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Services;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
+using Hasher = Etherna.BeeNet.Hashing.Hasher;
 
 #pragma warning disable CA1303
 Console.WriteLine("Main, don't remove!");
@@ -27,7 +26,7 @@ public partial class BeeNetWasmUtil
             data,
             fileContentType,
             fileName,
-            () => new SwarmChunkBmt()).ConfigureAwait(false);
+            () => new Hasher()).ConfigureAwait(false);
         return result.ChunkReference.Hash.ToString();
     }
 }

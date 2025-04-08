@@ -529,8 +529,7 @@ namespace Etherna.BeeNet.Chunks
                     RedundancyLevel.None,
                     false,
                     0,
-                    null,
-                    () => new SwarmChunkBmt()),
+                    null),
                 0);
 
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
@@ -539,8 +538,7 @@ namespace Etherna.BeeNet.Chunks
                 RedundancyLevel.None,
                 false,
                 0,
-                null,
-                () => new SwarmChunkBmt());
+                null);
             var fileAEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",
@@ -564,8 +562,7 @@ namespace Etherna.BeeNet.Chunks
                 RedundancyLevel.None,
                 false,
                 0,
-                null,
-                () => new SwarmChunkBmt());
+                null);
             var fileBEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",
@@ -584,8 +581,7 @@ namespace Etherna.BeeNet.Chunks
                 RedundancyLevel.None,
                 false,
                 0,
-                null,
-                () => new SwarmChunkBmt());
+                null);
             var fileCEntryMetadata = new Dictionary<string, string>
             {
                 [ManifestEntry.ContentTypeKey] = "application/octet-stream",
