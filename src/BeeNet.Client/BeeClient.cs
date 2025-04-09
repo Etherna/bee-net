@@ -475,7 +475,6 @@ namespace Etherna.BeeNet
 
         public async Task<SwarmCac> GetChunkAsync(
             SwarmHash hash,
-            int maxRetryAttempts = 10,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -484,7 +483,6 @@ namespace Etherna.BeeNet
         {
             using var stream = await GetChunkStreamAsync(
                 (string)hash,
-                maxRetryAttempts,
                 swarmCache,
                 swarmActTimestamp,
                 swarmActPublisher,
@@ -498,35 +496,18 @@ namespace Etherna.BeeNet
 
         public async Task<Stream> GetChunkStreamAsync(
             SwarmHash hash,
-            int maxRetryAttempts = 10,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default)
-        {
-            int i = 0;
-            while (true)
-            {
-                try
-                {
-                    return (await generatedClient.ChunksGetAsync(
-                        hash.ToString(),
-                        swarmCache,
-                        swarmActTimestamp,
-                        swarmActPublisher,
-                        swarmActHistoryAddress,
-                        cancellationToken).ConfigureAwait(false)).Stream;
-                }
-                catch (BeeNetApiException e) when (e.StatusCode == 404)
-                {
-                    if (i + 1 == maxRetryAttempts)
-                        throw;
-                }
-
-                i++;
-            }
-        }
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.ChunksGetAsync(
+                hash.ToString(),
+                swarmCache,
+                swarmActTimestamp,
+                swarmActPublisher,
+                swarmActHistoryAddress,
+                cancellationToken).ConfigureAwait(false)).Stream;
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public async Task<IChunkWebSocketUploader> GetChunkUploaderWebSocketAsync(
