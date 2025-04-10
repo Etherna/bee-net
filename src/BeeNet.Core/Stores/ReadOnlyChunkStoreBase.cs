@@ -32,13 +32,14 @@ namespace Etherna.BeeNet.Stores
         // Methods.
         public async Task<SwarmChunk> GetAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default)
         {
             if (ChunksCache.TryGetValue(hash, out var chunk))
                 return chunk;
 
-            chunk = await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
+            chunk = await LoadChunkAsync(hash, tryGetChunkType, cancellationToken).ConfigureAwait(false);
 
             if (cacheChunk)
                 ChunksCache[hash] = chunk;
@@ -48,12 +49,13 @@ namespace Etherna.BeeNet.Stores
 
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetAsync(hash, cacheChunk, cancellationToken).ConfigureAwait(false);
+                return await GetAsync(hash, tryGetChunkType, cacheChunk, cancellationToken).ConfigureAwait(false);
             }
             catch (BeeNetApiException)
             {
@@ -68,6 +70,7 @@ namespace Etherna.BeeNet.Stores
         // Protected methods.
         protected abstract Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             CancellationToken cancellationToken = default);
     }
 }

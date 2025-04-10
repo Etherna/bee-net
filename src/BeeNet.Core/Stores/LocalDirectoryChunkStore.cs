@@ -83,9 +83,11 @@ namespace Etherna.BeeNet.Stores
 
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             CancellationToken cancellationToken = default)
         {
             var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
+            tryGetChunkType ??= SwarmChunkType.Cac;
             
             if (!File.Exists(chunkPath))
                 throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
@@ -95,7 +97,12 @@ namespace Etherna.BeeNet.Stores
             await using var stream = fileStream.ConfigureAwait(false);
             var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
 
-            return new SwarmCac(hash, buffer.AsMemory()[..readBytes]);
+            return tryGetChunkType switch
+            {
+                SwarmChunkType.Cac => new SwarmCac(hash, buffer.AsMemory()[..readBytes]),
+                SwarmChunkType.Soc => SwarmSoc.BuildFromBytes(hash, buffer.AsMemory()[..readBytes], new SwarmChunkBmt()),
+                _ => throw new InvalidOperationException($"Unknown chunk type: {tryGetChunkType}")
+            };
         }
 
         protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)

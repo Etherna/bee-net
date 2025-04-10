@@ -126,7 +126,10 @@ namespace Etherna.BeeNet.Chunks
             CancellationToken cancellationToken)
         {
             // Get root chunk and join data.
-            var chunk = await chunkStore.GetAsync(chunkReference.Hash, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var chunk = await chunkStore.GetAsync(
+                chunkReference.Hash,
+                SwarmChunkType.Cac,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
             if (chunk is not SwarmCac cac)
                 throw new InvalidOperationException($"Chunk {chunkReference.Hash} is not a Content Addressed Chunk.");
             

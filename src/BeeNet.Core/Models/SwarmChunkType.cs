@@ -12,24 +12,11 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Models
 {
-    public interface IReadOnlyChunkStore
+    public enum SwarmChunkType
     {
-        Task<SwarmChunk> GetAsync(
-            SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
-            bool cacheChunk = false,
-            CancellationToken cancellationToken = default);
-
-        Task<SwarmChunk?> TryGetAsync(
-            SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
-            bool cacheChunk = false,
-            CancellationToken cancellationToken = default);
+        Cac,
+        Soc
     }
 }

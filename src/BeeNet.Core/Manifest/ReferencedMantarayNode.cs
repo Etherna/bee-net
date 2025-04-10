@@ -80,6 +80,7 @@ namespace Etherna.BeeNet.Manifest
 
             var chunk = await chunkStore.GetAsync(
                 Hash,
+                SwarmChunkType.Cac,
                 useChunkStoreCache).ConfigureAwait(false);
             if (chunk is not SwarmCac cac)
                 throw new InvalidOperationException("Chunk is not a Content Addressed Chunk");

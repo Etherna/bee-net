@@ -473,25 +473,34 @@ namespace Etherna.BeeNet
                     payout: BzzBalance.FromPlurString(response.Lastsent.Payout)) : null);
         }
 
-        public async Task<SwarmCac> GetChunkAsync(
+        public async Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
+            SwarmChunkType chunkType,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            using var stream = await GetChunkStreamAsync(
+            using var memoryStream = new MemoryStream();
+            var stream = await GetChunkStreamAsync(
                 (string)hash,
                 swarmCache,
                 swarmActTimestamp,
                 swarmActPublisher,
                 swarmActHistoryAddress,
                 cancellationToken).ConfigureAwait(false);
-            using var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
-            var spanData = memoryStream.ToArray();
-            return new SwarmCac(hash, spanData);
+            await using (stream.ConfigureAwait(false))
+            {
+                await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+            }
+            var chunkData = memoryStream.ToArray();
+            return chunkType switch
+            {
+                SwarmChunkType.Cac => new SwarmCac(hash, chunkData),
+                SwarmChunkType.Soc => SwarmSoc.BuildFromBytes(hash, chunkData, new SwarmChunkBmt()),
+                _ => throw new InvalidOperationException($"Unknown chunk type: {chunkType}")
+            };
         }
 
         public async Task<Stream> GetChunkStreamAsync(

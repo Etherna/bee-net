@@ -125,7 +125,9 @@ namespace Etherna.BeeNet.Chunks
             SwarmCac chunk;
             try
             {
-                chunk = (SwarmCac)await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
+                chunk = (SwarmCac)await chunkStore.GetAsync(
+                    chunkReference.Hash,
+                    SwarmChunkType.Cac).ConfigureAwait(false);
             }
 #pragma warning disable CA1031
             catch
@@ -196,7 +198,9 @@ namespace Etherna.BeeNet.Chunks
                 return;
             }
 #pragma warning restore CA1031
-            await onChunkFoundAsync(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false)).ConfigureAwait(false);
+            await onChunkFoundAsync(await chunkStore.GetAsync(
+                manifestNode.Hash,
+                SwarmChunkType.Cac).ConfigureAwait(false)).ConfigureAwait(false);
             
             // Traverse forks.
             foreach (var fork in manifestNode.Forks.Values)

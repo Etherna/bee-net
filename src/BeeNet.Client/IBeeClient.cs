@@ -308,8 +308,9 @@ namespace Etherna.BeeNet
         /// <param name="hash">Swarm address of chunk</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmCac> GetChunkAsync(
+        Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
+            SwarmChunkType chunkType,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,

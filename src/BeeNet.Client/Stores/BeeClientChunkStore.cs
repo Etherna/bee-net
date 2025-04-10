@@ -27,7 +27,11 @@ namespace Etherna.BeeNet.Stores
         // Methods.
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             CancellationToken cancellationToken = default) =>
-            await beeClient.GetChunkAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await beeClient.GetChunkAsync(
+                hash,
+                tryGetChunkType ?? SwarmChunkType.Cac,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

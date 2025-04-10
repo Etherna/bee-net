@@ -27,6 +27,7 @@ namespace Etherna.BeeNet.Stores
         
         protected override Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
+            SwarmChunkType? tryGetChunkType,
             CancellationToken cancellationToken = default) =>
             throw new KeyNotFoundException("Chunk get on a fake chunk store");
 

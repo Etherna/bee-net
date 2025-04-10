@@ -97,7 +97,9 @@ namespace Etherna.BeeNet.Models
             {
                 var hash = new SwarmHash(FeedPayload[LegacyTimeStampSize..]);
 #pragma warning disable CA1062
-                var chunk = await chunkStore!.GetAsync(hash).ConfigureAwait(false);
+                var chunk = await chunkStore!.GetAsync(
+                    hash,
+                    SwarmChunkType.Cac).ConfigureAwait(false);
 #pragma warning restore CA1062
                 if (chunk is not SwarmCac cac)
                     throw new InvalidOperationException($"Legacy referenced chunk {hash} is not a Content Addressed Chunk");
