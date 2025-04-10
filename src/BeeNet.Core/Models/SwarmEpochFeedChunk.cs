@@ -25,7 +25,11 @@ namespace Etherna.BeeNet.Models
         public const int MaxDataSize = SwarmCac.DataSize - TimeStampSize;
         public const int TimeStampSize = sizeof(ulong);
         
-        // Internal constructor.
+        // Internal constructors.
+        internal SwarmEpochFeedChunk(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic) :
+            base(topic, index, soc.Identifier, soc.Owner, soc.InnerChunk, soc.Signature)
+        { }
+        
         internal SwarmEpochFeedChunk(
             SwarmFeedTopic topic,
             SwarmEpochFeedIndex index,
@@ -37,6 +41,12 @@ namespace Etherna.BeeNet.Models
         { }
         
         // Static builders.
+        public static SwarmFeedChunkBase BuildFromSoc(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic)
+        {
+            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            return new SwarmEpochFeedChunk(soc, index, topic);
+        }
+
         public static SwarmEpochFeedChunk BuildNew(
             SwarmEpochFeed feed,
             SwarmEpochFeedIndex index,

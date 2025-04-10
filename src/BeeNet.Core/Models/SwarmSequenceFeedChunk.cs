@@ -23,7 +23,11 @@ namespace Etherna.BeeNet.Models
         // Consts.
         public const int LegacyTimeStampSize = sizeof(ulong);
         
-        // Internal constructor.
+        // Internal constructors.
+        internal SwarmSequenceFeedChunk(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic) :
+            base(topic, index, soc.Identifier, soc.Owner, soc.InnerChunk, soc.Signature)
+        { }
+
         internal SwarmSequenceFeedChunk(
             SwarmFeedTopic topic,
             SwarmSequenceFeedIndex index,
@@ -35,6 +39,12 @@ namespace Etherna.BeeNet.Models
         { }
         
         // Static builders.
+        public static SwarmFeedChunkBase BuildFromSoc(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic)
+        {
+            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            return new SwarmSequenceFeedChunk(soc, index, topic);
+        }
+
         public static SwarmSequenceFeedChunk BuildNew(
             SwarmSequenceFeed feed,
             SwarmSequenceFeedIndex index,
@@ -104,9 +114,8 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             
-            var innerChunkSpan = SwarmCac.LengthToSpan((ulong)data.Length);
-            var innerChunkHash = swarmChunkBmt.Hash(innerChunkSpan, data);
-            var innerChunk = new SwarmCac(innerChunkHash, innerChunkSpan, data);
+            var innerChunkHash = swarmChunkBmt.Hash(data[..SwarmCac.SpanSize], data[SwarmCac.SpanSize..]);
+            var innerChunk = new SwarmCac(innerChunkHash, data);
             return innerChunk;
         }
     }

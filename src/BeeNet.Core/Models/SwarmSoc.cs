@@ -16,7 +16,6 @@ using Etherna.BeeNet.Hashing;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using System;
-using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
 {
@@ -70,7 +69,7 @@ namespace Etherna.BeeNet.Models
         }
         
         // Properties.
-        public override SwarmHash Hash => hash ?? throw new InvalidOperationException("Hash has not been calculated.");
+        public override SwarmHash Hash => hash ??= BuildHash(Identifier, Owner, new Hasher());
         public SwarmSocIdentifier Identifier { get; } = identifier;
         public SwarmSocSignature? Signature { get; set; } = signature;
         public EthAddress Owner { get; } = owner;
@@ -96,9 +95,6 @@ namespace Etherna.BeeNet.Models
         
         public override byte[] GetFullPayloadToByteArray()
         {
-            if (!Signature.HasValue)
-                throw new InvalidOperationException("SOC has not been signed");
-
             var buffer = new byte[SwarmSocIdentifier.IdentifierSize +
                                   SwarmSocSignature.SignatureSize +
                                   InnerChunk.SpanData.Length];
@@ -107,32 +103,12 @@ namespace Etherna.BeeNet.Models
             Identifier.ToReadOnlyMemory().CopyTo(buffer);
             cursor += SwarmSocIdentifier.IdentifierSize;
             
-            Signature.Value.ToReadOnlyMemory().CopyTo(buffer.AsMemory(cursor));
+            (Signature ?? new byte[SwarmSocSignature.SignatureSize]).ToReadOnlyMemory().CopyTo(buffer.AsMemory(cursor));
             cursor += SwarmSocSignature.SignatureSize;
             
             InnerChunk.SpanData.CopyTo(buffer.AsMemory(cursor));
             
             return buffer;
-        }
-
-        public bool IsValidSoc(Hasher hasher)
-        {
-            // Verify hash.
-            if (hash != null &&
-                hash != BuildHash(Identifier, Owner, hasher))
-                return false;
-            
-            // Verify signature.
-            if (!Signature.HasValue ||
-                Signature.Value.RecoverOwner(ToSignDigest(hasher)) != Owner)
-                return false;
-            
-            // Disperse replica validation.
-            if (Owner == ReplicasOwner &&
-                !InnerChunk.Hash.ToReadOnlyMemory()[1..32].Span.SequenceEqual(Identifier.ToReadOnlyMemory()[1..32].Span))
-                return false;
-            
-            return true;
         }
 
         public void SignWithPrivateKey(EthECKey privateKey, Hasher hasher)
@@ -148,6 +124,24 @@ namespace Etherna.BeeNet.Models
         }
 
         public byte[] ToSignDigest(Hasher hasher) => BuildToSignDigest(Identifier, InnerChunk.Hash, hasher);
+
+        public bool ValidateSoc(Hasher hasher)
+        {
+            // Rebuild hash, has same cost than verify.
+            hash = BuildHash(Identifier, Owner, hasher);
+            
+            // Verify signature.
+            if (!Signature.HasValue ||
+                Signature.Value.RecoverOwner(ToSignDigest(hasher)) != Owner)
+                return false;
+            
+            // Disperse replica validation.
+            if (Owner == ReplicasOwner &&
+                !InnerChunk.Hash.ToReadOnlyMemory()[1..32].Span.SequenceEqual(Identifier.ToReadOnlyMemory()[1..32].Span))
+                return false;
+            
+            return true;
+        }
         
         // Static methods.
         public static SwarmHash BuildHash(

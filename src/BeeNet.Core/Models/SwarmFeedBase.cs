@@ -38,11 +38,13 @@ namespace Etherna.BeeNet.Models
             SwarmFeedChunkBase.BuildIdentifier(Topic, index, hasher);
         
         public abstract Task<SwarmFeedChunkBase> BuildNextFeedChunkAsync(
-            ReadOnlyMemory<byte> contentData,
+            ReadOnlyMemory<byte> data,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
             SwarmChunkBmt chunkBmt,
             DateTimeOffset? timestamp = null);
+        
+        public abstract SwarmFeedChunkBase SocToFeedChunk(SwarmSoc soc, SwarmFeedIndexBase index);
 
         /// <summary>
         /// Try to find feed at a given time
@@ -69,10 +71,10 @@ namespace Etherna.BeeNet.Models
             var hash = BuildHash(index, hasher);
 
             var chunk = await chunkStore.TryGetAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
-            if (chunk is not SwarmFeedChunkBase feedChunk)
+            if (chunk is not SwarmSoc soc)
                 return null;
 
-            return feedChunk;
+            return SocToFeedChunk(soc, index);
         }
     }
 }

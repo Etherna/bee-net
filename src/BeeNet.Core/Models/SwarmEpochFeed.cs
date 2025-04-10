@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Models
 
         // Methods.
         public override async Task<SwarmFeedChunkBase> BuildNextFeedChunkAsync(
-            ReadOnlyMemory<byte> contentData,
+            ReadOnlyMemory<byte> data,
             SwarmFeedIndexBase? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
             SwarmChunkBmt chunkBmt,
@@ -37,15 +37,18 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentException("Feed index bust be null or epoch index", nameof(knownNearIndex));
             
             return await BuildNextFeedChunkAsync(
-                contentData,
+                data,
                 knownNearIndex as SwarmEpochFeedIndex,
                 chunkStore,
                 chunkBmt,
                 timestamp).ConfigureAwait(false);
         }
 
+        public override SwarmFeedChunkBase SocToFeedChunk(SwarmSoc soc, SwarmFeedIndexBase index) =>
+            SwarmEpochFeedChunk.BuildFromSoc(soc, index, Topic);
+
         public async Task<SwarmEpochFeedChunk> BuildNextFeedChunkAsync(
-            ReadOnlyMemory<byte> contentData,
+            ReadOnlyMemory<byte> data,
             SwarmEpochFeedIndex? knownNearIndex,
             IReadOnlyChunkStore chunkStore,
             SwarmChunkBmt swarmChunkBmt,
@@ -76,7 +79,7 @@ namespace Etherna.BeeNet.Models
                 nextEpochIndex,
                 BuildIdentifier(nextEpochIndex, swarmChunkBmt.Hasher),
                 Owner,
-                SwarmEpochFeedChunk.BuildInnerChunk(contentData, timestamp, swarmChunkBmt),
+                SwarmEpochFeedChunk.BuildInnerChunk(data, timestamp, swarmChunkBmt),
                 null);
         }
         
