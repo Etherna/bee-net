@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Services
         {
             ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
             
-            var metadata = await manifest.GetResourceMetadataAsync(MantarayManifest.RootPath).ConfigureAwait(false);
+            var metadata = await manifest.GetResourceMetadataAsync(MantarayManifest.RootPath, false).ConfigureAwait(false);
             if (!metadata.TryGetValue(FeedMetadataEntryOwner, out var hexOwner))
                 return null;
             if (!metadata.TryGetValue(FeedMetadataEntryTopic, out var hexTopic))

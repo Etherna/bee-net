@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 address.Hash);
             
-            return await rootManifest.GetResourceMetadataAsync(address.Path).ConfigureAwait(false);
+            return await rootManifest.GetResourceMetadataAsync(address.Path, true).ConfigureAwait(false);
         }
 
         public async Task<Stream> GetFileStreamFromChunksAsync(

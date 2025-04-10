@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Manifest
         XorEncryptKey? ObfuscationKey { get; }
         
         // Methods.
-        Task<IReadOnlyDictionary<string,string>> GetResourceMetadataAsync(string path);
+        Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path, bool resolveIndexDocument);
         Task<bool> HasPathPrefixAsync(string path);
         Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path);
     }

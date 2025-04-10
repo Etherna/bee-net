@@ -105,13 +105,35 @@ namespace Etherna.BeeNet.Manifest
             IsDecoded = true;
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+            string path,
+            bool resolveIndexDocument)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
-            // If the path is empty, return current node metadata
-            if (path.Length == 0)
-                return _metadata;
+            // Different cases, based on index document resolution.
+            if (resolveIndexDocument)
+            {
+                // If the path is empty, or root
+                if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
+                {
+                    //try to lookup for index document suffix
+                    if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
+                        rootFork.Prefix != SwarmAddress.Separator.ToString())
+                        throw new KeyNotFoundException($"Final path {path} can't be found");
+                
+                    if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
+                        throw new KeyNotFoundException($"Index document can't be found");
+
+                    path = indexDocPat;
+                }
+            }
+            else
+            {
+                // If the path is empty, return current node metadata
+                if (path.Length == 0)
+                    return _metadata;
+            }
 
             // Find the child fork.
             if (!_forks.TryGetValue(path[0], out var fork) ||
@@ -127,7 +149,9 @@ namespace Etherna.BeeNet.Manifest
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
+            return await fork.Node.GetResourceMetadataAsync(
+                childSubPath,
+                resolveIndexDocument).ConfigureAwait(false);
         }
 
         public async Task<bool> HasPathPrefixAsync(string path)

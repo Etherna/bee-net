@@ -272,7 +272,9 @@ namespace Etherna.BeeNet.Manifest
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
 
-        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path)
+        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+            string path,
+            bool resolveIndexDocument)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();
