@@ -174,30 +174,37 @@ namespace Etherna.BeeNet.Manifest
                 path[fork.Prefix.Length..]).ConfigureAwait(false);
         }
 
-        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
+        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(
+            string path,
+            bool resolveIndexDocument)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
 
-            // If the path is empty
-            if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
+            // If the path is empty and entry is not null, return the entry
+            if (path.Length == 0 && EntryHash.HasValue && EntryHash != SwarmHash.Zero)
+                return new SwarmChunkReference(
+                    EntryHash.Value,
+                    EntryEncryptionKey,
+                    EntryUseRecursiveEncryption);
+            
+            // Try to resolve index document, if allowed.
+            if (resolveIndexDocument)
             {
-                //if entry is not null, return it
-                if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
-                    return new SwarmChunkReference(
-                        EntryHash.Value,
-                        EntryEncryptionKey,
-                        EntryUseRecursiveEncryption);
+                if (path.Length == 0 || path == SwarmAddress.Separator.ToString())
+                {
+                    //try to lookup for index document suffix
+                    if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
+                        rootFork.Prefix != SwarmAddress.Separator.ToString())
+                        throw new KeyNotFoundException($"Final path {path} can't be found");
                 
-                //try to lookup for index document suffix
-                if (!_forks.TryGetValue(SwarmAddress.Separator, out var rootFork) ||
-                    rootFork.Prefix != SwarmAddress.Separator.ToString())
-                    throw new KeyNotFoundException($"Final path {path} can't be found");
-                
-                if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
-                    throw new KeyNotFoundException($"Index document can't be found");
+                    if (!rootFork.Node.Metadata.TryGetValue(ManifestEntry.WebsiteIndexDocPathKey, out var indexDocPat))
+                        throw new KeyNotFoundException($"Index document can't be found");
 
-                path = indexDocPat;
+                    path = indexDocPat;
+                }
             }
+            else if (path.Length == 0)
+                throw new KeyNotFoundException("Path can't be found");
             
             // Find the child fork.
             if (!_forks.TryGetValue(path[0], out var fork) ||
@@ -208,7 +215,7 @@ namespace Etherna.BeeNet.Manifest
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await fork.Node.ResolveChunkReferenceAsync(
-                path[fork.Prefix.Length..]).ConfigureAwait(false);
+                path[fork.Prefix.Length..], resolveIndexDocument).ConfigureAwait(false);
         }
         
         // Helpers.

@@ -12,10 +12,13 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Manifest;
+using Etherna.BeeNet.Stores;
 using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
@@ -63,6 +66,14 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
                                              Path.GetHashCode(StringComparison.InvariantCulture);
+        public async Task<SwarmChunkReference> ResolveToChunkReferenceAsync(
+            IReadOnlyChunkStore chunkStore,
+            bool resolveIndexDocument)
+        {
+            var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
+            return await rootManifest.ResolveAddressToChunkReferenceAsync(
+                Path, resolveIndexDocument).ConfigureAwait(false);
+        }
         public override string ToString() => Hash + Path;
         
         // Static methods.

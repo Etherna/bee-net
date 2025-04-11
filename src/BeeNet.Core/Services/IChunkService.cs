@@ -44,9 +44,10 @@ namespace Etherna.BeeNet.Services
         /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
         /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>Resource stream</returns>
-        Task<Stream> GetFileStreamFromChunksAsync(
+        Task<Stream> GetFileStreamFromAddressAsync(
             IChunkStore chunkStore,
             SwarmAddress address,
+            bool resolveIndexDocument,
             string? fileCachePath = null,
             CancellationToken? cancellationToken = null);
     

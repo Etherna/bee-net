@@ -1098,19 +1098,6 @@ namespace Etherna.BeeNet
                 fees: XDaiBalance.FromWeiString(response.Fees));
         }
 
-        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(
-            SwarmAddress address,
-            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-        {
-            var chunkStore = new BeeClientChunkStore(this, chunksCache);
-            
-            var rootManifest = new ReferencedMantarayManifest(
-                chunkStore,
-                address.Hash);
-            
-            return await rootManifest.ResolveAddressToChunkReferenceAsync(address.Path).ConfigureAwait(false);
-        }
-
         public Task ReuploadContentAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>

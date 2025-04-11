@@ -286,7 +286,7 @@ namespace Etherna.BeeNet.Manifest
             throw new NotImplementedException();
         }
 
-        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
+        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path, bool resolveIndexDocument)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();

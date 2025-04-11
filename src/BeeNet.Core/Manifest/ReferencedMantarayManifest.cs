@@ -59,7 +59,9 @@ namespace Etherna.BeeNet.Manifest
             return await RootNode.HasPathPrefixAsync(path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
         }
 
-        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(string path)
+        public async Task<SwarmChunkReference> ResolveAddressToChunkReferenceAsync(
+            string path,
+            bool resolveIndexDocument)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             
@@ -69,7 +71,8 @@ namespace Etherna.BeeNet.Manifest
             return await _rootNode.ResolveChunkReferenceAsync(
                 path == SwarmAddress.Separator.ToString() ?
                     path :
-                    path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
+                    path.TrimStart(SwarmAddress.Separator),
+                resolveIndexDocument).ConfigureAwait(false);
         }
     }
 }
