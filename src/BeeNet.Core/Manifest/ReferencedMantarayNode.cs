@@ -171,15 +171,18 @@ namespace Etherna.BeeNet.Manifest
                 return true;
             
             // Find the child fork.
-            if (!_forks.TryGetValue(path[0], out var fork) ||
-                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+            if (!_forks.TryGetValue(path[0], out var fork))
+                return false;
+            
+            var commonPathLength = Math.Min(path.Length, fork.Prefix.Length);
+            if (!path.AsSpan()[..commonPathLength].SequenceEqual(fork.Prefix.AsSpan()[..commonPathLength]))
                 return false;
             
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await fork.Node.HasPathPrefixAsync(
-                path[fork.Prefix.Length..]).ConfigureAwait(false);
+                path[commonPathLength..]).ConfigureAwait(false);
         }
         
         // Helpers.
