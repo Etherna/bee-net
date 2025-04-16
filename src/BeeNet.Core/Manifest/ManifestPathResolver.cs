@@ -22,6 +22,18 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
+    /// <summary>
+    /// Implementation to resolve a path as list of resource lookups.
+    /// </summary>
+    /// <param name="resolveMetadataDocuments">If true, try to resolve Index and Error documents from metadata</param>
+    /// <param name="redirectToDirectory">
+    /// Help directories navigation, oriented to browsers:
+    /// - Lookup at existing directories with same name when a file is not found, and resolve invocation in it.
+    /// - Trim initial separator chars '/' from path into resource lookup. Always implicit.
+    /// </param>
+    /// <param name="explicitRedirectToDirectory">
+    /// If true, throw <see cref="ManifestExplicitRedirectException"/> when a redirect to directory is resolved.
+    /// </param>
     public sealed class ManifestPathResolver(
         bool resolveMetadataDocuments = false,
         bool redirectToDirectory = false,
@@ -33,6 +45,10 @@ namespace Etherna.BeeNet.Manifest
         public bool ExplicitRedirectToDirectory { get; set; } = explicitRedirectToDirectory;
 
         // Static properties.
+        public static ManifestPathResolver BrowserResolver { get; } = new(
+            resolveMetadataDocuments: true,
+            redirectToDirectory: true,
+            explicitRedirectToDirectory: true);
         public static ManifestPathResolver IdentityResolver { get; } = new(
             resolveMetadataDocuments: false,
             redirectToDirectory: false,
@@ -57,7 +73,8 @@ namespace Etherna.BeeNet.Manifest
                     ? SwarmAddress.Separator.ToString()
                     : path.TrimStart(SwarmAddress.Separator);
 
-                //only explicit redirect when new path is separator. Ignore all others explicit redirects here
+                // Only explicit redirect when new path is separator, ignore any other start separator trim.
+                // This because in general initial trims aren't an issue for browsers, and we can avoid a redirect.
                 if (newPath == SwarmAddress.Separator.ToString() && ExplicitRedirectToDirectory)
                     throw new ManifestExplicitRedirectException(newPath);
                 path = newPath;
