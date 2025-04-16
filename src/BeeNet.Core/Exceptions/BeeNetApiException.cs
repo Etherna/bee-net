@@ -20,32 +20,24 @@ using System.Globalization;
 namespace Etherna.BeeNet.Exceptions
 {
     [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-    public class BeeNetApiException : Exception
-    {
-        // Constructor.
-        public BeeNetApiException(
-            string message,
-            int statusCode,
-            string? response,
-            IReadOnlyDictionary<string, IEnumerable<string>> headers,
-            Exception? innerException)
-            : base($"""
-                    {message}
-                    
-                    Status: {statusCode}
-                    Response:
-                    {(response == null ? "(null)" : response[..(response.Length >= 512 ? 512 : response.Length)])}
-                    """, innerException)
-        {
-            StatusCode = statusCode;
-            Response = response;
-            Headers = headers;
-        }
+    public class BeeNetApiException(
+        string message,
+        int statusCode,
+        string? response,
+        IReadOnlyDictionary<string, IEnumerable<string>> headers,
+        Exception? innerException)
+        : Exception($"""
+                     {message}
 
+                     Status: {statusCode}
+                     Response:
+                     {(response == null ? "(null)" : response[..Math.Min(response.Length, 512)])}
+                     """, innerException)
+    {
         // Properties.
-        public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; private set; }
-        public string? Response { get; private set; }
-        public int StatusCode { get; private set; }
+        public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; } = headers;
+        public string? Response { get; } = response;
+        public int StatusCode { get; } = statusCode;
 
         // Methods.
         public override string ToString()
@@ -55,22 +47,16 @@ namespace Etherna.BeeNet.Exceptions
     }
 
     [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-    public class BeeNetApiException<TResult> : BeeNetApiException
+    public class BeeNetApiException<TResult>(
+        string message,
+        int statusCode,
+        string? response,
+        IReadOnlyDictionary<string, IEnumerable<string>> headers,
+        TResult result,
+        Exception? innerException)
+        : BeeNetApiException(message, statusCode, response, headers, innerException)
     {
-        // Constructor.
-        public BeeNetApiException(
-            string message,
-            int statusCode,
-            string? response,
-            IReadOnlyDictionary<string, IEnumerable<string>> headers,
-            TResult result,
-            Exception? innerException)
-            : base(message, statusCode, response, headers, innerException)
-        {
-            Result = result;
-        }
-
         // Properties.
-        public TResult Result { get; private set; }
+        public TResult Result { get; } = result;
     }
 }

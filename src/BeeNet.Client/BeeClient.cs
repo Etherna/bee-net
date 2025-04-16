@@ -1296,12 +1296,14 @@ namespace Etherna.BeeNet
 
         public async Task<string?> TryGetFileNameAsync(
             SwarmAddress address,
+            ManifestPathResolver manifestPathResolver,
             IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
             CancellationToken cancellationToken = default)
         {
             var chunkService = new ChunkService();
-            var metadata = await chunkService.GetFileMetadataFromChunksAsync(
+            var metadata = await chunkService.GetFileMetadataFromAddressAsync(
                 address,
+                manifestPathResolver,
                 new BeeClientChunkStore(this, chunksCache)).ConfigureAwait(false);
             return metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }

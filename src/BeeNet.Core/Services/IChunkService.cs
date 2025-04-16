@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
@@ -32,22 +33,24 @@ namespace Etherna.BeeNet.Services
         /// <param name="address">Resource address</param>
         /// <param name="chunkStore">The chunk reading store</param>
         /// <returns>Resource metadata</returns>
-        Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromChunksAsync(
+        Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromAddressAsync(
             SwarmAddress address,
+            ManifestPathResolver manifestPathResolver,
             IReadOnlyChunkStore chunkStore);
-        
+
         /// <summary>
         /// Get resource stream from a chunks store and the resource address
         /// </summary>
-        /// <param name="chunkStore">The chunk store</param>
         /// <param name="address">Resource address</param>
+        /// <param name="manifestPathResolver"></param>
+        /// <param name="chunkStore">The chunk store</param>
         /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
         /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetFileStreamFromAddressAsync(
-            IChunkStore chunkStore,
             SwarmAddress address,
-            bool resolveIndexDocument,
+            ManifestPathResolver manifestPathResolver,
+            IChunkStore chunkStore,
             string? fileCachePath = null,
             CancellationToken? cancellationToken = null);
     

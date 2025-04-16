@@ -68,11 +68,11 @@ namespace Etherna.BeeNet.Models
                                              Path.GetHashCode(StringComparison.InvariantCulture);
         public async Task<SwarmChunkReference> ResolveToChunkReferenceAsync(
             IReadOnlyChunkStore chunkStore,
-            bool resolveIndexDocument)
+            ManifestPathResolver manifestPathResolver)
         {
             var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
             return await rootManifest.ResolveAddressToChunkReferenceAsync(
-                Path, resolveIndexDocument).ConfigureAwait(false);
+                Path, manifestPathResolver).ConfigureAwait(false);
         }
         public override string ToString() => Hash + Path;
         

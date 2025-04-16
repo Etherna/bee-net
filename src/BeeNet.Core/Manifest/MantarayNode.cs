@@ -273,8 +273,7 @@ namespace Etherna.BeeNet.Manifest
             NodeTypeFlags &= ~flag;
 
         public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
-            string path,
-            bool resolveIndexDocument)
+            string path)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();
@@ -286,7 +285,7 @@ namespace Etherna.BeeNet.Manifest
             throw new NotImplementedException();
         }
 
-        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path, bool resolveIndexDocument)
+        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();

@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Tools;
 using System;
@@ -763,6 +764,7 @@ namespace Etherna.BeeNet
         /// <returns>The file name if found</returns>
         Task<string?> TryGetFileNameAsync(
             SwarmAddress address,
+            ManifestPathResolver manifestPathResolver,
             IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
             CancellationToken cancellationToken = default);
 

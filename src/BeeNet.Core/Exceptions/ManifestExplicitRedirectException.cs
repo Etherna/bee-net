@@ -12,24 +12,14 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Etherna.BeeNet.Manifest
+namespace Etherna.BeeNet.Exceptions
 {
-    public interface IReadOnlyMantarayNode
+    [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
+    public class ManifestExplicitRedirectException(string redirectToPath) : Exception
     {
-        // Properties.
-        SwarmHash? EntryHash { get; }
-        SwarmHash Hash { get; }
-        IReadOnlyDictionary<string, string> Metadata { get; }
-        NodeType NodeTypeFlags { get; }
-        XorEncryptKey? ObfuscationKey { get; }
-        
-        // Methods.
-        Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(string path);
-        Task<bool> HasPathPrefixAsync(string path);
-        Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path);
+        public string RedirectToPath { get; } = redirectToPath;
     }
 }
