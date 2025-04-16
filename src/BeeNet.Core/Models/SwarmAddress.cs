@@ -71,7 +71,7 @@ namespace Etherna.BeeNet.Models
             ManifestPathResolver manifestPathResolver)
         {
             var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
-            return await rootManifest.ResolveAddressToChunkReferenceAsync(
+            return await rootManifest.GetResourceChunkReferenceAsync(
                 Path, manifestPathResolver).ConfigureAwait(false);
         }
         public override string ToString() => Hash + Path;

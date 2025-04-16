@@ -106,7 +106,38 @@ namespace Etherna.BeeNet.Manifest
             IsDecoded = true;
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+        public async Task<SwarmChunkReference> GetChunkReferenceAsync(string path) =>
+            (await GetChunkReferenceWithMetadataAsync(path).ConfigureAwait(false)).Item1;
+
+        public async Task<(SwarmChunkReference, IReadOnlyDictionary<string, string>)> GetChunkReferenceWithMetadataAsync(string path)
+        {
+            ArgumentNullException.ThrowIfNull(path, nameof(path));
+
+            // If the path is empty and entry is not null, return the entry
+            if (path.Length == 0)
+            {
+                if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
+                    return (new SwarmChunkReference(
+                            EntryHash.Value,
+                            EntryEncryptionKey,
+                            EntryUseRecursiveEncryption),
+                        _metadata);
+            
+                throw new KeyNotFoundException("Path can't be found");
+            }
+            
+            // Find the child fork.
+            if (!_forks.TryGetValue(path[0], out var fork) ||
+                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+                throw new KeyNotFoundException($"Final path {path} can't be found");
+
+            if (!fork.Node.IsDecoded)
+                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
+
+            return await fork.Node.GetChunkReferenceWithMetadataAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
+        }
+
+        public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
             string path)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
@@ -129,7 +160,7 @@ namespace Etherna.BeeNet.Manifest
             if (!fork.Node.IsDecoded)
                 await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
 
-            return await fork.Node.GetResourceMetadataAsync(childSubPath).ConfigureAwait(false);
+            return await fork.Node.GetMetadataAsync(childSubPath).ConfigureAwait(false);
         }
 
         public async Task<bool> HasPathPrefixAsync(string path)
@@ -149,33 +180,6 @@ namespace Etherna.BeeNet.Manifest
 
             return await fork.Node.HasPathPrefixAsync(
                 path[fork.Prefix.Length..]).ConfigureAwait(false);
-        }
-
-        public async Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-
-            // If the path is empty and entry is not null, return the entry
-            if (path.Length == 0)
-            {
-                if(EntryHash.HasValue && EntryHash != SwarmHash.Zero)
-                    return new SwarmChunkReference(
-                        EntryHash.Value,
-                        EntryEncryptionKey,
-                        EntryUseRecursiveEncryption);
-            
-                throw new KeyNotFoundException("Path can't be found");
-            }
-            
-            // Find the child fork.
-            if (!_forks.TryGetValue(path[0], out var fork) ||
-                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
-                throw new KeyNotFoundException($"Final path {path} can't be found");
-
-            if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await fork.Node.ResolveChunkReferenceAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
         }
         
         // Helpers.

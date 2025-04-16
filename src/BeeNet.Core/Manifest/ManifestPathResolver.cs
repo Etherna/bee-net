@@ -75,7 +75,9 @@ namespace Etherna.BeeNet.Manifest
 
                 // Only explicit redirect when new path is separator, ignore any other start separator trim.
                 // This because in general initial trims aren't an issue for browsers, and we can avoid a redirect.
-                if (newPath == SwarmAddress.Separator.ToString() && ExplicitRedirectToDirectory)
+                if (path != newPath &&
+                    newPath == SwarmAddress.Separator.ToString() &&
+                    ExplicitRedirectToDirectory)
                     throw new ManifestExplicitRedirectException(newPath);
                 path = newPath;
             }

@@ -154,6 +154,19 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedResult = "Content on index.html"
                     },
                     
+                    // Can resolve index document on root with metadata resolution and explicit redirect to directory.
+                    new()
+                    {
+                        Path = "/",
+                        Resolver = new ManifestPathResolver(
+                            resolveMetadataDocuments: true,
+                            redirectToDirectory: true,
+                            explicitRedirectToDirectory: true),
+                        ExpectedGetMetadata = true,
+                        ExpectedInvokes = ["/", "index.html"],
+                        ExpectedResult = "Content on index.html"
+                    },
+                    
                     // Can serve content.
                     new()
                     {

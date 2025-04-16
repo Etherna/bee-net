@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Manifest
             if (!entry.IsDirectory)
                 skipWriteEntryHash = false;
 
-            // If the new entry doesn't have a path, this become a value node and directly takes entry.
+            // If the new entry doesn't have a path, this becomes a value node and directly takes the entry.
             if (path.Length == 0)
             {
                 SetNodeTypeFlag(NodeType.Value);
@@ -272,7 +272,19 @@ namespace Etherna.BeeNet.Manifest
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
 
-        public Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+        public Task<SwarmChunkReference> GetChunkReferenceAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
+
+        public Task<(SwarmChunkReference, IReadOnlyDictionary<string, string>)> GetChunkReferenceWithMetadataAsync(string path)
+        {
+            //this will be implemented probably into a base class
+            throw new NotImplementedException();
+        }
+
+        public Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
             string path)
         {
             //this will be implemented probably into a base class
@@ -280,12 +292,6 @@ namespace Etherna.BeeNet.Manifest
         }
 
         public Task<bool> HasPathPrefixAsync(string path)
-        {
-            //this will be implemented probably into a base class
-            throw new NotImplementedException();
-        }
-
-        public Task<SwarmChunkReference> ResolveChunkReferenceAsync(string path)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();
