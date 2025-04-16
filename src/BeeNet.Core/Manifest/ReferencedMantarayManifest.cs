@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public Task<SwarmHash> GetHashAsync() => Task.FromResult(RootNode.Hash);
 
-        public async Task<SwarmChunkReference> GetResourceChunkReferenceAsync(
+        public async Task<ManifestPathResolutionResult<SwarmChunkReference>> GetResourceChunkReferenceAsync(
             string path,
             ManifestPathResolver pathResolver)
         {
@@ -52,13 +52,14 @@ namespace Etherna.BeeNet.Manifest
                 getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
         }
 
-        public async Task<(SwarmChunkReference, IReadOnlyDictionary<string, string>)> GetResourceChunkReferenceWithMetadataAsync(
-            string path,
-            ManifestPathResolver pathResolver)
+        public async Task<ManifestPathResolutionResult<(SwarmChunkReference, IReadOnlyDictionary<string, string>)>>
+            GetResourceChunkReferenceWithMetadataAsync(
+                string path,
+                ManifestPathResolver pathResolver)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
-            
+
             if (!rootNode.IsDecoded)
                 await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
@@ -69,7 +70,7 @@ namespace Etherna.BeeNet.Manifest
                 getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetResourceMetadataAsync(
+        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetResourceMetadataAsync(
             string path,
             ManifestPathResolver pathResolver)
         {

@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Services
         /// <param name="address">Resource address</param>
         /// <param name="chunkStore">The chunk reading store</param>
         /// <returns>Resource metadata</returns>
-        Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromAddressAsync(
+        Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetFileMetadataFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
             IReadOnlyChunkStore chunkStore);

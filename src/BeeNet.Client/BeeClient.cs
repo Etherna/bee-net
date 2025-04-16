@@ -1301,10 +1301,10 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             var chunkService = new ChunkService();
-            var metadata = await chunkService.GetFileMetadataFromAddressAsync(
+            var metadata = (await chunkService.GetFileMetadataFromAddressAsync(
                 address,
                 manifestPathResolver,
-                new BeeClientChunkStore(this, chunksCache)).ConfigureAwait(false);
+                new BeeClientChunkStore(this, chunksCache)).ConfigureAwait(false)).Result;
             return metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }
 

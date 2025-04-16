@@ -36,6 +36,7 @@ namespace Etherna.BeeNet.Manifest
             public string[] ExpectedInvokes { get; init; } = [];
             public string[] ExpectedPrefixChecked { get; init; } = [];
             public string? ExpectedResult { get; init; }
+            public bool ExpectedResultFromErrorDoc { get; init; }
             public bool ExpectedKeyNotFoundException { get; init; }
             public string? ExpectedRedirectExceptionPath {get; init; }
         }
@@ -223,7 +224,8 @@ namespace Etherna.BeeNet.Manifest
                             resolveMetadataDocuments: true),
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["index.html/", "index.html/index.html", "error.html"],
-                        ExpectedResult = "Content on error.html"
+                        ExpectedResult = "Content on error.html",
+                        ExpectedResultFromErrorDoc = true
                     },
                     
                     // Throw KeyNotFoundException on directory name, without directory redirect.
@@ -361,7 +363,8 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["noIndexDir", "noIndexDir/index.html", "error.html"],
                         ExpectedPrefixChecked = ["noIndexDir/"],
-                        ExpectedResult = "Content on error.html"
+                        ExpectedResult = "Content on error.html",
+                        ExpectedResultFromErrorDoc = true
                     },
                     
                     // Resolve error document into directory, with implicit directory redirect and metadata resolution.
@@ -374,7 +377,8 @@ namespace Etherna.BeeNet.Manifest
                             explicitRedirectToDirectory: false),
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["noIndexDir/", "noIndexDir/index.html", "error.html"],
-                        ExpectedResult = "Content on error.html"
+                        ExpectedResult = "Content on error.html",
+                        ExpectedResultFromErrorDoc = true
                     },
                     
                     // Resolve error document on not existing file, with metadata resolution
@@ -387,7 +391,8 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["notFile", "error.html"],
                         ExpectedPrefixChecked = ["notFile/"],
-                        ExpectedResult = "Content on error.html"
+                        ExpectedResult = "Content on error.html",
+                        ExpectedResultFromErrorDoc = true
                     },
                     
                     // Throw KeyNotFoundException on not existing file, without metadata resolution
@@ -425,7 +430,8 @@ namespace Etherna.BeeNet.Manifest
                             redirectToDirectory: true),
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["notDir/", "notDir/index.html", "error.html"],
-                        ExpectedResult = "Content on error.html"
+                        ExpectedResult = "Content on error.html",
+                        ExpectedResultFromErrorDoc = true
                     },
                     
                     // Throw KeyNotFoundException on not existing directory, without metadata resolution
@@ -475,7 +481,7 @@ namespace Etherna.BeeNet.Manifest
             int getRootMetadataCounter = 0;
 
             // Action and asserts.
-            Task<string> InvokeFunc() =>
+            Task<ManifestPathResolutionResult<string>> InvokeFunc() =>
                 test.Resolver.InvokeAsync(
                     test.Path,
                     invokeAsync: p =>
@@ -500,7 +506,8 @@ namespace Etherna.BeeNet.Manifest
             {
                 var result = await InvokeFunc();
 
-                Assert.Equal(test.ExpectedResult, result);
+                Assert.Equal(test.ExpectedResult, result.Result);
+                Assert.Equal(test.ExpectedResultFromErrorDoc, result.IsFromErrorDoc);
             }
             else
             {

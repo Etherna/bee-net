@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
                                              Path.GetHashCode(StringComparison.InvariantCulture);
-        public async Task<SwarmChunkReference> ResolveToChunkReferenceAsync(
+        public async Task<ManifestPathResolutionResult<SwarmChunkReference>> ResolveToChunkReferenceAsync(
             IReadOnlyChunkStore chunkStore,
             ManifestPathResolver manifestPathResolver)
         {

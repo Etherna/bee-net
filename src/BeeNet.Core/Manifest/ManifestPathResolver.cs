@@ -55,7 +55,7 @@ namespace Etherna.BeeNet.Manifest
             explicitRedirectToDirectory: false);
         
         // Methods.
-        public async Task<TResult> InvokeAsync<TResult>(
+        public async Task<ManifestPathResolutionResult<TResult>> InvokeAsync<TResult>(
             string path,
             Func<string, Task<TResult>> invokeAsync,
             Func<string, Task<bool>> hasPathPrefixAsync,
@@ -91,7 +91,8 @@ namespace Etherna.BeeNet.Manifest
                 // Invoke with resolutions.
                 try
                 {
-                    return await invokeAsync(path).ConfigureAwait(false);
+                    var result = await invokeAsync(path).ConfigureAwait(false);
+                    return new(result, false);
                 }
                 catch(KeyNotFoundException)
                 {
@@ -134,7 +135,7 @@ namespace Etherna.BeeNet.Manifest
                             path != errorDocument)
                         {
                             //don't iterate on error, to avoid infinite execution vulnerability.  
-                            return await invokeAsync(errorDocument).ConfigureAwait(false);
+                            return new(await invokeAsync(errorDocument).ConfigureAwait(false), true);
                         }
                     }
 

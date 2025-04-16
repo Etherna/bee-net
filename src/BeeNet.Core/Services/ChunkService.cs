@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Services
     public class ChunkService : IChunkService
     {
         // Methods.
-        public async Task<IReadOnlyDictionary<string, string>> GetFileMetadataFromAddressAsync(
+        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetFileMetadataFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
             IReadOnlyChunkStore chunkStore)
@@ -53,8 +53,8 @@ namespace Etherna.BeeNet.Services
         {
             var chunkJoiner = new ChunkJoiner(chunkStore);
 
-            var chunkReference = await address.ResolveToChunkReferenceAsync(
-                chunkStore, manifestPathResolver).ConfigureAwait(false);
+            var chunkReference = (await address.ResolveToChunkReferenceAsync(
+                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result;
             
             return await chunkJoiner.GetJoinedChunkDataAsync(
                 chunkReference,
