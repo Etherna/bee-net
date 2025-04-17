@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Services
                 chunkStore,
                 address.Hash);
             
-            return await rootManifest.GetResourceMetadataAsync(address.Path, manifestPathResolver).ConfigureAwait(false);
+            return await rootManifest.GetMetadataAsync(address.Path, manifestPathResolver).ConfigureAwait(false);
         }
 
         public async Task<Stream> GetFileStreamFromAddressAsync(
@@ -53,8 +53,8 @@ namespace Etherna.BeeNet.Services
         {
             var chunkJoiner = new ChunkJoiner(chunkStore);
 
-            var chunkReference = (await address.ResolveToChunkReferenceAsync(
-                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result;
+            var chunkReference = (await address.ResolveToResourceInfoAsync(
+                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.ChunkReference;
             
             return await chunkJoiner.GetJoinedChunkDataAsync(
                 chunkReference,

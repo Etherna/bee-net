@@ -35,42 +35,24 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public Task<SwarmHash> GetHashAsync() => Task.FromResult(RootNode.Hash);
 
-        public async Task<ManifestPathResolutionResult<SwarmChunkReference>> GetResourceChunkReferenceAsync(
+        public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> GetResourceInfoAsync(
             string path,
             ManifestPathResolver pathResolver)
         {
             ArgumentNullException.ThrowIfNull(path, nameof(path));
             ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
-            
-            if (!rootNode.IsDecoded)
-                await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await pathResolver.InvokeAsync(
-                path,
-                invokeAsync: rootNode.GetChunkReferenceAsync,
-                hasPathPrefixAsync: rootNode.HasPathPrefixAsync,
-                getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
-        }
-
-        public async Task<ManifestPathResolutionResult<(SwarmChunkReference, IReadOnlyDictionary<string, string>)>>
-            GetResourceChunkReferenceWithMetadataAsync(
-                string path,
-                ManifestPathResolver pathResolver)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
 
             if (!rootNode.IsDecoded)
                 await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
 
             return await pathResolver.InvokeAsync(
                 path,
-                invokeAsync: rootNode.GetChunkReferenceWithMetadataAsync,
+                invokeAsync: rootNode.GetResourceInfoAsync,
                 hasPathPrefixAsync: rootNode.HasPathPrefixAsync,
                 getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
         }
 
-        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetResourceMetadataAsync(
+        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetMetadataAsync(
             string path,
             ManifestPathResolver pathResolver)
         {

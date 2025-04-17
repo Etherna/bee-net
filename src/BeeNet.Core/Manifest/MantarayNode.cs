@@ -272,13 +272,7 @@ namespace Etherna.BeeNet.Manifest
         private void RemoveNodeTypeFlag(NodeType flag) =>
             NodeTypeFlags &= ~flag;
 
-        public Task<SwarmChunkReference> GetChunkReferenceAsync(string path)
-        {
-            //this will be implemented probably into a base class
-            throw new NotImplementedException();
-        }
-
-        public Task<(SwarmChunkReference, IReadOnlyDictionary<string, string>)> GetChunkReferenceWithMetadataAsync(string path)
+        public Task<MantarayResourceInfo> GetResourceInfoAsync(string path)
         {
             //this will be implemented probably into a base class
             throw new NotImplementedException();

@@ -66,12 +66,12 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
                                              Path.GetHashCode(StringComparison.InvariantCulture);
-        public async Task<ManifestPathResolutionResult<SwarmChunkReference>> ResolveToChunkReferenceAsync(
+        public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveToResourceInfoAsync(
             IReadOnlyChunkStore chunkStore,
             ManifestPathResolver manifestPathResolver)
         {
             var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
-            return await rootManifest.GetResourceChunkReferenceAsync(
+            return await rootManifest.GetResourceInfoAsync(
                 Path, manifestPathResolver).ConfigureAwait(false);
         }
         public override string ToString() => Hash + Path;

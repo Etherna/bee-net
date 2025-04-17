@@ -14,22 +14,12 @@
 
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public interface IReadOnlyMantarayNode
+    public sealed class MantarayResourceInfo
     {
-        // Properties.
-        SwarmHash? EntryHash { get; }
-        SwarmHash Hash { get; }
-        IReadOnlyDictionary<string, string> Metadata { get; }
-        NodeType NodeTypeFlags { get; }
-        XorEncryptKey? ObfuscationKey { get; }
-        
-        // Methods.
-        Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(string path);
-        Task<MantarayResourceInfo> GetResourceInfoAsync(string path);
-        Task<bool> HasPathPrefixAsync(string path);
+        public required SwarmChunkReference ChunkReference { get; init; }
+        public required IReadOnlyDictionary<string, string> Metadata { get; init; }
     }
 }
