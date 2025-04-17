@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public ReadOnlyMemory<byte> Data => FeedPayload[TimeStampSize..];
+        public ReadOnlyMemory<byte> SpanData => FeedPayload[TimeStampSize..];
         public DateTimeOffset TimeStamp => FeedPayload[..TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
 
         // Methods.
@@ -93,9 +93,8 @@ namespace Etherna.BeeNet.Models
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             
-            var dataChunkSpan = SwarmCac.LengthToSpan((ulong)Data.Length);
-            var dataChunkHash = swarmChunkBmt.Hash(dataChunkSpan, Data);
-            return new SwarmCac(dataChunkHash, dataChunkSpan, Data);
+            var dataChunkHash = swarmChunkBmt.Hash(SpanData);
+            return new SwarmCac(dataChunkHash, SpanData);
         }
         
         // Static methods.
