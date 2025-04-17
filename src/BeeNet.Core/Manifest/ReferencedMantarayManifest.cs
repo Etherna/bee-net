@@ -20,14 +20,27 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ReferencedMantarayManifest(
-        IReadOnlyChunkStore chunkStore,
-        SwarmHash rootHash,
-        bool useChunkStoreCache = false)
-        : IReadOnlyMantarayManifest
+    public class ReferencedMantarayManifest : IReadOnlyMantarayManifest
     {
         // Fields.
-        private readonly ReferencedMantarayNode rootNode = new(chunkStore, rootHash, null, NodeType.Edge, useChunkStoreCache);
+        private readonly ReferencedMantarayNode rootNode;
+
+        // Constructors.
+        public ReferencedMantarayManifest(
+            IReadOnlyChunkStore chunkStore,
+            SwarmHash rootHash,
+            bool useChunkStoreCache = false)
+        {
+            rootNode = new ReferencedMantarayNode(chunkStore, rootHash, null, NodeType.Edge, useChunkStoreCache);
+        }
+
+        public ReferencedMantarayManifest(
+            IReadOnlyChunkStore chunkStore,
+            SwarmCac rootChunk,
+            bool useChunkStoreCache = false)
+        {
+            rootNode = new ReferencedMantarayNode(chunkStore, rootChunk, null, NodeType.Edge, useChunkStoreCache);
+        }
 
         // Properties.
         public IReadOnlyMantarayNode RootNode => rootNode;

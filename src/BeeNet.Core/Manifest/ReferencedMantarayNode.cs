@@ -55,6 +55,31 @@ namespace Etherna.BeeNet.Manifest
                 EntryUseRecursiveEncryption = bool.Parse(useRecursiveEncrypStr);
         }
         
+        public ReferencedMantarayNode(
+            IReadOnlyChunkStore chunkStore,
+            SwarmCac chunk,
+            Dictionary<string, string>? metadata,
+            NodeType nodeTypeFlags,
+            bool useChunkStoreCache = false)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            
+            this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
+            this.useChunkStoreCache = useChunkStoreCache;
+            Hash = chunk.Hash;
+            _metadata = metadata ?? new Dictionary<string, string>();
+            NodeTypeFlags = nodeTypeFlags;
+
+            // Read metadata.
+            if (_metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr))
+                EntryEncryptionKey = new XorEncryptKey(encryptKeyStr);
+            if (_metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr))
+                EntryUseRecursiveEncryption = bool.Parse(useRecursiveEncrypStr);
+            
+            // Decode chunk.
+            DecodeCacHelper(chunk);
+        }
+
         // Properties.
         public XorEncryptKey? EntryEncryptionKey { get; }
         public SwarmHash? EntryHash => IsDecoded
@@ -85,25 +110,7 @@ namespace Etherna.BeeNet.Manifest
             if (chunk is not SwarmCac cac)
                 throw new InvalidOperationException("Chunk is not a Content Addressed Chunk");
             
-            var data = cac.Data.ToArray();
-            var readIndex = 0;
-            
-            // Get obfuscation key and de-obfuscate.
-            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
-            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
-            readIndex += XorEncryptKey.KeySize;
-            
-            // Read header.
-            var versionHash = data.AsMemory()[readIndex..(readIndex + MantarayNode.VersionHashSize)];
-            readIndex += MantarayNode.VersionHashSize;
-            
-            if (versionHash.Span.SequenceEqual(MantarayNode.Version02Hash))
-                DecodeVersion02(data.AsMemory()[readIndex..]);
-            else
-                throw new InvalidOperationException("Manifest version not recognized");
-            
-            // Set as decoded.
-            IsDecoded = true;
+            DecodeCacHelper(cac);
         }
 
         public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
@@ -186,6 +193,32 @@ namespace Etherna.BeeNet.Manifest
         }
         
         // Helpers.
+        private void DecodeCacHelper(SwarmCac chunk)
+        {
+            if (chunk.Hash != Hash)
+                throw new ArgumentException("Chunk hash not match");
+            
+            var data = chunk.Data.ToArray();
+            var readIndex = 0;
+            
+            // Get obfuscation key and de-obfuscate.
+            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
+            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
+            readIndex += XorEncryptKey.KeySize;
+            
+            // Read header.
+            var versionHash = data.AsMemory()[readIndex..(readIndex + MantarayNode.VersionHashSize)];
+            readIndex += MantarayNode.VersionHashSize;
+            
+            if (versionHash.Span.SequenceEqual(MantarayNode.Version02Hash))
+                DecodeVersion02(data.AsMemory()[readIndex..]);
+            else
+                throw new InvalidOperationException("Manifest version not recognized");
+            
+            // Set as decoded.
+            IsDecoded = true;
+        }
+        
         private void DecodeVersion02(ReadOnlyMemory<byte> data)
         {
             var readIndex = 0;
