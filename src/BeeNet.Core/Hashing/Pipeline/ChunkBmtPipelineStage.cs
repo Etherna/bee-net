@@ -53,9 +53,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
             // Hash chunk and clear chunk bmt for next uses.
-            var plainChunkHash = args.SwarmChunkBmt.Hash(
-                args.SpanData[..SwarmCac.SpanSize],
-                args.SpanData[SwarmCac.SpanSize..]);
+            var plainChunkHash = args.SwarmChunkBmt.Hash(args.SpanData);
             args.SwarmChunkBmt.Clear();
             
             // Decide to compact chunk or not.
@@ -193,9 +191,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     EncryptDecryptChunkData(chunkKey, encryptedSpanData);
                     
                     // Calculate hash, bucket id, and save in cache.
-                    var encryptedHash = args.SwarmChunkBmt.Hash(
-                        encryptedSpanData.AsMemory()[..SwarmCac.SpanSize],
-                        encryptedSpanData.AsMemory()[SwarmCac.SpanSize..]);
+                    var encryptedHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
                     optimisticCache[i] = new(chunkKey, encryptedSpanData, encryptedHash);
                     
                     // Clear chunk bmt for next uses.

@@ -56,9 +56,7 @@ namespace Etherna.BeeNet.Models
             cursor += SwarmSocSignature.SignatureSize;
 
             var innerChunkSpanData = data[cursor..];
-            var innerChunkHash = swarmChunkBmt.Hash(
-                innerChunkSpanData[..SwarmCac.SpanSize],
-                innerChunkSpanData[SwarmCac.SpanSize..]);
+            var innerChunkHash = swarmChunkBmt.Hash(innerChunkSpanData);
             var innerChunk = new SwarmCac(innerChunkHash, innerChunkSpanData);
             
             // Recover owner information.

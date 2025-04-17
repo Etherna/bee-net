@@ -111,13 +111,13 @@ namespace Etherna.BeeNet.Models
         
         // Static methods.
         public static SwarmCac BuildInnerChunk(
-            ReadOnlyMemory<byte> data,
+            ReadOnlyMemory<byte> spanData,
             SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
             
-            var innerChunkHash = swarmChunkBmt.Hash(data[..SwarmCac.SpanSize], data[SwarmCac.SpanSize..]);
-            var innerChunk = new SwarmCac(innerChunkHash, data);
+            var innerChunkHash = swarmChunkBmt.Hash(spanData);
+            var innerChunk = new SwarmCac(innerChunkHash, spanData);
             return innerChunk;
         }
     }

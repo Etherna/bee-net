@@ -87,6 +87,9 @@ namespace Etherna.BeeNet.Models
             return proofs;
         }
 
+        public SwarmHash Hash(ReadOnlyMemory<byte> spanData) =>
+            Hash(spanData[..SwarmCac.SpanSize], spanData[SwarmCac.SpanSize..]);
+
         public SwarmHash Hash(ReadOnlyMemory<byte> span, ReadOnlyMemory<byte> data)
         {
             if (data.Length > SwarmCac.DataSize)

@@ -669,7 +669,7 @@ namespace Etherna.BeeNet.Models
                 SwarmCac.BuildFromData(SwarmHash.Zero, new byte[] { 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 }),
                 null);
 
-            var result = chunk.Data;
+            var result = chunk.SpanData;
 
             Assert.Equal(new byte[] { 6, 7 }, result);
         }
