@@ -20,7 +20,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.TypeConverters
 {
-    public class SwarmHashTypeConverter : TypeConverter
+    public sealed class SwarmHashTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
             sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);

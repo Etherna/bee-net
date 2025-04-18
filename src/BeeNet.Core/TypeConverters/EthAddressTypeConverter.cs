@@ -20,7 +20,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.TypeConverters
 {
-    public class EthAddressTypeConverter : TypeConverter
+    public sealed class EthAddressTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
             sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);

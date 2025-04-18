@@ -27,8 +27,11 @@ namespace Etherna.BeeNet.AspNet
             options.JsonSerializerOptions.Converters.Add(new EthAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new EthTxHashJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new PostageBatchIdJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new PostageStampJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmHashJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new SwarmSocIdentifierJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new SwarmSocSignatureJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmUriJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new TagIdJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new XorEncryptKeyJsonConverter());
