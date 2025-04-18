@@ -29,6 +29,7 @@ namespace Etherna.BeeNet.AspNet
             options.JsonSerializerOptions.Converters.Add(new PostageBatchIdJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new PostageStampJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmAddressJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new SwarmFeedTopicJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmHashJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmSocIdentifierJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmSocSignatureJsonConverter());
