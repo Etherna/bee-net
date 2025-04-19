@@ -240,7 +240,7 @@ namespace Etherna.BeeNet
                 gasPrice?.ToWeiLong(),
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<PostageBatchId> DilutePostageBatchAsync(
+        public async Task<EthTxHash> DilutePostageBatchAsync(
             PostageBatchId batchId,
             int depth,
             XDaiBalance? gasPrice = null,
@@ -251,7 +251,7 @@ namespace Etherna.BeeNet
                 depth,
                 gasPrice?.ToWeiLong(),
                 gasLimit,
-                cancellationToken).ConfigureAwait(false)).BatchID;
+                cancellationToken).ConfigureAwait(false)).TxHash;
 
         public async Task<EnvelopeResponse> EnvelopeAsync(
             PostageBatchId batchId,

@@ -161,9 +161,9 @@ namespace Etherna.BeeNet
         /// <summary>Dilute an existing postage batch.</summary>
         /// <param name="batchId">Batch ID to dilute</param>
         /// <param name="depth">New batch depth. Must be higher than the previous depth.</param>
-        /// <returns>Returns the postage batch ID that was diluted.</returns>
+        /// <returns>Returns the tx hash diluting the postage batch</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<PostageBatchId> DilutePostageBatchAsync(
+        Task<EthTxHash> DilutePostageBatchAsync(
             PostageBatchId batchId,
             int depth,
             XDaiBalance? gasPrice = null,
