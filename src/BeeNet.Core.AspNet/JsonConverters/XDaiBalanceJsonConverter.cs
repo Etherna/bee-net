@@ -19,7 +19,8 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class XDaiBalanceJsonConverter : JsonConverter<XDaiBalance>
+    public sealed class XDaiBalanceJsonConverter(bool writeAsString)
+        : JsonConverter<XDaiBalance>
     {
         public override XDaiBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
@@ -32,7 +33,10 @@ namespace Etherna.BeeNet.AspNet.JsonConverters
         public override void Write(Utf8JsonWriter writer, XDaiBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            writer.WriteNumberValue(value.ToWeiLong());
+            if (writeAsString)
+                writer.WriteStringValue(value.ToWeiString());
+            else
+                writer.WriteNumberValue(value.ToWeiLong());
         }
     }
 }

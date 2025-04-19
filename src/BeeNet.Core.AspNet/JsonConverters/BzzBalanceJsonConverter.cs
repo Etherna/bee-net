@@ -19,7 +19,8 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public sealed class BzzBalanceJsonConverter : JsonConverter<BzzBalance>
+    public sealed class BzzBalanceJsonConverter(bool writeAsString)
+        : JsonConverter<BzzBalance>
     {
         public override BzzBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
@@ -32,7 +33,10 @@ namespace Etherna.BeeNet.AspNet.JsonConverters
         public override void Write(Utf8JsonWriter writer, BzzBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            writer.WriteNumberValue(value.ToPlurLong());
+            if (writeAsString)
+                writer.WriteStringValue(value.ToPlurString());
+            else
+                writer.WriteNumberValue(value.ToPlurLong());
         }
     }
 }
