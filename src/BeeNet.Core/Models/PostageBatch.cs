@@ -33,7 +33,6 @@ namespace Etherna.BeeNet.Models
             bool isImmutable,
             bool isUsable,
             string? label,
-            int? storageRadius,
             TimeSpan ttl,
             uint? utilization)
         {
@@ -48,7 +47,6 @@ namespace Etherna.BeeNet.Models
             IsImmutable = isImmutable;
             IsUsable = isUsable;
             Label = label;
-            StorageRadius = storageRadius;
             Ttl = ttl;
             Utilization = utilization;
         }
@@ -63,7 +61,6 @@ namespace Etherna.BeeNet.Models
             isImmutable: false,
             isUsable: true,
             label: null,
-            storageRadius: null,
             ttl: TimeSpan.FromDays(3650),
             utilization: 0);
 
@@ -101,8 +98,6 @@ namespace Etherna.BeeNet.Models
         /// Label to identify the batch
         /// </summary>
         public string? Label { get; }
-
-        public int? StorageRadius { get; }
 
         /// <summary>
         /// Time to live before expiration

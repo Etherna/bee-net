@@ -348,14 +348,14 @@ namespace Etherna.BeeNet
                         sent: BzzBalance.FromPlurString(s.Sent))));
         }
 
-        public async Task<IDictionary<string, PostageBatch[]>> GetAllValidPostageBatchesFromAllNodesAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<IDictionary<string, (PostageBatch PostageBatch, int StorageRadius)[]>>
+            GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
             return response.Batches.GroupBy(b => b.Owner)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.Select(batch => new PostageBatch(
+                    g => g.Select(batch => (new PostageBatch(
                         id: batch.BatchID,
                         amount: BzzBalance.FromPlurString(batch.Value),
                         blockNumber: batch.Start,
@@ -364,9 +364,8 @@ namespace Etherna.BeeNet
                         isImmutable: batch.ImmutableFlag,
                         isUsable: true,
                         label: null,
-                        storageRadius: batch.StorageRadius,
                         ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
-                        utilization: null))
+                        utilization: null), batch.StorageRadius))
                         .ToArray());
         }
 
@@ -645,8 +644,7 @@ namespace Etherna.BeeNet
                     label: b.Label,
                     ttl: TimeSpan.FromSeconds(Math.Min(b.BatchTTL, TimeSpanMaxSeconds)),
                     isUsable: b.Usable,
-                    utilization: b.Utilization,
-                    storageRadius: null))
+                    utilization: b.Utilization))
                 .ToArray();
         }
 
@@ -689,8 +687,7 @@ namespace Etherna.BeeNet
                 label: response.Label,
                 ttl: TimeSpan.FromSeconds(Math.Min(response.BatchTTL, TimeSpanMaxSeconds)),
                 isUsable: response.Usable,
-                utilization: response.Utilization,
-                storageRadius: null);
+                utilization: response.Utilization);
         }
 
         public async Task<PostageBucketsStatus> GetPostageBatchBucketsAsync(
