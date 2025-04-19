@@ -17,30 +17,22 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.JsonConverters
+namespace Etherna.BeeNet.AspNet.JsonConverters
 {
-    public class BzzBalanceJsonConverter : JsonConverter<BzzBalance>
+    public sealed class BzzBalanceJsonConverter : JsonConverter<BzzBalance>
     {
-        public override BzzBalance Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options)
-        {
-            if (reader.TokenType != JsonTokenType.Number)
-                throw new JsonException();
+        public override BzzBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+            reader.TokenType switch
+            {
+                JsonTokenType.Number => BzzBalance.FromPlurLong(reader.GetInt64()),
+                JsonTokenType.String => BzzBalance.FromPlurString(reader.GetString()!),
+                _ => throw new JsonException()
+            };
 
-            var decimalValue = reader.GetDecimal();
-
-            return new BzzBalance(decimalValue);
-        }
-
-        public override void Write(
-            Utf8JsonWriter writer,
-            BzzBalance value,
-            JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, BzzBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            writer.WriteNumberValue(value.ToDecimal());
+            writer.WriteNumberValue(value.ToPlurLong());
         }
     }
 }
