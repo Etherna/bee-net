@@ -29,7 +29,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var postageBatches = await beeNodeClient.GetOwnedPostageBatchesByNodeAsync();
+            var postageBatches = await beeNodeClient.GetOwnedPostageBatchesAsync();
 
 
             // Assert
