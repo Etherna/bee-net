@@ -161,7 +161,7 @@ namespace Etherna.BeeNet
         /// <summary>Dilute an existing postage batch.</summary>
         /// <param name="batchId">Batch ID to dilute</param>
         /// <param name="depth">New batch depth. Must be higher than the previous depth.</param>
-        /// <returns>Returns the tx hash diluting the postage batch</returns>
+        /// <returns>Returns the tx hash updating the postage batch</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<EthTxHash> DilutePostageBatchAsync(
             PostageBatchId batchId,
@@ -705,9 +705,9 @@ namespace Etherna.BeeNet
         /// <summary>Top up an existing postage batch.</summary>
         /// <param name="batchId">Batch ID to top up</param>
         /// <param name="amount">Amount of BZZ per chunk to top up to an existing postage batch.</param>
-        /// <returns>Returns the postage batch ID that was topped up</returns>
+        /// <returns>Returns the tx hash updating the postage batch</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<PostageBatchId> TopUpPostageBatchAsync(
+        Task<EthTxHash> TopUpPostageBatchAsync(
             PostageBatchId batchId, 
             BzzBalance amount,
             XDaiBalance? gasPrice = null,

@@ -1217,7 +1217,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             generatedClient.PssSubscribeAsync(topic, cancellationToken);
 
-        public async Task<PostageBatchId> TopUpPostageBatchAsync(
+        public async Task<EthTxHash> TopUpPostageBatchAsync(
             PostageBatchId batchId,
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
@@ -1228,7 +1228,7 @@ namespace Etherna.BeeNet
                 amount.ToPlurLong(),
                 gasPrice?.ToWeiLong(),
                 gasLimit,
-                cancellationToken).ConfigureAwait(false)).BatchID;
+                cancellationToken).ConfigureAwait(false)).TxHash;
 
         public async Task<string> TryConnectToPeerAsync(
             string peerId,

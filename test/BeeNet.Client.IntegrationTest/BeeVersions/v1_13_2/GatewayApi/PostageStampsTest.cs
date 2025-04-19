@@ -88,10 +88,8 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Act 
             var result = await beeNodeClient.TopUpPostageBatchAsync(batch, 64);
-
-
+            
             // Assert
-            Assert.Equal(batch, result);
         }
 
         //TODO Invalid depth
