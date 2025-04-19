@@ -18,6 +18,9 @@ namespace Etherna.BeeNet.Models
     {
         public const string ContentTypeHeader = "Content-Type";
         public const string DefaultIndexFilename = "index.html";
+        public const string GasLimitHeader  = "Gas-Limit";
+        public const string GasPriceHeader  = "Gas-Price";
+        public const string ImmutableHeader = "Immutable";
         public const string SwarmCollectionHeader = "Swarm-Collection";
         public const string SwarmErrorDocumentHeader = "Swarm-Error-Document";
         public const string SwarmFeedIndexHeader = "Swarm-Feed-Index";
