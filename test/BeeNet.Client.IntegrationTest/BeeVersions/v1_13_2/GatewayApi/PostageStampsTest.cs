@@ -24,7 +24,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetOwnedPostageBatchesByNodeAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
 
@@ -40,7 +40,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetPostageBatchAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             
 
@@ -57,7 +57,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetPostageBatchBucketsAsync()
         {
             // Arrange.
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act.
@@ -75,15 +75,15 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Assert.
             await Task.Delay(60000);
-            var batch = await beeNodeClient.GetPostageBatchAsync(result);
-            Assert.Equal(batch.Id, result);
+            var batch = await beeNodeClient.GetPostageBatchAsync(result.BatchId);
+            Assert.Equal(batch.Id, result.BatchId);
         }
 
         [Fact]
         public async Task TopUpPostageBatchAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(60000);
 
             // Act 
@@ -115,7 +115,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task GetAllValidPostageBatchesFromAllNodesAsync()
         {
             // Arrange 
-            var batchId = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batchId, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             
             // Act 

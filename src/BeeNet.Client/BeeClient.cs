@@ -106,27 +106,30 @@ namespace Etherna.BeeNet
                     shadowReservedBalance: BzzBalance.FromPlurString(i.Value.ShadowReservedBalance),
                     ghostBalance: BzzBalance.FromPlurString(i.Value.GhostBalance)));
         
-        public async Task<PostageBatchId> BuyPostageBatchAsync(
+        public async Task<(PostageBatchId BatchId, EthTxHash TxHash)> BuyPostageBatchAsync(
             BzzBalance amount,
             int depth,
             string? label = null,
             bool? immutable = null,
+            ulong? gasLimit = null,
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
-            CancellationToken cancellationToken = default) =>
-            (await generatedClient.StampsPostAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var result = await generatedClient.StampsPostAsync(
                 amount.ToPlurString(),
                 depth,
                 label,
                 immutable,
                 gasPrice?.ToWeiLong(),
                 gasLimit,
-                cancellationToken).ConfigureAwait(false)).BatchID;
+                cancellationToken).ConfigureAwait(false);
+            return (result.BatchID, result.TxHash);
+        }
 
         public async Task<string> CashoutChequeForPeerAsync(
             string peerId,
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookCashoutPostAsync(
                 peerId,
@@ -241,7 +244,7 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             int depth,
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsDiluteAsync(
                 batchId.ToString(),
@@ -1120,7 +1123,7 @@ namespace Etherna.BeeNet
 
         public async Task StakeDeleteAsync(
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             await generatedClient.StakeDeleteAsync(
                 gasPrice?.ToWeiLong(),
@@ -1133,7 +1136,7 @@ namespace Etherna.BeeNet
         public async Task StakePostAsync(
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             await generatedClient.StakePostAsync(
                 amount.ToPlurString(),
@@ -1143,7 +1146,7 @@ namespace Etherna.BeeNet
 
         public Task StakeWithdrawableDeleteAsync(
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.StakeWithdrawableDeleteAsync(gasPrice?.ToWeiLong(), gasLimit, cancellationToken);
 
@@ -1221,7 +1224,7 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             BzzBalance amount,
             XDaiBalance? gasPrice = null,
-            long? gasLimit = null,
+            ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsTopupAsync(
                 batchId.ToString(),

@@ -26,7 +26,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task CreateFeedAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             var addresses = await beeNodeClient.GetAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";

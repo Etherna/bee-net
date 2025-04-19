@@ -29,7 +29,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
 
         protected async Task<SwarmHash> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
@@ -45,7 +45,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
 
         protected async Task<SwarmHash> UploadChunkFileAndGetReferenceAsync()
         {
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 
