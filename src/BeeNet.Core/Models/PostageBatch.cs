@@ -27,14 +27,14 @@ namespace Etherna.BeeNet.Models
         public PostageBatch(
             PostageBatchId id,
             BzzBalance amount,
-            int blockNumber,
+            ulong blockNumber,
             int depth,
             bool exists,
             bool isImmutable,
             bool isUsable,
             string? label,
             TimeSpan ttl,
-            uint? utilization)
+            uint utilization)
         {
             if (depth is < MinDepth or > MaxDepth)
                 throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Models
             Exists = exists;
             IsImmutable = isImmutable;
             IsUsable = isUsable;
-            Label = label;
+            Label = label ?? "";
             Ttl = ttl;
             Utilization = utilization;
         }
@@ -75,7 +75,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Block number when this batch was created
         /// </summary>
-        public int BlockNumber { get; }
+        public ulong BlockNumber { get; }
         
         /// <summary>
         /// Batch depth: batchSize = 2^depth * chunkSize
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Label to identify the batch
         /// </summary>
-        public string? Label { get; }
+        public string Label { get; }
 
         /// <summary>
         /// Time to live before expiration
@@ -107,7 +107,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// The count of the fullest bucket
         /// </summary>
-        public uint? Utilization { get; }
+        public uint Utilization { get; }
         
         // Static methods.
         public static BzzBalance CalculateAmount(BzzBalance chainPrice, TimeSpan ttl) =>

@@ -528,6 +528,7 @@ components:
           type: integer
         blockNumber:
           type: integer
+          format: int64
         immutableFlag:
           type: boolean
         exists:
@@ -556,6 +557,7 @@ components:
           $ref: "#/components/schemas/BigInt"
         start:
           type: integer
+          format: int64
         depth:
           type: integer
         bucketDepth:

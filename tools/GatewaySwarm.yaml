@@ -2750,6 +2750,7 @@ paths:
                               type: integer
                             blockNumber:
                               type: integer
+                              format: int64
                             immutableFlag:
                               type: boolean
                             exists:
@@ -2819,6 +2820,7 @@ paths:
                         type: integer
                       blockNumber:
                         type: integer
+                        format: int64
                       immutableFlag:
                         type: boolean
                       exists:
@@ -3047,6 +3049,7 @@ paths:
                           example: "1000000000000000000"
                         start:
                           type: integer
+                          format: int64
                         depth:
                           type: integer
                         bucketDepth:

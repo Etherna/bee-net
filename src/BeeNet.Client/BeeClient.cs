@@ -365,7 +365,7 @@ namespace Etherna.BeeNet
                         isUsable: true,
                         label: null,
                         ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
-                        utilization: null), batch.StorageRadius))
+                        utilization: 0), batch.StorageRadius))
                         .ToArray());
         }
 

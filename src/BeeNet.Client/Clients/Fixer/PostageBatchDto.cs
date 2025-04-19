@@ -59,7 +59,7 @@ namespace Etherna.BeeNet.Clients.Fixer
         public int BucketDepth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("blockNumber")]
-        public int BlockNumber { get; set; } = default!;
+        public ulong BlockNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
         public bool ImmutableFlag { get; set; } = default!;
