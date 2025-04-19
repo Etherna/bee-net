@@ -386,7 +386,7 @@ namespace Etherna.BeeNet
         /// <summary>Get all owned postage batches by this node</summary>
         /// <returns>List of all owned postage batches</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred</exception>
-        Task<PostageBatch[]> GetOwnedPostageBatchesByNodeAsync(CancellationToken cancellationToken = default);
+        Task<PostageBatch[]> GetOwnedPostageBatchesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>

@@ -629,7 +629,7 @@ namespace Etherna.BeeNet
                 swapEnabled: response.SwapEnabled);
         }
 
-        public async Task<PostageBatch[]> GetOwnedPostageBatchesByNodeAsync(
+        public async Task<PostageBatch[]> GetOwnedPostageBatchesAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
