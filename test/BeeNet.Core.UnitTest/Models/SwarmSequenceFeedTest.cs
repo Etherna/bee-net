@@ -66,7 +66,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -85,7 +84,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -104,7 +102,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -123,7 +120,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -142,7 +138,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -164,7 +159,6 @@ namespace Etherna.BeeNet.Models
                                 var chunk = BuildSequenceFeedChunk(i);
                                 chunkStoreMock.Setup(c => c.TryGetAsync(
                                         chunk.Hash,
-                                        It.IsAny<SwarmChunkType>(),
                                         It.IsAny<bool>(),
                                         It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(chunk);
@@ -199,7 +193,6 @@ namespace Etherna.BeeNet.Models
                         
             chunkStoreMock.Verify(cs => cs.TryGetAsync(
                     It.IsAny<SwarmHash>(),
-                    It.IsAny<SwarmChunkType>(),
                     It.IsAny<bool>(),
                     It.IsAny<CancellationToken>()),
                 Times.Between(
@@ -212,7 +205,6 @@ namespace Etherna.BeeNet.Models
                 var hash = SequenceFeed.BuildHash(new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
-                        It.IsAny<SwarmChunkType>(),
                         It.IsAny<bool>(),
                         It.IsAny<CancellationToken>()),
                     Times.Once);
@@ -223,7 +215,6 @@ namespace Etherna.BeeNet.Models
                 var hash = SequenceFeed.BuildHash(new SwarmSequenceFeedIndex(index), hasher);
                 chunkStoreMock.Verify(cs => cs.TryGetAsync(
                         hash,
-                        It.IsAny<SwarmChunkType>(),
                         It.IsAny<bool>(),
                         It.IsAny<CancellationToken>()),
                     Times.AtMostOnce);

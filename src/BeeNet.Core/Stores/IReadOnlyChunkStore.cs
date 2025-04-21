@@ -22,13 +22,11 @@ namespace Etherna.BeeNet.Stores
     {
         Task<SwarmChunk> GetAsync(
             SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default);
 
         Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default);
     }

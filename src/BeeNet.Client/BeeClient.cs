@@ -456,7 +456,7 @@ namespace Etherna.BeeNet
 
         public async Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
-            SwarmChunkType chunkType,
+            SwarmChunkBmt swarmChunkBmt,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -476,12 +476,8 @@ namespace Etherna.BeeNet
                 await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
             }
             var chunkData = memoryStream.ToArray();
-            return chunkType switch
-            {
-                SwarmChunkType.Cac => new SwarmCac(hash, chunkData),
-                SwarmChunkType.Soc => SwarmSoc.BuildFromBytes(hash, chunkData, new SwarmChunkBmt()),
-                _ => throw new InvalidOperationException($"Unknown chunk type: {chunkType}")
-            };
+
+            return SwarmChunk.BuildChunkFromHashAndData(hash, chunkData, swarmChunkBmt);
         }
 
         public async Task<Stream> GetChunkStreamAsync(

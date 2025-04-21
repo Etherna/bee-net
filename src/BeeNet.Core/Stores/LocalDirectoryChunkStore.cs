@@ -18,6 +18,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,7 +32,8 @@ namespace Etherna.BeeNet.Stores
     public class LocalDirectoryChunkStore : ChunkStoreBase
     {
         // Consts.
-        public const string ChunkFileExtension = ".chunk";
+        public const string CacFileExtension = ".cac";
+        public const string SocFileExtension = ".soc";
         
         // Constructor.
         public LocalDirectoryChunkStore(
@@ -57,10 +59,11 @@ namespace Etherna.BeeNet.Stores
         // Methods.
         public Task<IEnumerable<SwarmHash>> GetAllHashesAsync()
         {
-            var files = Directory.GetFiles(DirectoryPath, '*' + ChunkFileExtension);
-            var hashes = new List<SwarmHash>();
+            var cacFiles = Directory.GetFiles(DirectoryPath, '*' + CacFileExtension);
+            var socFiles = Directory.GetFiles(DirectoryPath, '*' + SocFileExtension);
+            var hashes = new HashSet<SwarmHash>();
             
-            foreach (var file in files)
+            foreach (var file in cacFiles.Concat(socFiles))
             {
                 try { hashes.Add(new SwarmHash(Path.GetFileName(file))); }
                 catch { }
@@ -72,44 +75,67 @@ namespace Etherna.BeeNet.Stores
         // Protected methods.
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash)
         {
-            var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
-
-            if (!File.Exists(chunkPath))
-                return Task.FromResult(false);
+            // Try cac.
+            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
+            if (File.Exists(cacPath))
+            {
+                File.Delete(cacPath);
+                return Task.FromResult(true);
+            }
             
-            File.Delete(chunkPath);
-            return Task.FromResult(true);
+            // Try soc.
+            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
+            if (File.Exists(socPath))
+            {
+                File.Delete(socPath);
+                return Task.FromResult(true);
+            }
+            
+            return Task.FromResult(false);
         }
 
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
             CancellationToken cancellationToken = default)
         {
-            var chunkPath = Path.Combine(DirectoryPath, hash + ChunkFileExtension);
-            tryGetChunkType ??= SwarmChunkType.Cac;
-            
-            if (!File.Exists(chunkPath))
-                throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
-
-            var buffer = new byte[SwarmCac.SpanDataSize];
-            var fileStream = File.OpenRead(chunkPath);
-            await using var stream = fileStream.ConfigureAwait(false);
-            var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-
-            return tryGetChunkType switch
+            // Try cac.
+            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
+            if (File.Exists(cacPath))
             {
-                SwarmChunkType.Cac => new SwarmCac(hash, buffer.AsMemory()[..readBytes]),
-                SwarmChunkType.Soc => SwarmSoc.BuildFromBytes(hash, buffer.AsMemory()[..readBytes], new SwarmChunkBmt()),
-                _ => throw new InvalidOperationException($"Unknown chunk type: {tryGetChunkType}")
-            };
+                var buffer = new byte[SwarmCac.SpanDataSize];
+                var fileStream = File.OpenRead(cacPath);
+                await using var stream = fileStream.ConfigureAwait(false);
+                var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+
+                return new SwarmCac(hash, buffer.AsMemory()[..readBytes]);
+            }
+            
+            // Try soc.
+            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
+            if (File.Exists(socPath))
+            {
+                var buffer = new byte[SwarmSoc.MaxSocSize];
+                var fileStream = File.OpenRead(socPath);
+                await using var stream = fileStream.ConfigureAwait(false);
+                var readBytes = await fileStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+
+                return SwarmSoc.BuildFromBytes(hash, buffer.AsMemory()[..readBytes], new SwarmChunkBmt());
+            }
+
+            throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
         }
 
         protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
-            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + ChunkFileExtension);
+            var chunkFileExtension = chunk switch
+            {
+                SwarmCac => CacFileExtension,
+                SwarmSoc => SocFileExtension,
+                _ => throw new InvalidOperationException(),
+            };
+            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + chunkFileExtension);
             
             if (File.Exists(chunkPath))
                 return false;

@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,14 +25,27 @@ namespace Etherna.BeeNet.Stores
         IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
         : ReadOnlyChunkStoreBase(chunksCache)
     {
+        // Fields.
+        private readonly ConcurrentQueue<SwarmChunkBmt> swarmChunkBmtPool = new();
+        
         // Methods.
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
-            SwarmChunkType? tryGetChunkType,
-            CancellationToken cancellationToken = default) =>
-            await beeClient.GetChunkAsync(
+            CancellationToken cancellationToken = default)
+        {
+            // Get chunk trying to reuse bmts with concurrency.
+            if (!swarmChunkBmtPool.TryDequeue(out var swarmChunkBmt))
+                swarmChunkBmt = new SwarmChunkBmt();
+            
+            var result = await beeClient.GetChunkAsync(
                 hash,
-                tryGetChunkType ?? SwarmChunkType.Cac,
+                swarmChunkBmt,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            swarmChunkBmt.Clear();
+            swarmChunkBmtPool.Enqueue(swarmChunkBmt);
+
+            return result;
+        }
     }
 }

@@ -77,6 +77,15 @@ namespace Etherna.BeeNet.Models
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 
         // Static methods.
+        public static bool IsValid(SwarmHash hash, ReadOnlyMemory<byte> spanData, SwarmChunkBmt swarmChunkBmt)
+        {
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+
+            if (spanData.Length is < SpanSize or > SpanDataSize)
+                return false;
+            return hash == swarmChunkBmt.Hash(spanData);
+        }
+        
         public static byte[] LengthToSpan(ulong length)
         {
             var span = new byte[SpanSize];

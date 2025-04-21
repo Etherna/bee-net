@@ -37,5 +37,14 @@ namespace Etherna.BeeNet.Models
         public override int GetHashCode() =>
             Hash.GetHashCode() ^
             GetFullPayload().GetHashCode();
+        
+        // Static methods.
+        public static SwarmChunk BuildChunkFromHashAndData(
+            SwarmHash hash,
+            ReadOnlyMemory<byte> chunkData,
+            SwarmChunkBmt swarmChunkBmt) =>
+            SwarmCac.IsValid(hash, chunkData, swarmChunkBmt)
+                ? new SwarmCac(hash, chunkData)
+                : SwarmSoc.BuildFromBytes(hash, chunkData, swarmChunkBmt);
     }
 }

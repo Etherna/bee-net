@@ -72,7 +72,6 @@ namespace Etherna.BeeNet.Models
 
             var chunk = await chunkStore.TryGetAsync(
                 hash,
-                SwarmChunkType.Soc,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
             if (chunk is not SwarmSoc soc)
                 return null;

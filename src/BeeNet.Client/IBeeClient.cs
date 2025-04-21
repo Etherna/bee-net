@@ -303,7 +303,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmChunk> GetChunkAsync(
             SwarmHash hash,
-            SwarmChunkType chunkType,
+            SwarmChunkBmt swarmChunkBmt,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
