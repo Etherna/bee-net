@@ -3050,21 +3050,19 @@ paths:
                         start:
                           type: integer
                           format: int64
-                        depth:
-                          type: integer
-                        bucketDepth:
-                          type: integer
-                        immutableFlag:
-                          type: boolean
-                        batchTTL:
-                          type: integer
-                          format: int64
                         owner:
                           type: string
                           pattern: ^[A-Fa-f0-9]{40}$
                           example: 36b7efd913ca4cf880b8eeac5093fa27b0825906
-                        storageRadius:
+                        depth:
                           type: integer
+                        bucketDepth:
+                          type: integer
+                        immutable:
+                          type: boolean
+                        batchTTL:
+                          type: integer
+                          format: int64
         default:
           description: Default response
   "/rchash/{depth}/{anchor1}/{anchor2}":

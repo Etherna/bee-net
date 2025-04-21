@@ -558,19 +558,17 @@ components:
         start:
           type: integer
           format: int64
+        owner:
+          $ref: "#/components/schemas/EthereumAddress"
         depth:
           type: integer
         bucketDepth:
           type: integer
-        immutableFlag:
+        immutable:
           type: boolean
         batchTTL:
           type: integer
           format: int64
-        owner:
-          $ref: "#/components/schemas/EthereumAddress"
-        storageRadius:
-          type: integer
 
     DebugPostageBatch:
       anyOf:

@@ -220,14 +220,6 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<Settlement> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Get all globally available batches that were purchased by all nodes.
-        /// </summary>
-        /// <returns></returns>
-        /// <returns>Returns a dictionary with owner as keys, and enumerable of currently valid owned postage batches as values.</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IDictionary<string, (PostageBatch PostageBatch, int StorageRadius)[]>> GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default);
-
         /// <summary>Get the balances with a specific peer including prepaid services</summary>
         /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
@@ -367,6 +359,14 @@ namespace Etherna.BeeNet
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Get all globally available batches that were purchased by all nodes.
+        /// </summary>
+        /// <returns></returns>
+        /// <returns>Returns a dictionary with owner as keys, and enumerable of currently valid owned postage batches as values.</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>

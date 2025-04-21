@@ -348,27 +348,6 @@ namespace Etherna.BeeNet
                         sent: BzzBalance.FromPlurString(s.Sent))));
         }
 
-        public async Task<IDictionary<string, (PostageBatch PostageBatch, int StorageRadius)[]>>
-            GetAllValidPostageBatchesFromAllNodesAsync(CancellationToken cancellationToken = default)
-        {
-            var response = await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
-            return response.Batches.GroupBy(b => b.Owner)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(batch => (new PostageBatch(
-                        id: batch.BatchID,
-                        amount: BzzBalance.FromPlurString(batch.Value),
-                        blockNumber: batch.Start,
-                        depth: batch.Depth,
-                        exists: true,
-                        isImmutable: batch.ImmutableFlag,
-                        isUsable: true,
-                        label: null,
-                        ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
-                        utilization: 0), batch.StorageRadius))
-                        .ToArray());
-        }
-
         public async Task<BzzBalance> GetBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
@@ -588,6 +567,26 @@ namespace Etherna.BeeNet
                     response.Headers,
                     response.Stream);
             }
+        }
+
+        public async Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
+            return response.Batches.Select(batch => (
+                    new PostageBatch(
+                        id: batch.BatchID,
+                        amount: BzzBalance.FromPlurString(batch.Value),
+                        blockNumber: batch.Start,
+                        depth: batch.Depth,
+                        exists: true,
+                        isImmutable: batch.Immutable,
+                        isUsable: true,
+                        label: null,
+                        ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                        utilization: 0),
+                    EthAddress.FromString(batch.Owner)))
+                .ToArray();
         }
 
         public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)

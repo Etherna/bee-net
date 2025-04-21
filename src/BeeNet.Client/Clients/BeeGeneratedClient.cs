@@ -17374,24 +17374,21 @@ namespace Etherna.BeeNet.Clients
         [System.Text.Json.Serialization.JsonPropertyName("start")]
         public ulong Start { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("owner")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Owner { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
         public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
         public int BucketDepth { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
-        public bool ImmutableFlag { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("immutable")]
+        public bool Immutable { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
         public long BatchTTL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("owner")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Owner { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("storageRadius")]
-        public int StorageRadius { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 

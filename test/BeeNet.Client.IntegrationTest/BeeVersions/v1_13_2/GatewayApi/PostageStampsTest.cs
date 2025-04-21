@@ -117,10 +117,10 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             await Task.Delay(180000);
             
             // Act 
-            var results = await beeNodeClient.GetAllValidPostageBatchesFromAllNodesAsync();
+            var results = await beeNodeClient.GetGlobalValidPostageBatchesAsync();
 
             // Assert
-            Assert.Contains(results, i => i.Value.Any(b => b.PostageBatch.Id == batchId));
+            Assert.Contains(results, b => b.PostageBatch.Id == batchId);
         }
     }
 }
