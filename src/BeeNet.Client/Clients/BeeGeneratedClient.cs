@@ -91,13 +91,13 @@ namespace Etherna.BeeNet.Clients
         /// <summary>
         /// Requests the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address reference to content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>The chunk exists.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task BytesHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task BytesHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -530,13 +530,13 @@ namespace Etherna.BeeNet.Clients
         /// <summary>
         /// Check if chunk at address exists locally
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address of chunk</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ChunksHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task ChunksHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1618,16 +1618,16 @@ namespace Etherna.BeeNet.Clients
         /// <summary>
         /// Requests the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address reference to content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>The chunk exists.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task BytesHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task BytesHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (address == null)
-                throw new System.ArgumentNullException("address");
+            if (reference == null)
+                throw new System.ArgumentNullException("reference");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1650,6 +1650,7 @@ namespace Etherna.BeeNet.Clients
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bytes/{reference}"
                     urlBuilder_.Append("bytes/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5659,16 +5660,16 @@ namespace Etherna.BeeNet.Clients
         /// <summary>
         /// Check if chunk at address exists locally
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address of chunk</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ChunksHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task ChunksHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (address == null)
-                throw new System.ArgumentNullException("address");
+            if (reference == null)
+                throw new System.ArgumentNullException("reference");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5691,6 +5692,7 @@ namespace Etherna.BeeNet.Clients
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "chunks/{reference}"
                     urlBuilder_.Append("chunks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
