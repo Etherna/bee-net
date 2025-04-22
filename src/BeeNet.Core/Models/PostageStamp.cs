@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Models
     [TypeConverter(typeof(PostageStampTypeConverter))]
     public class PostageStamp(
         PostageBatchId batchId,
-        StampBucketIndex bucketIndex,
+        PostageBucketIndex bucketIndex,
         DateTimeOffset timeStamp,
         ReadOnlyMemory<byte> signature)
     {
@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(bytes), "Invalid stamp length");
 
             var batchId = new PostageBatchId(bytes[..32]);
-            var stampBucketIndex = StampBucketIndex.BuildFromByteArray(bytes.Span[32..40]);
+            var stampBucketIndex = PostageBucketIndex.BuildFromByteArray(bytes.Span[32..40]);
             var timeStamp = bytes.Span[40..48].UnixTimeNanosecondsToDateTimeOffset();
             var signature = bytes[48..];
 
@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Models
         
         // Properties.
         public PostageBatchId BatchId { get; } = batchId;
-        public StampBucketIndex BucketIndex { get; } = bucketIndex;
+        public PostageBucketIndex BucketIndex { get; } = bucketIndex;
         public DateTimeOffset TimeStamp { get; } = timeStamp;
         public ReadOnlyMemory<byte> Signature => signature;
         
@@ -56,18 +56,18 @@ namespace Etherna.BeeNet.Models
         public static byte[] BuildSignDigest(
             SwarmHash hash,
             PostageBatchId batchId,
-            StampBucketIndex stampBucketIndex,
+            PostageBucketIndex bucketIndex,
             DateTimeOffset timeStamp,
             Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(stampBucketIndex, nameof(stampBucketIndex));
+            ArgumentNullException.ThrowIfNull(bucketIndex, nameof(bucketIndex));
 
             return hasher.ComputeHash(
             [
                 hash.ToReadOnlyMemory(),
                 batchId.ToReadOnlyMemory(),
-                stampBucketIndex.ToByteArray(),
+                bucketIndex.ToByteArray(),
                 timeStamp.ToUnixTimeNanosecondsByteArray()
             ]);
         }

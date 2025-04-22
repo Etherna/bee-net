@@ -20,14 +20,14 @@ namespace Etherna.BeeNet.Stores
     public class StampStoreItem(
         PostageBatchId batchId,
         SwarmHash chunkHash,
-        StampBucketIndex stampBucketIndex)
+        PostageBucketIndex bucketIndex)
     {
         // Properties.
         public PostageBatchId BatchId { get; protected set; } = batchId;
         public DateTimeOffset? BucketTimestamp { get; set; }
         public SwarmHash ChunkHash { get; protected set; } = chunkHash;
         public string Id => BuildId(BatchId, ChunkHash);
-        public StampBucketIndex StampBucketIndex { get; set; } = stampBucketIndex;
+        public PostageBucketIndex BucketIndex { get; set; } = bucketIndex;
 
         // Static methods.
         public static string BuildId(PostageBatchId batchId, SwarmHash chunkHash) => batchId + "/" + chunkHash;

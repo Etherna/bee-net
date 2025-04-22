@@ -114,7 +114,7 @@ namespace Etherna.BeeNet.Hashing.Postage
                 toSignDigest = PostageStamp.BuildSignDigest(
                     hash,
                     StampIssuer.PostageBatch.Id,
-                    item.StampBucketIndex,
+                    item.BucketIndex,
                     item.BucketTimestamp.Value,
                     hasher);
             }
@@ -123,7 +123,7 @@ namespace Etherna.BeeNet.Hashing.Postage
 
             return new PostageStamp(
                 StampIssuer.PostageBatch.Id,
-                item.StampBucketIndex!,
+                item.BucketIndex!,
                 item.BucketTimestamp.Value,
                 signature);
         }

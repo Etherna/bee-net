@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Hashing.Postage
         public EthAddress? PostageBatchOwner { get; }
 
         // Methods.
-        public StampBucketIndex IncrementBucketCount(SwarmHash hash)
+        public PostageBucketIndex IncrementBucketCount(SwarmHash hash)
         {
             var bucketId = hash.ToBucketId();
 
@@ -61,7 +61,7 @@ namespace Etherna.BeeNet.Hashing.Postage
             _buckets.IncrementCollisions(bucketId);
             collisions++;
 
-            return new StampBucketIndex(bucketId, collisions);
+            return new PostageBucketIndex(bucketId, collisions);
         }
     }
 }

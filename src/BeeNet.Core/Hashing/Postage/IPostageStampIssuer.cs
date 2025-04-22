@@ -36,6 +36,6 @@ namespace Etherna.BeeNet.Hashing.Postage
         EthAddress? PostageBatchOwner { get; }
 
         // Methods.
-        StampBucketIndex IncrementBucketCount(SwarmHash hash);
+        PostageBucketIndex IncrementBucketCount(SwarmHash hash);
     }
 }

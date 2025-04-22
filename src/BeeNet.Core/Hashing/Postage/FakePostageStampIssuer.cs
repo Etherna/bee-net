@@ -26,6 +26,6 @@ namespace Etherna.BeeNet.Hashing.Postage
         public uint MaxBucketCollisions { get; }
         public long TotalChunks { get; }
 
-        public StampBucketIndex IncrementBucketCount(SwarmHash hash) => new(0, 0);
+        public PostageBucketIndex IncrementBucketCount(SwarmHash hash) => new(0, 0);
     }
 }
