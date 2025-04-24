@@ -32,18 +32,6 @@ namespace Etherna.BeeNet.Services
     public class ChunkService : IChunkService
     {
         // Methods.
-        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetFileMetadataFromAddressAsync(
-            SwarmAddress address,
-            ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore)
-        {
-            var rootManifest = new ReferencedMantarayManifest(
-                chunkStore,
-                address.Hash);
-            
-            return await rootManifest.GetMetadataAsync(address.Path, manifestPathResolver).ConfigureAwait(false);
-        }
-
         public async Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,

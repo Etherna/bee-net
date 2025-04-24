@@ -14,10 +14,7 @@
 
 using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Services;
-using Etherna.BeeNet.Stores;
 using Etherna.BeeNet.Tools;
 using Nethereum.Hex.HexConvertors.Extensions;
 using System;
@@ -1287,20 +1284,6 @@ namespace Etherna.BeeNet
                     swarmActPublisher,
                     swarmActHistoryAddress,
                     cancellationToken).ConfigureAwait(false);
-        }
-
-        public async Task<string?> TryGetFileNameAsync(
-            SwarmAddress address,
-            ManifestPathResolver manifestPathResolver,
-            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
-            CancellationToken cancellationToken = default)
-        {
-            var chunkService = new ChunkService();
-            var metadata = (await chunkService.GetFileMetadataFromAddressAsync(
-                address,
-                manifestPathResolver,
-                new BeeClientChunkStore(this, chunksCache)).ConfigureAwait(false)).Result;
-            return metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }
 
         public async Task<long?> TryGetFileSizeAsync(

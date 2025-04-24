@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Exceptions;
-using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Tools;
 using System;
@@ -754,18 +753,6 @@ namespace Etherna.BeeNet
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null, 
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Try to get a file name
-        /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>The file name if found</returns>
-        Task<string?> TryGetFileNameAsync(
-            SwarmAddress address,
-            ManifestPathResolver manifestPathResolver,
-            IDictionary<SwarmHash, SwarmChunk>? chunksCache = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>

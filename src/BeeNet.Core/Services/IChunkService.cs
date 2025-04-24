@@ -18,7 +18,6 @@ using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,17 +26,6 @@ namespace Etherna.BeeNet.Services
 {
     public interface IChunkService
     {
-        /// <summary>
-        /// Get resource metadata from a directory of chunks and the resource address
-        /// </summary>
-        /// <param name="address">Resource address</param>
-        /// <param name="chunkStore">The chunk reading store</param>
-        /// <returns>Resource metadata</returns>
-        Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetFileMetadataFromAddressAsync(
-            SwarmAddress address,
-            ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore);
-
         /// <summary>
         /// Get resource stream from a chunks store and the resource address
         /// </summary>

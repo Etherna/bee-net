@@ -75,6 +75,14 @@ namespace Etherna.BeeNet.Models
                 Path, manifestPathResolver).ConfigureAwait(false);
         }
         public override string ToString() => Hash + Path;
+        public async Task<string?> TryGetFileNameAsync(
+            IReadOnlyChunkStore chunkStore)
+        {
+            var info = await ResolveToResourceInfoAsync(
+                chunkStore,
+                ManifestPathResolver.IdentityResolver).ConfigureAwait(false);
+            return info.Result.Metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
+        }
         
         // Static methods.
         public static SwarmAddress FromString(string value) => new(value);
