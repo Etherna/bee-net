@@ -262,18 +262,6 @@ namespace Etherna.BeeNet
                 response.Signature);
         }
 
-        public async Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default)
-        {
-            var response = await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false);
-            return new AddressDetail(
-                underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
-                overlay: response.Overlay,
-                ethereum: response.Ethereum,
-                chainAddress: response.Chain_address,
-                publicKey: response.PublicKey,
-                pssPublicKey: response.PssPublicKey);
-        }
-
         public async Task<IDictionary<string, BzzBalance>> GetAllBalancesAsync(
             CancellationToken cancellationToken = default)
         {
@@ -604,6 +592,18 @@ namespace Etherna.BeeNet
                 s.Neighborhood,
                 s.Proximity,
                 s.ReserveSizeWithinRadius)).ToArray();
+        }
+
+        public async Task<SwarmNodeAddresses> GetNodeAddressesAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await generatedClient.AddressesAsync(cancellationToken).ConfigureAwait(false);
+            return new SwarmNodeAddresses(
+                underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
+                overlay: response.Overlay,
+                ethereum: response.Ethereum,
+                chainAddress: response.Chain_address,
+                publicKey: response.PublicKey,
+                pssPublicKey: response.PssPublicKey);
         }
 
         public async Task<NodeInfo> GetNodeInfoAsync(CancellationToken cancellationToken = default)

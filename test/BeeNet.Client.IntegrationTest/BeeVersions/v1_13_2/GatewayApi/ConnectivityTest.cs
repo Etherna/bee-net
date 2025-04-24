@@ -26,7 +26,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GetAddressesAsync();
+            var result = await beeNodeClient.GetNodeAddressesAsync();
 
 
             // Assert 

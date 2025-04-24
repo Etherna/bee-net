@@ -179,11 +179,6 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Get overlay and underlay addresses of the node</summary>
-        /// <returns>Own node underlay and overlay addresses</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<AddressDetail> GetAddressesAsync(CancellationToken cancellationToken = default);
-
         /// <summary>Get the balances with all known peers including prepaid services</summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
@@ -374,6 +369,11 @@ namespace Etherna.BeeNet
 
         Task<NeighborhoodStatus[]> GetNeighborhoodsStatus(
             CancellationToken cancellationToken = default);
+
+        /// <summary>Get overlay and underlay addresses of the node</summary>
+        /// <returns>Own node underlay and overlay addresses</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<SwarmNodeAddresses> GetNodeAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get information about the node

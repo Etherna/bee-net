@@ -28,7 +28,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Arrange 
             var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var addresses = await beeNodeClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GetNodeAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";
             var feed = new SwarmSequenceFeed(addresses.Ethereum, topic.HexToByteArray());
 
