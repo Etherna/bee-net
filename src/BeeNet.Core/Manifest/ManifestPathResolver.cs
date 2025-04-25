@@ -67,21 +67,19 @@ namespace Etherna.BeeNet.Manifest
             ArgumentNullException.ThrowIfNull(getRootMetadataAsync, nameof(getRootMetadataAsync));
                 
             // Trim start separators.
-            if (RedirectToDirectory)
-            {
-                var newPath = path.All(c => c == SwarmAddress.Separator)
-                    ? SwarmAddress.Separator.ToString()
-                    : path.TrimStart(SwarmAddress.Separator);
+            var newPath = path.All(c => c == SwarmAddress.Separator)
+                ? SwarmAddress.Separator.ToString()
+                : path.TrimStart(SwarmAddress.Separator);
 
-                // Only explicit redirect when new path is separator, ignore any other start separator trim.
-                // This because in general initial trims aren't an issue for browsers, and we can avoid a redirect.
-                if (path != newPath &&
-                    newPath == SwarmAddress.Separator.ToString() &&
-                    ExplicitRedirectToDirectory)
-                    throw new ManifestExplicitRedirectException(newPath);
-                path = newPath;
-            }
+            //Only explicit redirect when new path is to root, ignore any other start separator trim.
+            //This because in general initial trims aren't an issue for browsers, and we can avoid a redirect.
+            if (path != newPath &&
+                newPath == SwarmAddress.Separator.ToString() &&
+                ExplicitRedirectToDirectory)
+                throw new ManifestExplicitRedirectException(newPath);
+            path = newPath;
             
+            // Do invokes.
             IReadOnlyDictionary<string, string>? rootMetadata = null;
             var resolvedIndex = false;
             while (true)

@@ -48,42 +48,40 @@ namespace Etherna.BeeNet.Manifest
             {
                 var tests = new List<InvokeResolvingPathTestElement>
                 {
-                    // Don't trim start separator if disabled redirect to directory.
+                    // Trim start separators.
                     new()
                     {
                         Path = "///index.html",
-                        Resolver = new ManifestPathResolver(redirectToDirectory: false),
-                        ExpectedInvokes = ["///index.html"],
-                        ExpectedKeyNotFoundException = true
-                    },
-                    
-                    // Can trim start separators.
-                    new()
-                    {
-                        Path = "///index.html",
-                        Resolver = new ManifestPathResolver(redirectToDirectory: true),
+                        Resolver = new ManifestPathResolver(),
                         ExpectedInvokes = ["index.html"],
                         ExpectedResult = "Content on index.html"
                     },
                     
-                    // Can trim start separators, even with explicit directory redirect.
+                    // Trim start separators and explicit redirect to root.
+                    new()
+                    {
+                        Path = "///",
+                        Resolver = new ManifestPathResolver(
+                            explicitRedirectToDirectory: true),
+                        ExpectedRedirectExceptionPath = "/"
+                    },
+                    
+                    // Trim start separators and implicit redirect to content, even with explicit redirect to directories.
                     new()
                     {
                         Path = "///index.html",
                         Resolver = new ManifestPathResolver(
-                            redirectToDirectory: true,
                             explicitRedirectToDirectory: true),
                         ExpectedInvokes = ["index.html"],
                         ExpectedResult = "Content on index.html"
                     },
                     
-                    // Throw KeyNotFoundException on empty path, without directory redirect.
+                    // Throw KeyNotFoundException on empty path.
                     new()
                     {
                         Path = "",
-                        Resolver = new ManifestPathResolver(
-                            redirectToDirectory: false),
-                        ExpectedInvokes = [""],
+                        Resolver = new ManifestPathResolver(),
+                        ExpectedInvokes = ["/"],
                         ExpectedKeyNotFoundException = true
                     },
                     
@@ -92,46 +90,38 @@ namespace Etherna.BeeNet.Manifest
                     {
                         Path = "",
                         Resolver = new ManifestPathResolver(
-                            redirectToDirectory: true,
                             explicitRedirectToDirectory: true),
                         ExpectedRedirectExceptionPath = "/"
                     },
                     
-                    // Can resolve index document on empty path, with implicit directory redirect and metadata resolution.
+                    // Can resolve index document on empty path, with metadata resolution.
                     new()
                     {
                         Path = "",
                         Resolver = new ManifestPathResolver(
-                            resolveMetadataDocuments: true,
-                            redirectToDirectory: true,
-                            explicitRedirectToDirectory: false),
+                            resolveMetadataDocuments: true),
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["/", "index.html"],
                         ExpectedResult = "Content on index.html"
                     },
                     
-                    // Throw KeyNotFoundException on empty path, with implicit directory redirect and no set metadata.
+                    // Throw KeyNotFoundException on empty path, without metadata resolution.
                     new()
                     {
                         Path = "",
-                        Resolver = new ManifestPathResolver(
-                            resolveMetadataDocuments: true,
-                            redirectToDirectory: true,
-                            explicitRedirectToDirectory: false),
-                        RootMetadata = [],
-                        ExpectedGetMetadata = true,
+                        Resolver = new ManifestPathResolver(),
                         ExpectedInvokes = ["/"],
                         ExpectedKeyNotFoundException = true
                     },
                     
-                    // Throw KeyNotFoundException on empty path, with implicit directory redirect and no metadata resolution.
+                    // Throw KeyNotFoundException on empty path, without metadata.
                     new()
                     {
                         Path = "",
                         Resolver = new ManifestPathResolver(
-                            resolveMetadataDocuments: false,
-                            redirectToDirectory: true,
-                            explicitRedirectToDirectory: false),
+                            resolveMetadataDocuments: true),
+                        RootMetadata = [],
+                        ExpectedGetMetadata = true,
                         ExpectedInvokes = ["/"],
                         ExpectedKeyNotFoundException = true
                     },
@@ -140,7 +130,7 @@ namespace Etherna.BeeNet.Manifest
                     new()
                     {
                         Path = "/",
-                        Resolver = new ManifestPathResolver(resolveMetadataDocuments: false),
+                        Resolver = new ManifestPathResolver(),
                         ExpectedInvokes = ["/"],
                         ExpectedKeyNotFoundException = true
                     },
@@ -149,7 +139,8 @@ namespace Etherna.BeeNet.Manifest
                     new()
                     {
                         Path = "/",
-                        Resolver = new ManifestPathResolver(resolveMetadataDocuments: true),
+                        Resolver = new ManifestPathResolver(
+                            resolveMetadataDocuments: true),
                         ExpectedGetMetadata = true,
                         ExpectedInvokes = ["/", "index.html"],
                         ExpectedResult = "Content on index.html"
@@ -177,11 +168,21 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedResult = "Content on index.html"
                     },
                     
+                    // Can serve content with initial slash, and no redirect to directory.
+                    new()
+                    {
+                        Path = "/index.html",
+                        Resolver = new ManifestPathResolver(),
+                        ExpectedInvokes = ["index.html"],
+                        ExpectedResult = "Content on index.html"
+                    },
+                    
                     // Can serve content with initial slash, and implicit redirect to directory.
                     new()
                     {
                         Path = "/index.html",
-                        Resolver = new ManifestPathResolver(redirectToDirectory: true),
+                        Resolver = new ManifestPathResolver(
+                            redirectToDirectory: true),
                         ExpectedInvokes = ["index.html"],
                         ExpectedResult = "Content on index.html"
                     },
@@ -197,15 +198,6 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedResult = "Content on index.html"
                     },
                     
-                    // Throw KeyNotFoundException with initial slash, and no redirect to directory.
-                    new()
-                    {
-                        Path = "/index.html",
-                        Resolver = new ManifestPathResolver(),
-                        ExpectedInvokes = ["/index.html"],
-                        ExpectedKeyNotFoundException = true
-                    },
-                    
                     // Can't serve content with wrong final slash, throw KeyNotFoundException without metadata resolution.
                     new()
                     {
@@ -216,7 +208,7 @@ namespace Etherna.BeeNet.Manifest
                         ExpectedKeyNotFoundException = true
                     },
                     
-                    // Can't serve content with wrong final slash, return error document with metadata resolution.
+                    // Return error document with wrong final slash, with metadata resolution.
                     new()
                     {
                         Path = "index.html/",
@@ -232,9 +224,19 @@ namespace Etherna.BeeNet.Manifest
                     new()
                     {
                         Path = "indexedDir",
-                        Resolver = new ManifestPathResolver(
-                            redirectToDirectory: false),
+                        Resolver = new ManifestPathResolver(),
                         ExpectedInvokes = ["indexedDir"],
+                        ExpectedKeyNotFoundException = true
+                    },
+                    
+                    // Throw KeyNotFoundException on directory name, without implicit directory redirect and no metadata resolution.
+                    new()
+                    {
+                        Path = "indexedDir",
+                        Resolver = new ManifestPathResolver(
+                            redirectToDirectory: true),
+                        ExpectedInvokes = ["indexedDir", "indexedDir/"],
+                        ExpectedPrefixChecked = ["indexedDir/"],
                         ExpectedKeyNotFoundException = true
                     },
                     
