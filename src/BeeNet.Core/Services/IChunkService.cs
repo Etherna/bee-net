@@ -38,7 +38,7 @@ namespace Etherna.BeeNet.Services
         Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IChunkStore chunkStore,
+            IReadOnlyChunkStore chunkStore,
             string? fileCachePath = null,
             CancellationToken? cancellationToken = null);
     

@@ -10,6 +10,11 @@ namespace Etherna.BeeNet.Models
         bool useRecursiveEncryption)
     {
         // Static builders.
+        public static async Task<SwarmChunkReference> ResolveFromAddress(
+            SwarmAddress address,
+            IReadOnlyChunkStore chunkStore) =>
+            (await address.ResolveToResourceInfoAsync(
+                chunkStore, ManifestPathResolver.IdentityResolver).ConfigureAwait(false)).Result.ChunkReference;
         public static async Task<SwarmChunkReference> ResolveFromStringAsync(
             string hashOrAddress,
             IReadOnlyChunkStore chunkStore)
