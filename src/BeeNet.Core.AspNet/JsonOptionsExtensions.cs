@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.AspNet.JsonConverters;
+using Etherna.BeeNet.JsonConverters;
 using Microsoft.AspNetCore.Mvc;
 using System;
 

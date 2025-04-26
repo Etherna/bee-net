@@ -13,29 +13,27 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class PostageStampJsonConverter : JsonConverter<PostageStamp>
+    public sealed class SwarmFeedTopicJsonConverter : JsonConverter<SwarmFeedTopic>
     {
-        public override PostageStamp Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SwarmFeedTopic Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
 
-            return PostageStamp.BuildFromByteArray(reader.GetString()!.HexToByteArray());
+            return reader.GetString()!;
         }
 
-        public override void Write(Utf8JsonWriter writer, PostageStamp value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, SwarmFeedTopic value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
             
-            writer.WriteStringValue(value.ToByteArray().ToHex());
+            writer.WriteStringValue(value.ToString());
         }
     }
 }

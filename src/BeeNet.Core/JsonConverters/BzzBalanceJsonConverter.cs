@@ -17,23 +17,26 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class SwarmHashJsonConverter : JsonConverter<SwarmHash>
+    public sealed class BzzBalanceJsonConverter(bool writeAsString)
+        : JsonConverter<BzzBalance>
     {
-        public override SwarmHash Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            if (reader.TokenType != JsonTokenType.String)
-                throw new JsonException();
+        public override BzzBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+            reader.TokenType switch
+            {
+                JsonTokenType.Number => BzzBalance.FromPlurLong(reader.GetInt64()),
+                JsonTokenType.String => BzzBalance.FromPlurString(reader.GetString()!),
+                _ => throw new JsonException()
+            };
 
-            return reader.GetString()!;
-        }
-
-        public override void Write(Utf8JsonWriter writer, SwarmHash value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, BzzBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            
-            writer.WriteStringValue(value.ToString());
+            if (writeAsString)
+                writer.WriteStringValue(value.ToPlurString());
+            else
+                writer.WriteNumberValue(value.ToPlurLong());
         }
     }
 }

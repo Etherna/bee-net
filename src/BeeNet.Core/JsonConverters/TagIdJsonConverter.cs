@@ -17,23 +17,23 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class PostageBatchIdJsonConverter : JsonConverter<PostageBatchId>
+    public sealed class TagIdJsonConverter : JsonConverter<TagId>
     {
-        public override PostageBatchId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override TagId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType != JsonTokenType.String)
+            if (reader.TokenType != JsonTokenType.Number)
                 throw new JsonException();
 
-            return reader.GetString()!;
+            return new TagId(reader.GetUInt64());
         }
 
-        public override void Write(Utf8JsonWriter writer, PostageBatchId value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, TagId value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             
-            writer.WriteStringValue(value.ToString());
+            writer.WriteNumberValue(value.Value);
         }
     }
 }

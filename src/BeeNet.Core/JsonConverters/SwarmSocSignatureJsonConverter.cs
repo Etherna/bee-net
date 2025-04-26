@@ -17,11 +17,11 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class EthAddressJsonConverter : JsonConverter<EthAddress>
+    public sealed class SwarmSocSignatureJsonConverter : JsonConverter<SwarmSocSignature>
     {
-        public override EthAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SwarmSocSignature Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.AspNet.JsonConverters
             return reader.GetString()!;
         }
 
-        public override void Write(Utf8JsonWriter writer, EthAddress value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, SwarmSocSignature value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             

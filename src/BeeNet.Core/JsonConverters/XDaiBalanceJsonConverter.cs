@@ -17,26 +17,26 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class BzzBalanceJsonConverter(bool writeAsString)
-        : JsonConverter<BzzBalance>
+    public sealed class XDaiBalanceJsonConverter(bool writeAsString)
+        : JsonConverter<XDaiBalance>
     {
-        public override BzzBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        public override XDaiBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {
-                JsonTokenType.Number => BzzBalance.FromPlurLong(reader.GetInt64()),
-                JsonTokenType.String => BzzBalance.FromPlurString(reader.GetString()!),
+                JsonTokenType.Number => XDaiBalance.FromWeiLong(reader.GetInt64()),
+                JsonTokenType.String => XDaiBalance.FromWeiString(reader.GetString()!),
                 _ => throw new JsonException()
             };
 
-        public override void Write(Utf8JsonWriter writer, BzzBalance value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, XDaiBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             if (writeAsString)
-                writer.WriteStringValue(value.ToPlurString());
+                writer.WriteStringValue(value.ToWeiString());
             else
-                writer.WriteNumberValue(value.ToPlurLong());
+                writer.WriteNumberValue(value.ToWeiLong());
         }
     }
 }

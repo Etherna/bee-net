@@ -17,26 +17,23 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class XDaiBalanceJsonConverter(bool writeAsString)
-        : JsonConverter<XDaiBalance>
+    public sealed class EthAddressJsonConverter : JsonConverter<EthAddress>
     {
-        public override XDaiBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
-            reader.TokenType switch
-            {
-                JsonTokenType.Number => XDaiBalance.FromWeiLong(reader.GetInt64()),
-                JsonTokenType.String => XDaiBalance.FromWeiString(reader.GetString()!),
-                _ => throw new JsonException()
-            };
+        public override EthAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.String)
+                throw new JsonException();
 
-        public override void Write(Utf8JsonWriter writer, XDaiBalance value, JsonSerializerOptions options)
+            return reader.GetString()!;
+        }
+
+        public override void Write(Utf8JsonWriter writer, EthAddress value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            if (writeAsString)
-                writer.WriteStringValue(value.ToWeiString());
-            else
-                writer.WriteNumberValue(value.ToWeiLong());
+            
+            writer.WriteStringValue(value.ToString());
         }
     }
 }

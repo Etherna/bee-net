@@ -17,11 +17,11 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Etherna.BeeNet.AspNet.JsonConverters
+namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class XorEncryptKeyJsonConverter : JsonConverter<XorEncryptKey>
+    public sealed class SwarmHashJsonConverter : JsonConverter<SwarmHash>
     {
-        public override XorEncryptKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SwarmHash Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.AspNet.JsonConverters
             return reader.GetString()!;
         }
 
-        public override void Write(Utf8JsonWriter writer, XorEncryptKey value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, SwarmHash value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             
