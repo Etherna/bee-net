@@ -31,5 +31,6 @@ namespace Etherna.BeeNet.Manifest
         Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(string path);
         Task<MantarayResourceInfo> GetResourceInfoAsync(string path);
         Task<bool> HasPathPrefixAsync(string path);
+        Task OnVisitingAsync();
     }
 }

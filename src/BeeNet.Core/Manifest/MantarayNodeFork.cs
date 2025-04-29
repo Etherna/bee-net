@@ -21,7 +21,7 @@ using System.Text;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayNodeFork
+    public sealed class MantarayNodeFork
     {
         // Consts.
         public const int HeaderSize = TypeSize + PrefixSize;
@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Manifest
         // Constructor.
         public MantarayNodeFork(
             string prefix,
-            MantarayNode node)
+            MantarayNodeBase node)
         {
             ArgumentNullException.ThrowIfNull(node, nameof(node));
             ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
@@ -46,7 +46,7 @@ namespace Etherna.BeeNet.Manifest
 
         // Properties.
         public string Prefix { get; }
-        public MantarayNode Node { get; }
+        public MantarayNodeBase Node { get; }
 
         // Methods.
         public byte[] ToByteArray()

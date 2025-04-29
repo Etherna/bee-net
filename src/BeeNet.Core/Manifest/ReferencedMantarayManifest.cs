@@ -12,15 +12,14 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ReferencedMantarayManifest : IReadOnlyMantarayManifest
+    public sealed class ReferencedMantarayManifest : MantarayManifestBase
     {
         // Fields.
         private readonly ReferencedMantarayNode rootNode;
@@ -43,53 +42,10 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
-        public IReadOnlyMantarayNode RootNode => rootNode;
+        public override IReadOnlyMantarayNode RootNode => rootNode;
 
         // Methods.
-        public Task<SwarmHash> GetHashAsync() => Task.FromResult(RootNode.Hash);
-
-        public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> GetResourceInfoAsync(
-            string path,
-            ManifestPathResolver pathResolver)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
-
-            if (!rootNode.IsDecoded)
-                await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await pathResolver.InvokeAsync(
-                path,
-                invokeAsync: rootNode.GetResourceInfoAsync,
-                hasPathPrefixAsync: rootNode.HasPathPrefixAsync,
-                getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
-        }
-
-        public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetMetadataAsync(
-            string path,
-            ManifestPathResolver pathResolver)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
-            
-            if (!rootNode.IsDecoded)
-                await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await pathResolver.InvokeAsync(
-                path,
-                invokeAsync: rootNode.GetMetadataAsync,
-                hasPathPrefixAsync: rootNode.HasPathPrefixAsync,
-                getRootMetadataAsync: () => rootNode.GetMetadataAsync(MantarayManifest.RootPath)).ConfigureAwait(false);
-        }
-
-        public async Task<bool> HasPathPrefixAsync(string path)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-
-            if (!rootNode.IsDecoded)
-                await rootNode.DecodeFromChunkAsync().ConfigureAwait(false);
-        
-            return await RootNode.HasPathPrefixAsync(path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
-        }
+        public override Task<SwarmChunkReference> GetHashAsync(Hasher hasher) =>
+            Task.FromResult(new SwarmChunkReference(RootNode.Hash, null, false));
     }
 }

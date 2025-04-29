@@ -521,7 +521,7 @@ namespace Etherna.BeeNet.Chunks
             fileRand.NextBytes(fileCData);
             
             // Build manifest.
-            var dirManifest = new MantarayManifest(
+            var dirManifest = new WritableMantarayManifest(
                 _ => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,

@@ -125,7 +125,7 @@ namespace Etherna.BeeNet.Services
                 indexFilename = SwarmHttpConsts.DefaultIndexFilename;
             
             // Create manifest.
-            var dirManifest = new MantarayManifest(
+            var dirManifest = new WritableMantarayManifest(
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
@@ -186,7 +186,7 @@ namespace Etherna.BeeNet.Services
                     metadata[ManifestEntry.WebsiteErrorDocPathKey] = errorFilename;
 
                 var rootManifestEntry = ManifestEntry.NewDirectory(metadata);
-                dirManifest.Add(MantarayManifest.RootPath, rootManifestEntry);
+                dirManifest.Add(MantarayManifestBase.RootPath, rootManifestEntry);
             }
 
             // Get manifest hash.
@@ -265,7 +265,7 @@ namespace Etherna.BeeNet.Services
                 fileName = fileHashingResult.Hash.ToString();
             
             // Create manifest.
-            var manifest = new MantarayManifest(
+            var manifest = new WritableMantarayManifest(
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
@@ -277,7 +277,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel);
 
             manifest.Add(
-                MantarayManifest.RootPath,
+                MantarayManifestBase.RootPath,
                 ManifestEntry.NewDirectory(
                     new Dictionary<string, string>
                     {

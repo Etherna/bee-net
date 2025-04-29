@@ -24,21 +24,19 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class MantarayNode : IReadOnlyMantarayNode
+    public sealed class WritableMantarayNode : MantarayNodeBase
     {
-        // Consts.
-        public const int ForksIndexSize = 32;
-        public static readonly byte[] Version02Hash = new Hasher().ComputeHash("mantaray:0.2")
-            .Take(VersionHashSize).ToArray();
-        public const int VersionHashSize = 31;
-        
         // Fields.
-        private SwarmHash? _hash;
+        private SwarmHash? _entryHash;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
+        private SwarmHash? _hash;
+        private IReadOnlyDictionary<string, string> _metadata = new Dictionary<string, string>();
+        private NodeType _nodeTypeFlags;
+        private XorEncryptKey? _obfuscationKey;
         private bool skipWriteEntryHash = true;
 
         // Constructors.
-        public MantarayNode(
+        public WritableMantarayNode(
             ushort compactLevel = 0,
             XorEncryptKey? obfuscationKey = null)
         {
@@ -46,17 +44,17 @@ namespace Etherna.BeeNet.Manifest
                 throw new ArgumentException("Can't preset obfuscation key with compactLevel > 0");
             
             CompactLevel = compactLevel;
-            ObfuscationKey = obfuscationKey;
+            _obfuscationKey = obfuscationKey;
         }
 
         // Properties.
         public ushort CompactLevel { get; }
-        public SwarmHash? EntryHash { get; private set; }
-        public IReadOnlyDictionary<char, MantarayNodeFork> Forks => _forks;
-        public SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
-        public IReadOnlyDictionary<string, string> Metadata { get; private set; } = new Dictionary<string, string>();
-        public NodeType NodeTypeFlags { get; private set; }
-        public XorEncryptKey? ObfuscationKey { get; private set; }
+        public override SwarmHash? EntryHash => _entryHash;
+        public override IReadOnlyDictionary<char, MantarayNodeFork> Forks => _forks;
+        public override SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
+        public override IReadOnlyDictionary<string, string> Metadata => _metadata;
+        public override NodeType NodeTypeFlags => _nodeTypeFlags;
+        public override XorEncryptKey? ObfuscationKey => _obfuscationKey;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -78,10 +76,10 @@ namespace Etherna.BeeNet.Manifest
             {
                 SetNodeTypeFlag(NodeType.Value);
                 
-                EntryHash = entry.Hash;
+                _entryHash = entry.Hash;
                 if (entry.Metadata.Count > 0)
                 {
-                    Metadata = entry.Metadata;
+                    _metadata = entry.Metadata;
                     SetNodeTypeFlag(NodeType.WithMetadata);
                 }
             }
@@ -98,12 +96,12 @@ namespace Etherna.BeeNet.Manifest
                     if (fork.Prefix.Length > commonPrefix.Length)
                     {
                         var childPrefix = fork.Prefix[commonPrefix.Length..];
-                        var childNode = fork.Node;
+                        var childNode = (WritableMantarayNode)fork.Node;
                         childNode.UpdateFlagIsWithPathSeparator(childPrefix);
                         
                         // Create new parent node.
                         //parentPrefix = commonPrefix
-                        var parentNode = new MantarayNode(CompactLevel, ObfuscationKey)
+                        var parentNode = new WritableMantarayNode(CompactLevel, ObfuscationKey)
                         {
                             _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
                             skipWriteEntryHash = skipWriteEntryHash
@@ -122,8 +120,8 @@ namespace Etherna.BeeNet.Manifest
                     }
                     else // Else, reuse the same fork node.
                     {
-                        fork.Node.UpdateFlagIsWithPathSeparator(path);
-                        fork.Node.Add(path[commonPrefix.Length..], entry);
+                        ((WritableMantarayNode)fork.Node).UpdateFlagIsWithPathSeparator(path);
+                        ((WritableMantarayNode)fork.Node).Add(path[commonPrefix.Length..], entry);
                     }
                 }
 
@@ -136,7 +134,7 @@ namespace Etherna.BeeNet.Manifest
                     var prefixRest = path.Length > MantarayNodeFork.PrefixMaxSize ?
                         path[MantarayNodeFork.PrefixMaxSize..] : "";
                     
-                    var newNode = new MantarayNode(CompactLevel, ObfuscationKey)
+                    var newNode = new WritableMantarayNode(CompactLevel, ObfuscationKey)
                     {
                         skipWriteEntryHash = skipWriteEntryHash
                     };
@@ -163,15 +161,15 @@ namespace Etherna.BeeNet.Manifest
 
             // Recursively compute hash for each fork nodes.
             foreach (var fork in _forks.Values)
-                await fork.Node.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
+                await ((WritableMantarayNode)fork.Node).ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
             if (CompactLevel == 0)
-                ObfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
+                _obfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
             else
-                ObfuscationKey = await GetBestObfuscationKeyAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
+                _obfuscationKey = await GetBestObfuscationKeyAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             
-            var byteArray = ToByteArray(ObfuscationKey.Value);
+            var byteArray = ToByteArray(_obfuscationKey.Value);
             using var hasherPipeline = hasherPipelineBuilder(false);
             var hashingResult = await hasherPipeline.HashDataAsync(byteArray).ConfigureAwait(false);
             _hash = hashingResult.Hash;
@@ -179,6 +177,8 @@ namespace Etherna.BeeNet.Manifest
             // Clean forks.
             _forks.Clear();
         }
+        
+        public override Task OnVisitingAsync() => Task.CompletedTask;
 
         // Helpers.
         private byte[] ForksToByteArray()
@@ -270,29 +270,10 @@ namespace Etherna.BeeNet.Manifest
         }
 
         private void RemoveNodeTypeFlag(NodeType flag) =>
-            NodeTypeFlags &= ~flag;
-
-        public Task<MantarayResourceInfo> GetResourceInfoAsync(string path)
-        {
-            //this will be implemented probably into a base class
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
-            string path)
-        {
-            //this will be implemented probably into a base class
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> HasPathPrefixAsync(string path)
-        {
-            //this will be implemented probably into a base class
-            throw new NotImplementedException();
-        }
+            _nodeTypeFlags &= ~flag;
 
         private void SetNodeTypeFlag(NodeType flag) =>
-            NodeTypeFlags |= flag;
+            _nodeTypeFlags |= flag;
         
         private byte[] ToByteArray(XorEncryptKey obfuscationKey)
         {

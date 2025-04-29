@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Services
             ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
             
             var metadata = (await manifest.GetMetadataAsync(
-                MantarayManifest.RootPath,
+                MantarayManifestBase.RootPath,
                 ManifestPathResolver.IdentityResolver).ConfigureAwait(false)).Result;
             if (!metadata.TryGetValue(FeedMetadataEntryOwner, out var hexOwner))
                 return null;
@@ -86,7 +86,7 @@ namespace Etherna.BeeNet.Services
                 new MemoryStampStore());
 
             // Create manifest.
-            var feedManifest = new MantarayManifest(
+            var feedManifest = new WritableMantarayManifest(
                 readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
                     postageStamper,
@@ -98,7 +98,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel);
 
             feedManifest.Add(
-                MantarayManifest.RootPath,
+                MantarayManifestBase.RootPath,
                 ManifestEntry.NewFile(
                     SwarmHash.Zero,
                     new Dictionary<string, string>

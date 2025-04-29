@@ -23,14 +23,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public class ReferencedMantarayNode : IReadOnlyMantarayNode
+    public sealed class ReferencedMantarayNode : MantarayNodeBase
     {
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
         private readonly bool useChunkStoreCache;
         
         private SwarmHash? _entryHash;
-        private readonly Dictionary<char, ReferencedMantarayNodeFork> _forks = new();
+        private readonly Dictionary<char, MantarayNodeFork> _forks = new();
         private readonly Dictionary<string, string> _metadata;
         private XorEncryptKey? _obfuscationKey;
 
@@ -47,12 +47,6 @@ namespace Etherna.BeeNet.Manifest
             Hash = chunkHash;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
-
-            // Read metadata.
-            if (_metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr))
-                EntryEncryptionKey = new XorEncryptKey(encryptKeyStr);
-            if (_metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr))
-                EntryUseRecursiveEncryption = bool.Parse(useRecursiveEncrypStr);
         }
         
         public ReferencedMantarayNode(
@@ -69,31 +63,23 @@ namespace Etherna.BeeNet.Manifest
             Hash = chunk.Hash;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
-
-            // Read metadata.
-            if (_metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr))
-                EntryEncryptionKey = new XorEncryptKey(encryptKeyStr);
-            if (_metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr))
-                EntryUseRecursiveEncryption = bool.Parse(useRecursiveEncrypStr);
             
             // Decode chunk.
             DecodeCacHelper(chunk);
         }
 
         // Properties.
-        public XorEncryptKey? EntryEncryptionKey { get; }
-        public SwarmHash? EntryHash => IsDecoded
+        public override SwarmHash? EntryHash => IsDecoded
             ? _entryHash
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public bool EntryUseRecursiveEncryption { get; }
-        public IReadOnlyDictionary<char, ReferencedMantarayNodeFork> Forks => IsDecoded
+        public override IReadOnlyDictionary<char, MantarayNodeFork> Forks => IsDecoded
             ? _forks
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public SwarmHash Hash { get; }
+        public override SwarmHash Hash { get; }
         public bool IsDecoded { get; private set; }
-        public IReadOnlyDictionary<string, string> Metadata => _metadata;
-        public NodeType NodeTypeFlags { get; }
-        public XorEncryptKey? ObfuscationKey => IsDecoded
+        public override IReadOnlyDictionary<string, string> Metadata => _metadata;
+        public override NodeType NodeTypeFlags { get; }
+        public override XorEncryptKey? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
 
@@ -112,83 +98,10 @@ namespace Etherna.BeeNet.Manifest
             DecodeCacHelper(cac);
         }
 
-        public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
-            string path)
+        public override async Task OnVisitingAsync()
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-
-            // If the path is empty, return current node metadata
-            if (path.Length == 0)
-                return _metadata;
-
-            // Find the child fork.
-            if (!_forks.TryGetValue(path[0], out var fork) ||
-                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
-                throw new KeyNotFoundException($"Final path {path} can't be found");
-            
-            // If the child node is the one we are looking for, return metadata.
-            var childSubPath = path[fork.Prefix.Length..];
-            if (childSubPath.Length == 0)
-                return fork.Node._metadata;
-            
-            // Else, proceed into it.
-            if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await fork.Node.GetMetadataAsync(childSubPath).ConfigureAwait(false);
-        }
-
-        public async Task<MantarayResourceInfo> GetResourceInfoAsync(string path)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-
-            // If the path is empty and entry is not null, return the entry
-            if (path.Length == 0)
-            {
-                if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
-                    return new()
-                    {
-                        ChunkReference = new SwarmChunkReference(
-                            EntryHash.Value,
-                            EntryEncryptionKey,
-                            EntryUseRecursiveEncryption),
-                        Metadata = _metadata,
-                    };
-            
-                throw new KeyNotFoundException("Path can't be found");
-            }
-            
-            // Find the child fork.
-            if (!_forks.TryGetValue(path[0], out var fork) ||
-                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
-                throw new KeyNotFoundException($"Final path {path} can't be found");
-
-            if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await fork.Node.GetResourceInfoAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
-        }
-
-        public async Task<bool> HasPathPrefixAsync(string path)
-        {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-
-            if (path.Length == 0)
-                return true;
-            
-            // Find the child fork.
-            if (!_forks.TryGetValue(path[0], out var fork))
-                return false;
-            
-            var commonPathLength = Math.Min(path.Length, fork.Prefix.Length);
-            if (!path.AsSpan()[..commonPathLength].SequenceEqual(fork.Prefix.AsSpan()[..commonPathLength]))
-                return false;
-            
-            if (!fork.Node.IsDecoded)
-                await fork.Node.DecodeFromChunkAsync().ConfigureAwait(false);
-
-            return await fork.Node.HasPathPrefixAsync(
-                path[commonPathLength..]).ConfigureAwait(false);
+            if (!IsDecoded)
+                await DecodeFromChunkAsync().ConfigureAwait(false);
         }
         
         // Helpers.
@@ -206,10 +119,10 @@ namespace Etherna.BeeNet.Manifest
             readIndex += XorEncryptKey.KeySize;
             
             // Read header.
-            var versionHash = data.AsMemory()[readIndex..(readIndex + MantarayNode.VersionHashSize)];
-            readIndex += MantarayNode.VersionHashSize;
+            var versionHash = data.AsMemory()[readIndex..(readIndex + VersionHashSize)];
+            readIndex += VersionHashSize;
             
-            if (versionHash.Span.SequenceEqual(MantarayNode.Version02Hash))
+            if (versionHash.Span.SequenceEqual(Version02Hash))
                 DecodeVersion02(data.AsMemory()[readIndex..]);
             else
                 throw new InvalidOperationException("Manifest version not recognized");
@@ -234,11 +147,11 @@ namespace Etherna.BeeNet.Manifest
             
             // Read forks.
             //index
-            var forksIndex = data[readIndex..(readIndex + MantarayNode.ForksIndexSize)];
-            readIndex += MantarayNode.ForksIndexSize;
+            var forksIndex = data[readIndex..(readIndex + ForksIndexSize)];
+            readIndex += ForksIndexSize;
             
             var forksKeys = new List<char>();
-            for (int i = 0; i < MantarayNode.ForksIndexSize * 8; i++)
+            for (int i = 0; i < ForksIndexSize * 8; i++)
             {
                 if ((forksIndex.Span[i / 8] & (byte)(1 << (i % 8))) != 0)
                     forksKeys.Add((char)i);
@@ -279,7 +192,7 @@ namespace Etherna.BeeNet.Manifest
                 }
                 
                 //add fork
-                _forks[key] = new ReferencedMantarayNodeFork(
+                _forks[key] = new MantarayNodeFork(
                     prefix,
                     new ReferencedMantarayNode(
                         chunkStore,

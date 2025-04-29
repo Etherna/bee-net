@@ -22,29 +22,35 @@ namespace Etherna.BeeNet.Manifest
 {
     public delegate IHasherPipeline BuildHasherPipeline(bool readOnlyPipeline);
     
-    public class MantarayManifest(
-        BuildHasherPipeline hasherPipelineBuilder,
-        MantarayNode rootNode)
-        : IReadOnlyMantarayManifest
+    public sealed class WritableMantarayManifest : MantarayManifestBase
     {
-        // Consts.
-        public static readonly string RootPath = SwarmAddress.Separator.ToString();
+        // Fields.
+        private readonly BuildHasherPipeline hasherPipelineBuilder;
+        private readonly WritableMantarayNode rootNode;
 
         // Constructors.
-        public MantarayManifest(
+        public WritableMantarayManifest(
             BuildHasherPipeline hasherPipelineBuilder,
             ushort compactLevel)
             : this(
                 hasherPipelineBuilder,
-                new MantarayNode(
+                new WritableMantarayNode(
                     compactLevel,
                     compactLevel > 0
                         ? (XorEncryptKey?)null //auto-generate on hash building
                         : XorEncryptKey.Zero))
         { }
 
+        public WritableMantarayManifest(
+            BuildHasherPipeline hasherPipelineBuilder,
+            WritableMantarayNode rootNode)
+        {
+            this.hasherPipelineBuilder = hasherPipelineBuilder;
+            this.rootNode = rootNode;
+        }
+
         // Properties.
-        public IReadOnlyMantarayNode RootNode => rootNode;
+        public override IReadOnlyMantarayNode RootNode => rootNode;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -55,7 +61,7 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public async Task<SwarmChunkReference> GetHashAsync(Hasher hasher)
+        public override async Task<SwarmChunkReference> GetHashAsync(Hasher hasher)
         {
             await rootNode.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             return new SwarmChunkReference(rootNode.Hash, null, false);

@@ -177,7 +177,7 @@ namespace Etherna.BeeNet.Chunks
         }
         
         private async Task TraverseMantarayNodeHelperAsync(
-            ReferencedMantarayNode manifestNode,
+            MantarayNodeBase manifestNode,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
             Func<SwarmHash, Task> onChunkNotFoundAsync)
@@ -187,7 +187,7 @@ namespace Etherna.BeeNet.Chunks
             // Try decode manifest.
             try
             {
-                await manifestNode.DecodeFromChunkAsync().ConfigureAwait(false);
+                await manifestNode.OnVisitingAsync().ConfigureAwait(false);
             }
 #pragma warning disable CA1031
             catch
