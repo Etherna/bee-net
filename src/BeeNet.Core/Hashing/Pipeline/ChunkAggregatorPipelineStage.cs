@@ -111,7 +111,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         break; //level empty, continue to the next
                     
                     case 1:
-                        rootChunkFound = isLastLevel;
+                        if (isLastLevel)
+                            rootChunkFound = true;
+                        else //carry on current chunk on next level
+                        {
+                            var nextLevelChunks = GetLevelChunks(i + 1);
+                            nextLevelChunks.Add(levelChunks.Single());
+                            levelChunks.Clear();
+                        }
                         break;
                     
                     default:
