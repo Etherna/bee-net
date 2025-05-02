@@ -44,6 +44,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             IHasherPipelineStage nextStage,
             int? chunkConcurrency = null)
         {
+            if (chunkConcurrency <= 0)
+                throw new ArgumentOutOfRangeException(nameof(chunkConcurrency), "Chunk concurrency must be greater than zero");
+            
             chunkConcurrency ??= Environment.ProcessorCount;
             
             this.nextStage = nextStage;
