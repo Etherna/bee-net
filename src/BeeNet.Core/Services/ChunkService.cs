@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -35,19 +34,12 @@ namespace Etherna.BeeNet.Services
         public async Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore,
-            string? fileCachePath = null,
-            CancellationToken? cancellationToken = null)
+            IReadOnlyChunkStore chunkStore)
         {
-            var chunkJoiner = new ChunkJoiner(chunkStore);
-
             var chunkReference = (await address.ResolveToResourceInfoAsync(
                 chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.ChunkReference;
-            
-            return await chunkJoiner.GetJoinedChunkDataAsync(
-                chunkReference,
-                fileCachePath,
-                cancellationToken).ConfigureAwait(false);
+
+            return await ChunkDataStream.BuildNewAsync(chunkReference, chunkStore).ConfigureAwait(false);
         }
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(

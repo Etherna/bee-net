@@ -19,7 +19,6 @@ using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Services
@@ -32,15 +31,11 @@ namespace Etherna.BeeNet.Services
         /// <param name="address">Resource address</param>
         /// <param name="manifestPathResolver"></param>
         /// <param name="chunkStore">The chunk store</param>
-        /// <param name="fileCachePath">Optional file where store read data. Necessary if data is >2GB</param>
-        /// <param name="cancellationToken">Optional cancellation token</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore,
-            string? fileCachePath = null,
-            CancellationToken? cancellationToken = null);
+            IReadOnlyChunkStore chunkStore);
     
         /// <summary>
         /// Evaluate the result uploading a directory
