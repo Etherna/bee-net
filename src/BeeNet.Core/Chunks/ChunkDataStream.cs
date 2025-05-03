@@ -121,11 +121,15 @@ namespace Etherna.BeeNet.Chunks
         
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
+            // Return 0 when the stream is at the end.
+            var dataToRead = (int)Math.Min(buffer.Length, Length - Position);
+            if (dataToRead == 0)
+                return 0;
+            
             // Seek position on chunks' cache to start reading.
             await SeekChunksCacheAsync(0, (ulong)Position, cancellationToken).ConfigureAwait(false);
             
             // Read from chunks.
-            var dataToRead = (int)Math.Min(buffer.Length, Length - Position);
             await CopyDataToBufferAsync(buffer[..dataToRead], cancellationToken).ConfigureAwait(false);
             
             Position += dataToRead;
