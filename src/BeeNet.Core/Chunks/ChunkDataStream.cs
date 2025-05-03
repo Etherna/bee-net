@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
+using Nethereum.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -161,10 +162,8 @@ namespace Etherna.BeeNet.Chunks
             var cacheDataLevel = chunkCacheLevels.Last();
             var dataToReadFromChunk = Math.Min(cacheDataLevel.Chunk.Data.Length - cacheDataLevel.Position, buffer.Length);
             
-            var dataArray = cacheDataLevel.Chunk.Data.ToArray();
-            cacheDataLevel.EncryptionKey?.EncryptDecrypt(dataArray);
-            
-            dataArray.AsMemory()[cacheDataLevel.Position..(cacheDataLevel.Position + dataToReadFromChunk)].CopyTo(buffer);
+            cacheDataLevel.Chunk.Data[cacheDataLevel.Position..(cacheDataLevel.Position + dataToReadFromChunk)].CopyTo(buffer);
+            cacheDataLevel.EncryptionKey?.EncryptDecrypt(buffer[..dataToReadFromChunk].Span);
             
             // If all data has been read, return.
             if (buffer.Length == dataToReadFromChunk)
@@ -192,18 +191,19 @@ namespace Etherna.BeeNet.Chunks
             currentLevel.Position += segmentSize;
             
             // Find first child data chunk.
+            var dataBuffer = new byte[SwarmCac.DataSize];
             do
             {
-                var dataArray = currentLevel.Chunk.Data.ToArray();
-                currentLevel.EncryptionKey?.EncryptDecrypt(dataArray);
+                currentLevel.Chunk.Data.CopyTo(dataBuffer);
+                currentLevel.EncryptionKey?.EncryptDecrypt(dataBuffer);
                 
                 // Read child chunk reference.
                 var cursor = currentLevel.Position;
-                var childHash = new SwarmHash(dataArray.AsMemory()[cursor..(cursor + SwarmHash.HashSize)]);
+                var childHash = new SwarmHash(dataBuffer.Slice(cursor, cursor + SwarmHash.HashSize));
                 cursor += SwarmHash.HashSize;
 
                 var childEncryptionKey = useRecursiveEncryption
-                    ? new XorEncryptKey(dataArray.AsMemory()[cursor..(cursor + XorEncryptKey.KeySize)])
+                    ? new XorEncryptKey(dataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize))
                     : (XorEncryptKey?)null;
 
                 var childChunk = await chunkStore.GetAsync(childHash, cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -217,75 +217,80 @@ namespace Etherna.BeeNet.Chunks
         }
 
         /// <summary>
-        /// Recursive method to find in chunks' cache the current branch with rigth position to start reading.
-        /// Recursion:
-        /// - input: argument current level has always the right chunk selected, with position to determinate.
-        ///          The offset indicates how many bytes still needs to skip
-        /// - check: verify if current chunk is a leaf, in that case set position on the leaf
-        /// - recursive call: find the chunk at next cache level containing the searched offset,
-        ///                   and update position at current level according to it
+        /// Iterative method to initialize cache to the current branch with rigth position to start reading.
+        /// How it works:
+        /// - invariant: argument current level has always the right chunk selected, with position to determinate.
+        ///              The offset indicates how many bytes still needs to skip
+        /// - exit condition: verify if current chunk is a leaf, in that case set position on the leaf and return
+        /// - operation: find and put in cache the chunk at next cache level containing the searched offset,
+        ///              and update position at current level to point to it
         /// </summary>
         /// <param name="currentLevelIndex">Current max level cache with known right chunk</param>
         /// <param name="offset">Data offset to apply</param>
         private async Task SeekChunksCacheAsync(int currentLevelIndex, ulong offset, CancellationToken cancellationToken)
         {
-            var currentLevel = chunkCacheLevels[currentLevelIndex];
-            
-            var dataArray = currentLevel.Chunk.Data.ToArray();
-            currentLevel.EncryptionKey?.EncryptDecrypt(dataArray);
-            
-            // If is a data chunk, set position and return.
-            var chunkDataLength = SwarmCac.SpanToLength(currentLevel.Chunk.Span.Span);
-            if (chunkDataLength <= SwarmCac.DataSize)
+            var dataBuffer = new byte[SwarmCac.DataSize];
+            while (true)
             {
-                //check offset consistency
-                if (chunkDataLength < offset)
-                    throw new InvalidOperationException("Current chunk's can't resolve required offset");
-                
-                //clear cache after this level
-                while (chunkCacheLevels.Count - 1 > currentLevelIndex)
-                    chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
-                
-                currentLevel.Position = (int)offset;
-                return;
-            }
-            
-            // Else, identify the right segment to visit.
-            var segmentsAmount = (uint)(dataArray.Length / segmentSize);
-            ulong dataBySegment = SwarmCac.DataSize;
-            while (dataBySegment * segmentsAmount < chunkDataLength)
-                dataBySegment *= maxSegmentsInChunk;
+                var currentLevel = chunkCacheLevels[currentLevelIndex];
 
-            var selectedSegment = (int)(offset / dataBySegment);
-            var selectedSegmentPosition = selectedSegment * segmentSize;
-            var offsetRest = offset - dataBySegment * (ulong)selectedSegment;
+                currentLevel.Chunk.Data.CopyTo(dataBuffer);
+                currentLevel.EncryptionKey?.EncryptDecrypt(dataBuffer);
 
-            // If current cache needs to be updated.
-            if (selectedSegmentPosition != currentLevel.Position || currentLevelIndex == chunkCacheLevels.Count - 1)
-            {
-                while (chunkCacheLevels.Count - 1 > currentLevelIndex)
-                    chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
-                
-                currentLevel.Position = selectedSegmentPosition;
-            
-                // Read child chunk reference.
-                var cursor = currentLevel.Position;
-                var childHash = new SwarmHash(dataArray.AsMemory()[cursor..(cursor + SwarmHash.HashSize)]);
-                cursor += SwarmHash.HashSize;
-            
-                var childEncryptionKey = useRecursiveEncryption ?
-                    new XorEncryptKey(dataArray.AsMemory()[cursor..(cursor + XorEncryptKey.KeySize)]) :
-                    (XorEncryptKey?)null;
-            
-                // Get child chunk and add to cache.
-                var childChunk = await chunkStore.GetAsync(childHash, cancellationToken: cancellationToken).ConfigureAwait(false);
-                if (childChunk is not SwarmCac childCac)
-                    throw new InvalidOperationException($"Chunk {childHash} is not a Content Addressed Chunk.");
-                chunkCacheLevels.Add(new ChunkCacheLevel{Chunk = childCac, EncryptionKey = childEncryptionKey});
+                // If is a data chunk, set position and return.
+                var chunkDataLength = SwarmCac.SpanToLength(currentLevel.Chunk.Span.Span);
+                if (chunkDataLength <= SwarmCac.DataSize)
+                {
+                    //check offset consistency
+                    if (chunkDataLength < offset)
+                        throw new InvalidOperationException("Current chunk's can't resolve required offset");
+
+                    //clear cache after this level
+                    while (chunkCacheLevels.Count - 1 > currentLevelIndex)
+                        chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
+
+                    currentLevel.Position = (int)offset;
+                    return;
+                }
+
+                // Else, identify the right segment to visit.
+                var segmentsAmount = (uint)(currentLevel.Chunk.Data.Length / segmentSize);
+                ulong dataBySegment = SwarmCac.DataSize;
+                while (dataBySegment * segmentsAmount < chunkDataLength)
+                    dataBySegment *= maxSegmentsInChunk;
+
+                var selectedSegment = (int)(offset / dataBySegment);
+                var selectedSegmentPosition = selectedSegment * segmentSize;
+                var offsetRest = offset - dataBySegment * (ulong)selectedSegment;
+
+                // If current cache needs to be updated.
+                if (selectedSegmentPosition != currentLevel.Position || currentLevelIndex == chunkCacheLevels.Count - 1)
+                {
+                    while (chunkCacheLevels.Count - 1 > currentLevelIndex)
+                        chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
+
+                    currentLevel.Position = selectedSegmentPosition;
+
+                    // Read child chunk reference.
+                    var cursor = currentLevel.Position;
+                    var childHash = new SwarmHash(dataBuffer.Slice(cursor, cursor + SwarmHash.HashSize));
+                    cursor += SwarmHash.HashSize;
+
+                    var childEncryptionKey = useRecursiveEncryption ?
+                        new XorEncryptKey(dataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize)) :
+                        (XorEncryptKey?)null;
+
+                    // Get child chunk and add to cache.
+                    var childChunk = await chunkStore.GetAsync(childHash, cancellationToken: cancellationToken).ConfigureAwait(false);
+                    if (childChunk is not SwarmCac childCac)
+                        throw new InvalidOperationException($"Chunk {childHash} is not a Content Addressed Chunk.");
+                    chunkCacheLevels.Add(new ChunkCacheLevel { Chunk = childCac, EncryptionKey = childEncryptionKey });
+                }
+
+                // Do iteration on next cache level.
+                currentLevelIndex++;
+                offset = offsetRest;
             }
-            
-            // Do recursion on next cache level.
-            await SeekChunksCacheAsync(currentLevelIndex + 1, offsetRest, cancellationToken).ConfigureAwait(false);
         }
     }
 }
