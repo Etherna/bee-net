@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Pipeline;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
@@ -26,7 +25,7 @@ using Xunit;
 
 namespace Etherna.BeeNet.Chunks
 {
-    public class ChunkJoinerTest
+    public class ChunkDataStreamTest
     {
         // Internal classes.
         public class JoinChunkDataTestElement(
@@ -101,11 +100,10 @@ namespace Etherna.BeeNet.Chunks
         [Theory, MemberData(nameof(JoinChunkDataTests))]
         public async Task JoinChunkData(JoinChunkDataTestElement test)
         {
-            using var memoryStream = new MemoryStream();
-            var chunkJoiner = new ChunkJoiner(test.ChunkStore);
+            await using var memoryStream = new MemoryStream();
+            await using var chunkDataStream = await ChunkDataStream.BuildNewAsync(test.RootChunkReference, test.ChunkStore);
             
-            using var resultStream = await chunkJoiner.GetJoinedChunkDataAsync(test.RootChunkReference);
-            await resultStream.CopyToAsync(memoryStream);
+            await chunkDataStream.CopyToAsync(memoryStream);
             memoryStream.Seek(0, SeekOrigin.Begin);
             var result = memoryStream.ToArray();
             
