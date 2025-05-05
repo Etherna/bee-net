@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Stores
             // Get from store only missing chunks.
             if (cacheMissedHashes.Count != 0)
             {
-                var storeResults = await LoadChunksAsync(cacheMissedHashes, cancellationToken);
+                var storeResults = await LoadChunksAsync(cacheMissedHashes, cancellationToken).ConfigureAwait(false);
                 foreach (var result in storeResults)
                     results.Add(result.Key, result.Value);
             }
@@ -114,7 +114,7 @@ namespace Etherna.BeeNet.Stores
             {
                 try
                 {
-                    var chunk = await LoadChunkAsync(hash, cancellationToken);
+                    var chunk = await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
                     results.Add(hash, chunk);
                 }
                 catch (KeyNotFoundException) { }
