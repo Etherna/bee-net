@@ -46,6 +46,39 @@ namespace Etherna.BeeNet.Stores
             return chunk;
         }
 
+        public async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
+            IEnumerable<SwarmHash> hashes,
+            bool cacheChunk = false,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            
+            var results = new Dictionary<SwarmHash, SwarmChunk>();
+            var cacheMissedHashes = new List<SwarmHash>();
+            
+            // Try read chunks from cache.
+            foreach (var hash in hashes)
+                if (ChunksCache.TryGetValue(hash, out var chunk))
+                    results.Add(hash, chunk);
+                else
+                    cacheMissedHashes.Add(hash);
+
+            // Get from store only missing chunks.
+            if (cacheMissedHashes.Count != 0)
+            {
+                var storeResults = await LoadChunksAsync(cacheMissedHashes, cancellationToken);
+                foreach (var result in storeResults)
+                    results.Add(result.Key, result.Value);
+            }
+
+            // Report chunks to cache, if required.
+            if (cacheChunk)
+                foreach (var result in results)
+                    ChunksCache.TryAdd(result.Key, result.Value);
+            
+            return results;
+        }
+
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
             bool cacheChunk = false,
@@ -69,5 +102,25 @@ namespace Etherna.BeeNet.Stores
         protected abstract Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default);
+
+        protected virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> LoadChunksAsync(
+            IEnumerable<SwarmHash> hashes,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            
+            var results = new Dictionary<SwarmHash, SwarmChunk>();
+            foreach (var hash in hashes)
+            {
+                try
+                {
+                    var chunk = await LoadChunkAsync(hash, cancellationToken);
+                    results.Add(hash, chunk);
+                }
+                catch (KeyNotFoundException) { }
+            }
+
+            return results;
+        }
     }
 }
