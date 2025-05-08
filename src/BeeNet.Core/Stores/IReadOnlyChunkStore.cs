@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +23,11 @@ namespace Etherna.BeeNet.Stores
     {
         Task<SwarmChunk> GetAsync(
             SwarmHash hash,
+            bool cacheChunk = false,
+            CancellationToken cancellationToken = default);
+
+        Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
+            IEnumerable<SwarmHash> hashes,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default);
 
