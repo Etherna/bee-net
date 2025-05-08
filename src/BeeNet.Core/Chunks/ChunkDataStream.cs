@@ -155,25 +155,31 @@ namespace Etherna.BeeNet.Chunks
             List<SwarmCac> newLevelsCache = [];
             
             // Init with root level info.
-            (SwarmCac Chunk, XorEncryptKey? EncKey)[] levelChunkKeyPairs = [new(rootChunk, rootEncryptionKey)];
             var levelStartDataOffset = (ulong)Position;
             var levelEndDataOffset = (ulong)(Length - (Position + buffer.Length));
+            (SwarmCac Chunk, XorEncryptKey? EncKey)[] levelChunkKeyPairs = [new(rootChunk, rootEncryptionKey)];
+            
+            // Reuse these for memory optimization.
+            var chunkDataBuffer = new byte[SwarmCac.DataSize];
+            var levelChildHashKeyPairs = new List<(SwarmHash Hash, XorEncryptKey? EncKey)>();
 
             // Iterate on all levels from root to data chunks.
-            var chunkDataBuffer = new byte[SwarmCac.DataSize]; //reuse for memory optimization
             for (var levelIndex = 0; levelChunkKeyPairs.Length != 0; levelIndex++)
             {
-                var levelChildHashKeyPairs = new List<(SwarmHash Hash, XorEncryptKey? EncKey)>();
+                // Init.
+                levelChildHashKeyPairs.Clear();
+                //optimize value search for chunks in level. Analyzing from right, it can only be monotonically non-decreasing
+                ulong dataSizeBySegment = SwarmCac.DataSize;
 
                 // Parse all chunks on current level. Start from end to copy data first, if present in level.
                 for (int chunkIndex = levelChunkKeyPairs.Length - 1; chunkIndex >= 0; chunkIndex--)
                 {
                     var chunkKeyPair = levelChunkKeyPairs[chunkIndex];
-                    var isFirstLevelChunk = chunkIndex == 0;
-                    var isLastLevelChunk = chunkIndex == levelChunkKeyPairs.Length - 1;
+                    var isFirstChunkInLevel = chunkIndex == 0;
+                    var isLastChunkInLevel = chunkIndex == levelChunkKeyPairs.Length - 1;
 
                     // If it's the last chunk on the level, and if some data remains to read in level, cache the chunk.
-                    if (isLastLevelChunk && levelEndDataOffset > 0)
+                    if (isLastChunkInLevel && levelEndDataOffset > 0)
                         newLevelsCache.Add(chunkKeyPair.Chunk);
                     
                     // Decode chunk's data.
@@ -205,24 +211,26 @@ namespace Etherna.BeeNet.Chunks
                     // Find referred data size by segment.
                     var referredDataSize = SwarmCac.SpanToLength(chunkKeyPair.Chunk.Span.Span);
                     var segmentsAmount = (uint)(chunkKeyPair.Chunk.Data.Length / chunkSegmentSize);
-                    ulong dataSizeBySegment = SwarmCac.DataSize;
                     while (dataSizeBySegment * segmentsAmount < referredDataSize)
                         dataSizeBySegment *= maxSegmentsInChunk;
                     
-                    // Define chunk's segments to read and define bounds for the next level. 
+                    // Define chunk's segments to read and set bounds for the next level. 
                     var chunkStartPosition = 0;
-                    if (isFirstLevelChunk)
+                    if (isFirstChunkInLevel)
                     {
                         var startSegmentsToSkip = levelStartDataOffset / dataSizeBySegment;
                         chunkStartPosition = (int)(startSegmentsToSkip * chunkSegmentSize);
                         levelStartDataOffset -= startSegmentsToSkip * dataSizeBySegment;
                     }
                     var chunkEndPosition = chunkKeyPair.Chunk.Data.Length;
-                    if (isLastLevelChunk)
+                    if (isLastChunkInLevel)
                     {
                         var endSegmentsToSkip = levelEndDataOffset / dataSizeBySegment;
                         chunkEndPosition = chunkKeyPair.Chunk.Data.Length - (int)(endSegmentsToSkip * chunkSegmentSize);
-                        levelEndDataOffset -= endSegmentsToSkip * dataSizeBySegment;
+                        if (endSegmentsToSkip > 0)
+                            levelEndDataOffset -= referredDataSize % dataSizeBySegment == 0
+                                ? endSegmentsToSkip * dataSizeBySegment
+                                : (endSegmentsToSkip - 1) * dataSizeBySegment + referredDataSize % dataSizeBySegment;
                     }
 
                     // Reverse read child chunks references and prepend them on hash list.
@@ -248,7 +256,8 @@ namespace Etherna.BeeNet.Chunks
                 {
                     IReadOnlyDictionary<SwarmHash, SwarmChunk> childChunksPool;
                 
-                    if (levelsCache.Count > levelIndex + 1 && //with cache
+                    //with cache
+                    if (levelsCache.Count > levelIndex + 1 &&
                         levelChildHashKeyPairs.Any(p => p.Hash == levelsCache[levelIndex + 1].Hash))
                     {
                         var hashesToGetFromStore = levelChildHashKeyPairs
