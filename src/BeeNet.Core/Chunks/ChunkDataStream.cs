@@ -215,7 +215,7 @@ namespace Etherna.BeeNet.Chunks
                     while (dataSizeBySegment * segmentsAmount < referredDataSize)
                         dataSizeBySegment *= maxSegmentsInChunk;
                     
-                    // Define chunk's segments to read and set bounds for the next level. 
+                    // Define chunk's segments to read and set bounds for the next level.
                     var chunkStartPosition = 0;
                     if (isFirstChunkInLevel)
                     {
@@ -226,7 +226,10 @@ namespace Etherna.BeeNet.Chunks
                     var chunkEndPosition = chunkKeyPair.Chunk.Data.Length;
                     if (isLastChunkInLevel)
                     {
-                        var endSegmentsToSkip = levelEndDataOffset / dataSizeBySegment;
+                        var lastPartialSegmentDataSize = referredDataSize % dataSizeBySegment;
+                        var endSegmentsToSkip = (levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment;
+                        if (lastPartialSegmentDataSize > 0 && lastPartialSegmentDataSize <= levelEndDataOffset)
+                            endSegmentsToSkip++;
                         chunkEndPosition = chunkKeyPair.Chunk.Data.Length - (int)(endSegmentsToSkip * chunkSegmentSize);
                         if (endSegmentsToSkip > 0)
                             levelEndDataOffset -= referredDataSize % dataSizeBySegment == 0
