@@ -190,16 +190,17 @@ namespace Etherna.BeeNet.Chunks
                     if (chunkKeyPair.Chunk.IsDataChunk)
                     {
                         //check end offset consistency
-                        if ((uint)chunkKeyPair.Chunk.Data.Length <= levelEndDataOffset)
-                            throw new InvalidOperationException("Invalid end data offset with current data chunk");
+                        var dataToCopyStart = isFirstChunkInLevel ? (int)levelStartDataOffset : 0;
+                        var dataToCopySize = chunkKeyPair.Chunk.Data.Length - dataToCopyStart - (int)levelEndDataOffset;
+                        if (dataToCopySize <= 0)
+                            throw new InvalidOperationException("Invalid data to copy size");
                         
                         //copy data to end of buffer, and shrink buffer
-                        var dataToCopySize = chunkKeyPair.Chunk.Data.Length - (int)levelEndDataOffset;
-                        chunkDataBuffer[..dataToCopySize].CopyTo(buffer[^dataToCopySize..]);
+                        chunkDataBuffer[dataToCopyStart..(dataToCopyStart + dataToCopySize)].CopyTo(buffer[^dataToCopySize..]);
                         buffer = buffer[..^dataToCopySize];
                         
-                        //update bounds
-                        levelEndDataOffset -= (uint)dataToCopySize % SwarmCac.DataSize;
+                        //update level bounds
+                        levelEndDataOffset = 0;
 
                         continue;
                     }
