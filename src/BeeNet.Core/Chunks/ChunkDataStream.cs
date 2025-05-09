@@ -163,8 +163,8 @@ namespace Etherna.BeeNet.Chunks
             var chunkDataBuffer = new byte[SwarmCac.DataSize];
             var levelChildHashKeyPairs = new List<(SwarmHash Hash, XorEncryptKey? EncKey)>();
 
-            // Iterate on all levels from root to data chunks.
-            for (var levelIndex = 0; levelChunkKeyPairs.Length != 0; levelIndex++)
+            // Iterate on all levels from root to data chunks. Terminate when no chunks remain.
+            for (var levelIndex = 0;; levelIndex++)
             {
                 // Init.
                 levelChildHashKeyPairs.Clear();
@@ -254,53 +254,51 @@ namespace Etherna.BeeNet.Chunks
                         levelChildHashKeyPairs.Insert(0, (childHash, childEncryptionKey));
                     }
                 }
-
-                // Search next level chunks.
-                if (levelChildHashKeyPairs.Count != 0)
-                {
-                    IReadOnlyDictionary<SwarmHash, SwarmChunk> childChunksPool;
                 
-                    //with cache
-                    if (levelsCache.Count > levelIndex + 1 &&
-                        levelChildHashKeyPairs.Any(p => p.Hash == levelsCache[levelIndex + 1].Hash))
-                    {
-                        var hashesToGetFromStore = levelChildHashKeyPairs
-                            .Select(p => p.Hash)
-                            .Where(h => h != levelsCache[levelIndex + 1].Hash).ToArray();
-                        IEnumerable<KeyValuePair<SwarmHash, SwarmChunk>> chunksFromStore =
-                            hashesToGetFromStore.Length != 0
-                                ? await chunkStore.GetAsync(hashesToGetFromStore, cancellationToken: cancellationToken).ConfigureAwait(false)
-                                : Array.Empty<KeyValuePair<SwarmHash, SwarmChunk>>();
+                // If next level is empty, set cache and return.
+                if (levelChildHashKeyPairs.Count == 0)
+                {
+                    // Verify the full buffer has been written.
+                    if (buffer.Length != 0)
+                        throw new InvalidOperationException("Not full buffer has been written");
+
+                    // Replace cache.
+                    levelsCache = newLevelsCache;
+
+                    return;
+                }
+
+                // Search chunks for the next level.
+                IReadOnlyDictionary<SwarmHash, SwarmChunk> childChunksPool;
+                
+                //with cache
+                if (levelsCache.Count > levelIndex + 1 &&
+                    levelChildHashKeyPairs.Any(p => p.Hash == levelsCache[levelIndex + 1].Hash))
+                {
+                    var hashesToGetFromStore = levelChildHashKeyPairs
+                        .Select(p => p.Hash)
+                        .Where(h => h != levelsCache[levelIndex + 1].Hash).ToArray();
+                    IEnumerable<KeyValuePair<SwarmHash, SwarmChunk>> chunksFromStore =
+                        hashesToGetFromStore.Length != 0
+                            ? await chunkStore.GetAsync(hashesToGetFromStore, cancellationToken: cancellationToken).ConfigureAwait(false)
+                            : Array.Empty<KeyValuePair<SwarmHash, SwarmChunk>>();
                     
-                        childChunksPool = new Dictionary<SwarmHash, SwarmChunk>(chunksFromStore)
-                        {
-                            [levelsCache[levelIndex + 1].Hash] = levelsCache[levelIndex + 1]
-                        };
-                    }
-                    else //or without cache
+                    childChunksPool = new Dictionary<SwarmHash, SwarmChunk>(chunksFromStore)
                     {
-                        childChunksPool = await chunkStore.GetAsync(
-                            levelChildHashKeyPairs.Select(p => p.Hash),
-                            cancellationToken: cancellationToken).ConfigureAwait(false);
-                    }
-                
-                    // Resolve child chunks from hash list.
-                    levelChunkKeyPairs = levelChildHashKeyPairs.Select(pair =>
-                        ((SwarmCac)childChunksPool[pair.Hash], pair.EncKey)).ToArray();
+                        [levelsCache[levelIndex + 1].Hash] = levelsCache[levelIndex + 1]
+                    };
                 }
-                else
+                else //or without cache
                 {
-                    // No more chunks on next level.
-                    levelChunkKeyPairs = [];
+                    childChunksPool = await chunkStore.GetAsync(
+                        levelChildHashKeyPairs.Select(p => p.Hash),
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
                 }
+                
+                // Resolve child chunks from hash list.
+                levelChunkKeyPairs = levelChildHashKeyPairs.Select(pair =>
+                    ((SwarmCac)childChunksPool[pair.Hash], pair.EncKey)).ToArray();
             }
-            
-            // Verify the full buffer has been written.
-            if (buffer.Length != 0)
-                throw new InvalidOperationException("Not full buffer has been written");
-
-            // Replace cache.
-            levelsCache = newLevelsCache;
         }
     }
 }
