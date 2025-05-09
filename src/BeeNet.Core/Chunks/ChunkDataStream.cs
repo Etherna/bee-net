@@ -26,42 +26,35 @@ namespace Etherna.BeeNet.Chunks
 {
     public sealed class ChunkDataStream : Stream
     {
-        // Private classes.
-        private class ChunkCacheLevel
-        {
-            public required SwarmCac Chunk { get; init; }
-            public required XorEncryptKey? EncryptionKey { get; init; }
-            public int Position { get; set; }
-        }
-        
         // Fields.
-        private readonly List<ChunkCacheLevel> chunkCacheLevels = new();
+        private readonly uint chunkSegmentSize;
         private readonly IReadOnlyChunkStore chunkStore;
+        private List<SwarmCac> levelsCache = new();
         private readonly uint maxSegmentsInChunk;
-        private readonly int segmentSize;
+        private readonly SwarmCac rootChunk;
+        private readonly XorEncryptKey? rootEncryptionKey;
         private readonly bool useRecursiveEncryption;
 
         // Constructor.
         private ChunkDataStream(
             SwarmCac rootChunk,
-            XorEncryptKey? encryptionKey,
+            XorEncryptKey? rootEncryptionKey,
             bool useRecursiveEncryption,
             IReadOnlyChunkStore chunkStore,
             long length)
         {
-            chunkCacheLevels.Add(new ChunkCacheLevel
-            {
-                Chunk = rootChunk,
-                EncryptionKey = encryptionKey
-            });
             this.chunkStore = chunkStore;
-            segmentSize = SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
-            maxSegmentsInChunk = (uint)(SwarmCac.DataSize / segmentSize);
+            this.rootChunk = rootChunk;
+            this.rootEncryptionKey = rootEncryptionKey;
             this.useRecursiveEncryption = useRecursiveEncryption;
             Length = length;
             Position = 0;
+            
+            // Define segments info.
+            chunkSegmentSize = (uint)(SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1));
+            maxSegmentsInChunk = SwarmCac.DataSize / chunkSegmentSize;
         }
-        
+
         // Static builder.
         public static async Task<Stream> BuildNewAsync(
             SwarmChunkReference chunkReference,
@@ -126,10 +119,7 @@ namespace Etherna.BeeNet.Chunks
             if (dataToRead == 0)
                 return 0;
             
-            // Seek position on chunks' cache to start reading.
-            await SeekChunksCacheAsync(0, (ulong)Position, cancellationToken).ConfigureAwait(false);
-            
-            // Read from chunks.
+            // Read data from chunks.
             await CopyDataToBufferAsync(buffer[..dataToRead], cancellationToken).ConfigureAwait(false);
             
             Position += dataToRead;
@@ -162,138 +152,156 @@ namespace Etherna.BeeNet.Chunks
         // Private helpers.
         private async Task CopyDataToBufferAsync(Memory<byte> buffer, CancellationToken cancellationToken)
         {
-            // Read from current cached data chunk.
-            var cacheDataLevel = chunkCacheLevels.Last();
-            var dataToReadFromChunk = Math.Min(cacheDataLevel.Chunk.Data.Length - cacheDataLevel.Position, buffer.Length);
+            List<SwarmCac> newLevelsCache = [];
             
-            cacheDataLevel.Chunk.Data[cacheDataLevel.Position..(cacheDataLevel.Position + dataToReadFromChunk)].CopyTo(buffer);
-            cacheDataLevel.EncryptionKey?.EncryptDecrypt(buffer[..dataToReadFromChunk].Span);
+            // Init with root level info.
+            var levelStartDataOffset = (ulong)Position;
+            var levelEndDataOffset = (ulong)(Length - (Position + buffer.Length));
+            (SwarmCac Chunk, XorEncryptKey? EncKey)[] levelChunkKeyPairs = [new(rootChunk, rootEncryptionKey)];
             
-            // If all data has been read, return.
-            if (buffer.Length == dataToReadFromChunk)
-                return;
-            
-            // Else, cached next data chunk and read it.
-            await CacheNextDataChunkAsync(cancellationToken).ConfigureAwait(false);
-            await CopyDataToBufferAsync(buffer[dataToReadFromChunk..], cancellationToken).ConfigureAwait(false);
-        }
+            // Reuse these for memory optimization.
+            var chunkDataBuffer = new byte[SwarmCac.DataSize];
+            var levelChildHashKeyPairs = new List<(SwarmHash Hash, XorEncryptKey? EncKey)>();
 
-        private async Task CacheNextDataChunkAsync(CancellationToken cancellationToken)
-        {
-            // Remove current data chunk.
-            chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
-            
-            // Find first parent where selected segment is not the last, remove others.
-            var currentLevel = chunkCacheLevels.Last();
-            while (currentLevel.Position == currentLevel.Chunk.Data.Length - segmentSize)
+            // Iterate on all levels from root to data chunks. Terminate when no chunks remain.
+            for (var levelIndex = 0;; levelIndex++)
             {
-                chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
-                currentLevel = chunkCacheLevels.Last();
-            }
-            
-            // Increment selected segment.
-            currentLevel.Position += segmentSize;
-            
-            // Find first child data chunk.
-            var dataBuffer = new byte[SwarmCac.DataSize];
-            do
-            {
-                currentLevel.Chunk.Data.CopyTo(dataBuffer);
-                currentLevel.EncryptionKey?.EncryptDecrypt(dataBuffer);
-                
-                // Read child chunk reference.
-                var cursor = currentLevel.Position;
-                var childHash = new SwarmHash(dataBuffer.Slice(cursor, cursor + SwarmHash.HashSize));
-                cursor += SwarmHash.HashSize;
+                // Init.
+                levelChildHashKeyPairs.Clear();
+                //optimize value search for chunks in level. Analyzing from right, it can only be monotonically non-decreasing
+                ulong dataSizeBySegment = SwarmCac.DataSize;
 
-                var childEncryptionKey = useRecursiveEncryption
-                    ? new XorEncryptKey(dataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize))
-                    : (XorEncryptKey?)null;
-
-                var childChunk = await chunkStore.GetAsync(childHash, cancellationToken: cancellationToken).ConfigureAwait(false);
-                if (childChunk is not SwarmCac childCac)
-                    throw new InvalidOperationException($"Chunk {childHash} is not a Content Addressed Chunk.");
-
-                currentLevel = new ChunkCacheLevel { Chunk = childCac, EncryptionKey = childEncryptionKey };
-                chunkCacheLevels.Add(currentLevel);
-                
-            } while (SwarmCac.SpanToLength(currentLevel.Chunk.Span.Span) > SwarmCac.DataSize);
-        }
-
-        /// <summary>
-        /// Iterative method to initialize cache to the current branch with rigth position to start reading.
-        /// How it works:
-        /// - invariant: argument current level has always the right chunk selected, with position to determinate.
-        ///              The offset indicates how many bytes still needs to skip
-        /// - exit condition: verify if current chunk is a leaf, in that case set position on the leaf and return
-        /// - operation: find and put in cache the chunk at next cache level containing the searched offset,
-        ///              and update position at current level to point to it
-        /// </summary>
-        /// <param name="currentLevelIndex">Current max level cache with known right chunk</param>
-        /// <param name="offset">Data offset to apply</param>
-        private async Task SeekChunksCacheAsync(int currentLevelIndex, ulong offset, CancellationToken cancellationToken)
-        {
-            var dataBuffer = new byte[SwarmCac.DataSize];
-            while (true)
-            {
-                var currentLevel = chunkCacheLevels[currentLevelIndex];
-
-                currentLevel.Chunk.Data.CopyTo(dataBuffer);
-                currentLevel.EncryptionKey?.EncryptDecrypt(dataBuffer);
-
-                // If is a data chunk, set position and return.
-                var chunkDataLength = SwarmCac.SpanToLength(currentLevel.Chunk.Span.Span);
-                if (chunkDataLength <= SwarmCac.DataSize)
+                // Parse all chunks on current level. Start from end to copy data first, if present in level.
+                for (int chunkIndex = levelChunkKeyPairs.Length - 1; chunkIndex >= 0; chunkIndex--)
                 {
-                    //check offset consistency
-                    if (chunkDataLength < offset)
-                        throw new InvalidOperationException("Current chunk's can't resolve required offset");
+                    var chunkKeyPair = levelChunkKeyPairs[chunkIndex];
+                    var isFirstChunkInLevel = chunkIndex == 0;
+                    var isLastChunkInLevel = chunkIndex == levelChunkKeyPairs.Length - 1;
 
-                    //clear cache after this level
-                    while (chunkCacheLevels.Count - 1 > currentLevelIndex)
-                        chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
+                    // If it's the last chunk on the level, and if some data remains to read in level, cache the chunk.
+                    if (isLastChunkInLevel && levelEndDataOffset > 0)
+                        newLevelsCache.Add(chunkKeyPair.Chunk);
+                    
+                    // Decode chunk's data.
+                    chunkKeyPair.Chunk.Data.CopyTo(chunkDataBuffer);
+                    chunkKeyPair.EncKey?.EncryptDecrypt(chunkDataBuffer.AsSpan(0, chunkKeyPair.Chunk.Data.Length));
+                    
+                    // If is a data chunk, report data on buffer and update bounds. Then continue.
+                    if (chunkKeyPair.Chunk.IsDataChunk)
+                    {
+                        //check end offset consistency
+                        var dataToCopyStart = isFirstChunkInLevel ? (int)levelStartDataOffset : 0;
+                        var dataToCopySize = chunkKeyPair.Chunk.Data.Length - dataToCopyStart - (int)levelEndDataOffset;
+                        if (dataToCopySize <= 0)
+                            throw new InvalidOperationException("Invalid data to copy size");
+                        
+                        //copy data to end of buffer, and shrink buffer
+                        chunkDataBuffer[dataToCopyStart..(dataToCopyStart + dataToCopySize)].CopyTo(buffer[^dataToCopySize..]);
+                        buffer = buffer[..^dataToCopySize];
+                        
+                        //update level bounds
+                        levelEndDataOffset = 0;
 
-                    currentLevel.Position = (int)offset;
+                        continue;
+                    }
+
+                    // Else if it's an intermediate chunk
+                    if (chunkKeyPair.Chunk.Data.Length % chunkSegmentSize != 0)
+                        throw new InvalidOperationException("Intermediate chunk's data length is not multiple of segment size.");
+            
+                    // Find referred data size by segment.
+                    var referredDataSize = SwarmCac.SpanToLength(chunkKeyPair.Chunk.Span.Span);
+                    var segmentsAmount = (uint)(chunkKeyPair.Chunk.Data.Length / chunkSegmentSize);
+                    while (dataSizeBySegment * segmentsAmount < referredDataSize)
+                        dataSizeBySegment *= maxSegmentsInChunk;
+                    
+                    // Define chunk's segments to read and set bounds for the next level.
+                    var chunkStartPosition = 0;
+                    if (isFirstChunkInLevel)
+                    {
+                        var startSegmentsToSkip = levelStartDataOffset / dataSizeBySegment;
+                        chunkStartPosition = (int)(startSegmentsToSkip * chunkSegmentSize);
+                        levelStartDataOffset -= startSegmentsToSkip * dataSizeBySegment;
+                    }
+                    var chunkEndPosition = chunkKeyPair.Chunk.Data.Length;
+                    if (isLastChunkInLevel)
+                    {
+                        var lastPartialSegmentDataSize = referredDataSize % dataSizeBySegment;
+                        ulong endSegmentsToSkip = 0;
+                        if (levelEndDataOffset >= lastPartialSegmentDataSize)
+                        {
+                            endSegmentsToSkip = (levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment;
+                            if (lastPartialSegmentDataSize > 0)
+                                endSegmentsToSkip++;
+                        }
+                        chunkEndPosition = chunkKeyPair.Chunk.Data.Length - (int)(endSegmentsToSkip * chunkSegmentSize);
+                        if (endSegmentsToSkip > 0)
+                            levelEndDataOffset -= referredDataSize % dataSizeBySegment == 0
+                                ? endSegmentsToSkip * dataSizeBySegment
+                                : (endSegmentsToSkip - 1) * dataSizeBySegment + referredDataSize % dataSizeBySegment;
+                    }
+
+                    // Reverse read child chunks references and prepend them on hash list.
+                    for (var cursor = chunkEndPosition; cursor > chunkStartPosition;)
+                    {
+                        XorEncryptKey? childEncryptionKey = null;
+                        if (useRecursiveEncryption)
+                        {
+                            cursor -= XorEncryptKey.KeySize;
+                            childEncryptionKey =
+                                new XorEncryptKey(chunkDataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize));
+                        }
+                        
+                        cursor -= SwarmHash.HashSize;
+                        var childHash = new SwarmHash(chunkDataBuffer.Slice(cursor, cursor + SwarmHash.HashSize));
+
+                        levelChildHashKeyPairs.Insert(0, (childHash, childEncryptionKey));
+                    }
+                }
+                
+                // If next level is empty, set cache and return.
+                if (levelChildHashKeyPairs.Count == 0)
+                {
+                    // Verify the full buffer has been written.
+                    if (buffer.Length != 0)
+                        throw new InvalidOperationException("Not full buffer has been written");
+
+                    // Replace cache.
+                    levelsCache = newLevelsCache;
+
                     return;
                 }
 
-                // Else, identify the right segment to visit.
-                var segmentsAmount = (uint)(currentLevel.Chunk.Data.Length / segmentSize);
-                ulong dataBySegment = SwarmCac.DataSize;
-                while (dataBySegment * segmentsAmount < chunkDataLength)
-                    dataBySegment *= maxSegmentsInChunk;
-
-                var selectedSegment = (int)(offset / dataBySegment);
-                var selectedSegmentPosition = selectedSegment * segmentSize;
-                var offsetRest = offset - dataBySegment * (ulong)selectedSegment;
-
-                // If current cache needs to be updated.
-                if (selectedSegmentPosition != currentLevel.Position || currentLevelIndex == chunkCacheLevels.Count - 1)
+                // Search chunks for the next level.
+                IReadOnlyDictionary<SwarmHash, SwarmChunk> childChunksPool;
+                
+                //with cache
+                if (levelsCache.Count > levelIndex + 1 &&
+                    levelChildHashKeyPairs.Any(p => p.Hash == levelsCache[levelIndex + 1].Hash))
                 {
-                    while (chunkCacheLevels.Count - 1 > currentLevelIndex)
-                        chunkCacheLevels.RemoveAt(chunkCacheLevels.Count - 1);
-
-                    currentLevel.Position = selectedSegmentPosition;
-
-                    // Read child chunk reference.
-                    var cursor = currentLevel.Position;
-                    var childHash = new SwarmHash(dataBuffer.Slice(cursor, cursor + SwarmHash.HashSize));
-                    cursor += SwarmHash.HashSize;
-
-                    var childEncryptionKey = useRecursiveEncryption ?
-                        new XorEncryptKey(dataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize)) :
-                        (XorEncryptKey?)null;
-
-                    // Get child chunk and add to cache.
-                    var childChunk = await chunkStore.GetAsync(childHash, cancellationToken: cancellationToken).ConfigureAwait(false);
-                    if (childChunk is not SwarmCac childCac)
-                        throw new InvalidOperationException($"Chunk {childHash} is not a Content Addressed Chunk.");
-                    chunkCacheLevels.Add(new ChunkCacheLevel { Chunk = childCac, EncryptionKey = childEncryptionKey });
+                    var hashesToGetFromStore = levelChildHashKeyPairs
+                        .Select(p => p.Hash)
+                        .Where(h => h != levelsCache[levelIndex + 1].Hash).ToArray();
+                    IEnumerable<KeyValuePair<SwarmHash, SwarmChunk>> chunksFromStore =
+                        hashesToGetFromStore.Length != 0
+                            ? await chunkStore.GetAsync(hashesToGetFromStore, cancellationToken: cancellationToken).ConfigureAwait(false)
+                            : Array.Empty<KeyValuePair<SwarmHash, SwarmChunk>>();
+                    
+                    childChunksPool = new Dictionary<SwarmHash, SwarmChunk>(chunksFromStore)
+                    {
+                        [levelsCache[levelIndex + 1].Hash] = levelsCache[levelIndex + 1]
+                    };
                 }
-
-                // Do iteration on next cache level.
-                currentLevelIndex++;
-                offset = offsetRest;
+                else //or without cache
+                {
+                    childChunksPool = await chunkStore.GetAsync(
+                        levelChildHashKeyPairs.Select(p => p.Hash),
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                }
+                
+                // Resolve child chunks from hash list.
+                levelChunkKeyPairs = levelChildHashKeyPairs.Select(pair =>
+                    ((SwarmCac)childChunksPool[pair.Hash], pair.EncKey)).ToArray();
             }
         }
     }

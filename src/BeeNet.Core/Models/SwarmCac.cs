@@ -71,6 +71,8 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
+        public bool IsDataChunk => SpanToLength(Span.Span) <= DataSize;
+        public bool IsIntermediateChunk => !IsDataChunk;
         
         // Methods.
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
