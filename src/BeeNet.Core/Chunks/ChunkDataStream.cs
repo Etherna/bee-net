@@ -227,9 +227,13 @@ namespace Etherna.BeeNet.Chunks
                     if (isLastChunkInLevel)
                     {
                         var lastPartialSegmentDataSize = referredDataSize % dataSizeBySegment;
-                        var endSegmentsToSkip = (levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment;
-                        if (lastPartialSegmentDataSize > 0 && lastPartialSegmentDataSize <= levelEndDataOffset)
-                            endSegmentsToSkip++;
+                        ulong endSegmentsToSkip = 0;
+                        if (levelEndDataOffset >= lastPartialSegmentDataSize)
+                        {
+                            endSegmentsToSkip = (levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment;
+                            if (lastPartialSegmentDataSize > 0)
+                                endSegmentsToSkip++;
+                        }
                         chunkEndPosition = chunkKeyPair.Chunk.Data.Length - (int)(endSegmentsToSkip * chunkSegmentSize);
                         if (endSegmentsToSkip > 0)
                             levelEndDataOffset -= referredDataSize % dataSizeBySegment == 0
