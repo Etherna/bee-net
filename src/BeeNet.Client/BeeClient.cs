@@ -134,29 +134,6 @@ namespace Etherna.BeeNet
                 gasLimit,
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
-        public async Task<bool> CheckChunkExistsAsync(
-            SwarmHash hash,
-            long? swarmActTimestamp = null,
-            string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                await generatedClient.ChunksHeadAsync(
-                    hash.ToString(),
-                    swarmActTimestamp,
-                    swarmActPublisher,
-                    swarmActHistoryAddress,
-                    cancellationToken).ConfigureAwait(false);
-                return true;
-            }
-            catch (BeeNetApiException)
-            {
-                return false;
-            }
-        }
-
         public async Task<CheckPinsResult> CheckPinsAsync(
             SwarmHash? hash,
             CancellationToken cancellationToken = default)
@@ -978,6 +955,29 @@ namespace Etherna.BeeNet
                 swarmActHistoryAddress,
                 cancellationToken).ConfigureAwait(false);
             return new GranteeResponse(response.Ref, response.Historyref);
+        }
+
+        public async Task<bool> IsChunkExistingAsync(
+            SwarmHash hash,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await generatedClient.ChunksHeadAsync(
+                    hash.ToString(),
+                    swarmActTimestamp,
+                    swarmActPublisher,
+                    swarmActHistoryAddress,
+                    cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch (BeeNetApiException)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> IsContentRetrievableAsync(

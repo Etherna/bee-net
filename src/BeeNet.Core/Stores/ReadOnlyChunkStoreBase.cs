@@ -79,6 +79,8 @@ namespace Etherna.BeeNet.Stores
             return results;
         }
 
+        public abstract Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default);
+
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
             bool cacheChunk = false,

@@ -67,20 +67,6 @@ namespace Etherna.BeeNet
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default);
 
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Check if chunk at address exists locally
-        /// </summary>
-        /// <param name="hash">Swarm hash of chunk</param>
-        /// <returns>Chunk exists</returns>
-        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<bool> CheckChunkExistsAsync(
-            SwarmHash hash,
-            long? swarmActTimestamp = null,
-            string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default);
-
         /// <summary>
         /// Validate pinned chunks integerity
         /// </summary>
@@ -524,6 +510,20 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<GranteeResponse> GranteePostAsync(PostageBatchId batchId, string[] grantees, TagId? tagId = null, bool? swarmPin = null, bool? swarmDeferredUpload = null, string? swarmActHistoryAddress = null, CancellationToken cancellationToken = default);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Check if chunk at address exists locally
+        /// </summary>
+        /// <param name="hash">Swarm hash of chunk</param>
+        /// <returns>Chunk exists</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<bool> IsChunkExistingAsync(
+            SwarmHash hash,
+            long? swarmActTimestamp = null,
+            string? swarmActPublisher = null,
+            string? swarmActHistoryAddress = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Check if content is retrievable</summary>
         /// <param name="hash">Root hash of content (can be of any type: collection, file, chunk)</param>

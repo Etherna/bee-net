@@ -30,6 +30,9 @@ namespace Etherna.BeeNet.Stores
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
             Task.FromResult(chunks.Remove(hash, out _));
 
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(chunks.ContainsKey(hash));
+
         protected override Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>

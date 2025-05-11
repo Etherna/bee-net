@@ -29,6 +29,9 @@ namespace Etherna.BeeNet.Stores
         private readonly ConcurrentQueue<SwarmChunkBmt> swarmChunkBmtPool = new();
         
         // Methods.
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            beeClient.IsChunkExistingAsync(hash, cancellationToken: cancellationToken);
+
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default)

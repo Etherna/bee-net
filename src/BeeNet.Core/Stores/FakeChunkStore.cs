@@ -24,7 +24,10 @@ namespace Etherna.BeeNet.Stores
         // Protected methods.
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
             Task.FromResult(false);
-        
+
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(false);
+
         protected override Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>

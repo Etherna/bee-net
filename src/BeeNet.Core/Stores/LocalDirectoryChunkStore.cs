@@ -94,6 +94,10 @@ namespace Etherna.BeeNet.Stores
             return Task.FromResult(false);
         }
 
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(File.Exists(Path.Combine(DirectoryPath, hash + CacFileExtension)) ||
+                            File.Exists(Path.Combine(DirectoryPath, hash + SocFileExtension)));
+
         protected override async Task<SwarmChunk> LoadChunkAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default)

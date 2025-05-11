@@ -30,6 +30,8 @@ namespace Etherna.BeeNet.Stores
             IEnumerable<SwarmHash> hashes,
             bool cacheChunk = false,
             CancellationToken cancellationToken = default);
+        
+        Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default);
 
         Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
