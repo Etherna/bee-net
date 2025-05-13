@@ -735,6 +735,7 @@ namespace Etherna.BeeNet
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
+            bool resolveLegacyPayload = false,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,

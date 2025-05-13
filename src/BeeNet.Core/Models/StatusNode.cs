@@ -19,6 +19,7 @@ namespace Etherna.BeeNet.Models
         int batchCommitment,
         int committedDepth,
         int connectedPeers,
+        bool isWarmingUp,
         bool isReachable,
         long lastSyncedBlock,
         int neighborhoodSize,
@@ -36,6 +37,7 @@ namespace Etherna.BeeNet.Models
         public int CommittedDepth { get; } = committedDepth;
         public int ConnectedPeers { get; } = connectedPeers;
         public bool IsReachable { get; } = isReachable;
+        public bool IsWarmingUp { get; } = isWarmingUp;
         public long LastSyncedBlock { get; } = lastSyncedBlock;
         public int NeighborhoodSize { get; } = neighborhoodSize;
         public string Overlay { get; } = overlay;

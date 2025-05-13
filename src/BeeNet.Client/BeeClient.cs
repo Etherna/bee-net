@@ -1149,10 +1149,10 @@ namespace Etherna.BeeNet
                 overlay: response.Overlay,
                 beeMode: response.BeeMode switch
                 {
-                    Response65BeeMode.Light => StatusBeeMode.Light,
-                    Response65BeeMode.Full => StatusBeeMode.Full,
-                    Response65BeeMode.UltraLight => StatusBeeMode.UltraLight,
-                    Response65BeeMode.Unknown => StatusBeeMode.Unknown,
+                    Response70BeeMode.Light => StatusBeeMode.Light,
+                    Response70BeeMode.Full => StatusBeeMode.Full,
+                    Response70BeeMode.UltraLight => StatusBeeMode.UltraLight,
+                    Response70BeeMode.Unknown => StatusBeeMode.Unknown,
                     _ => throw new InvalidOperationException()
                 },
                 proximity: response.Proximity,
@@ -1166,7 +1166,8 @@ namespace Etherna.BeeNet
                 batchCommitment: response.BatchCommitment,
                 isReachable: response.IsReachable,
                 lastSyncedBlock: response.LastSyncedBlock,
-                committedDepth: response.CommittedDepth);
+                committedDepth: response.CommittedDepth,
+                isWarmingUp: response.IsWarmingUp);
         }
 
         public async Task<StatusNode[]> StatusPeersAsync(CancellationToken cancellationToken = default)
@@ -1195,7 +1196,8 @@ namespace Etherna.BeeNet
                     reserveSizeWithinRadius: s.ReserveSizeWithinRadius,
                     requestFailed: s.RequestFailed,
                     storageRadius: s.StorageRadius,
-                    committedDepth: s.CommittedDepth))
+                    committedDepth: s.CommittedDepth,
+                    isWarmingUp: s.IsWarmingUp))
                 .ToArray();
         }
 
@@ -1233,6 +1235,7 @@ namespace Etherna.BeeNet
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
+            bool resolveLegacyPayload = false,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
@@ -1248,6 +1251,7 @@ namespace Etherna.BeeNet
                     at: at,
                     after: after,
                     type: type.ToString(),
+                    legacy_feed_resolution: resolveLegacyPayload,
                     swarm_only_root_chunk: swarmOnlyRootChunk,
                     swarm_cache: swarmCache,
                     swarm_redundancy_strategy: (SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
