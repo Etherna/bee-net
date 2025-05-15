@@ -62,8 +62,8 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public bool Equals(SwarmHash other) => byteHash.Span.SequenceEqual(other.byteHash.Span);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
-        public byte[] GetDistanceBytesFrom(SwarmHash other) => GetDistanceBytes(this, other);
-        public byte[] GetDistanceBytesFrom(SwarmOverlayAddress other) => GetDistanceBytes(this, other);
+        public byte[] GetDistanceBytesFrom(SwarmHash other) => GetDistanceBytes(byteHash.Span, other.byteHash.Span);
+        public byte[] GetDistanceBytesFrom(SwarmOverlayAddress other) => GetDistanceBytes(byteHash.Span, other.ToReadOnlyMemory().Span);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash.ToArray());
         public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.Span[..2]);
         public byte[] ToByteArray() => byteHash.ToArray();
@@ -75,10 +75,7 @@ namespace Etherna.BeeNet.Models
         /// Compare x and y to the target in terms of bytes distance.
         /// </summary>
         /// <returns>
-        /// Returns:
-        ///   - 1 if x is closer to target than y
-        ///   - 0 if x and y are equally distant to target
-        ///   - -1 if x is farther from target than y
+        /// Returns -1 if x is closer to target than y, 0 if x and y are equals, 1 if x is farther than y
         /// </returns>
         public static int CompareDistances(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y, ReadOnlySpan<byte> target)
         {
@@ -87,22 +84,14 @@ namespace Etherna.BeeNet.Models
                 var xDist = x[i] ^ target[i];
                 var yDist = y[i] ^ target[i];
                 if (xDist < yDist)
-                    return 1;
-                if (xDist > yDist)
                     return -1;
+                if (xDist > yDist)
+                    return 1;
             }
             return 0;
         }
-        public static int CompareDistances(SwarmHash x, SwarmHash y, SwarmHash target) =>
-            CompareDistances(x.byteHash.Span, y.byteHash.Span, target.byteHash.Span);
-        public static int CompareDistances(SwarmHash x, SwarmHash y, SwarmOverlayAddress target) =>
-            CompareDistances(x.byteHash.Span, y.byteHash.Span, target.ToReadOnlyMemory().Span);
         public static SwarmHash FromByteArray(byte[] value) => new(value);
         public static SwarmHash FromString(string value) => new(value);
-        public static byte[] GetDistanceBytes(SwarmHash x, SwarmHash y) =>
-            GetDistanceBytes(x.byteHash.Span, y.byteHash.Span);
-        public static byte[] GetDistanceBytes(SwarmHash x, SwarmOverlayAddress y) =>
-            GetDistanceBytes(x.byteHash.Span, y.ToReadOnlyMemory().Span);
         public static byte[] GetDistanceBytes(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y)
         {
             var distance = new byte[HashSize];
