@@ -17,7 +17,7 @@ using System.Collections.Generic;
 namespace Etherna.BeeNet.Models
 {
     public sealed class SwarmNodeAddresses(
-        string overlay,
+        SwarmOverlayAddress overlay,
         IEnumerable<string> underlay,
         EthAddress ethereum,
         string chainAddress,
@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Models
         string pssPublicKey)
     {
         // Properties.
-        public string Overlay { get; } = overlay;
+        public SwarmOverlayAddress Overlay { get; } = overlay;
         public IEnumerable<string> Underlay { get; } = underlay;
         public EthAddress Ethereum { get; } = ethereum;
         public string ChainAddress { get; } = chainAddress;

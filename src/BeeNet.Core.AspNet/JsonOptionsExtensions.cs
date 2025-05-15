@@ -34,6 +34,7 @@ namespace Etherna.BeeNet.AspNet
             options.JsonSerializerOptions.Converters.Add(new SwarmAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmFeedTopicJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmHashJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new SwarmOverlayAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmSocIdentifierJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmSocSignatureJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmUriJsonConverter());
