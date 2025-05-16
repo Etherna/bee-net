@@ -28,33 +28,33 @@ namespace Etherna.BeeNet.Chunks
         public async Task TraverseFromDataChunkAsync(
             SwarmChunkReference chunkReference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync,
-            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             ArgumentNullException.ThrowIfNull(chunkReference, nameof(chunkReference));
             
             onChunkFoundAsync ??= _ => Task.CompletedTask;
-            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
 
             // Read as data or intermediate chunk.
             await TraverseDataHelperAsync(
                 chunkReference,
                 [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync,
-                onInvalidChunkFoundAsync).ConfigureAwait(false);
+                onInvalidChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
         
         public async Task TraverseFromMantarayManifestRootAsync(
             SwarmHash rootHash,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync,
-            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             onChunkFoundAsync ??= _ => Task.CompletedTask;
-            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             
             // Read as manifest.
             var manifest = new ReferencedMantarayManifest(chunkStore, rootHash, true);
@@ -63,8 +63,8 @@ namespace Etherna.BeeNet.Chunks
                 manifestNode,
                 [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync,
-                onInvalidChunkFoundAsync).ConfigureAwait(false);
+                onInvalidChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
 
         public Task TraverseFromMantarayNodeChunkAsync(
@@ -73,8 +73,8 @@ namespace Etherna.BeeNet.Chunks
             bool? useRecursiveEncryption,
             NodeType nodeTypeFlags,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync,
-            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             // Build metadata.
             var metadata = new Dictionary<string, string>();
@@ -89,8 +89,8 @@ namespace Etherna.BeeNet.Chunks
                 metadata,
                 nodeTypeFlags,
                 onChunkFoundAsync,
-                onChunkNotFoundAsync,
-                onInvalidChunkFoundAsync);
+                onInvalidChunkFoundAsync,
+                onChunkNotFoundAsync);
         }
 
         public async Task TraverseFromMantarayNodeChunkAsync(
@@ -98,12 +98,12 @@ namespace Etherna.BeeNet.Chunks
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync,
-            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
             onChunkFoundAsync ??= _ => Task.CompletedTask;
-            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
+            onChunkNotFoundAsync ??= _ => Task.CompletedTask;
 
             // Read as manifest node.
             var manifestNode = new ReferencedMantarayNode(
@@ -116,8 +116,8 @@ namespace Etherna.BeeNet.Chunks
                 manifestNode,
                 [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync,
-                onInvalidChunkFoundAsync).ConfigureAwait(false);
+                onInvalidChunkFoundAsync,
+                onChunkNotFoundAsync).ConfigureAwait(false);
         }
 
         // Helpers.
@@ -125,8 +125,8 @@ namespace Etherna.BeeNet.Chunks
             SwarmChunkReference rootChunkRef,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
-            Func<SwarmHash, Task> onChunkNotFoundAsync,
-            Func<SwarmChunk, Task> onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task> onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task> onChunkNotFoundAsync)
         {
             List<SwarmChunkReference> chunkRefs = [rootChunkRef];
 
@@ -210,8 +210,8 @@ namespace Etherna.BeeNet.Chunks
             MantarayNodeBase manifestNode,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
-            Func<SwarmHash, Task> onChunkNotFoundAsync,
-            Func<SwarmChunk, Task> onInvalidChunkFoundAsync)
+            Func<SwarmChunk, Task> onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task> onChunkNotFoundAsync)
         {
             visitedHashes.Add(manifestNode.Hash);
             
@@ -238,8 +238,8 @@ namespace Etherna.BeeNet.Chunks
                     fork.Node,
                     visitedHashes,
                     onChunkFoundAsync,
-                    onChunkNotFoundAsync,
-                    onInvalidChunkFoundAsync).ConfigureAwait(false);
+                    onInvalidChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
             }
             
             // Traverse data.
@@ -253,8 +253,8 @@ namespace Etherna.BeeNet.Chunks
                         manifestNode.EntryUseRecursiveEncryption),
                     visitedHashes,
                     onChunkFoundAsync,
-                    onChunkNotFoundAsync,
-                    onInvalidChunkFoundAsync).ConfigureAwait(false);
+                    onInvalidChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
         }
     }
 }
