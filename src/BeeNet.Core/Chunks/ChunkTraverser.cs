@@ -28,39 +28,43 @@ namespace Etherna.BeeNet.Chunks
         public async Task TraverseFromDataChunkAsync(
             SwarmChunkReference chunkReference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync)
+            Func<SwarmHash, Task>? onChunkNotFoundAsync,
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
         {
             ArgumentNullException.ThrowIfNull(chunkReference, nameof(chunkReference));
             
             onChunkFoundAsync ??= _ => Task.CompletedTask;
             onChunkNotFoundAsync ??= _ => Task.CompletedTask;
-            HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
+            onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
 
-            // Read as data chunk.
+            // Read as data or intermediate chunk.
             await TraverseDataHelperAsync(
                 chunkReference,
-                visitedHashes,
+                [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync).ConfigureAwait(false);
+                onChunkNotFoundAsync,
+                onInvalidChunkFoundAsync).ConfigureAwait(false);
         }
         
         public async Task TraverseFromMantarayManifestRootAsync(
             SwarmHash rootHash,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync)
+            Func<SwarmHash, Task>? onChunkNotFoundAsync,
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
         {
             onChunkFoundAsync ??= _ => Task.CompletedTask;
             onChunkNotFoundAsync ??= _ => Task.CompletedTask;
-            HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
+            onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
             
             // Read as manifest.
             var manifest = new ReferencedMantarayManifest(chunkStore, rootHash, true);
             var manifestNode = (ReferencedMantarayNode)manifest.RootNode;
             await TraverseMantarayNodeHelperAsync(
                 manifestNode,
-                visitedHashes,
+                [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync).ConfigureAwait(false);
+                onChunkNotFoundAsync,
+                onInvalidChunkFoundAsync).ConfigureAwait(false);
         }
 
         public Task TraverseFromMantarayNodeChunkAsync(
@@ -69,7 +73,8 @@ namespace Etherna.BeeNet.Chunks
             bool? useRecursiveEncryption,
             NodeType nodeTypeFlags,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync)
+            Func<SwarmHash, Task>? onChunkNotFoundAsync,
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
         {
             // Build metadata.
             var metadata = new Dictionary<string, string>();
@@ -84,7 +89,8 @@ namespace Etherna.BeeNet.Chunks
                 metadata,
                 nodeTypeFlags,
                 onChunkFoundAsync,
-                onChunkNotFoundAsync);
+                onChunkNotFoundAsync,
+                onInvalidChunkFoundAsync);
         }
 
         public async Task TraverseFromMantarayNodeChunkAsync(
@@ -92,11 +98,12 @@ namespace Etherna.BeeNet.Chunks
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
-            Func<SwarmHash, Task>? onChunkNotFoundAsync)
+            Func<SwarmHash, Task>? onChunkNotFoundAsync,
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync)
         {
             onChunkFoundAsync ??= _ => Task.CompletedTask;
             onChunkNotFoundAsync ??= _ => Task.CompletedTask;
-            HashSet<SwarmHash> visitedHashes = new HashSet<SwarmHash>();
+            onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
 
             // Read as manifest node.
             var manifestNode = new ReferencedMantarayNode(
@@ -107,72 +114,95 @@ namespace Etherna.BeeNet.Chunks
                 true);
             await TraverseMantarayNodeHelperAsync(
                 manifestNode,
-                visitedHashes,
+                [],
                 onChunkFoundAsync,
-                onChunkNotFoundAsync).ConfigureAwait(false);
+                onChunkNotFoundAsync,
+                onInvalidChunkFoundAsync).ConfigureAwait(false);
         }
 
         // Helpers.
         private async Task TraverseDataHelperAsync(
-            SwarmChunkReference chunkReference,
+            SwarmChunkReference rootChunkRef,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
-            Func<SwarmHash, Task> onChunkNotFoundAsync)
+            Func<SwarmHash, Task> onChunkNotFoundAsync,
+            Func<SwarmChunk, Task> onInvalidChunkFoundAsync)
         {
-            visitedHashes.Add(chunkReference.Hash);
-            
-            // Read and decrypt chunk data.
-            SwarmCac chunk;
-            try
+            List<SwarmChunkReference> chunkRefs = [rootChunkRef];
+
+            while (chunkRefs.Count > 0)
             {
-                chunk = (SwarmCac)await chunkStore.GetAsync(chunkReference.Hash).ConfigureAwait(false);
-            }
-#pragma warning disable CA1031
-            catch
-            {
-                await onChunkNotFoundAsync(chunkReference.Hash).ConfigureAwait(false);
-                return;
-            }
-#pragma warning restore CA1031
-            await onChunkFoundAsync(chunk).ConfigureAwait(false);
-            
-            // Extract data and decrypt.
-            var dataArray = chunk.Data.ToArray();
-            chunkReference.EncryptionKey?.EncryptDecrypt(dataArray);
-            
-            // Determine if is a data chunk, or an intermediate chunk.
-            var totalDataLength = SwarmCac.SpanToLength(chunk.Span.Span);
-            if (totalDataLength <= SwarmCac.DataSize)
-                return;
-            
-            for (int i = 0; i < dataArray.Length;)
-            {
-                // Decode child chunk.
-                //read hash
-                var childHash = new SwarmHash(dataArray.AsMemory()[i..(i + SwarmHash.HashSize)]);
-                i += SwarmHash.HashSize;
+                var nextLevelChunkRefs = new List<SwarmChunkReference>();
                 
-                //read encryption key
-                XorEncryptKey? childEncryptionKey = null;
-                if (chunkReference.UseRecursiveEncryption)
+                foreach (var chunkRef in chunkRefs)
                 {
-                    childEncryptionKey = new XorEncryptKey(dataArray.AsMemory()[i..(i + XorEncryptKey.KeySize)]);
-                    i += XorEncryptKey.KeySize;
+                    // Set hash as visited.
+                    visitedHashes.Add(chunkRef.Hash);
+                    
+                    // Get content addressed chunk and invoke callbacks.
+                    SwarmChunk chunk;
+                    try
+                    {
+                        chunk = await chunkStore.GetAsync(chunkRef.Hash).ConfigureAwait(false);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        await onChunkNotFoundAsync(chunkRef.Hash).ConfigureAwait(false);
+                        continue;
+                    }
+                    
+                    if (chunk is not SwarmCac cac)
+                    {
+                        await onInvalidChunkFoundAsync(chunk).ConfigureAwait(false);
+                        continue;
+                    }
+                    await onChunkFoundAsync(cac).ConfigureAwait(false);
+
+                    // Skip iteration on data chunks.
+                    if (cac.IsDataChunk)
+                        continue;
+
+                    // Extract intermediate chunk data and decrypt.
+                    ReadOnlyMemory<byte> cacData;
+                    if (chunkRef.EncryptionKey is null)
+                    {
+                        cacData = cac.Data;
+                    }
+                    else
+                    {
+                        var buffer = cac.Data.ToArray();
+                        chunkRef.EncryptionKey?.EncryptDecrypt(buffer);
+                        cacData = buffer;
+                    }
+
+                    // Decode child chunk.
+                    for (int i = 0; i < cacData.Length;)
+                    {
+                        //read hash
+                        var childHash = new SwarmHash(cacData[i..(i + SwarmHash.HashSize)]);
+                        i += SwarmHash.HashSize;
+
+                        //read encryption key
+                        XorEncryptKey? childEncryptionKey = null;
+                        if (chunkRef.UseRecursiveEncryption)
+                        {
+                            childEncryptionKey = new XorEncryptKey(cacData[i..(i + XorEncryptKey.KeySize)]);
+                            i += XorEncryptKey.KeySize;
+                        }
+
+                        // Skip if already visited.
+                        if (!visitedHashes.Contains(childHash))
+                        {
+                            nextLevelChunkRefs.Add(new SwarmChunkReference(
+                                childHash,
+                                childEncryptionKey,
+                                chunkRef.UseRecursiveEncryption));
+                        }
+                    }
                 }
-
-                // Skip if already visited.
-                if (visitedHashes.Contains(childHash))
-                    continue;
-
-                // Traverse recursively.
-                await TraverseDataHelperAsync(
-                    new SwarmChunkReference(
-                        childHash,
-                        childEncryptionKey,
-                        chunkReference.UseRecursiveEncryption),
-                    visitedHashes,
-                    onChunkFoundAsync,
-                    onChunkNotFoundAsync).ConfigureAwait(false);
+                
+                // Iterate on next level chunks.
+                chunkRefs = nextLevelChunkRefs;
             }
         }
         
@@ -180,7 +210,8 @@ namespace Etherna.BeeNet.Chunks
             MantarayNodeBase manifestNode,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
-            Func<SwarmHash, Task> onChunkNotFoundAsync)
+            Func<SwarmHash, Task> onChunkNotFoundAsync,
+            Func<SwarmChunk, Task> onInvalidChunkFoundAsync)
         {
             visitedHashes.Add(manifestNode.Hash);
             
@@ -189,13 +220,11 @@ namespace Etherna.BeeNet.Chunks
             {
                 await manifestNode.OnVisitingAsync().ConfigureAwait(false);
             }
-#pragma warning disable CA1031
-            catch
+            catch (KeyNotFoundException)
             {
                 await onChunkNotFoundAsync(manifestNode.Hash).ConfigureAwait(false);
                 return;
             }
-#pragma warning restore CA1031
             await onChunkFoundAsync(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false)).ConfigureAwait(false);
             
             // Traverse forks.
@@ -209,7 +238,8 @@ namespace Etherna.BeeNet.Chunks
                     fork.Node,
                     visitedHashes,
                     onChunkFoundAsync,
-                    onChunkNotFoundAsync).ConfigureAwait(false);
+                    onChunkNotFoundAsync,
+                    onInvalidChunkFoundAsync).ConfigureAwait(false);
             }
             
             // Traverse data.
@@ -223,7 +253,8 @@ namespace Etherna.BeeNet.Chunks
                         manifestNode.EntryUseRecursiveEncryption),
                     visitedHashes,
                     onChunkFoundAsync,
-                    onChunkNotFoundAsync).ConfigureAwait(false);
+                    onChunkNotFoundAsync,
+                    onInvalidChunkFoundAsync).ConfigureAwait(false);
         }
     }
 }

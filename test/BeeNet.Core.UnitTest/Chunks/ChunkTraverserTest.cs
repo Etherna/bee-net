@@ -425,14 +425,17 @@ namespace Etherna.BeeNet.Chunks
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
             List<SwarmHash> foundChunkHashes = [];
             List<SwarmHash> notFoundChunkHashes = [];
+            List<SwarmHash> invalidFoundChunkHashes = [];
         
             await chunkTraverser.TraverseFromDataChunkAsync(
                 new SwarmChunkReference(test.RootHash, null, false),
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; },
+                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; });
         
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
+            Assert.Empty(invalidFoundChunkHashes);
         }
         
         [Theory, MemberData(nameof(TraverseFromMantarayManifestRootTests))]
@@ -441,14 +444,17 @@ namespace Etherna.BeeNet.Chunks
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
             List<SwarmHash> foundChunkHashes = [];
             List<SwarmHash> notFoundChunkHashes = [];
+            List<SwarmHash> invalidFoundChunkHashes = [];
 
             await chunkTraverser.TraverseFromMantarayManifestRootAsync(
                 test.RootHash,
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; },
+                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; });
 
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
+            Assert.Empty(invalidFoundChunkHashes);
         }
         
         [Theory, MemberData(nameof(TraverseFromMantarayNodeChunkTests))]
@@ -457,6 +463,7 @@ namespace Etherna.BeeNet.Chunks
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
             List<SwarmHash> foundChunkHashes = [];
             List<SwarmHash> notFoundChunkHashes = [];
+            List<SwarmHash> invalidFoundChunkHashes = [];
         
             await chunkTraverser.TraverseFromMantarayNodeChunkAsync(
                 test.RootHash,
@@ -464,10 +471,12 @@ namespace Etherna.BeeNet.Chunks
                 null,
                 NodeType.Edge,
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; },
+                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; });
         
             Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
             Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
+            Assert.Empty(invalidFoundChunkHashes);
         }
         
         // Helpers.
