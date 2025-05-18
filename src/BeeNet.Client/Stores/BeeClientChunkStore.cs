@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -46,6 +47,10 @@ namespace Etherna.BeeNet.Stores
                     hash,
                     swarmChunkBmt,
                     cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
+            catch (BeeNetApiException)
+            {
+                throw new KeyNotFoundException();
             }
             finally
             {
