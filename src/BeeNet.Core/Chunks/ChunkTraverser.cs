@@ -58,9 +58,8 @@ namespace Etherna.BeeNet.Chunks
             
             // Read as manifest.
             var manifest = new ReferencedMantarayManifest(chunkStore, rootHash, true);
-            var manifestNode = (ReferencedMantarayNode)manifest.RootNode;
             await TraverseMantarayNodeHelperAsync(
-                manifestNode,
+                (ReferencedMantarayNode)manifest.RootNode,
                 [],
                 onChunkFoundAsync,
                 onInvalidChunkFoundAsync,
@@ -207,7 +206,7 @@ namespace Etherna.BeeNet.Chunks
         }
         
         private async Task TraverseMantarayNodeHelperAsync(
-            MantarayNodeBase manifestNode,
+            ReferencedMantarayNode manifestNode,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
             Func<SwarmChunk, Task> onInvalidChunkFoundAsync,
@@ -225,7 +224,7 @@ namespace Etherna.BeeNet.Chunks
                 await onChunkNotFoundAsync(manifestNode.Hash).ConfigureAwait(false);
                 return;
             }
-            await onChunkFoundAsync(await chunkStore.GetAsync(manifestNode.Hash).ConfigureAwait(false)).ConfigureAwait(false);
+            await onChunkFoundAsync(manifestNode.Chunk!).ConfigureAwait(false);
             
             // Traverse forks.
             foreach (var fork in manifestNode.Forks.Values)
@@ -235,7 +234,7 @@ namespace Etherna.BeeNet.Chunks
                     continue;
                 
                 await TraverseMantarayNodeHelperAsync(
-                    fork.Node,
+                    (ReferencedMantarayNode)fork.Node,
                     visitedHashes,
                     onChunkFoundAsync,
                     onInvalidChunkFoundAsync,

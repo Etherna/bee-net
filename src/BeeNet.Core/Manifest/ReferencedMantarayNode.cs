@@ -69,6 +69,7 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
+        public SwarmCac? Chunk { get; private set; }
         public override SwarmHash? EntryHash => IsDecoded
             ? _entryHash
             : throw new InvalidOperationException("Node is not decoded from chunk");
@@ -76,7 +77,7 @@ namespace Etherna.BeeNet.Manifest
             ? _forks
             : throw new InvalidOperationException("Node is not decoded from chunk");
         public override SwarmHash Hash { get; }
-        public bool IsDecoded { get; private set; }
+        public bool IsDecoded => Chunk != null;
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
         public override NodeType NodeTypeFlags { get; }
         public override XorEncryptKey? ObfuscationKey => IsDecoded
@@ -127,8 +128,8 @@ namespace Etherna.BeeNet.Manifest
             else
                 throw new InvalidOperationException("Manifest version not recognized");
             
-            // Set as decoded.
-            IsDecoded = true;
+            // Set chunk.
+            Chunk = chunk;
         }
         
         private void DecodeVersion02(ReadOnlyMemory<byte> data)
