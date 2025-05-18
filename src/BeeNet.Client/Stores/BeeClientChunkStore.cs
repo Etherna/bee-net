@@ -39,16 +39,19 @@ namespace Etherna.BeeNet.Stores
             // Get chunk trying to reuse bmts with concurrency.
             if (!swarmChunkBmtPool.TryDequeue(out var swarmChunkBmt))
                 swarmChunkBmt = new SwarmChunkBmt();
-            
-            var result = await beeClient.GetChunkAsync(
-                hash,
-                swarmChunkBmt,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            swarmChunkBmt.Clear();
-            swarmChunkBmtPool.Enqueue(swarmChunkBmt);
-
-            return result;
+            try
+            {
+                return await beeClient.GetChunkAsync(
+                    hash,
+                    swarmChunkBmt,
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                swarmChunkBmt.Clear();
+                swarmChunkBmtPool.Enqueue(swarmChunkBmt);
+            }
         }
     }
 }
