@@ -25,6 +25,41 @@ namespace Etherna.BeeNet.Chunks
         IReadOnlyChunkStore chunkStore)
     {
         // Methods.
+        /// <summary>
+        /// Try to traverse as from a mantaray manifest, and if fails as a data chunk
+        /// </summary>
+        /// <param name="rootHash">Root traversing chunk</param>
+        public async Task TraverseAsync(
+            SwarmHash rootHash,
+            Func<SwarmChunk, Task>? onChunkFoundAsync,
+            Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
+            Func<SwarmHash, Task>? onChunkNotFoundAsync)
+        {
+            // Identify if is manifest root chunk.
+            var isManifestChunk = false;
+            try
+            {
+                var manifest = new ReferencedMantarayManifest(chunkStore, rootHash);
+                await manifest.RootNode.OnVisitingAsync().ConfigureAwait(false);
+                isManifestChunk = true;
+            }
+            catch (InvalidOperationException) { }
+
+            // Traverse with identified chunk type.
+            if (isManifestChunk)
+                await TraverseFromMantarayManifestRootAsync(
+                    rootHash,
+                    onChunkFoundAsync,
+                    onInvalidChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
+            else
+                await TraverseFromDataChunkAsync(
+                    new SwarmChunkReference(rootHash, null, false),
+                    onChunkFoundAsync,
+                    onInvalidChunkFoundAsync,
+                    onChunkNotFoundAsync).ConfigureAwait(false);
+        }
+
         public async Task TraverseFromDataChunkAsync(
             SwarmChunkReference chunkReference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
@@ -57,7 +92,7 @@ namespace Etherna.BeeNet.Chunks
             onChunkNotFoundAsync ??= _ => Task.CompletedTask;
             
             // Read as manifest.
-            var manifest = new ReferencedMantarayManifest(chunkStore, rootHash, true);
+            var manifest = new ReferencedMantarayManifest(chunkStore, rootHash);
             await TraverseMantarayNodeHelperAsync(
                 (ReferencedMantarayNode)manifest.RootNode,
                 [],
