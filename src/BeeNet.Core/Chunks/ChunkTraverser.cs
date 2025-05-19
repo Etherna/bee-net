@@ -30,31 +30,42 @@ namespace Etherna.BeeNet.Chunks
         /// </summary>
         /// <param name="rootHash">Root traversing chunk</param>
         public async Task TraverseAsync(
-            SwarmHash rootHash,
+            SwarmChunkReference rootReference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
             Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
             Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
+            ArgumentNullException.ThrowIfNull(rootReference, nameof(rootReference));
+            
             // Identify if is manifest root chunk.
             var isManifestChunk = false;
-            try
+            if (!rootReference.UseRecursiveEncryption) //manifest can't use recursive encryption
             {
-                var manifest = new ReferencedMantarayManifest(chunkStore, rootHash);
-                await manifest.RootNode.OnVisitingAsync().ConfigureAwait(false);
-                isManifestChunk = true;
+                try
+                {
+                    var manifest = new ReferencedMantarayManifest(chunkStore, rootReference.Hash);
+                    await manifest.RootNode.OnVisitingAsync().ConfigureAwait(false);
+                    isManifestChunk = true;
+                }
+                catch (InvalidOperationException) //in case it's not a manifest
+                { }
+                catch (KeyNotFoundException) //in case root chunk is not found
+                {
+                    onChunkNotFoundAsync?.Invoke(rootReference.Hash);
+                    return;
+                }
             }
-            catch (InvalidOperationException) { }
 
             // Traverse with identified chunk type.
             if (isManifestChunk)
                 await TraverseFromMantarayManifestRootAsync(
-                    rootHash,
+                    rootReference.Hash,
                     onChunkFoundAsync,
                     onInvalidChunkFoundAsync,
                     onChunkNotFoundAsync).ConfigureAwait(false);
             else
                 await TraverseFromDataChunkAsync(
-                    new SwarmChunkReference(rootHash, null, false),
+                    rootReference,
                     onChunkFoundAsync,
                     onInvalidChunkFoundAsync,
                     onChunkNotFoundAsync).ConfigureAwait(false);
