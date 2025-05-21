@@ -31,7 +31,8 @@ namespace Etherna.BeeNet.Models
         
         // Fields.
         private readonly uint[] _buckets;
-        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions; //<collisions, bucketId[]>
+        private long _totalChunks;
+        private readonly Dictionary<uint, HashSet<uint>> bucketsByCollisions = new(); //<collisions, bucketId[]>
         private readonly ReaderWriterLockSlim bucketsLock = new(LockRecursionPolicy.NoRecursion);
         private bool disposed;
         
@@ -44,16 +45,17 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentOutOfRangeException(nameof(initialBuckets),
                     $"Initial buckets must have length {BucketsSize}, or be null");
             
-            //init "buckets" and reverse index "bucketsByCollisions"
+            // Init.
             _buckets = initialBuckets ?? new uint[BucketsSize];
-            bucketsByCollisions = new Dictionary<uint, HashSet<uint>> { [0] = [] };
             for (uint i = 0; i < BucketsSize; i++)
-                bucketsByCollisions[0].Add(i);
+            {
+                bucketsByCollisions.TryAdd(_buckets[i], []);
+                bucketsByCollisions[_buckets[i]].Add(i);
+            }
 
-            //init counters
             MaxBucketCollisions = 0;
             MinBucketCollisions = 0;
-            TotalChunks = 0;
+            _totalChunks = 0;
         }
 
         // Dispose.
@@ -78,7 +80,21 @@ namespace Etherna.BeeNet.Models
         public uint MaxBucketCollisions { get; private set; }
         public uint MinBucketCollisions { get; private set; }
         public int RequiredPostageBatchDepth => CollisionsToRequiredPostageBatchDepth(MaxBucketCollisions);
-        public long TotalChunks { get; private set; }
+        public long TotalChunks
+        {
+            get
+            {
+                bucketsLock.EnterReadLock();
+                try
+                {
+                    return _totalChunks;
+                }
+                finally
+                {
+                    bucketsLock.ExitReadLock();
+                }
+            }
+        }
         
         // Methods.
         public int[] CountBucketsByCollisions()
@@ -160,7 +176,7 @@ namespace Etherna.BeeNet.Models
                     .First(p => p.Value.Count > 0)
                     .Key;
                     
-                TotalChunks++;
+                _totalChunks++;
             }
             finally
             {

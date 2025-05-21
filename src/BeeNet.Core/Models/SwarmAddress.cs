@@ -12,21 +12,30 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Manifest;
+using Etherna.BeeNet.Stores;
+using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(SwarmAddressTypeConverter))]
     public readonly struct SwarmAddress : IEquatable<SwarmAddress>
     {
         // Consts.
         public const char Separator = '/';
         
+        // Fields.
+        private readonly string? _path;
+        
         // Constructor.
         public SwarmAddress(SwarmHash hash, string? path = null)
         {
             Hash = hash;
-            Path = NormalizePath(path);
+            _path = NormalizePath(path);
         }
         public SwarmAddress(string address)
         {
@@ -42,12 +51,13 @@ namespace Etherna.BeeNet.Models
             
             // Set hash and path.
             Hash = new SwarmHash(hash);
-            Path = NormalizePath(path);
+            _path = NormalizePath(path);
         }
         
         // Properties.
         public SwarmHash Hash { get; }
-        public string Path { get; }
+        public bool HasPath => Path != Separator.ToString();
+        public string Path => _path ?? NormalizePath(null);
         
         // Methods.
         public bool Equals(SwarmAddress other) =>
@@ -55,8 +65,24 @@ namespace Etherna.BeeNet.Models
             EqualityComparer<string>.Default.Equals(Path, other.Path);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
         public override int GetHashCode() => Hash.GetHashCode() ^
-                                             (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
+                                             Path.GetHashCode(StringComparison.InvariantCulture);
+        public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveToResourceInfoAsync(
+            IReadOnlyChunkStore chunkStore,
+            ManifestPathResolver manifestPathResolver)
+        {
+            var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
+            return await rootManifest.GetResourceInfoAsync(
+                Path, manifestPathResolver).ConfigureAwait(false);
+        }
         public override string ToString() => Hash + Path;
+        public async Task<string?> TryGetFileNameAsync(
+            IReadOnlyChunkStore chunkStore)
+        {
+            var info = await ResolveToResourceInfoAsync(
+                chunkStore,
+                ManifestPathResolver.IdentityResolver).ConfigureAwait(false);
+            return info.Result.Metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
+        }
         
         // Static methods.
         public static SwarmAddress FromString(string value) => new(value);

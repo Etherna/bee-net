@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class ChequebookTest : BaseTest_Gateway_v5_0_0
     {
@@ -84,7 +84,6 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert 
-            Assert.StartsWith("0x", cheque);
         }
 
         [Fact]

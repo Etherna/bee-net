@@ -12,24 +12,26 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(PostageBatchIdTypeConverter))]
     public readonly struct PostageBatchId : IEquatable<PostageBatchId>
     {
         // Consts.
         public const int BatchIdSize = 32;
         
         // Fields.
-        private readonly byte[] byteId;
+        private readonly ReadOnlyMemory<byte> byteId;
 
         // Constructors.
-        public PostageBatchId(byte[] batchId)
+        public PostageBatchId(ReadOnlyMemory<byte> batchId)
         {
-            ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
             if (batchId.Length != BatchIdSize)
                 throw new ArgumentOutOfRangeException(nameof(batchId));
             
@@ -50,12 +52,12 @@ namespace Etherna.BeeNet.Models
         public static PostageBatchId Zero { get; } = new byte[BatchIdSize];
 
         // Methods.
-        public bool Equals(PostageBatchId other) => ByteArrayComparer.Current.Equals(byteId, other.byteId);
+        public bool Equals(PostageBatchId other) => byteId.Span.SequenceEqual(other.byteId.Span);
         public override bool Equals(object? obj) => obj is PostageBatchId other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteId);
-        public byte[] ToByteArray() => (byte[])byteId.Clone();
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteId.ToArray());
+        public byte[] ToByteArray() => byteId.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteId;
-        public override string ToString() => byteId.ToHex();
+        public override string ToString() => byteId.ToArray().ToHex();
         
         // Static methods.
         public static PostageBatchId FromByteArray(byte[] value) => new(value);

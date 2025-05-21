@@ -18,24 +18,18 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
 {
     public abstract class BaseTest_Gateway_v5_0_0
     {
-        protected BeeClient beeNodeClient;
+        protected BeeClient beeNodeClient = new(
+            new Uri(Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1:1633/"));
         protected string pathTestFileForUpload = "Data/TestFileForUpload_Gateway.txt";
         protected const string version = "4.0.0";
 
-        public BaseTest_Gateway_v5_0_0()
-        {
-            beeNodeClient = new BeeClient(
-                Environment.GetEnvironmentVariable("BeeNet_IT_NodeEndPoint") ?? "http://127.0.0.1/",
-                1633);
-        }
-
         protected async Task<SwarmHash> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
@@ -51,16 +45,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2
 
         protected async Task<SwarmHash> UploadChunkFileAndGetReferenceAsync()
         {
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             var fs = File.OpenRead(pathTestFileForUpload);
 
-
             // Act 
-            var reference = await beeNodeClient.UploadChunkAsync(batch, fs, swarmDeferredUpload: false);
+            var reference = await beeNodeClient.UploadChunkAsync(fs, batch);
 
             return reference;
         }
-
     }
 }

@@ -19,28 +19,24 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public class XDaiBalanceJsonConverter: JsonConverter<XDaiBalance>
+    public sealed class XDaiBalanceJsonConverter(bool writeAsString)
+        : JsonConverter<XDaiBalance>
     {
-        public override XDaiBalance Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options)
-        {
-            if (reader.TokenType != JsonTokenType.Number)
-                throw new JsonException();
+        public override XDaiBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+            reader.TokenType switch
+            {
+                JsonTokenType.Number => XDaiBalance.FromWeiLong(reader.GetInt64()),
+                JsonTokenType.String => XDaiBalance.FromWeiString(reader.GetString()!),
+                _ => throw new JsonException()
+            };
 
-            var decimalValue = reader.GetDecimal();
-
-            return new XDaiBalance(decimalValue);
-        }
-
-        public override void Write(
-            Utf8JsonWriter writer,
-            XDaiBalance value,
-            JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, XDaiBalance value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            writer.WriteNumberValue(value.ToDecimal());
+            if (writeAsString)
+                writer.WriteStringValue(value.ToWeiString());
+            else
+                writer.WriteNumberValue(value.ToWeiLong());
         }
     }
 }

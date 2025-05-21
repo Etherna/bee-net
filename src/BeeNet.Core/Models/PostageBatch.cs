@@ -27,15 +27,14 @@ namespace Etherna.BeeNet.Models
         public PostageBatch(
             PostageBatchId id,
             BzzBalance amount,
-            int blockNumber,
+            ulong blockNumber,
             int depth,
             bool exists,
             bool isImmutable,
             bool isUsable,
             string? label,
-            int? storageRadius,
             TimeSpan ttl,
-            uint? utilization)
+            uint utilization)
         {
             if (depth is < MinDepth or > MaxDepth)
                 throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
@@ -47,25 +46,23 @@ namespace Etherna.BeeNet.Models
             Exists = exists;
             IsImmutable = isImmutable;
             IsUsable = isUsable;
-            Label = label;
-            StorageRadius = storageRadius;
+            Label = label ?? "";
             Ttl = ttl;
             Utilization = utilization;
         }
         
         // Static properties.
         public static PostageBatch MaxDepthInstance { get; } = new(
-            PostageBatchId.Zero,
-            0,
-            0,
-            MaxDepth,
-            true,
-            false,
-            true,
-            null,
-            null,
-            TimeSpan.FromDays(3650),
-            0);
+            id: PostageBatchId.Zero,
+            amount: 0,
+            blockNumber: 0,
+            depth: MaxDepth,
+            exists: true,
+            isImmutable: false,
+            isUsable: true,
+            label: null,
+            ttl: TimeSpan.FromDays(3650),
+            utilization: 0);
 
         // Properties.
         public PostageBatchId Id { get; }
@@ -78,7 +75,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Block number when this batch was created
         /// </summary>
-        public int BlockNumber { get; }
+        public ulong BlockNumber { get; }
         
         /// <summary>
         /// Batch depth: batchSize = 2^depth * chunkSize
@@ -100,9 +97,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Label to identify the batch
         /// </summary>
-        public string? Label { get; }
-
-        public int? StorageRadius { get; }
+        public string Label { get; }
 
         /// <summary>
         /// Time to live before expiration
@@ -112,7 +107,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// The count of the fullest bucket
         /// </summary>
-        public uint? Utilization { get; }
+        public uint Utilization { get; }
         
         // Static methods.
         public static BzzBalance CalculateAmount(BzzBalance chainPrice, TimeSpan ttl) =>

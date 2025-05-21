@@ -12,10 +12,12 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Models;
+using Nethereum.Hex.HexConvertors.Extensions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class FeedTest : BaseTest_Gateway_v5_0_0
     {
@@ -24,14 +26,14 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task CreateFeedAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
-            var addresses = await beeNodeClient.GetAddressesAsync();
+            var addresses = await beeNodeClient.GetNodeAddressesAsync();
             var topic = "cf880b8eeac5093fa27b0825906c600685";
-
+            var feed = new SwarmSequenceFeed(addresses.Ethereum, topic.HexToByteArray());
 
             // Act 
-            var result = await beeNodeClient.CreateFeedAsync(addresses.Ethereum.Replace("0x", ""), topic, batch);
+            var result = await beeNodeClient.UploadFeedManifestAsync(feed, batch);
         }
 
         /*

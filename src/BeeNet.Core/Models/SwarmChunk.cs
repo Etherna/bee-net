@@ -13,85 +13,38 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmChunk
+    public abstract class SwarmChunk
     {
-        // Fields.
-        protected readonly byte[] _data;
-        protected readonly byte[] _span;
-        
-        // Consts.
-        public const int DataSize = 4096;
-        public const int SpanAndDataSize = SpanSize + DataSize;
-        public const int SpanSize = 8;
-        
-        // Constructors.
-        public SwarmChunk(SwarmHash hash, byte[] data)
-        {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-            if (data.Length > DataSize)
-                throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be longer than {DataSize} bytes");
-            
-            Hash = hash;
-            _span = LengthToSpan((ulong)data.Length);
-            _data = data;
-        }
-
-        public SwarmChunk(SwarmHash hash, byte[] span, byte[] data)
-        {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
-            ArgumentNullException.ThrowIfNull(span, nameof(span));
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
-            
-            Hash = hash;
-            _span = span;
-            _data = data;
-        }
-        
-        // Static builders.
-        public static SwarmChunk BuildFromSpanAndData(SwarmHash hash, ReadOnlySpan<byte> spanAndData)
-        {
-            if (spanAndData.Length > SpanAndDataSize)
-                throw new ArgumentOutOfRangeException(nameof(spanAndData),
-                    $"Data with span can't be longer than {SpanAndDataSize} bytes");
-
-            var spanSlice = spanAndData[..SpanSize];
-            var dataSlice = spanAndData[SpanSize..];
-
-            return new SwarmChunk(hash, spanSlice.ToArray(), dataSlice.ToArray());
-        }
-
         // Properties.
-        public SwarmHash Hash { get; }
-        public ReadOnlyMemory<byte> Data => _data;
-        public PostageStamp? PostageStamp { get; set; }
-        public ReadOnlyMemory<byte> Span => _span;
+        public abstract SwarmHash Hash { get; }
         
         // Methods.
-        public byte[] GetSpanAndData()
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
+        public override bool Equals(object? obj)
         {
-            var spanAndData = new byte[SpanSize + _data.Length];
-            Span.CopyTo(spanAndData.AsMemory()[..SpanSize]);
-            Data.CopyTo(spanAndData.AsMemory()[SpanSize..]);
-            return spanAndData;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is not SwarmChunk objChunk) return false;
+            return GetType() == obj.GetType() &&
+                   Hash.Equals(objChunk.Hash) &&
+                   GetFullPayload().Span.SequenceEqual(objChunk.GetFullPayload().Span);
         }
+        public abstract ReadOnlyMemory<byte> GetFullPayload();
+        public abstract byte[] GetFullPayloadToByteArray();
+        public override int GetHashCode() =>
+            Hash.GetHashCode() ^
+            GetFullPayload().GetHashCode();
         
         // Static methods.
-        public static byte[] LengthToSpan(ulong length)
-        {
-            var span = new byte[SpanSize];
-            WriteSpan(span, length);
-            return span;
-        }
-
-        public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
-            BinaryPrimitives.ReadUInt64LittleEndian(span);
-
-        public static void WriteSpan(Span<byte> span, ulong length) =>
-            BinaryPrimitives.WriteUInt64LittleEndian(span, length);
+        public static SwarmChunk BuildChunkFromHashAndData(
+            SwarmHash hash,
+            ReadOnlyMemory<byte> chunkData,
+            SwarmChunkBmt swarmChunkBmt) =>
+            SwarmCac.IsValid(hash, chunkData, swarmChunkBmt)
+                ? new SwarmCac(hash, chunkData)
+                : SwarmSoc.BuildFromBytes(hash, chunkData, swarmChunkBmt);
     }
 }

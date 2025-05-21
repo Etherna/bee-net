@@ -12,20 +12,16 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-
 namespace Etherna.BeeNet.Models
 {
     public sealed class Health(
         bool isStatusOk,
         string version,
-        string apiVersion,
-        string debugApiVersion)
+        string apiVersion)
     {
         // Properties.
         public bool IsStatusOk { get; } = isStatusOk;
         public string Version { get; } = version;
         public string ApiVersion { get; } = apiVersion;
-        public string DebugApiVersion { get; } = debugApiVersion;
     }
 }

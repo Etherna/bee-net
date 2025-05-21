@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class TagTest : BaseTest_Gateway_v5_0_0
     {

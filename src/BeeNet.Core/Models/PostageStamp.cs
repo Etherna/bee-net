@@ -12,45 +12,91 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.TypeConverters;
+using Nethereum.Signer;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
-    public class PostageStamp
+    [TypeConverter(typeof(PostageStampTypeConverter))]
+    public class PostageStamp(
+        PostageBatchId batchId,
+        PostageBucketIndex bucketIndex,
+        DateTimeOffset timeStamp,
+        ReadOnlyMemory<byte> signature)
     {
-        // Constructor.
-        public PostageStamp(
-            PostageBatchId batchId,
-            StampBucketIndex stampBucketIndex,
-            DateTimeOffset timeStamp,
-            byte[] signature)
+        // Consts.
+        public const int StampSize = 113;
+        
+        // Static builders.
+        public static PostageStamp BuildFromByteArray(ReadOnlyMemory<byte> bytes)
         {
-            ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
-            
-            BatchId = batchId;
-            StampBucketIndex = stampBucketIndex;
-            TimeStamp = timeStamp;
-            Signature = signature;
+            if (bytes.Length != StampSize)
+                throw new ArgumentOutOfRangeException(nameof(bytes), "Invalid stamp length");
+
+            var batchId = new PostageBatchId(bytes[..32]);
+            var stampBucketIndex = PostageBucketIndex.BuildFromByteArray(bytes.Span[32..40]);
+            var timeStamp = bytes.Span[40..48].UnixTimeNanosecondsToDateTimeOffset();
+            var signature = bytes[48..];
+
+            return new PostageStamp(batchId, stampBucketIndex, timeStamp, signature);
+        }
+        
+        // Properties.
+        public PostageBatchId BatchId { get; } = batchId;
+        public PostageBucketIndex BucketIndex { get; } = bucketIndex;
+        public DateTimeOffset TimeStamp { get; } = timeStamp;
+        public ReadOnlyMemory<byte> Signature => signature;
+        
+        // Static methods.
+        public static byte[] BuildSignDigest(
+            SwarmHash hash,
+            PostageBatchId batchId,
+            PostageBucketIndex bucketIndex,
+            DateTimeOffset timeStamp,
+            Hasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(bucketIndex, nameof(bucketIndex));
+
+            return hasher.ComputeHash(
+            [
+                hash.ToReadOnlyMemory(),
+                batchId.ToReadOnlyMemory(),
+                bucketIndex.ToByteArray(),
+                timeStamp.ToUnixTimeNanosecondsByteArray()
+            ]);
         }
 
+        // Methods.
         /// <summary>
-        /// Postage batch ID
+        /// Returns ethereum address that signed postage batch
         /// </summary>
-        public PostageBatchId BatchId { get; }
+        /// <param name="hash"></param>
+        /// <param name="hasher"></param>
+        /// <returns></returns>
+        public EthAddress RecoverBatchOwner(SwarmHash hash, Hasher hasher)
+        {
+            var signer = new EthereumMessageSigner();
+            var toSign = ToSignDigest(hash, hasher);
+            return signer.EcRecover(toSign, new EthECDSASignature(signature.ToArray()));
+        }
+        
+        public byte[] ToByteArray()
+        {
+            List<byte> buffer = [];
+            buffer.AddRange(BatchId.ToReadOnlyMemory().Span);
+            buffer.AddRange(BucketIndex.ToByteArray());
+            buffer.AddRange(TimeStamp.ToUnixTimeNanosecondsByteArray());
+            buffer.AddRange(Signature.Span);
+            return buffer.ToArray();
+        }
 
-        /// <summary>
-        /// Index of the batch
-        /// </summary>
-        public StampBucketIndex StampBucketIndex { get; }
-
-        /// <summary>
-        /// To signal order when assigning the indexes to multiple chunks
-        /// </summary>
-        public DateTimeOffset TimeStamp { get; }
-
-        /// <summary>
-        /// common r[32]s[32]v[1]-style 65 byte ECDSA signature of batchID|index|address by owner or grantee
-        /// </summary>
-        public ReadOnlyMemory<byte> Signature { get; }
+        public byte[] ToSignDigest(SwarmHash hash, Hasher hasher) =>
+            BuildSignDigest(hash, BatchId, BucketIndex, TimeStamp, hasher);
     }
 }

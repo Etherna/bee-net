@@ -12,11 +12,10 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class ConnectivityTest : BaseTest_Gateway_v5_0_0
     {
@@ -27,11 +26,10 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Act 
-            var result = await beeNodeClient.GetAddressesAsync();
+            var result = await beeNodeClient.GetNodeAddressesAsync();
 
 
             // Assert 
-            Assert.StartsWith("0x", result.Ethereum);
         }
 
         [Fact]

@@ -17,13 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C162BCCF
 	ProjectSection(SolutionItems) = preProject
 		tools\README.md = tools\README.md
 		tools\bee-api.nswag = tools\bee-api.nswag
+		tools\GatewaySwarm.yaml = tools\GatewaySwarm.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openapi", "openapi", "{1956F8A3-25CE-42BB-8AE5-77ACC56B9B92}"
 	ProjectSection(SolutionItems) = preProject
 		tools\openapi\Swarm.yaml = tools\openapi\Swarm.yaml
 		tools\openapi\SwarmCommon.yaml = tools\openapi\SwarmCommon.yaml
-		tools\openapi\SwarmDebug.yaml = tools\openapi\SwarmDebug.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F6289FE6-5CC0-4225-98BC-2DCFE85C767F}"
@@ -38,15 +38,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeeNet.Client.IntegrationTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core", "src\BeeNet.Core\BeeNet.Core.csproj", "{0C681EE6-7290-4548-9502-4C9B6B061F12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Util", "src\BeeNet.Util\BeeNet.Util.csproj", "{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Client", "src\BeeNet.Client\BeeNet.Client.csproj", "{EC667802-776E-4306-922C-AA23C7D5835B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core.UnitTest", "test\BeeNet.Core.UnitTest\BeeNet.Core.UnitTest.csproj", "{63368E76-475A-45BE-B6DB-86402C041C39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Util.UnitTest", "test\BeeNet.Util.UnitTest\BeeNet.Util.UnitTest.csproj", "{BBC17EDC-660C-4006-A14C-377693290D5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core.AspNet", "src\BeeNet.Core.AspNet\BeeNet.Core.AspNet.csproj", "{2020D0B8-6325-4DC5-B199-9929772FBBED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Util.Wasm", "src\BeeNet.Util.Wasm\BeeNet.Util.Wasm.csproj", "{7257332C-5291-4814-B00B-3732BE90FB2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeNet.Core.Wasm", "src\BeeNet.Core.Wasm\BeeNet.Core.Wasm.csproj", "{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +60,6 @@ Global
 		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C681EE6-7290-4548-9502-4C9B6B061F12}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC667802-776E-4306-922C-AA23C7D5835B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC667802-776E-4306-922C-AA23C7D5835B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC667802-776E-4306-922C-AA23C7D5835B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -74,14 +68,14 @@ Global
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63368E76-475A-45BE-B6DB-86402C041C39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BBC17EDC-660C-4006-A14C-377693290D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BBC17EDC-660C-4006-A14C-377693290D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BBC17EDC-660C-4006-A14C-377693290D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BBC17EDC-660C-4006-A14C-377693290D5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7257332C-5291-4814-B00B-3732BE90FB2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7257332C-5291-4814-B00B-3732BE90FB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7257332C-5291-4814-B00B-3732BE90FB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7257332C-5291-4814-B00B-3732BE90FB2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2020D0B8-6325-4DC5-B199-9929772FBBED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,11 +86,10 @@ Global
 		{F6289FE6-5CC0-4225-98BC-2DCFE85C767F} = {6EAC22F4-C9F3-4C2E-A0AC-922D4F92B8F6}
 		{F0C776C9-4856-4031-B4CE-18E53FEF9E55} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
 		{0C681EE6-7290-4548-9502-4C9B6B061F12} = {7932D52A-3D44-4723-9E77-1711F7486417}
-		{FDB74F14-61A0-42D9-89C1-8F8DA8A8A4C2} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{EC667802-776E-4306-922C-AA23C7D5835B} = {7932D52A-3D44-4723-9E77-1711F7486417}
 		{63368E76-475A-45BE-B6DB-86402C041C39} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
-		{BBC17EDC-660C-4006-A14C-377693290D5E} = {990C5C57-6E00-4E76-A23A-519F19290ACB}
-		{7257332C-5291-4814-B00B-3732BE90FB2E} = {7932D52A-3D44-4723-9E77-1711F7486417}
+		{2020D0B8-6325-4DC5-B199-9929772FBBED} = {7932D52A-3D44-4723-9E77-1711F7486417}
+		{44AD249B-2E64-4BE8-A67B-F76DE7DE2FEC} = {7932D52A-3D44-4723-9E77-1711F7486417}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BC8368EB-8E3B-4FBB-B657-D1C9375AFAFC}

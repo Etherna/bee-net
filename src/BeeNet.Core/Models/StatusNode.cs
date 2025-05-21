@@ -17,9 +17,13 @@ namespace Etherna.BeeNet.Models
     public sealed class StatusNode(
         StatusBeeMode beeMode,
         int batchCommitment,
+        int committedDepth,
         int connectedPeers,
+        bool isWarmingUp,
+        bool isReachable,
+        long lastSyncedBlock,
         int neighborhoodSize,
-        string peer,
+        string overlay,
         int proximity,
         double pullsyncRate,
         int reserveSize,
@@ -30,9 +34,13 @@ namespace Etherna.BeeNet.Models
         // Properties.
         public StatusBeeMode BeeMode { get; } = beeMode;
         public int BatchCommitment { get; } = batchCommitment;
+        public int CommittedDepth { get; } = committedDepth;
         public int ConnectedPeers { get; } = connectedPeers;
+        public bool IsReachable { get; } = isReachable;
+        public bool IsWarmingUp { get; } = isWarmingUp;
+        public long LastSyncedBlock { get; } = lastSyncedBlock;
         public int NeighborhoodSize { get; } = neighborhoodSize;
-        public string Peer { get; } = peer;
+        public string Overlay { get; } = overlay;
         public int Proximity { get; } = proximity;
         public double PullsyncRate { get; } = pullsyncRate;
         public int ReserveSize { get; } = reserveSize;

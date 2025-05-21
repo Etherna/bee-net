@@ -12,28 +12,31 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util;
 using System;
+using System.ComponentModel;
 using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Models
 {
-    public class XorEncryptKey
+    [TypeConverter(typeof(XorEncryptKeyTypeConverter))]
+    public readonly struct XorEncryptKey : IEquatable<XorEncryptKey>
     {
         // Consts.
         public const int KeySize = 32;
         
         // Fields.
-        private readonly byte[] bytes;
+        private readonly ReadOnlyMemory<byte> byteKey;
 
         // Constructor.
-        public XorEncryptKey(byte[] bytes)
+        public XorEncryptKey(ReadOnlyMemory<byte> key)
         {
-            ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
-            if (bytes.Length != KeySize)
-                throw new ArgumentOutOfRangeException(nameof(bytes));
+            if (!IsValidKey(key))
+                throw new ArgumentOutOfRangeException(nameof(key));
             
-            this.bytes = bytes;
+            byteKey = key;
         }
         
         public XorEncryptKey(string key)
@@ -42,14 +45,14 @@ namespace Etherna.BeeNet.Models
             
             try
             {
-                bytes = key.HexToByteArray();
+                byteKey = key.HexToByteArray();
             }
             catch (FormatException)
             {
                 throw new ArgumentException("Invalid hash", nameof(key));
             }
             
-            if (!IsValidKey(bytes))
+            if (!IsValidKey(byteKey))
                 throw new ArgumentOutOfRangeException(nameof(key));
         }
 
@@ -61,15 +64,12 @@ namespace Etherna.BeeNet.Models
             return new XorEncryptKey(keyBytes);
         }
         
-        // Properties.
-        public Memory<byte> Bytes => bytes;
-        
         // Static properties.
-        public static XorEncryptKey Empty { get; } = new(new byte[KeySize]);
+        public static XorEncryptKey Zero { get; } = new byte[KeySize];
         
         // Methods.
         /// <summary>
-        /// Runs a XOR encryption on the input bytes, encrypting it if it
+        /// Runs XOR encryption on the input bytes, encrypting it if it
         /// hasn't already been, and decrypting it if it has, using the key provided.
         /// </summary>
         /// <param name="data">Input data</param>
@@ -77,16 +77,42 @@ namespace Etherna.BeeNet.Models
         public void EncryptDecrypt(Span<byte> data)
         {
             for (var i = 0; i < data.Length; i++)
-                data[i] = (byte)(data[i] ^ bytes[i % bytes.Length]);
+                data[i] = (byte)(data[i] ^ byteKey.Span[i % byteKey.Length]);
         }
-        
-        public override string ToString() => bytes.ToHex();
+        public bool Equals(XorEncryptKey other) => byteKey.Span.SequenceEqual(other.byteKey.Span);
+        public override bool Equals(object? obj) => obj is XorEncryptKey other && Equals(other);
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteKey.ToArray());
+        public byte[] ToByteArray() => byteKey.ToArray();
+        public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteKey;
+        public override string ToString() => byteKey.ToArray().ToHex();
         
         // Static methods.
-        public static bool IsValidKey(byte[] value)
+        public static XorEncryptKey FromByteArray(byte[] value) => new(value);
+        public static XorEncryptKey FromString(string value) => new(value);
+        public static bool IsValidKey(ReadOnlyMemory<byte> value) => value.Length == KeySize;
+        public static bool IsValidKey(string value)
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            return value.Length == KeySize;
+            try
+            {
+                return IsValidKey(value.HexToByteArray());
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
+        
+        // Operator methods.
+        public static bool operator ==(XorEncryptKey left, XorEncryptKey right) => left.Equals(right);
+        public static bool operator !=(XorEncryptKey left, XorEncryptKey right) => !(left == right);
+        
+        // Implicit conversion operator methods.
+        public static implicit operator XorEncryptKey(string value) => new(value);
+        public static implicit operator XorEncryptKey(byte[] value) => new(value);
+        
+        // Explicit conversion operator methods.
+        public static explicit operator string(XorEncryptKey value) => value.ToString();
+        public static explicit operator ReadOnlyMemory<byte>(XorEncryptKey value) => value.ToReadOnlyMemory();
+        public static explicit operator byte[](XorEncryptKey value) => value.ToByteArray();
     }
 }

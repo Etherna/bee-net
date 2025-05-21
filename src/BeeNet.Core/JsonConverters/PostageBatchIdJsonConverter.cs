@@ -19,29 +19,20 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public class PostageBatchIdJsonConverter : JsonConverter<PostageBatchId>
+    public sealed class PostageBatchIdJsonConverter : JsonConverter<PostageBatchId>
     {
-        public override PostageBatchId Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options)
+        public override PostageBatchId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
 
-            var stringValue = reader.GetString();
-            if (stringValue is null)
-                throw new JsonException();
-
-            return new PostageBatchId(stringValue);
+            return reader.GetString()!;
         }
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            PostageBatchId value,
-            JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, PostageBatchId value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+            
             writer.WriteStringValue(value.ToString());
         }
     }

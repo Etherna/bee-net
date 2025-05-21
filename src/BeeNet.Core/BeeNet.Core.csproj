@@ -1,18 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Etherna.BeeNet</RootNamespace>
 
     <Authors>Etherna SA</Authors>
-    <Description>Core models to work with Ethereum Swarm in .Net</Description>
+    <Description>Core models and services to work with Ethereum Swarm in .Net</Description>
 
-    <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
-    <IsAotCompatible>true</IsAotCompatible>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <IsAotCompatible>true</IsAotCompatible>
 
     <PackageId>Bee.Net.Core</PackageId>
     <RepositoryUrl>https://github.com/Etherna/bee-net</RepositoryUrl>
@@ -25,10 +24,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.0" />
+    <PackageReference Include="GitVersion.MsBuild" Version="6.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -36,7 +37,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nethereum.Util" Version="4.21.3" />
+    <PackageReference Include="NBitcoin.Secp256k1" Version="3.1.6" />
+    <PackageReference Include="Nethereum.Model" Version="4.29.0" />
+    <PackageReference Include="Nethereum.Util" Version="4.29.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

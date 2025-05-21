@@ -12,16 +12,22 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Etherna.BeeNet.Models
 {
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
+    [TypeConverter(typeof(SwarmUriTypeConverter))]
     public readonly struct SwarmUri : IEquatable<SwarmUri>
     {
+        // Fields.
+        private readonly string? _path;
+        
         // Constructor.
         public SwarmUri(SwarmHash? hash, string? path)
         {
@@ -29,7 +35,7 @@ namespace Etherna.BeeNet.Models
                 throw new ArgumentException("Hash and path can't be both null");
             
             Hash = hash;
-            Path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
+            _path = hash != null ? SwarmAddress.NormalizePath(path) : path!;
         }
         public SwarmUri(string uri, UriKind uriKind)
         {
@@ -45,18 +51,19 @@ namespace Etherna.BeeNet.Models
             {
                 var address = new SwarmAddress(uri);
                 Hash = address.Hash;
-                Path = address.Path;
+                _path = address.Path;
             }
             else
             {
-                Path = uri;
+                _path = uri;
             }
         }
         
         // Properties.
         public SwarmHash? Hash { get; }
+        public bool HasPath => Path.Length > 0 && Path != SwarmAddress.Separator.ToString();
         public bool IsRooted => UriKind == UriKind.Absolute || System.IO.Path.IsPathRooted(Path);
-        public string Path { get; }
+        public string Path => _path ?? SwarmAddress.NormalizePath(null);
         public UriKind UriKind => Hash.HasValue ? UriKind.Absolute : UriKind.Relative;
         
         // Methods.
@@ -67,7 +74,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmUri other && Equals(other);
         
         public override int GetHashCode() => Hash.GetHashCode() ^
-                                             (Path?.GetHashCode(StringComparison.InvariantCulture) ?? 0);
+                                             Path.GetHashCode(StringComparison.InvariantCulture);
         
         public override string ToString() =>
             UriKind == UriKind.Absolute ? new SwarmAddress(Hash!.Value, Path).ToString() : Path!;

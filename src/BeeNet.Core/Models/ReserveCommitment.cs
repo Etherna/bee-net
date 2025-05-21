@@ -12,17 +12,19 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Etherna.BeeNet.Models
 {
     public sealed class ReserveCommitment(
-        int duration,
+        TimeSpan duration,
         SwarmHash hash,
         ReserveCommitmentProof proof1,
         ReserveCommitmentProof proof2,
         ReserveCommitmentProof proofLast)
     {
         // Properties.
-        public int Duration { get; } = duration;
+        public TimeSpan Duration { get; } = duration;
         public SwarmHash Hash { get; } = hash;
         public ReserveCommitmentProof Proof1 { get; } = proof1;
         public ReserveCommitmentProof Proof2 { get; } = proof2;

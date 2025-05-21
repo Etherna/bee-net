@@ -16,7 +16,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
+namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 {
     public class BzzTest : BaseTest_Gateway_v5_0_0
     {
@@ -25,7 +25,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTextAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
 
             // Act 
@@ -46,7 +46,7 @@ namespace BeeNet.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
         public async Task UploadFileSingleFileTarAsync()
         {
             // Arrange 
-            var batch = await beeNodeClient.BuyPostageBatchAsync(500, 32);
+            var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
             
             // Act 

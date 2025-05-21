@@ -16,9 +16,10 @@ namespace Etherna.BeeNet.Models
 {
     public enum StatusBeeMode
     {
-        Light = 0,
-        Full = 1,
-        UltraLight = 2,
-        Unknown = 3
+        Light,
+        Full,
+        Dev,
+        UltraLight,
+        Unknown
     }
 }

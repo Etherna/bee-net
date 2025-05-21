@@ -2,11 +2,9 @@
 
 ## Overview
 
-Bee.Net is a .Net client for the [Bee Swarm](https://github.com/ethersphere/bee) node.
+Bee.Net is a [Swarm](https://ethswarm.org/) Development Kit build with .Net.
 
-With this client you can consume public and debug api of any Bee node exposing them.
-
-This includes also some useful to calculate data chunking, and postage batch usage.
+It offers models and services to work with Swarm's protocol, and implements a client for the [Bee Swarm](https://github.com/ethersphere/bee) node.
 
 ## Packages
 
@@ -15,12 +13,12 @@ There are several NuGet packages available for Bee.Net. Here's a brief descripti
 1. **Bee.Net.Client**: This package contains a client that is designed to connect to and work with Bee Swarm. It
    simplifies the interaction with Bee nodes by providing high-level methods and classes.
 
-2. **Bee.Net.Core**: This package contains the base models for working with Swarm. These models represent the core
-   entities in the Swarm world and provide a foundation for interacting with the Bee Swarm.
+2. **Bee.Net.Core**: This package contains base models and useful tools to work with Swarm.
+   Models represent the core entities in the Swarm world and provide a foundation for interacting with the Bee Swarm.
+   Tools include utilities for data chunking, calculating postage batch usage, work with feeds, and other helpful 
+   operations that enhance your experience when working with Swarm.
 
-3. **Bee.Net.Util**: This package contains a series of useful tools. These tools include utilities for data chunking,
-   calculating postage batch usage, and other helpful operations that enhance your experience when working with
-   Swarm.
+3. **BeeNet.Core.AspNet**: This package helps to register Bee.Net Core services and converters with Asp.Net
 
 ## Package repositories
 

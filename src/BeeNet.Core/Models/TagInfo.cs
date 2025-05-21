@@ -17,7 +17,7 @@ using System;
 namespace Etherna.BeeNet.Models
 {
     public sealed class TagInfo(
-        long uid,
+        TagId id,
         DateTimeOffset startedAt,
         int split,
         int seen,
@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Models
         int synced)
     {
         // Properties.
-        public long Uid { get; } = uid;
+        public TagId Id { get; } = id;
         public DateTimeOffset StartedAt { get; } = startedAt;
         public int Split { get; } = split;
         public int Seen { get; } = seen;

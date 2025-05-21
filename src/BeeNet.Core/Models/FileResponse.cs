@@ -15,11 +15,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
     public sealed class FileResponse(
+        HttpContentHeaders? contentHeaders,
         IReadOnlyDictionary<string, IEnumerable<string>> headers,
         Stream stream)
         : IDisposable, IAsyncDisposable
@@ -30,6 +32,7 @@ namespace Etherna.BeeNet.Models
 
         // Properties.
         public bool IsFeed => Headers.ContainsKey("Swarm-Feed-Index");
+        public HttpContentHeaders? ContentHeaders { get; } = contentHeaders;
         public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; } = headers;
         public Stream Stream { get; } = stream;
     }

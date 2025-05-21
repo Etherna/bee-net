@@ -1,5 +1,5 @@
 {
-  "runtime": "Net80",
+  "runtime": "Net90",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
@@ -13,7 +13,9 @@
       "clientBaseClass": null,
       "configurationClass": null,
       "generateClientClasses": true,
+      "suppressClientClassesOutput": false,
       "generateClientInterfaces": true,
+      "suppressClientInterfacesOutput": false,
       "clientBaseInterface": null,
       "injectHttpClient": true,
       "disposeHttpClient": true,
@@ -31,6 +33,8 @@
       "exposeJsonSerializerSettings": false,
       "clientClassAccessModifier": "internal",
       "typeAccessModifier": "internal",
+      "propertySetterAccessModifier": "",
+      "generateNativeRecords": false,
       "generateContractsOutput": false,
       "contractsNamespace": null,
       "contractsOutputFilePath": null,
@@ -90,12 +94,9 @@
       "generateOptionalPropertiesAsNullable": false,
       "generateNullableReferenceTypes": true,
       "templateDirectory": null,
-      "typeNameGeneratorType": null,
-      "propertyNameGeneratorType": null,
-      "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet/Clients/BeeGeneratedClient.cs",
+      "output": "../src/BeeNet.Client/Clients/BeeGeneratedClient.cs",
       "newLineBehavior": "Auto"
     }
   }

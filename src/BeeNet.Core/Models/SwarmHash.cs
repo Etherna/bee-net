@@ -12,25 +12,27 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.TypeConverters;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.Buffers.Binary;
+using System.ComponentModel;
 
 namespace Etherna.BeeNet.Models
 {
+    [TypeConverter(typeof(SwarmHashTypeConverter))]
     public readonly struct SwarmHash : IEquatable<SwarmHash>
     {
         // Consts.
-        public const int HashSize = 32; //Keccak hash size
+        public const int HashSize = 32;
         
         // Fields.
-        private readonly byte[] byteHash;
+        private readonly ReadOnlyMemory<byte> byteHash;
 
         // Constructors.
-        public SwarmHash(byte[] hash)
+        public SwarmHash(ReadOnlyMemory<byte> hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
             if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
             
@@ -58,23 +60,47 @@ namespace Etherna.BeeNet.Models
         public static SwarmHash Zero { get; } = new byte[HashSize];
 
         // Methods.
-        public bool Equals(SwarmHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
+        public bool Equals(SwarmHash other) => byteHash.Span.SequenceEqual(other.byteHash.Span);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
-        public uint ToBucketId() =>
-            BinaryPrimitives.ReadUInt32BigEndian(byteHash.AsSpan()[..4]) >> (32 - PostageBatch.BucketDepth);
-        public byte[] ToByteArray() => (byte[])byteHash.Clone();
+        public byte[] GetDistanceBytesFrom(SwarmHash other) => GetDistanceBytes(byteHash.Span, other.byteHash.Span);
+        public byte[] GetDistanceBytesFrom(SwarmOverlayAddress other) => GetDistanceBytes(byteHash.Span, other.ToReadOnlyMemory().Span);
+        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash.ToArray());
+        public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.Span[..2]);
+        public byte[] ToByteArray() => byteHash.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;
-        public override string ToString() => byteHash.ToHex();
+        public override string ToString() => byteHash.ToArray().ToHex();
         
         // Static methods.
+        /// <summary>
+        /// Compare x and y to the target in terms of bytes distance.
+        /// </summary>
+        /// <returns>
+        /// Returns -1 if x is closer to target than y, 0 if x and y are equals, 1 if x is farther than y
+        /// </returns>
+        public static int CompareDistances(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y, ReadOnlySpan<byte> target)
+        {
+            for (int i = 0; i < HashSize; i++)
+            {
+                var xDist = x[i] ^ target[i];
+                var yDist = y[i] ^ target[i];
+                if (xDist < yDist)
+                    return -1;
+                if (xDist > yDist)
+                    return 1;
+            }
+            return 0;
+        }
         public static SwarmHash FromByteArray(byte[] value) => new(value);
         public static SwarmHash FromString(string value) => new(value);
-        public static bool IsValidHash(byte[] value)
+        public static byte[] GetDistanceBytes(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y)
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-            return value.Length == HashSize;
+            var distance = new byte[HashSize];
+            for (int i = 0; i < HashSize; i++)
+                distance[i] = (byte)(x[i] ^ y[i]);
+            
+            return distance;
         }
+        public static bool IsValidHash(ReadOnlyMemory<byte> value) => value.Length == HashSize;
         public static bool IsValidHash(string value)
         {
             try
