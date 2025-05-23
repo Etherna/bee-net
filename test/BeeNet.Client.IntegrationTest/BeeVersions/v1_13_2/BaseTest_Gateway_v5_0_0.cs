@@ -34,8 +34,8 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
 
             // Act 
             var result = await beeNodeClient.UploadFileAsync(
-                batch,
                 content: File.OpenRead(filePath ?? pathTestFileForUpload),
+                batch,
                 name: Path.GetFileName(filePath) ?? Path.GetFileName(pathTestFileForUpload),
                 contentType: "text/plain",
                 isFileCollection: false);
