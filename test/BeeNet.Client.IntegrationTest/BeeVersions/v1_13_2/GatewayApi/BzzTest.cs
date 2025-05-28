@@ -30,8 +30,8 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
             // Act 
             var reference = await beeNodeClient.UploadFileAsync(
-                batch,
                 content: File.OpenRead("Data/TestFileForUpload_Gateway.txt"),
+                batch,
                 name: "TestFileForUpload_Gateway.txt",
                 contentType: "text/plain", 
                 isFileCollection: false);
@@ -51,8 +51,8 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             
             // Act 
             var reference = await beeNodeClient.UploadFileAsync(
-                batch,
                 content: File.OpenRead("Data/BzzFIleForUpload.tar"),
+                batch,
                 name: "BzzFIleForUpload.tar",
                 contentType: "application/x-tar",
                 isFileCollection: false);
