@@ -1379,7 +1379,8 @@ namespace Etherna.BeeNet
                 body: chunkData,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
 
-        public async Task<SwarmHash> UploadDirectoryAsync(string directoryPath,
+        public async Task<SwarmHash> UploadDirectoryAsync(
+            string directoryPath,
             PostageBatchId batchId,
             TagId? tagId = null,
             bool? swarmPin = null,
@@ -1440,7 +1441,8 @@ namespace Etherna.BeeNet
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
 
-        public async Task<SwarmHash> UploadFileAsync(Stream content,
+        public async Task<SwarmHash> UploadFileAsync(
+            Stream content,
             PostageBatchId batchId,
             string? name = null,
             string? contentType = null,
