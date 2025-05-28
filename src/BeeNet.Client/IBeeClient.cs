@@ -780,11 +780,31 @@ namespace Etherna.BeeNet
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Upload Chunk</summary>
+        /// <summary>Upload data</summary>
+        /// <param name="body"></param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="tagId">Associate upload with an existing Tag UID</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="swarmEncrypt">Represents the encrypting state of the file</param>
+        /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="swarmRedundancyLevel"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Reference hash</returns>
+        /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
+        Task<SwarmHash> UploadBytesAsync(
+            Stream body,
+            PostageBatchId batchId,
+            TagId? tagId = null,
+            bool? swarmPin = null,
+            bool? swarmEncrypt = null,
+            bool? swarmDeferredUpload = null,
+            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Upload Chunk</summary>
         /// <param name="chunkData"></param>
-        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.
-        ///     <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <param name="tagId">Associate upload with an existing Tag UID</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Ok</returns>
@@ -799,44 +819,42 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
-        /// <summary>Upload data</summary>
+        /// <summary>Upload Chunk</summary>
+        /// <param name="chunk"></param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmEncrypt">Represents the encrypting state of the file
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
-        /// <returns>Reference hash</returns>
+        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="tagId">Associate upload with an existing Tag UID</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmHash> UploadBytesAsync(
-            PostageBatchId batchId,
-            Stream body,
-            TagId? tagId = null, 
-            bool? swarmPin = null, 
-            bool? swarmEncrypt = null, 
-            bool? swarmDeferredUpload = null,
-            RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
+        Task<SwarmHash> UploadChunkAsync(
+            SwarmCac chunk,
+            PostageBatchId? batchId,
+            bool pinChunk = false,
+            TagId? tagId = null,
+            PostageStamp? presignedPostageStamp = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
-        
+
         /// <summary>Upload a directory</summary>
-        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="directoryPath">The directory path</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmEncrypt">Represents the encrypting state of the file
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmCollection">Upload file/files as a collection</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="tagId">Associate upload with an existing Tag UID</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="swarmEncrypt">Represents the encrypting state of the file</param>
         /// <param name="swarmIndexDocument">Default file to be referenced on path, if exists under that path</param>
         /// <param name="swarmErrorDocument">Configure custom error document to be returned when a specified path can not be found in collection</param>
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <param name="swarmRedundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="swarmAct"></param>
+        /// <param name="swarmActHistoryAddress"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadDirectoryAsync(
-            PostageBatchId batchId,
             string directoryPath,
+            PostageBatchId batchId,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
@@ -851,8 +869,7 @@ namespace Etherna.BeeNet
         /// <summary>Upload feed root manifest</summary>
         /// <param name="feed">Feed</param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadFeedManifestAsync(
@@ -864,16 +881,14 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload a file</summary>
-        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="content">Input file content</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="name">Filename when uploading single file</param>
         /// <param name="contentType">The specified content-type is preserved for download of the asset</param>
         /// <param name="isFileCollection">Upload file/files as a collection</param>
-        /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
-        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
-        /// <param name="swarmEncrypt">Represents the encrypting state of the file
-        /// <br/>Warning! Not available for nodes that run in Gateway mode!</param>
+        /// <param name="tagId">Associate upload with an existing Tag UID</param>
+        /// <param name="swarmPin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="swarmEncrypt">Represents the encrypting state of the file</param>
         /// <param name="swarmIndexDocument">Default file to be referenced on path, if exists under that path</param>
         /// <param name="swarmErrorDocument">Configure custom error document to be returned when a specified path can not be found in collection</param>
         /// <param name="swarmDeferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
@@ -882,8 +897,8 @@ namespace Etherna.BeeNet
         /// <returns>Reference hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmHash> UploadFileAsync(
-            PostageBatchId batchId,
             Stream content,
+            PostageBatchId batchId,
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
