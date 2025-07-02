@@ -634,10 +634,10 @@ namespace Etherna.BeeNet
                 .ToArray();
         }
 
-        public async Task<string> GetPinStatusAsync(
+        public async Task<bool> GetPinStatusAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync((string)hash, cancellationToken).ConfigureAwait(false)).Reference;
+            (await generatedClient.PinsGetAsync((string)hash, cancellationToken).ConfigureAwait(false)).Reference == hash;
 
         public async Task<PostageBatch> GetPostageBatchAsync(
             PostageBatchId batchId,

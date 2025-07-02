@@ -382,7 +382,7 @@ namespace Etherna.BeeNet
         /// <param name="hash">Swarm reference of the root hash</param>
         /// <returns>Reference of the pinned root hash</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> GetPinStatusAsync(
+        Task<bool> GetPinStatusAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default);
 
