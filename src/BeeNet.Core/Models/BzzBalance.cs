@@ -40,6 +40,7 @@ namespace Etherna.BeeNet.Models
         public static BzzBalance FromDecimal(decimal value) => new(value);
         public static BzzBalance FromDouble(double value) => new((decimal)value);
         public static BzzBalance FromInt32(int value) => new(value);
+        public static BzzBalance FromInt64(long value) => new(value);
         public static BzzBalance FromPlurLong(long plurValue) => decimal.Divide(plurValue, PlursInBzz);
         public static BzzBalance FromPlurString(string plurValue) =>
             FromPlurLong(long.Parse(plurValue, CultureInfo.InvariantCulture));
@@ -62,11 +63,17 @@ namespace Etherna.BeeNet.Models
         public static decimal Divide(BzzBalance left, BzzBalance right) => left.balance / right.balance;
         public static BzzBalance Divide(BzzBalance left, decimal right) => left.balance / right;
         public static BzzBalance Divide(BzzBalance left, double right) => left.balance / (decimal)right;
+        public static BzzBalance Divide(BzzBalance left, int right) => left.balance / right;
+        public static BzzBalance Divide(BzzBalance left, long right) => left.balance / right;
         public static BzzBalance Increment(BzzBalance balance) => ++balance;
         public static BzzBalance Multiply(BzzBalance left, decimal right) => left.balance * right;
         public static BzzBalance Multiply(BzzBalance left, double right) => left.balance * (decimal)right;
+        public static BzzBalance Multiply(BzzBalance left, int right) => left.balance * right;
+        public static BzzBalance Multiply(BzzBalance left, long right) => left.balance * right;
         public static BzzBalance Multiply(decimal left, BzzBalance right) => left * right.balance;
         public static BzzBalance Multiply(double left, BzzBalance right) => (decimal)left * right.balance;
+        public static BzzBalance Multiply(int left, BzzBalance right) => left * right.balance;
+        public static BzzBalance Multiply(long left, BzzBalance right) => left * right.balance;
         public static BzzBalance Negate(BzzBalance balance) => -balance;
         public static BzzBalance Subtract(BzzBalance left, BzzBalance right) => left - right;
 
@@ -75,11 +82,17 @@ namespace Etherna.BeeNet.Models
         public static BzzBalance operator -(BzzBalance left, BzzBalance right) => left.balance - right.balance;
         public static BzzBalance operator *(BzzBalance left, decimal right) => left.balance * right;
         public static BzzBalance operator *(BzzBalance left, double right) => left.balance * (decimal)right;
+        public static BzzBalance operator *(BzzBalance left, int right) => left.balance * right;
+        public static BzzBalance operator *(BzzBalance left, long right) => left.balance * right;
         public static BzzBalance operator *(decimal left, BzzBalance right) => left * right.balance;
         public static BzzBalance operator *(double left, BzzBalance right) => (decimal)left * right.balance;
+        public static BzzBalance operator *(int left, BzzBalance right) => left * right.balance;
+        public static BzzBalance operator *(long left, BzzBalance right) => left * right.balance;
         public static decimal operator /(BzzBalance left, BzzBalance right) => left.balance / right.balance;
         public static BzzBalance operator /(BzzBalance left, decimal right) => left.balance / right;
         public static BzzBalance operator /(BzzBalance left, double right) => left.balance / (decimal)right;
+        public static BzzBalance operator /(BzzBalance left, int right) => left.balance / right;
+        public static BzzBalance operator /(BzzBalance left, long right) => left.balance / right;
 
         public static bool operator ==(BzzBalance left, BzzBalance right) => left.Equals(right);
         public static bool operator !=(BzzBalance left, BzzBalance right) => !(left == right);
@@ -95,6 +108,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator BzzBalance(decimal value) => new(value);
         public static implicit operator BzzBalance(double value) => new((decimal)value);
         public static implicit operator BzzBalance(int value) => new(value);
+        public static implicit operator BzzBalance(long value) => new(value);
 
         public static explicit operator decimal(BzzBalance value) => value.ToDecimal();
     }

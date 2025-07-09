@@ -40,6 +40,7 @@ namespace Etherna.BeeNet.Models
         public static XDaiBalance FromDecimal(decimal value) => new(value);
         public static XDaiBalance FromDouble(double value) => new((decimal)value);
         public static XDaiBalance FromInt32(int value) => new(value);
+        public static XDaiBalance FromInt64(long value) => new(value);
         public static XDaiBalance FromWeiLong(long weiValue) => decimal.Divide(weiValue, WeisInXDai);
         public static XDaiBalance FromWeiString(string weiValue) =>
             FromWeiLong(long.Parse(weiValue, CultureInfo.InvariantCulture));
@@ -62,11 +63,17 @@ namespace Etherna.BeeNet.Models
         public static decimal Divide(XDaiBalance left, XDaiBalance right) => left.balance / right.balance;
         public static XDaiBalance Divide(XDaiBalance left, decimal right) => left.balance / right;
         public static XDaiBalance Divide(XDaiBalance left, double right) => left.balance / (decimal)right;
+        public static XDaiBalance Divide(XDaiBalance left, int right) => left.balance / right;
+        public static XDaiBalance Divide(XDaiBalance left, long right) => left.balance / right;
         public static XDaiBalance Increment(XDaiBalance balance) => ++balance;
         public static XDaiBalance Multiply(XDaiBalance left, decimal right) => left.balance * right;
         public static XDaiBalance Multiply(XDaiBalance left, double right) => left.balance * (decimal)right;
+        public static XDaiBalance Multiply(XDaiBalance left, int right) => left.balance * right;
+        public static XDaiBalance Multiply(XDaiBalance left, long right) => left.balance * right;
         public static XDaiBalance Multiply(decimal left, XDaiBalance right) => left * right.balance;
         public static XDaiBalance Multiply(double left, XDaiBalance right) => (decimal)left * right.balance;
+        public static XDaiBalance Multiply(int left, XDaiBalance right) => left * right.balance;
+        public static XDaiBalance Multiply(long left, XDaiBalance right) => left * right.balance;
         public static XDaiBalance Negate(XDaiBalance balance) => -balance;
         public static XDaiBalance Subtract(XDaiBalance left, XDaiBalance right) => left - right;
 
@@ -75,11 +82,17 @@ namespace Etherna.BeeNet.Models
         public static XDaiBalance operator -(XDaiBalance left, XDaiBalance right) => left.balance - right.balance;
         public static XDaiBalance operator *(XDaiBalance left, decimal right) => left.balance * right;
         public static XDaiBalance operator *(XDaiBalance left, double right) => left.balance * (decimal)right;
+        public static XDaiBalance operator *(XDaiBalance left, int right) => left.balance * right;
+        public static XDaiBalance operator *(XDaiBalance left, long right) => left.balance * right;
         public static XDaiBalance operator *(decimal left, XDaiBalance right) => left * right.balance;
         public static XDaiBalance operator *(double left, XDaiBalance right) => (decimal)left * right.balance;
+        public static XDaiBalance operator *(int left, XDaiBalance right) => left * right.balance;
+        public static XDaiBalance operator *(long left, XDaiBalance right) => left * right.balance;
         public static decimal operator /(XDaiBalance left, XDaiBalance right) => left.balance / right.balance;
         public static XDaiBalance operator /(XDaiBalance left, decimal right) => left.balance / right;
         public static XDaiBalance operator /(XDaiBalance left, double right) => left.balance / (decimal)right;
+        public static XDaiBalance operator /(XDaiBalance left, int right) => left.balance / right;
+        public static XDaiBalance operator /(XDaiBalance left, long right) => left.balance / right;
 
         public static bool operator ==(XDaiBalance left, XDaiBalance right) => left.Equals(right);
         public static bool operator !=(XDaiBalance left, XDaiBalance right) => !(left == right);
@@ -95,6 +108,7 @@ namespace Etherna.BeeNet.Models
         public static implicit operator XDaiBalance(decimal value) => new(value);
         public static implicit operator XDaiBalance(double value) => new((decimal)value);
         public static implicit operator XDaiBalance(int value) => new(value);
+        public static implicit operator XDaiBalance(long value) => new(value);
 
         public static explicit operator decimal(XDaiBalance value) => value.ToDecimal();
     }
