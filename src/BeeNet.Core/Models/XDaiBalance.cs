@@ -61,9 +61,12 @@ namespace Etherna.BeeNet.Models
         public static XDaiBalance Decrement(XDaiBalance balance) => --balance;
         public static decimal Divide(XDaiBalance left, XDaiBalance right) => left.balance / right.balance;
         public static XDaiBalance Divide(XDaiBalance left, decimal right) => left.balance / right;
+        public static XDaiBalance Divide(XDaiBalance left, double right) => left.balance / (decimal)right;
         public static XDaiBalance Increment(XDaiBalance balance) => ++balance;
         public static XDaiBalance Multiply(XDaiBalance left, decimal right) => left.balance * right;
+        public static XDaiBalance Multiply(XDaiBalance left, double right) => left.balance * (decimal)right;
         public static XDaiBalance Multiply(decimal left, XDaiBalance right) => left * right.balance;
+        public static XDaiBalance Multiply(double left, XDaiBalance right) => (decimal)left * right.balance;
         public static XDaiBalance Negate(XDaiBalance balance) => -balance;
         public static XDaiBalance Subtract(XDaiBalance left, XDaiBalance right) => left - right;
 
@@ -71,9 +74,12 @@ namespace Etherna.BeeNet.Models
         public static XDaiBalance operator +(XDaiBalance left, XDaiBalance right) => left.balance + right.balance;
         public static XDaiBalance operator -(XDaiBalance left, XDaiBalance right) => left.balance - right.balance;
         public static XDaiBalance operator *(XDaiBalance left, decimal right) => left.balance * right;
+        public static XDaiBalance operator *(XDaiBalance left, double right) => left.balance * (decimal)right;
         public static XDaiBalance operator *(decimal left, XDaiBalance right) => left * right.balance;
+        public static XDaiBalance operator *(double left, XDaiBalance right) => (decimal)left * right.balance;
         public static decimal operator /(XDaiBalance left, XDaiBalance right) => left.balance / right.balance;
         public static XDaiBalance operator /(XDaiBalance left, decimal right) => left.balance / right;
+        public static XDaiBalance operator /(XDaiBalance left, double right) => left.balance / (decimal)right;
 
         public static bool operator ==(XDaiBalance left, XDaiBalance right) => left.Equals(right);
         public static bool operator !=(XDaiBalance left, XDaiBalance right) => !(left == right);

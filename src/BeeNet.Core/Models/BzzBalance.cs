@@ -61,9 +61,12 @@ namespace Etherna.BeeNet.Models
         public static BzzBalance Decrement(BzzBalance balance) => --balance;
         public static decimal Divide(BzzBalance left, BzzBalance right) => left.balance / right.balance;
         public static BzzBalance Divide(BzzBalance left, decimal right) => left.balance / right;
+        public static BzzBalance Divide(BzzBalance left, double right) => left.balance / (decimal)right;
         public static BzzBalance Increment(BzzBalance balance) => ++balance;
         public static BzzBalance Multiply(BzzBalance left, decimal right) => left.balance * right;
+        public static BzzBalance Multiply(BzzBalance left, double right) => left.balance * (decimal)right;
         public static BzzBalance Multiply(decimal left, BzzBalance right) => left * right.balance;
+        public static BzzBalance Multiply(double left, BzzBalance right) => (decimal)left * right.balance;
         public static BzzBalance Negate(BzzBalance balance) => -balance;
         public static BzzBalance Subtract(BzzBalance left, BzzBalance right) => left - right;
 
@@ -71,9 +74,12 @@ namespace Etherna.BeeNet.Models
         public static BzzBalance operator +(BzzBalance left, BzzBalance right) => left.balance + right.balance;
         public static BzzBalance operator -(BzzBalance left, BzzBalance right) => left.balance - right.balance;
         public static BzzBalance operator *(BzzBalance left, decimal right) => left.balance * right;
+        public static BzzBalance operator *(BzzBalance left, double right) => left.balance * (decimal)right;
         public static BzzBalance operator *(decimal left, BzzBalance right) => left * right.balance;
+        public static BzzBalance operator *(double left, BzzBalance right) => (decimal)left * right.balance;
         public static decimal operator /(BzzBalance left, BzzBalance right) => left.balance / right.balance;
         public static BzzBalance operator /(BzzBalance left, decimal right) => left.balance / right;
+        public static BzzBalance operator /(BzzBalance left, double right) => left.balance / (decimal)right;
 
         public static bool operator ==(BzzBalance left, BzzBalance right) => left.Equals(right);
         public static bool operator !=(BzzBalance left, BzzBalance right) => !(left == right);
