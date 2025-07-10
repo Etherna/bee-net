@@ -111,12 +111,15 @@ namespace Etherna.BeeNet.Models
         
         // Static methods.
         public static BzzBalance CalculateAmount(BzzBalance chainPrice, TimeSpan ttl) =>
-            (decimal)(ttl / GnosisChain.BlockTime) * chainPrice;
+            ttl / GnosisChain.BlockTime * chainPrice;
         
         public static BzzBalance CalculatePrice(BzzBalance amount, int depth) =>
-            amount * (decimal)Math.Pow(2, depth);
+            amount * Math.Pow(2, depth);
 
         public static BzzBalance CalculatePrice(BzzBalance chainPrice, TimeSpan ttl, int depth) =>
             CalculatePrice(CalculateAmount(chainPrice, ttl), depth);
+
+        public static TimeSpan CalculateTtl(BzzBalance amount, BzzBalance chainPrice) =>
+            TimeSpan.FromSeconds((double)(amount * GnosisChain.BlockTime.TotalSeconds / chainPrice));
     }
 }
