@@ -399,7 +399,6 @@ namespace Etherna.BeeNet.Clients
         /// <param name="at">Timestamp of the update (default: now)</param>
         /// <param name="after">Start index (default: 0)</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
-        /// <param name="legacy_feed_resolution">Resolves feed payloads in legacy structure (timestamp, content address).</param>
         /// <param name="swarm_only_root_chunk">Returns only the root chunk of the content</param>
         /// <param name="swarm_cache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
@@ -407,7 +406,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? legacy_feed_resolution = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -869,7 +868,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(string amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(string amount, string address, Coin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -4343,7 +4342,6 @@ namespace Etherna.BeeNet.Clients
         /// <param name="at">Timestamp of the update (default: now)</param>
         /// <param name="after">Start index (default: 0)</param>
         /// <param name="type">Feed indexing scheme (default: sequence)</param>
-        /// <param name="legacy_feed_resolution">Resolves feed payloads in legacy structure (timestamp, content address).</param>
         /// <param name="swarm_only_root_chunk">Returns only the root chunk of the content</param>
         /// <param name="swarm_cache">Determines if the download data should be cached on the node. By default the download will be cached</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieve strategy on redundant data. The numbers stand for NONE, DATA, PROX and RACE, respectively. Strategy NONE means no prefetching takes place. Strategy DATA means only data chunks are prefetched. Strategy PROX means only chunks that are close to the node are prefetched. Strategy RACE means all chunks are prefetched: n data chunks and k parity chunks. The first n chunks to arrive are used to reconstruct the file. Multiple strategies can be used in a fallback cascade if the swarm redundancy fallback mode is set to true. The default strategy is NONE, DATA, falling back to PROX, falling back to RACE</param>
@@ -4351,7 +4349,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? legacy_feed_resolution = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4365,9 +4363,6 @@ namespace Etherna.BeeNet.Clients
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (legacy_feed_resolution != null)
-                        request_.Headers.TryAddWithoutValidation("legacy-feed-resolution", ConvertToString(legacy_feed_resolution, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_only_root_chunk != null)
                         request_.Headers.TryAddWithoutValidation("swarm-only-root-chunk", ConvertToString(swarm_only_root_chunk, System.Globalization.CultureInfo.InvariantCulture));
@@ -9143,7 +9138,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(string amount, string address, string coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response62> WalletWithdrawAsync(string amount, string address, Coin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (coin == null)
                 throw new System.ArgumentNullException("coin");
@@ -10576,6 +10571,18 @@ namespace Etherna.BeeNet.Clients
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum Coin
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"bzz")]
+        Bzz = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"nativetoken")]
+        Nativetoken = 1,
 
     }
 

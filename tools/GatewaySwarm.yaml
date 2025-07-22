@@ -1421,13 +1421,6 @@ paths:
           schema: *a37
           required: false
           description: "Feed indexing scheme (default: sequence)"
-        - in: header
-          name: legacy-feed-resolution
-          schema:
-            type: boolean
-          required: false
-          description: Resolves feed payloads in legacy structure (timestamp, content
-            address).
         - *a38
         - *a24
         - *a25
@@ -3239,7 +3232,11 @@ paths:
         - in: path
           name: coin
           required: true
-          schema: *a43
+          schema:
+            type: string
+            enum:
+              - bzz
+              - nativetoken
       responses:
         "200":
           content:

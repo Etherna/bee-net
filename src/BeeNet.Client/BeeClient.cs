@@ -1235,7 +1235,6 @@ namespace Etherna.BeeNet
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
-            bool resolveLegacyPayload = false,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
@@ -1251,7 +1250,6 @@ namespace Etherna.BeeNet
                     at: at,
                     after: after,
                     type: type.ToString(),
-                    legacy_feed_resolution: resolveLegacyPayload,
                     swarm_only_root_chunk: swarmOnlyRootChunk,
                     swarm_cache: swarmCache,
                     swarm_redundancy_strategy: (SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
@@ -1495,15 +1493,24 @@ namespace Etherna.BeeNet
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
         }
 
-        public async Task<string> WalletWithdrawAsync(
+        public async Task<string> WalletBzzWithdrawAsync(
             BzzBalance amount,
             EthAddress address,
-            XDaiBalance coin,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.WalletWithdrawAsync(
                 amount.ToPlurString(),
                 address.ToString(),
-                coin.ToWeiString(),
+                Coin.Bzz,
+                cancellationToken).ConfigureAwait(false)).TransactionHash;
+
+        public async Task<string> WalletNativeCoinWithdrawAsync(
+            XDaiBalance amount,
+            EthAddress address,
+            CancellationToken cancellationToken = default) =>
+            (await generatedClient.WalletWithdrawAsync(
+                amount.ToWeiString(),
+                address.ToString(),
+                Coin.Nativetoken,
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequebookAsync(

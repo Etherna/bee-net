@@ -735,7 +735,6 @@ namespace Etherna.BeeNet
             long? at = null,
             ulong? after = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
-            bool resolveLegacyPayload = false,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
             RedundancyStrategy? swarmRedundancyStrategy = null,
@@ -925,16 +924,27 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
         
         /// <summary>
-        /// Allows withdrawals of BZZ or xDAI to provided (whitelisted) address
+        /// Allows withdrawals of BZZ to provided (whitelisted) address
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="address"></param>
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
-        Task<string> WalletWithdrawAsync(
+        Task<string> WalletBzzWithdrawAsync(
             BzzBalance amount,
             EthAddress address,
-            XDaiBalance coin,
+            CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Allows withdrawals of xDAI to provided (whitelisted) address
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="address"></param>
+        /// <param name="coin"></param>
+        /// <returns>Tx hash</returns>
+        Task<string> WalletNativeCoinWithdrawAsync(
+            XDaiBalance amount,
+            EthAddress address,
             CancellationToken cancellationToken = default);
 
         /// <summary>Withdraw tokens from the chequebook to the overlay address</summary>
