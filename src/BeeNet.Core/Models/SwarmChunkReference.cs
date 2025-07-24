@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public class SwarmChunkReference(
+    public sealed class SwarmChunkReference(
         SwarmHash hash,
         XorEncryptKey? encryptionKey,
         bool useRecursiveEncryption)
@@ -30,5 +30,11 @@ namespace Etherna.BeeNet.Models
         public XorEncryptKey? EncryptionKey { get; } = encryptionKey;
         public SwarmHash Hash { get; } = hash;
         public bool UseRecursiveEncryption { get; } = useRecursiveEncryption;
+        
+        // Methods.
+        public static SwarmChunkReference FromSwarmHash(SwarmHash hash) => new(hash, null, false);
+        
+        // Implicit conversion operator methods.
+        public static implicit operator SwarmChunkReference(SwarmHash hash) => new(hash, null, false);
     }
 }
