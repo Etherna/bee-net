@@ -20,17 +20,17 @@ using System.Text.Json.Serialization;
 namespace Etherna.BeeNet.JsonConverters
 {
     public sealed class BzzBalanceJsonConverter(bool writeAsString)
-        : JsonConverter<BzzBalance>
+        : JsonConverter<BzzValue>
     {
-        public override BzzBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        public override BzzValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {
-                JsonTokenType.Number => BzzBalance.FromPlurLong(reader.GetInt64()),
-                JsonTokenType.String => BzzBalance.FromPlurString(reader.GetString()!),
+                JsonTokenType.Number => BzzValue.FromPlurLong(reader.GetInt64()),
+                JsonTokenType.String => BzzValue.FromPlurString(reader.GetString()!),
                 _ => throw new JsonException()
             };
 
-        public override void Write(Utf8JsonWriter writer, BzzBalance value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, BzzValue value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             if (writeAsString)

@@ -20,17 +20,17 @@ using System.Text.Json.Serialization;
 namespace Etherna.BeeNet.JsonConverters
 {
     public sealed class XDaiBalanceJsonConverter(bool writeAsString)
-        : JsonConverter<XDaiBalance>
+        : JsonConverter<XDaiValue>
     {
-        public override XDaiBalance Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        public override XDaiValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {
-                JsonTokenType.Number => XDaiBalance.FromWeiLong(reader.GetInt64()),
-                JsonTokenType.String => XDaiBalance.FromWeiString(reader.GetString()!),
+                JsonTokenType.Number => XDaiValue.FromWeiLong(reader.GetInt64()),
+                JsonTokenType.String => XDaiValue.FromWeiString(reader.GetString()!),
                 _ => throw new JsonException()
             };
 
-        public override void Write(Utf8JsonWriter writer, XDaiBalance value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, XDaiValue value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             if (writeAsString)

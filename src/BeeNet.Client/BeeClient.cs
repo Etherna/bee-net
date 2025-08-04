@@ -95,21 +95,21 @@ namespace Etherna.BeeNet
             (await generatedClient.AccountingAsync(cancellationToken).ConfigureAwait(false)).PeerData.ToDictionary(
                 i => i.Key,
                 i => new Account(
-                    balance: BzzBalance.FromPlurString(i.Value.Balance),
-                    thresholdReceived: BzzBalance.FromPlurString(i.Value.ThresholdReceived),
-                    thresholdGiven: BzzBalance.FromPlurString(i.Value.ThresholdGiven),
-                    surplusBalance: BzzBalance.FromPlurString(i.Value.SurplusBalance),
-                    reservedBalance: BzzBalance.FromPlurString(i.Value.ReservedBalance),
-                    shadowReservedBalance: BzzBalance.FromPlurString(i.Value.ShadowReservedBalance),
-                    ghostBalance: BzzBalance.FromPlurString(i.Value.GhostBalance)));
+                    balance: BzzValue.FromPlurString(i.Value.Balance),
+                    thresholdReceived: BzzValue.FromPlurString(i.Value.ThresholdReceived),
+                    thresholdGiven: BzzValue.FromPlurString(i.Value.ThresholdGiven),
+                    surplusBalance: BzzValue.FromPlurString(i.Value.SurplusBalance),
+                    reservedBalance: BzzValue.FromPlurString(i.Value.ReservedBalance),
+                    shadowReservedBalance: BzzValue.FromPlurString(i.Value.ShadowReservedBalance),
+                    ghostBalance: BzzValue.FromPlurString(i.Value.GhostBalance)));
         
         public async Task<(PostageBatchId BatchId, EthTxHash TxHash)> BuyPostageBatchAsync(
-            BzzBalance amount,
+            BzzValue amount,
             int depth,
             string? label = null,
             bool? immutable = null,
             ulong? gasLimit = null,
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default)
         {
             var result = await generatedClient.StampsPostAsync(
@@ -125,7 +125,7 @@ namespace Etherna.BeeNet
 
         public async Task<string> CashoutChequeForPeerAsync(
             string peerId,
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookCashoutPostAsync(
@@ -198,7 +198,7 @@ namespace Etherna.BeeNet
 
         public async Task<string> DeleteTransactionAsync(
             EthTxHash txHash,
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.TransactionsDeleteAsync(
                 txHash.ToString(),
@@ -206,8 +206,8 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> DepositIntoChequebookAsync(
-            BzzBalance amount,
-            XDaiBalance? gasPrice = null,
+            BzzValue amount,
+            XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookDepositAsync(
                 amount.ToPlurLong(),
@@ -217,7 +217,7 @@ namespace Etherna.BeeNet
         public async Task<EthTxHash> DilutePostageBatchAsync(
             PostageBatchId batchId,
             int depth,
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsDiluteAsync(
@@ -239,13 +239,13 @@ namespace Etherna.BeeNet
                 response.Signature);
         }
 
-        public async Task<IDictionary<string, BzzBalance>> GetAllBalancesAsync(
+        public async Task<IDictionary<string, BzzValue>> GetAllBalancesAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.BalancesGetAsync(cancellationToken).ConfigureAwait(false);
             return response.Balances.ToDictionary(
                 b => b.Peer,
-                b => BzzBalance.FromPlurString(b.Balance));
+                b => BzzValue.FromPlurString(b.Balance));
         }
 
         public async Task<ChequebookCheque[]> GetAllChequebookChequesAsync(
@@ -258,21 +258,21 @@ namespace Etherna.BeeNet
                 lastReceived: c.Lastreceived is not null ? new ChequePayment(
                     beneficiary: c.Lastreceived.Beneficiary,
                     chequebook: c.Lastreceived.Chequebook,
-                    payout: BzzBalance.FromPlurString(c.Lastreceived.Payout)) : null,
+                    payout: BzzValue.FromPlurString(c.Lastreceived.Payout)) : null,
                 lastSent: c.Lastsent is not null ? new ChequePayment(
                     beneficiary: c.Lastsent.Beneficiary,
                     chequebook: c.Lastsent.Chequebook,
-                    payout: BzzBalance.FromPlurString(c.Lastsent.Payout)) : null))
+                    payout: BzzValue.FromPlurString(c.Lastsent.Payout)) : null))
                 .ToArray();
         }
 
-        public async Task<IDictionary<string, BzzBalance>> GetAllConsumedBalancesAsync(
+        public async Task<IDictionary<string, BzzValue>> GetAllConsumedBalancesAsync(
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.ConsumedGetAsync(cancellationToken).ConfigureAwait(false);
             return response.Balances.ToDictionary(
                 b => b.Peer,
-                b => BzzBalance.FromPlurString(b.Balance));
+                b => BzzValue.FromPlurString(b.Balance));
         }
 
         public async Task<string[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default) =>
@@ -288,32 +288,32 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.SettlementsGetAsync(cancellationToken).ConfigureAwait(false);
             return new Settlement(
-                totalReceived: BzzBalance.FromPlurString(response.TotalReceived),
-                totalSent: BzzBalance.FromPlurString(response.TotalSent),
+                totalReceived: BzzValue.FromPlurString(response.TotalReceived),
+                totalSent: BzzValue.FromPlurString(response.TotalSent),
                 settlements: response.Settlements
                     .Select(s => new SettlementData(
                         peer: s.Peer,
-                        received: BzzBalance.FromPlurString(s.Received),
-                        sent: BzzBalance.FromPlurString(s.Sent))));
+                        received: BzzValue.FromPlurString(s.Received),
+                        sent: BzzValue.FromPlurString(s.Sent))));
         }
 
         public async Task<Settlement> GetAllTimeSettlementsAsync(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.TimesettlementsAsync(cancellationToken).ConfigureAwait(false);
             return new Settlement(
-                totalReceived: BzzBalance.FromPlurString(response.TotalReceived),
-                totalSent: BzzBalance.FromPlurString(response.TotalSent),
+                totalReceived: BzzValue.FromPlurString(response.TotalReceived),
+                totalSent: BzzValue.FromPlurString(response.TotalSent),
                 settlements: response.Settlements
                     .Select(s => new SettlementData(
                         peer: s.Peer,
-                        received: BzzBalance.FromPlurString(s.Received),
-                        sent: BzzBalance.FromPlurString(s.Sent))));
+                        received: BzzValue.FromPlurString(s.Received),
+                        sent: BzzValue.FromPlurString(s.Sent))));
         }
 
-        public async Task<BzzBalance> GetBalanceWithPeerAsync(
+        public async Task<BzzValue> GetBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
-            BzzBalance.FromPlurString(
+            BzzValue.FromPlurString(
                 (await generatedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
         public async Task<Stream> GetBytesAsync(
@@ -361,8 +361,8 @@ namespace Etherna.BeeNet
             return new ChainState(
                 block: response.Block,
                 chainTip: response.ChainTip,
-                currentPrice: BzzBalance.FromPlurString(response.CurrentPrice),
-                totalAmount: BzzBalance.FromPlurString(response.TotalAmount));
+                currentPrice: BzzValue.FromPlurString(response.CurrentPrice),
+                totalAmount: BzzValue.FromPlurString(response.TotalAmount));
         }
 
         public async Task<EthAddress> GetChequebookAddressAsync(CancellationToken cancellationToken = default) =>
@@ -372,8 +372,8 @@ namespace Etherna.BeeNet
         {
             var response = await generatedClient.ChequebookBalanceAsync(cancellationToken).ConfigureAwait(false);
             return new ChequebookBalance(
-                totalBalance: BzzBalance.FromPlurString(response.TotalBalance),
-                availableBalance: BzzBalance.FromPlurString(response.AvailableBalance));
+                totalBalance: BzzValue.FromPlurString(response.TotalBalance),
+                availableBalance: BzzValue.FromPlurString(response.AvailableBalance));
         }
 
         public async Task<ChequebookCashout> GetChequebookCashoutForPeerAsync(
@@ -389,14 +389,14 @@ namespace Etherna.BeeNet
                     ? new ChequePayment(
                         response.LastCashedCheque.Beneficiary,
                         response.LastCashedCheque.Chequebook,
-                        BzzBalance.FromPlurString(response.LastCashedCheque.Payout))
+                        BzzValue.FromPlurString(response.LastCashedCheque.Payout))
                     : null,
                 transactionHash: response.TransactionHash,
                 result: new ResultChequebook(
                     recipient: response.Result.Recipient,
-                    lastPayout: BzzBalance.FromPlurString(response.Result.LastPayout),
+                    lastPayout: BzzValue.FromPlurString(response.Result.LastPayout),
                     bounced: response.Result.Bounced),
-                uncashedAmount: BzzBalance.FromPlurString(response.UncashedAmount));
+                uncashedAmount: BzzValue.FromPlurString(response.UncashedAmount));
         }
 
         public async Task<ChequebookCheque> GetChequebookChequeForPeerAsync(
@@ -409,11 +409,11 @@ namespace Etherna.BeeNet
                 lastReceived: response.Lastreceived is not null ? new ChequePayment(
                     beneficiary: response.Lastreceived.Beneficiary,
                     chequebook: response.Lastreceived.Chequebook,
-                    payout: BzzBalance.FromPlurString(response.Lastreceived.Payout)) : null,
+                    payout: BzzValue.FromPlurString(response.Lastreceived.Payout)) : null,
                 lastSent: response.Lastsent is not null ? new ChequePayment(
                     beneficiary: response.Lastsent.Beneficiary,
                     chequebook: response.Lastsent.Chequebook,
-                    payout: BzzBalance.FromPlurString(response.Lastsent.Payout)) : null);
+                    payout: BzzValue.FromPlurString(response.Lastsent.Payout)) : null);
         }
 
         public async Task<SwarmChunk> GetChunkAsync(
@@ -475,10 +475,10 @@ namespace Etherna.BeeNet
             return new ChunkWebSocketUploader(webSocket);
         }
 
-        public async Task<BzzBalance> GetConsumedBalanceWithPeerAsync(
+        public async Task<BzzValue> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default) =>
-            BzzBalance.FromPlurString(
+            BzzValue.FromPlurString(
                 (await generatedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
 
         public async Task<FileResponse> GetFileAsync(
@@ -534,7 +534,7 @@ namespace Etherna.BeeNet
             return response.Batches.Select(batch => (
                     new PostageBatch(
                         id: batch.BatchID,
-                        amount: BzzBalance.FromPlurString(batch.Value),
+                        amount: BzzValue.FromPlurString(batch.Value),
                         blockNumber: batch.Start,
                         depth: batch.Depth,
                         exists: true,
@@ -604,7 +604,7 @@ namespace Etherna.BeeNet
             var response = await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
             return response.Stamps.Select(b =>
                 new PostageBatch(
-                    amount: BzzBalance.FromPlurString(b.Amount),
+                    amount: BzzValue.FromPlurString(b.Amount),
                     depth: b.Depth,
                     blockNumber: b.BlockNumber,
                     exists: b.Exists,
@@ -625,12 +625,12 @@ namespace Etherna.BeeNet
                 transactionHash: tx.TransactionHash,
                 to: tx.To,
                 nonce: tx.Nonce,
-                gasPrice: XDaiBalance.FromWeiString(tx.GasPrice),
+                gasPrice: XDaiValue.FromWeiString(tx.GasPrice),
                 gasLimit: tx.GasLimit,
                 data: tx.Data,
                 created: tx.Created,
                 description: tx.Description,
-                value: XDaiBalance.FromWeiString(tx.Value)))
+                value: XDaiValue.FromWeiString(tx.Value)))
                 .ToArray();
         }
 
@@ -647,7 +647,7 @@ namespace Etherna.BeeNet
                 batchId.ToString(),
                 cancellationToken).ConfigureAwait(false);
             return new PostageBatch(
-                amount: BzzBalance.FromPlurString(response.Amount),
+                amount: BzzValue.FromPlurString(response.Amount),
                 depth: response.Depth,
                 blockNumber: response.BlockNumber,
                 exists: response.Exists,
@@ -768,8 +768,8 @@ namespace Etherna.BeeNet
             var response = await generatedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
             return new SettlementData(
                 peer: response.Peer,
-                received: BzzBalance.FromPlurString(response.Received),
-                sent: BzzBalance.FromPlurString(response.Sent));
+                received: BzzValue.FromPlurString(response.Received),
+                sent: BzzValue.FromPlurString(response.Sent));
         }
 
         public async Task<FileResponse> GetSocDataAsync(
@@ -890,20 +890,20 @@ namespace Etherna.BeeNet
                 transactionHash: response.TransactionHash,
                 to: response.To,
                 nonce: response.Nonce,
-                gasPrice: XDaiBalance.FromWeiString(response.GasPrice),
+                gasPrice: XDaiValue.FromWeiString(response.GasPrice),
                 gasLimit: response.GasLimit,
                 data: response.Data,
                 created: response.Created,
                 description: response.Description,
-                value: XDaiBalance.FromWeiString(response.Value));
+                value: XDaiValue.FromWeiString(response.Value));
         }
 
         public async Task<WalletBalances> GetWalletBalance(CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.WalletAsync(cancellationToken).ConfigureAwait(false);
             return new(
-                bzzBalance: BzzBalance.FromPlurString(response.BzzBalance),
-                xDaiBalance: XDaiBalance.FromWeiString(response.NativeTokenBalance));
+                bzzBalance: BzzValue.FromPlurString(response.BzzBalance),
+                xDaiBalance: XDaiValue.FromWeiString(response.NativeTokenBalance));
         }
 
         public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
@@ -1086,8 +1086,8 @@ namespace Etherna.BeeNet
                 lastPlayedRound: response.LastPlayedRound,
                 lastFrozenRound: response.LastFrozenRound,
                 block: response.Block,
-                reward: BzzBalance.FromPlurString(response.Reward),
-                fees: XDaiBalance.FromWeiString(response.Fees));
+                reward: BzzValue.FromPlurString(response.Reward),
+                fees: XDaiValue.FromWeiString(response.Fees));
         }
 
         public Task ReuploadContentAsync(
@@ -1111,7 +1111,7 @@ namespace Etherna.BeeNet
                 cancellationToken);
 
         public async Task StakeDeleteAsync(
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             await generatedClient.StakeDeleteAsync(
@@ -1123,8 +1123,8 @@ namespace Etherna.BeeNet
             await generatedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
 
         public async Task StakePostAsync(
-            BzzBalance amount,
-            XDaiBalance? gasPrice = null,
+            BzzValue amount,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             await generatedClient.StakePostAsync(
@@ -1134,7 +1134,7 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false);
 
         public Task StakeWithdrawableDeleteAsync(
-            XDaiBalance? gasPrice = null,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             generatedClient.StakeWithdrawableDeleteAsync(gasPrice?.ToWeiLong(), gasLimit, cancellationToken);
@@ -1213,8 +1213,8 @@ namespace Etherna.BeeNet
 
         public async Task<EthTxHash> TopUpPostageBatchAsync(
             PostageBatchId batchId,
-            BzzBalance amount,
-            XDaiBalance? gasPrice = null,
+            BzzValue amount,
+            XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.StampsTopupAsync(
@@ -1494,7 +1494,7 @@ namespace Etherna.BeeNet
         }
 
         public async Task<string> WalletBzzWithdrawAsync(
-            BzzBalance amount,
+            BzzValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.WalletWithdrawAsync(
@@ -1504,7 +1504,7 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WalletNativeCoinWithdrawAsync(
-            XDaiBalance amount,
+            XDaiValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.WalletWithdrawAsync(
@@ -1514,8 +1514,8 @@ namespace Etherna.BeeNet
                 cancellationToken).ConfigureAwait(false)).TransactionHash;
 
         public async Task<string> WithdrawFromChequebookAsync(
-            BzzBalance amount,
-            XDaiBalance? gasPrice = null,
+            BzzValue amount,
+            XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ChequebookWithdrawAsync(
                 amount.ToPlurLong(),

@@ -20,22 +20,22 @@ namespace Etherna.BeeNet.Models
         EthTxHash transactionHash,
         EthAddress to,
         int nonce,
-        XDaiBalance gasPrice,
+        XDaiValue gasPrice,
         long gasLimit,
         string data,
         DateTimeOffset created,
         string description,
-        XDaiBalance value)
+        XDaiValue value)
     {
         // Properties.
         public EthTxHash TransactionHash { get; } = transactionHash;
         public EthAddress To { get; } = to;
         public int Nonce { get; } = nonce;
-        public XDaiBalance GasPrice { get; } = gasPrice;
+        public XDaiValue GasPrice { get; } = gasPrice;
         public long GasLimit { get; } = gasLimit;
         public string Data { get; } = data;
         public DateTimeOffset Created { get; } = created;
         public string Description { get; } = description;
-        public XDaiBalance Value { get; } = value;
+        public XDaiValue Value { get; } = value;
     }
 }

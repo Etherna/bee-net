@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.Models
         // Public constructor.
         public PostageBatch(
             PostageBatchId id,
-            BzzBalance amount,
+            BzzValue amount,
             ulong blockNumber,
             int depth,
             bool exists,
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Amount paid for the batch
         /// </summary>
-        public BzzBalance Amount { get; }
+        public BzzValue Amount { get; }
         
         /// <summary>
         /// Block number when this batch was created
@@ -110,16 +110,16 @@ namespace Etherna.BeeNet.Models
         public uint Utilization { get; }
         
         // Static methods.
-        public static BzzBalance CalculateAmount(BzzBalance chainPrice, TimeSpan ttl) =>
+        public static BzzValue CalculateAmount(BzzValue chainPrice, TimeSpan ttl) =>
             ttl / GnosisChain.BlockTime * chainPrice;
         
-        public static BzzBalance CalculatePrice(BzzBalance amount, int depth) =>
+        public static BzzValue CalculatePrice(BzzValue amount, int depth) =>
             amount * Math.Pow(2, depth);
 
-        public static BzzBalance CalculatePrice(BzzBalance chainPrice, TimeSpan ttl, int depth) =>
+        public static BzzValue CalculatePrice(BzzValue chainPrice, TimeSpan ttl, int depth) =>
             CalculatePrice(CalculateAmount(chainPrice, ttl), depth);
 
-        public static TimeSpan CalculateTtl(BzzBalance amount, BzzBalance chainPrice) =>
+        public static TimeSpan CalculateTtl(BzzValue amount, BzzValue chainPrice) =>
             TimeSpan.FromSeconds((double)(amount * GnosisChain.BlockTime.TotalSeconds / chainPrice));
     }
 }

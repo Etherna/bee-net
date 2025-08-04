@@ -15,11 +15,11 @@
 namespace Etherna.BeeNet.Models
 {
     public sealed class WalletBalances(
-        BzzBalance bzzBalance,
-        XDaiBalance xDaiBalance)
+        BzzValue bzzBalance,
+        XDaiValue xDaiBalance)
     {
         // Properties.
-        public BzzBalance BzzBalance { get; } = bzzBalance;
-        public XDaiBalance XDaiBalance { get; } = xDaiBalance;
+        public BzzValue BzzBalance { get; } = bzzBalance;
+        public XDaiValue XDaiBalance { get; } = xDaiBalance;
     }
 }

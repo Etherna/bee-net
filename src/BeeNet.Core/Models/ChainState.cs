@@ -17,13 +17,13 @@ namespace Etherna.BeeNet.Models
     public sealed class ChainState(
         long block,
         int chainTip,
-        BzzBalance currentPrice,
-        BzzBalance totalAmount)
+        BzzValue currentPrice,
+        BzzValue totalAmount)
     {
         // Properties.
         public long Block { get; } = block;
         public int ChainTip { get; } = chainTip;
-        public BzzBalance CurrentPrice { get; } = currentPrice;
-        public BzzBalance TotalAmount { get; } = totalAmount;
+        public BzzValue CurrentPrice { get; } = currentPrice;
+        public BzzValue TotalAmount { get; } = totalAmount;
     }
 }

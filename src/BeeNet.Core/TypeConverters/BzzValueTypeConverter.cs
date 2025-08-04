@@ -20,7 +20,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.TypeConverters
 {
-    public sealed class XDaiBalanceTypeConverter : TypeConverter
+    public sealed class BzzValueTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
             sourceType == typeof(decimal) ||
@@ -41,28 +41,28 @@ namespace Etherna.BeeNet.TypeConverters
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) =>
             value switch
             {
-                decimal bzz => XDaiBalance.FromDecimal(bzz),
-                double bzz => XDaiBalance.FromDouble(bzz),
-                int plur => XDaiBalance.FromWeiLong(plur),
-                long plur => XDaiBalance.FromWeiLong(plur),
-                string plur => XDaiBalance.FromWeiString(plur),
+                decimal bzz => BzzValue.FromDecimal(bzz),
+                double bzz => BzzValue.FromDouble(bzz),
+                int plur => BzzValue.FromPlurLong(plur),
+                long plur => BzzValue.FromPlurLong(plur),
+                string plur => BzzValue.FromPlurString(plur),
                 _ => base.ConvertFrom(context, culture, value)
             };
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
-            if (value is XDaiBalance xDaiBalance)
+            if (value is BzzValue bzzValue)
             {
                 if (destinationType == typeof(decimal))
-                    return xDaiBalance.ToDecimal();
+                    return bzzValue.ToDecimal();
                 if (destinationType == typeof(double))
-                    return (double)xDaiBalance.ToDecimal();
+                    return (double)bzzValue.ToDecimal();
                 if (destinationType == typeof(int))
-                    return (int)xDaiBalance.ToWeiLong();
+                    return (int)bzzValue.ToPlurLong();
                 if (destinationType == typeof(long))
-                    return xDaiBalance.ToWeiLong();
+                    return bzzValue.ToPlurLong();
                 if (destinationType == typeof(string))
-                    return xDaiBalance.ToWeiString();
+                    return bzzValue.ToPlurString();
             }
             return base.ConvertTo(context, culture, value, destinationType);
         }
