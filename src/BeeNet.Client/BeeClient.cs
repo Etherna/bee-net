@@ -153,10 +153,20 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default) =>
             (await generatedClient.ConnectAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Address;
 
-        public Task CreatePinAsync(
+        public async Task<bool> CreatePinAsync(
             SwarmHash hash,
-            CancellationToken cancellationToken = default) =>
-            generatedClient.PinsPostAsync((string)hash, cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await generatedClient.PinsPostAsync((string)hash, cancellationToken);
+                return true;
+            }
+            catch (BeeNetApiException e) when (e.StatusCode == 404)
+            {
+                return false;
+            }
+        }
 
         public async Task<TagInfo> CreateTagAsync(
             SwarmHash hash,

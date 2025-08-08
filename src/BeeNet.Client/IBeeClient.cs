@@ -87,7 +87,7 @@ namespace Etherna.BeeNet
         /// <summary>Pin the root hash with the given reference</summary>
         /// <param name="hash">Swarm reference of the root hash</param>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task CreatePinAsync(
+        Task<bool> CreatePinAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default);
 
