@@ -159,7 +159,7 @@ namespace Etherna.BeeNet
         {
             try
             {
-                await generatedClient.PinsPostAsync((string)hash, cancellationToken);
+                await generatedClient.PinsPostAsync((string)hash, cancellationToken).ConfigureAwait(false);
                 return true;
             }
             catch (BeeNetApiException e) when (e.StatusCode == 404)
