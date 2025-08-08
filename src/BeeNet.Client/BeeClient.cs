@@ -636,8 +636,18 @@ namespace Etherna.BeeNet
 
         public async Task<bool> GetPinStatusAsync(
             SwarmHash hash,
-            CancellationToken cancellationToken = default) =>
-            (await generatedClient.PinsGetAsync((string)hash, cancellationToken).ConfigureAwait(false)).Reference == hash;
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return (await generatedClient.PinsGetAsync((string)hash, cancellationToken).ConfigureAwait(false))
+                    .Reference == hash;
+            }
+            catch (BeeNetApiException e) when (e.StatusCode == 404)
+            {
+                return false;
+            }
+        }
 
         public async Task<PostageBatch> GetPostageBatchAsync(
             PostageBatchId batchId,
