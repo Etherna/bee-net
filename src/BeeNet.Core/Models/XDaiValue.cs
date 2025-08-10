@@ -15,12 +15,13 @@
 using Etherna.BeeNet.TypeConverters;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(XDaiValueTypeConverter))]
-    public readonly struct XDaiValue(decimal value) : IEquatable<XDaiValue>
+    public readonly struct XDaiValue(decimal value) : IEquatable<XDaiValue>, IParsable<XDaiValue>
     {
         // Consts.
         public const int DecimalPrecision = 18;
@@ -69,7 +70,29 @@ namespace Etherna.BeeNet.Models
         public static XDaiValue Multiply(int left, XDaiValue right) => left * right.value;
         public static XDaiValue Multiply(long left, XDaiValue right) => left * right.value;
         public static XDaiValue Negate(XDaiValue value) => -value;
+        public static XDaiValue Parse(string s, IFormatProvider? provider) => FromWeiString(s);
         public static XDaiValue Subtract(XDaiValue left, XDaiValue right) => left - right;
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out XDaiValue result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromWeiString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
 
         // Operator methods.
         public static XDaiValue operator +(XDaiValue left, XDaiValue right) => left.value + right.value;

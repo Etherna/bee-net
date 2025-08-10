@@ -16,7 +16,6 @@ using Etherna.BeeNet.Clients;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Tools;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -1391,7 +1390,7 @@ namespace Etherna.BeeNet
             (await generatedClient.ChunksPostAsync(
                 swarm_tag: tagId?.Value,
                 swarm_postage_batch_id: batchId?.ToString(),
-                swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),
+                swarm_postage_stamp: presignedPostageStamp?.ToString(),
                 swarm_act: swarmAct,
                 swarm_act_history_address: swarmActHistoryAddress,
                 body: chunkData,
@@ -1507,7 +1506,7 @@ namespace Etherna.BeeNet
                 sig: soc.Signature.Value.ToString(),
                 swarm_postage_batch_id: batchId?.ToString(),
                 body: bodyMemoryStream,
-                swarm_postage_stamp: presignedPostageStamp?.ToByteArray().ToHex(),
+                swarm_postage_stamp: presignedPostageStamp?.ToString(),
                 swarm_act: swarmAct,
                 swarm_act_history_address: swarmActHistoryAddress,
                 cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;

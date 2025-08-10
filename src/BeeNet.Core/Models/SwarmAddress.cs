@@ -18,12 +18,13 @@ using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmAddressTypeConverter))]
-    public readonly struct SwarmAddress : IEquatable<SwarmAddress>
+    public readonly struct SwarmAddress : IEquatable<SwarmAddress>, IParsable<SwarmAddress>
     {
         // Consts.
         public const char Separator = '/';
@@ -87,6 +88,28 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static SwarmAddress FromString(string value) => new(value);
         public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
+        public static SwarmAddress Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmAddress result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
         
         // Operator methods.
         public static bool operator ==(SwarmAddress left, SwarmAddress right) => left.Equals(right);

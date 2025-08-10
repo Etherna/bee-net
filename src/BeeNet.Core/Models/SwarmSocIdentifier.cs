@@ -17,11 +17,12 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmSocIdentifierTypeConverter))]
-    public readonly struct SwarmSocIdentifier : IEquatable<SwarmSocIdentifier>
+    public readonly struct SwarmSocIdentifier : IEquatable<SwarmSocIdentifier>, IParsable<SwarmSocIdentifier>
     {
         // Consts.
         public const int IdentifierSize = SwarmHash.HashSize;
@@ -77,6 +78,28 @@ namespace Etherna.BeeNet.Models
             {
                 return false;
             }
+        }
+        public static SwarmSocIdentifier Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmSocIdentifier result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
         }
         
         // Operator methods.

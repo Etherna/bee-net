@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.Models
 {
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
     [TypeConverter(typeof(SwarmUriTypeConverter))]
-    public readonly struct SwarmUri : IEquatable<SwarmUri>
+    public readonly struct SwarmUri : IEquatable<SwarmUri>, IParsable<SwarmUri>
     {
         // Fields.
         private readonly string? _path;
@@ -140,6 +140,28 @@ namespace Etherna.BeeNet.Models
         public static SwarmUri FromString(string value) => new(value, UriKind.RelativeOrAbsolute);
         public static SwarmUri FromSwarmAddress(SwarmAddress value) => new(value.Hash, value.Path);
         public static SwarmUri FromSwarmHash(SwarmHash value) => new(value, null);
+        public static SwarmUri Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmUri result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
         
         // Operator methods.
         public static bool operator ==(SwarmUri left, SwarmUri right) => left.Equals(right);

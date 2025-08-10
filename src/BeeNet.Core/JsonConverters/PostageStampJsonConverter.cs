@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,15 +26,14 @@ namespace Etherna.BeeNet.JsonConverters
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
 
-            return PostageStamp.BuildFromByteArray(reader.GetString()!.HexToByteArray());
+            return PostageStamp.FromString(reader.GetString()!);
         }
 
         public override void Write(Utf8JsonWriter writer, PostageStamp value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
             
-            writer.WriteStringValue(value.ToByteArray().ToHex());
+            writer.WriteStringValue(value.ToString());
         }
     }
 }

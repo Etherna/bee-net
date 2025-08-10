@@ -15,12 +15,13 @@
 using Etherna.BeeNet.TypeConverters;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(BzzValueTypeConverter))]
-    public readonly struct BzzValue(decimal value) : IEquatable<BzzValue>
+    public readonly struct BzzValue(decimal value) : IEquatable<BzzValue>, IParsable<BzzValue>
     {
         // Consts.
         public const int DecimalPrecision = 16;
@@ -69,7 +70,29 @@ namespace Etherna.BeeNet.Models
         public static BzzValue Multiply(int left, BzzValue right) => left * right.value;
         public static BzzValue Multiply(long left, BzzValue right) => left * right.value;
         public static BzzValue Negate(BzzValue value) => -value;
+        public static BzzValue Parse(string s, IFormatProvider? provider) => FromPlurString(s);
         public static BzzValue Subtract(BzzValue left, BzzValue right) => left - right;
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out BzzValue result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromPlurString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
 
         // Operator methods.
         public static BzzValue operator +(BzzValue left, BzzValue right) => left.value + right.value;

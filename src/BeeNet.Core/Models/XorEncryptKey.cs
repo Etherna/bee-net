@@ -17,12 +17,13 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(XorEncryptKeyTypeConverter))]
-    public readonly struct XorEncryptKey : IEquatable<XorEncryptKey>
+    public readonly struct XorEncryptKey : IEquatable<XorEncryptKey>, IParsable<XorEncryptKey>
     {
         // Consts.
         public const int KeySize = 32;
@@ -100,6 +101,28 @@ namespace Etherna.BeeNet.Models
             {
                 return false;
             }
+        }
+        public static XorEncryptKey Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out XorEncryptKey result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
         }
         
         // Operator methods.
