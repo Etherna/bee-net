@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> GranteePostAsync(string swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> GranteePostAsync(object swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -60,7 +60,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="reference">Grantee list reference</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response2> GranteePatchAsync(string reference, object swarm_act_history_address, string swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response2> GranteePatchAsync(string reference, object swarm_act_history_address, object swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -116,7 +116,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -358,7 +358,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -544,7 +544,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response27> EnvelopeAsync(string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response27> EnvelopeAsync(object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1038,7 +1038,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> GranteePostAsync(string swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> GranteePostAsync(object swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -1258,7 +1258,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="reference">Grantee list reference</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response2> GranteePatchAsync(string reference, object swarm_act_history_address, string swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response2> GranteePatchAsync(string reference, object swarm_act_history_address, object swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -1741,7 +1741,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="body">Chunk binary data that has to have at least 8 bytes.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3910,7 +3910,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -5772,7 +5772,7 @@ namespace Etherna.BeeNet.Clients
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response27> EnvelopeAsync(string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response27> EnvelopeAsync(object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
