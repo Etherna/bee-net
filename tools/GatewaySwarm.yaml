@@ -2987,7 +2987,7 @@ paths:
                           example: "1000000000000000000"
                         start:
                           type: integer
-                          format: int64
+                          format: uint64
                         owner:
                           type: string
                           pattern: ^[A-Fa-f0-9]{40}$

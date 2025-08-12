@@ -557,7 +557,7 @@ components:
           $ref: "#/components/schemas/BigInt"
         start:
           type: integer
-          format: int64
+          format: uint64
         owner:
           $ref: "#/components/schemas/EthereumAddress"
         depth:
