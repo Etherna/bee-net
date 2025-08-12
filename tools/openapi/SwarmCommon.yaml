@@ -263,7 +263,7 @@ components:
     GasLimit:
       description: Gas limit refers to the maximum amount of gas you’re willing to spend on a particular transaction.
       type: integer
-      format: int64
+      format: uint64
       minimum: 0
       maximum: 18446744073709551615
 
@@ -833,7 +833,7 @@ components:
 
     Uid:
       type: integer
-      format: int64
+      format: uint64
 
     WelcomeMessage:
       type: object

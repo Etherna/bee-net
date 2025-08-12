@@ -1059,7 +1059,7 @@ paths:
           name: after
           schema:
             type: integer
-            format: int64
+            format: uint64
           required: false
           description: "Start index (default: 0)"
         - in: query

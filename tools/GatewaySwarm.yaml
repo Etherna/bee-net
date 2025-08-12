@@ -51,7 +51,7 @@ paths:
             schema:
               &a12
               type: integer
-              format: int64
+              format: uint64
             description: Associate upload with an existing Tag UID
           name: swarm-tag
           required: false
@@ -554,7 +554,7 @@ paths:
               schema:
                 &a28
                 type: integer
-                format: int64
+                format: uint64
             swarm-act-history-address:
               &a23
               description: Swarm address reference to the new ACT history entry
@@ -835,7 +835,7 @@ paths:
                       properties:
                         uid:
                           type: integer
-                          format: int64
+                          format: uint64
                         startedAt:
                           type: string
                           format: date-time
@@ -899,7 +899,7 @@ paths:
                 properties:
                   uid:
                     type: integer
-                    format: int64
+                    format: uint64
                   startedAt:
                     type: string
                     format: date-time
@@ -1413,7 +1413,7 @@ paths:
           name: after
           schema:
             type: integer
-            format: int64
+            format: uint64
           required: false
           description: "Start index (default: 0)"
         - in: query
@@ -2321,7 +2321,7 @@ paths:
             description: Gas limit refers to the maximum amount of gas you’re willing to
               spend on a particular transaction.
             type: integer
-            format: int64
+            format: uint64
             minimum: 0
             maximum: 18446744073709552000
           required: false
