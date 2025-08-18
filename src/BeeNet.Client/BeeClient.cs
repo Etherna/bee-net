@@ -370,7 +370,7 @@ namespace Etherna.BeeNet
             return new ChainState(
                 block: response.Block,
                 chainTip: response.ChainTip,
-                currentPrice: BzzValue.FromPlurString(response.CurrentPrice),
+                currentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
                 totalAmount: BzzValue.FromPlurString(response.TotalAmount));
         }
 
