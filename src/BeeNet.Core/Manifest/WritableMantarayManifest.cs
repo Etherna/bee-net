@@ -37,8 +37,8 @@ namespace Etherna.BeeNet.Manifest
                 new WritableMantarayNode(
                     compactLevel,
                     compactLevel > 0
-                        ? (XorEncryptKey?)null //auto-generate on hash building
-                        : XorEncryptKey.Zero))
+                        ? (EncryptionKey256?)null //auto-generate on hash building
+                        : EncryptionKey256.Zero))
         { }
 
         public WritableMantarayManifest(

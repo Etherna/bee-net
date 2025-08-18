@@ -30,9 +30,9 @@ namespace Etherna.BeeNet.Manifest
         public const int VersionHashSize = 31;
 
         // Properties.
-        public XorEncryptKey? EntryEncryptionKey  =>
+        public EncryptionKey256? EntryEncryptionKey  =>
             Metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr) ?
-                new XorEncryptKey(encryptKeyStr) : (XorEncryptKey?)null;
+                new EncryptionKey256(encryptKeyStr) : (EncryptionKey256?)null;
         public abstract SwarmHash? EntryHash { get; }
         public bool EntryUseRecursiveEncryption =>
             Metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr) && bool.Parse(useRecursiveEncrypStr);
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Manifest
         public abstract SwarmHash Hash { get; }
         public abstract IReadOnlyDictionary<string, string> Metadata { get; }
         public abstract NodeType NodeTypeFlags { get; }
-        public abstract XorEncryptKey? ObfuscationKey { get; }
+        public abstract EncryptionKey256? ObfuscationKey { get; }
         
         // Methods.
         public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(

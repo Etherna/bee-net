@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Manifest
         SwarmHash Hash { get; }
         IReadOnlyDictionary<string, string> Metadata { get; }
         NodeType NodeTypeFlags { get; }
-        XorEncryptKey? ObfuscationKey { get; }
+        EncryptionKey256? ObfuscationKey { get; }
         
         // Methods.
         Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(string path);

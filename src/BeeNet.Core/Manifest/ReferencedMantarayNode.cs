@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Manifest
         private SwarmHash? _entryHash;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
         private readonly Dictionary<string, string> _metadata;
-        private XorEncryptKey? _obfuscationKey;
+        private EncryptionKey256? _obfuscationKey;
 
         // Constructor.
         public ReferencedMantarayNode(
@@ -80,7 +80,7 @@ namespace Etherna.BeeNet.Manifest
         public bool IsDecoded => Chunk != null;
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
         public override NodeType NodeTypeFlags { get; }
-        public override XorEncryptKey? ObfuscationKey => IsDecoded
+        public override EncryptionKey256? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
 
@@ -115,9 +115,9 @@ namespace Etherna.BeeNet.Manifest
             var readIndex = 0;
             
             // Get obfuscation key and de-obfuscate.
-            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
-            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
-            readIndex += XorEncryptKey.KeySize;
+            _obfuscationKey = new EncryptionKey256(data.AsMemory()[..EncryptionKey256.KeySize]);
+            _obfuscationKey.Value.XorEncryptDecrypt(data.AsSpan()[EncryptionKey256.KeySize..]);
+            readIndex += EncryptionKey256.KeySize;
             
             // Read header.
             var versionHash = data.AsMemory()[readIndex..(readIndex + VersionHashSize)];
@@ -188,8 +188,8 @@ namespace Etherna.BeeNet.Manifest
                     
                     //skip padding
                     var metadataTotalSize = metadataBytes.Length + MantarayNodeFork.MetadataBytesSize;
-                    if (metadataTotalSize % XorEncryptKey.KeySize != 0)
-                        readIndex += XorEncryptKey.KeySize - metadataTotalSize % XorEncryptKey.KeySize;
+                    if (metadataTotalSize % EncryptionKey256.KeySize != 0)
+                        readIndex += EncryptionKey256.KeySize - metadataTotalSize % EncryptionKey256.KeySize;
                 }
                 
                 //add fork

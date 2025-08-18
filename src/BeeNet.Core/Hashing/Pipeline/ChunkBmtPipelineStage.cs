@@ -78,10 +78,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt) => nextStage.SumAsync(swarmChunkBmt);
         
         // Helpers.
-        private static void EncryptDecryptChunkData(XorEncryptKey chunkKey, Span<byte> data)
+        private static void EncryptDecryptChunkData(EncryptionKey256 chunkKey, Span<byte> data)
         {
             // Don't encrypt span, otherwise knowing the chunk length, we could reconstruct the key.
-            chunkKey.EncryptDecrypt(data[SwarmCac.SpanSize..]);
+            chunkKey.XorEncryptDecrypt(data[SwarmCac.SpanSize..]);
         }
         
         private async Task<CompactedChunkAttemptResult> GetBestChunkAsync(
@@ -184,7 +184,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 {
                     // Create key.
                     BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
-                    var chunkKey = new XorEncryptKey(args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHashArray));
+                    var chunkKey = new EncryptionKey256(args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHashArray));
                     
                     // Encrypt data.
                     var encryptedSpanData = args.SpanData.ToArray();

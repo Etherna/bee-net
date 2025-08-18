@@ -20,7 +20,7 @@ using System.Globalization;
 
 namespace Etherna.BeeNet.TypeConverters
 {
-    public sealed class XorEncryptKeyTypeConverter : TypeConverter
+    public sealed class EncryptionKey256TypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
             sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
@@ -31,13 +31,13 @@ namespace Etherna.BeeNet.TypeConverters
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
             if (value is string str)
-                return new XorEncryptKey(str);
+                return new EncryptionKey256(str);
             return base.ConvertFrom(context, culture, value);
         }
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
-            if (destinationType == typeof(string) && value is XorEncryptKey key)
+            if (destinationType == typeof(string) && value is EncryptionKey256 key)
                 return key.ToString();
             return base.ConvertTo(context, culture, value, destinationType);
         }

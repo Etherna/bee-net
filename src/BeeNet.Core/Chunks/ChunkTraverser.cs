@@ -114,7 +114,7 @@ namespace Etherna.BeeNet.Chunks
 
         public Task TraverseFromMantarayNodeChunkAsync(
             SwarmHash nodeHash,
-            XorEncryptKey? encryptKey,
+            EncryptionKey256? encryptKey,
             bool? useRecursiveEncryption,
             NodeType nodeTypeFlags,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
@@ -216,7 +216,7 @@ namespace Etherna.BeeNet.Chunks
                     else
                     {
                         var buffer = cac.Data.ToArray();
-                        chunkRef.EncryptionKey?.EncryptDecrypt(buffer);
+                        chunkRef.EncryptionKey?.XorEncryptDecrypt(buffer);
                         cacData = buffer;
                     }
 
@@ -228,11 +228,11 @@ namespace Etherna.BeeNet.Chunks
                         i += SwarmHash.HashSize;
 
                         //read encryption key
-                        XorEncryptKey? childEncryptionKey = null;
+                        EncryptionKey256? childEncryptionKey = null;
                         if (chunkRef.UseRecursiveEncryption)
                         {
-                            childEncryptionKey = new XorEncryptKey(cacData[i..(i + XorEncryptKey.KeySize)]);
-                            i += XorEncryptKey.KeySize;
+                            childEncryptionKey = new EncryptionKey256(cacData[i..(i + EncryptionKey256.KeySize)]);
+                            i += EncryptionKey256.KeySize;
                         }
 
                         // Skip if already visited.

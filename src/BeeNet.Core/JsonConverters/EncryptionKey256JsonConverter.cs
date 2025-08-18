@@ -19,9 +19,9 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class XorEncryptKeyJsonConverter : JsonConverter<XorEncryptKey>
+    public sealed class EncryptionKey256JsonConverter : JsonConverter<EncryptionKey256>
     {
-        public override XorEncryptKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override EncryptionKey256 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.JsonConverters
             return reader.GetString()!;
         }
 
-        public override XorEncryptKey ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override EncryptionKey256 ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.PropertyName)
                 throw new JsonException();
@@ -37,14 +37,14 @@ namespace Etherna.BeeNet.JsonConverters
             return reader.GetString()!;
         }
 
-        public override void Write(Utf8JsonWriter writer, XorEncryptKey value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, EncryptionKey256 value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             
             writer.WriteStringValue(value.ToString());
         }
 
-        public override void WriteAsPropertyName(Utf8JsonWriter writer, XorEncryptKey value, JsonSerializerOptions options)
+        public override void WriteAsPropertyName(Utf8JsonWriter writer, EncryptionKey256 value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         

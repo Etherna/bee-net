@@ -22,8 +22,8 @@ using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Models
 {
-    [TypeConverter(typeof(XorEncryptKeyTypeConverter))]
-    public readonly struct XorEncryptKey : IEquatable<XorEncryptKey>, IParsable<XorEncryptKey>
+    [TypeConverter(typeof(EncryptionKey256TypeConverter))]
+    public readonly struct EncryptionKey256 : IEquatable<EncryptionKey256>, IParsable<EncryptionKey256>
     {
         // Consts.
         public const int KeySize = 32;
@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
         private readonly ReadOnlyMemory<byte> byteKey;
 
         // Constructor.
-        public XorEncryptKey(ReadOnlyMemory<byte> key)
+        public EncryptionKey256(ReadOnlyMemory<byte> key)
         {
             if (!IsValidKey(key))
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Models
             byteKey = key;
         }
         
-        public XorEncryptKey(string key)
+        public EncryptionKey256(string key)
         {
             ArgumentNullException.ThrowIfNull(key, nameof(key));
             
@@ -58,15 +58,15 @@ namespace Etherna.BeeNet.Models
         }
 
         // Builders.
-        public static XorEncryptKey BuildNewRandom()
+        public static EncryptionKey256 BuildNewRandom()
         {
             var keyBytes = new byte[KeySize];
             RandomNumberGenerator.Fill(keyBytes);
-            return new XorEncryptKey(keyBytes);
+            return new EncryptionKey256(keyBytes);
         }
         
         // Static properties.
-        public static XorEncryptKey Zero { get; } = new byte[KeySize];
+        public static EncryptionKey256 Zero { get; } = new byte[KeySize];
         
         // Methods.
         /// <summary>
@@ -75,21 +75,21 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="data">Input data</param>
         /// <returns>Encrypted/decrypted data</returns>
-        public void EncryptDecrypt(Span<byte> data)
+        public void XorEncryptDecrypt(Span<byte> data)
         {
             for (var i = 0; i < data.Length; i++)
                 data[i] = (byte)(data[i] ^ byteKey.Span[i % byteKey.Length]);
         }
-        public bool Equals(XorEncryptKey other) => byteKey.Span.SequenceEqual(other.byteKey.Span);
-        public override bool Equals(object? obj) => obj is XorEncryptKey other && Equals(other);
+        public bool Equals(EncryptionKey256 other) => byteKey.Span.SequenceEqual(other.byteKey.Span);
+        public override bool Equals(object? obj) => obj is EncryptionKey256 other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteKey.ToArray());
         public byte[] ToByteArray() => byteKey.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteKey;
         public override string ToString() => byteKey.ToArray().ToHex();
         
         // Static methods.
-        public static XorEncryptKey FromByteArray(byte[] value) => new(value);
-        public static XorEncryptKey FromString(string value) => new(value);
+        public static EncryptionKey256 FromByteArray(byte[] value) => new(value);
+        public static EncryptionKey256 FromString(string value) => new(value);
         public static bool IsValidKey(ReadOnlyMemory<byte> value) => value.Length == KeySize;
         public static bool IsValidKey(string value)
         {
@@ -102,8 +102,8 @@ namespace Etherna.BeeNet.Models
                 return false;
             }
         }
-        public static XorEncryptKey Parse(string s, IFormatProvider? provider) => FromString(s);
-        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out XorEncryptKey result)
+        public static EncryptionKey256 Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out EncryptionKey256 result)
         {
             if (string.IsNullOrWhiteSpace(s))
             {
@@ -126,16 +126,16 @@ namespace Etherna.BeeNet.Models
         }
         
         // Operator methods.
-        public static bool operator ==(XorEncryptKey left, XorEncryptKey right) => left.Equals(right);
-        public static bool operator !=(XorEncryptKey left, XorEncryptKey right) => !(left == right);
+        public static bool operator ==(EncryptionKey256 left, EncryptionKey256 right) => left.Equals(right);
+        public static bool operator !=(EncryptionKey256 left, EncryptionKey256 right) => !(left == right);
         
         // Implicit conversion operator methods.
-        public static implicit operator XorEncryptKey(string value) => new(value);
-        public static implicit operator XorEncryptKey(byte[] value) => new(value);
+        public static implicit operator EncryptionKey256(string value) => new(value);
+        public static implicit operator EncryptionKey256(byte[] value) => new(value);
         
         // Explicit conversion operator methods.
-        public static explicit operator string(XorEncryptKey value) => value.ToString();
-        public static explicit operator ReadOnlyMemory<byte>(XorEncryptKey value) => value.ToReadOnlyMemory();
-        public static explicit operator byte[](XorEncryptKey value) => value.ToByteArray();
+        public static explicit operator string(EncryptionKey256 value) => value.ToString();
+        public static explicit operator ReadOnlyMemory<byte>(EncryptionKey256 value) => value.ToReadOnlyMemory();
+        public static explicit operator byte[](EncryptionKey256 value) => value.ToByteArray();
     }
 }

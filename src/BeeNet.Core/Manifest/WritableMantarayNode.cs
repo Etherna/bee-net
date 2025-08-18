@@ -32,13 +32,13 @@ namespace Etherna.BeeNet.Manifest
         private SwarmHash? _hash;
         private IReadOnlyDictionary<string, string> _metadata = new Dictionary<string, string>();
         private NodeType _nodeTypeFlags;
-        private XorEncryptKey? _obfuscationKey;
+        private EncryptionKey256? _obfuscationKey;
         private bool skipWriteEntryHash = true;
 
         // Constructors.
         public WritableMantarayNode(
             ushort compactLevel = 0,
-            XorEncryptKey? obfuscationKey = null)
+            EncryptionKey256? obfuscationKey = null)
         {
             if (compactLevel > 0 && obfuscationKey != null)
                 throw new ArgumentException("Can't preset obfuscation key with compactLevel > 0");
@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Manifest
         public override SwarmHash Hash => _hash ?? throw new InvalidOperationException("Hash not computed");
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
         public override NodeType NodeTypeFlags => _nodeTypeFlags;
-        public override XorEncryptKey? ObfuscationKey => _obfuscationKey;
+        public override EncryptionKey256? ObfuscationKey => _obfuscationKey;
 
         // Methods.
         public void Add(string path, ManifestEntry entry)
@@ -165,7 +165,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Marshal current node, and set its hash.
             if (CompactLevel == 0)
-                _obfuscationKey ??= XorEncryptKey.BuildNewRandom(); //set random obfuscation key if missing
+                _obfuscationKey ??= EncryptionKey256.BuildNewRandom(); //set random obfuscation key if missing
             else
                 _obfuscationKey = await GetBestObfuscationKeyAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
             
@@ -203,7 +203,7 @@ namespace Etherna.BeeNet.Manifest
             return bytes.ToArray();
         }
         
-        private async Task<XorEncryptKey> GetBestObfuscationKeyAsync(
+        private async Task<EncryptionKey256> GetBestObfuscationKeyAsync(
             Hasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
@@ -227,20 +227,20 @@ namespace Etherna.BeeNet.Manifest
              */
 
             // Calculate plain hash, and use as starting seed.
-            var plainByteArray = ToByteArray(XorEncryptKey.Zero);
+            var plainByteArray = ToByteArray(EncryptionKey256.Zero);
             using var plainHasherPipeline = hasherPipelineBuilder(true);
             var plainHashingResult = await plainHasherPipeline.HashDataAsync(plainByteArray).ConfigureAwait(false);
             var plainChunkHashArray = plainHashingResult.Hash.ToByteArray();
 
             // Search best chunk key.
             uint bestCollisions = 0;
-            var bestKey = XorEncryptKey.Zero;
+            var bestKey = EncryptionKey256.Zero;
 
             for (ushort i = 0; i < CompactLevel; i++)
             {
                 // Create key and data byte array.
                 BinaryPrimitives.WriteUInt16BigEndian(plainChunkHashArray.AsSpan()[^2..], i);
-                var obfuscationKey = new XorEncryptKey(hasher.ComputeHash(plainChunkHashArray));
+                var obfuscationKey = new EncryptionKey256(hasher.ComputeHash(plainChunkHashArray));
                 var obfuscatedData = ToByteArray(obfuscationKey);
                 
                 // Calculate hash and count collisions.
@@ -275,7 +275,7 @@ namespace Etherna.BeeNet.Manifest
         private void SetNodeTypeFlag(NodeType flag) =>
             _nodeTypeFlags |= flag;
         
-        private byte[] ToByteArray(XorEncryptKey obfuscationKey)
+        private byte[] ToByteArray(EncryptionKey256 obfuscationKey)
         {
             var bytes = new List<byte>();
             
@@ -295,7 +295,7 @@ namespace Etherna.BeeNet.Manifest
 
             // Obfuscate with key (except for key as first value).
             var bytesArray = bytes.ToArray();
-            obfuscationKey.EncryptDecrypt(bytesArray.AsSpan()[XorEncryptKey.KeySize..]);
+            obfuscationKey.XorEncryptDecrypt(bytesArray.AsSpan()[EncryptionKey256.KeySize..]);
             return bytesArray;
         }
 

@@ -32,13 +32,13 @@ namespace Etherna.BeeNet.Chunks
         private List<SwarmCac> levelsCache = new();
         private readonly uint maxSegmentsInChunk;
         private readonly SwarmCac rootChunk;
-        private readonly XorEncryptKey? rootEncryptionKey;
+        private readonly EncryptionKey256? rootEncryptionKey;
         private readonly bool useRecursiveEncryption;
 
         // Constructor.
         private ChunkDataStream(
             SwarmCac rootChunk,
-            XorEncryptKey? rootEncryptionKey,
+            EncryptionKey256? rootEncryptionKey,
             bool useRecursiveEncryption,
             IReadOnlyChunkStore chunkStore,
             long length)
@@ -76,7 +76,7 @@ namespace Etherna.BeeNet.Chunks
         
         public static Stream BuildNew(
             SwarmCac rootChunk,
-            XorEncryptKey? encryptionKey,
+            EncryptionKey256? encryptionKey,
             bool useRecursiveEncryption,
             IReadOnlyChunkStore chunkStore)
         {
@@ -157,11 +157,11 @@ namespace Etherna.BeeNet.Chunks
             // Init with root level info.
             var levelStartDataOffset = (ulong)Position;
             var levelEndDataOffset = (ulong)(Length - (Position + buffer.Length));
-            (SwarmCac Chunk, XorEncryptKey? EncKey)[] levelChunkKeyPairs = [new(rootChunk, rootEncryptionKey)];
+            (SwarmCac Chunk, EncryptionKey256? EncKey)[] levelChunkKeyPairs = [new(rootChunk, rootEncryptionKey)];
             
             // Reuse these for memory optimization.
             var chunkDataBuffer = new byte[SwarmCac.DataSize];
-            var levelChildHashKeyPairs = new List<(SwarmHash Hash, XorEncryptKey? EncKey)>();
+            var levelChildHashKeyPairs = new List<(SwarmHash Hash, EncryptionKey256? EncKey)>();
 
             // Iterate on all levels from root to data chunks. Terminate when no chunks remain.
             for (var levelIndex = 0;; levelIndex++)
@@ -184,7 +184,7 @@ namespace Etherna.BeeNet.Chunks
                     
                     // Decode chunk's data.
                     chunkKeyPair.Chunk.Data.CopyTo(chunkDataBuffer);
-                    chunkKeyPair.EncKey?.EncryptDecrypt(chunkDataBuffer.AsSpan(0, chunkKeyPair.Chunk.Data.Length));
+                    chunkKeyPair.EncKey?.XorEncryptDecrypt(chunkDataBuffer.AsSpan(0, chunkKeyPair.Chunk.Data.Length));
                     
                     // If is a data chunk, report data on buffer and update bounds. Then continue.
                     if (chunkKeyPair.Chunk.IsDataChunk)
@@ -244,12 +244,12 @@ namespace Etherna.BeeNet.Chunks
                     // Reverse read child chunks references and prepend them on hash list.
                     for (var cursor = chunkEndPosition; cursor > chunkStartPosition;)
                     {
-                        XorEncryptKey? childEncryptionKey = null;
+                        EncryptionKey256? childEncryptionKey = null;
                         if (useRecursiveEncryption)
                         {
-                            cursor -= XorEncryptKey.KeySize;
+                            cursor -= EncryptionKey256.KeySize;
                             childEncryptionKey =
-                                new XorEncryptKey(chunkDataBuffer.Slice(cursor, cursor + XorEncryptKey.KeySize));
+                                new EncryptionKey256(chunkDataBuffer.Slice(cursor, cursor + EncryptionKey256.KeySize));
                         }
                         
                         cursor -= SwarmHash.HashSize;

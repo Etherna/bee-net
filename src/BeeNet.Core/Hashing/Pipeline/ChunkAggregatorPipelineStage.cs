@@ -31,10 +31,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private sealed class ChunkHeader(
             SwarmHash hash,
             ReadOnlyMemory<byte> span,
-            XorEncryptKey? chunkKey,
+            EncryptionKey256? chunkKey,
             bool isParityChunk)
         {
-            public XorEncryptKey? ChunkKey { get; } = chunkKey;
+            public EncryptionKey256? ChunkKey { get; } = chunkKey;
             public SwarmHash Hash { get; } = hash;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 if (useRecursiveEncryption)
                 {
                     chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
-                    totalDataIndex += XorEncryptKey.KeySize;
+                    totalDataIndex += EncryptionKey256.KeySize;
                 }
             }
 

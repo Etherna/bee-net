@@ -6,7 +6,7 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class SwarmChunkReference(
         SwarmHash hash,
-        XorEncryptKey? encryptionKey,
+        EncryptionKey256? encryptionKey,
         bool useRecursiveEncryption)
     {
         // Static builders.
@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Models
         }
 
         // Properties.
-        public XorEncryptKey? EncryptionKey { get; } = encryptionKey;
+        public EncryptionKey256? EncryptionKey { get; } = encryptionKey;
         public SwarmHash Hash { get; } = hash;
         public bool UseRecursiveEncryption { get; } = useRecursiveEncryption;
         
