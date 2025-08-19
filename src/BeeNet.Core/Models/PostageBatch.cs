@@ -120,6 +120,8 @@ namespace Etherna.BeeNet.Models
             CalculatePrice(CalculateAmount(chainPrice, ttl), depth);
 
         public static TimeSpan CalculateTtl(BzzValue amount, BzzValue chainPrice) =>
-            TimeSpan.FromSeconds((double)(amount * GnosisChain.BlockTime.TotalSeconds / chainPrice));
+            TimeSpan.FromSeconds(Math.Min(
+                (double)(amount * GnosisChain.BlockTime.TotalSeconds / chainPrice),
+                TimeSpan.MaxValue.TotalSeconds));
     }
 }
