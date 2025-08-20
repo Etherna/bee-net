@@ -30,13 +30,11 @@ namespace Etherna.BeeNet.Chunks
         /// </summary>
         /// <param name="rootHash">Root traversing chunk</param>
         public async Task TraverseAsync(
-            SwarmChunkReference rootReference,
+            SwarmReference rootReference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
             Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
             Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
-            ArgumentNullException.ThrowIfNull(rootReference, nameof(rootReference));
-            
             // Identify if is manifest root chunk.
             var isManifestChunk = false;
             if (!rootReference.UseRecursiveEncryption) //manifest can't use recursive encryption
@@ -72,20 +70,18 @@ namespace Etherna.BeeNet.Chunks
         }
 
         public async Task TraverseFromDataChunkAsync(
-            SwarmChunkReference chunkReference,
+            SwarmReference reference,
             Func<SwarmChunk, Task>? onChunkFoundAsync,
             Func<SwarmChunk, Task>? onInvalidChunkFoundAsync,
             Func<SwarmHash, Task>? onChunkNotFoundAsync)
         {
-            ArgumentNullException.ThrowIfNull(chunkReference, nameof(chunkReference));
-            
             onChunkFoundAsync ??= _ => Task.CompletedTask;
             onInvalidChunkFoundAsync ??= _ => Task.CompletedTask;
             onChunkNotFoundAsync ??= _ => Task.CompletedTask;
 
             // Read as data or intermediate chunk.
             await TraverseDataHelperAsync(
-                chunkReference,
+                reference,
                 [],
                 onChunkFoundAsync,
                 onInvalidChunkFoundAsync,
@@ -167,17 +163,17 @@ namespace Etherna.BeeNet.Chunks
 
         // Helpers.
         private async Task TraverseDataHelperAsync(
-            SwarmChunkReference rootChunkRef,
+            SwarmReference rootRef,
             HashSet<SwarmHash> visitedHashes,
             Func<SwarmChunk, Task> onChunkFoundAsync,
             Func<SwarmChunk, Task> onInvalidChunkFoundAsync,
             Func<SwarmHash, Task> onChunkNotFoundAsync)
         {
-            List<SwarmChunkReference> chunkRefs = [rootChunkRef];
+            List<SwarmReference> chunkRefs = [rootRef];
 
             while (chunkRefs.Count > 0)
             {
-                var nextLevelChunkRefs = new List<SwarmChunkReference>();
+                var nextLevelChunkRefs = new List<SwarmReference>();
                 
                 foreach (var chunkRef in chunkRefs)
                 {
@@ -238,10 +234,9 @@ namespace Etherna.BeeNet.Chunks
                         // Skip if already visited.
                         if (!visitedHashes.Contains(childHash))
                         {
-                            nextLevelChunkRefs.Add(new SwarmChunkReference(
+                            nextLevelChunkRefs.Add(new SwarmReference(
                                 childHash,
-                                childEncryptionKey,
-                                chunkRef.UseRecursiveEncryption));
+                                childEncryptionKey));
                         }
                     }
                 }
@@ -292,10 +287,9 @@ namespace Etherna.BeeNet.Chunks
                 manifestNode.EntryHash != SwarmHash.Zero &&
                 !visitedHashes.Contains(manifestNode.EntryHash.Value)) //skip already visited chunks
                 await TraverseDataHelperAsync(
-                    new SwarmChunkReference(
+                    new SwarmReference(
                         manifestNode.EntryHash.Value,
-                        manifestNode.EntryEncryptionKey,
-                        manifestNode.EntryUseRecursiveEncryption),
+                        manifestNode.EntryEncryptionKey),
                     visitedHashes,
                     onChunkFoundAsync,
                     onInvalidChunkFoundAsync,

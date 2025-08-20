@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Manifest
         public override IReadOnlyMantarayNode RootNode => rootNode;
 
         // Methods.
-        public override Task<SwarmChunkReference> GetHashAsync(Hasher hasher) =>
-            Task.FromResult(new SwarmChunkReference(RootNode.Hash, null, false));
+        public override Task<SwarmReference> GetHashAsync(Hasher hasher) =>
+            Task.FromResult(new SwarmReference(RootNode.Hash, null));
     }
 }

@@ -428,7 +428,7 @@ namespace Etherna.BeeNet.Chunks
             List<SwarmHash> invalidFoundChunkHashes = [];
         
             await chunkTraverser.TraverseFromDataChunkAsync(
-                new SwarmChunkReference(test.RootHash, null, false),
+                new SwarmReference(test.RootHash, null),
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
                 c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
                 h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });

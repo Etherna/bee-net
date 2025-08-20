@@ -61,10 +61,10 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public override async Task<SwarmChunkReference> GetHashAsync(Hasher hasher)
+        public override async Task<SwarmReference> GetHashAsync(Hasher hasher)
         {
             await rootNode.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
-            return new SwarmChunkReference(rootNode.Hash, null, false);
+            return new SwarmReference(rootNode.Hash, null);
         }
     }
 }

@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
+        public async Task<SwarmReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -195,7 +195,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
         
         // Helpers.
-        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(
+        private async Task<SwarmReference> HashIntermediateChunkAsync(
             ReadOnlyMemory<byte> span,
             ReadOnlyMemory<byte> spanData,
             SwarmChunkBmt swarmChunkBmt)

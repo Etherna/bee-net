@@ -19,7 +19,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace Etherna.BeeNet.Encryption
+namespace Etherna.BeeNet.Chunks
 {
     public static class ChunkEncrypter
     {
@@ -36,23 +36,58 @@ namespace Etherna.BeeNet.Encryption
 
             Transform(data, key, initCtr, decryptedData, hasher);
         }
+
+        /// <summary>
+        /// Decrypt a chunk
+        /// </summary>
+        /// <param name="chunkSpanData"></param>
+        /// <param name="key"></param>
+        /// <param name="decryptedSpan"></param>
+        /// <param name="decryptedData"></param>
+        /// <param name="hasher"></param>
+        /// <returns>Decrypted chunk data length</returns>
+        public static int DecryptChunk(
+            ReadOnlySpan<byte> chunkSpanData,
+            EncryptionKey256 key,
+            Span<byte> decryptedSpan,
+            Span<byte> decryptedData,
+            Hasher hasher)
+        {
+            if (decryptedSpan.Length != SwarmCac.SpanSize)
+                throw new ArgumentException($"{nameof(decryptedSpan)} must have size {SwarmCac.SpanSize}");
+            if (decryptedData.Length != SwarmCac.DataSize)
+                throw new ArgumentException($"{nameof(decryptedData)} must have size {SwarmCac.DataSize}");
+            
+            // Decrypt.
+            Transform(chunkSpanData[..SwarmCac.SpanSize], key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher);
+            Transform(chunkSpanData[SwarmCac.SpanSize..], key, 0, decryptedData, hasher);
+
+            // Calculate real data length removing added padding.
+            var (level, decodedSpan) = ChunkRedundancy.DecodeSpanLevel(decryptedSpan);
+            var length = SwarmCac.SpanToLength(decodedSpan);
+            if (length <= SwarmCac.DataSize)
+                return (int)length;
+            
+            var (dataShards, parities) = SwarmCac.CountIntermediateReferences(length, level, true);
+            return SwarmReference.EncryptedSize * dataShards + parities * SwarmHash.HashSize;
+        }
         
         public static (EncryptionKey256 Key, byte[] EncSpan, byte[] EncData) EncryptChunk(
             ReadOnlySpan<byte> chunkSpanData,
-            EncryptionKey256? encryptionKey,
+            EncryptionKey256? key,
             Hasher hasher)
         {
             var encryptedSpan = new byte[SwarmCac.SpanSize];
             var encryptedData = new byte[SwarmCac.DataSize];
 
-            encryptionKey = EncryptChunk(chunkSpanData, encryptionKey, encryptedSpan, encryptedData, hasher);
+            key = EncryptChunk(chunkSpanData, key, encryptedSpan, encryptedData, hasher);
             
-            return (encryptionKey.Value, encryptedSpan, encryptedData);
+            return (key.Value, encryptedSpan, encryptedData);
         }
 
         public static EncryptionKey256 EncryptChunk(
             ReadOnlySpan<byte> chunkSpanData,
-            EncryptionKey256? encryptionKey,
+            EncryptionKey256? key,
             Span<byte> encryptedSpan,
             Span<byte> encryptedData,
             Hasher hasher)
@@ -62,12 +97,12 @@ namespace Etherna.BeeNet.Encryption
             if (encryptedData.Length != SwarmCac.DataSize)
                 throw new ArgumentException($"{nameof(encryptedData)} must have size {SwarmCac.DataSize}");
             
-            encryptionKey ??= EncryptionKey256.BuildNewRandom();
+            key ??= EncryptionKey256.BuildNewRandom();
             
-            Transform(chunkSpanData[..8], encryptionKey.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
-            Transform(chunkSpanData[8..], encryptionKey.Value, 0, encryptedData, hasher);
+            Transform(chunkSpanData[..SwarmCac.SpanSize], key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
+            Transform(chunkSpanData[SwarmCac.SpanSize..], key.Value, 0, encryptedData, hasher);
 
-            return encryptionKey.Value;
+            return key.Value;
         }
         
         // Helpers.

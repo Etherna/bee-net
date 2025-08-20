@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Services
             IReadOnlyChunkStore chunkStore)
         {
             var chunkReference = (await address.ResolveToResourceInfoAsync(
-                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.ChunkReference;
+                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.Reference;
 
             return await ChunkDataStream.BuildNewAsync(chunkReference, chunkStore).ConfigureAwait(false);
         }

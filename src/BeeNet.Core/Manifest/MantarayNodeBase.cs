@@ -78,10 +78,9 @@ namespace Etherna.BeeNet.Manifest
                 if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
                     return new()
                     {
-                        ChunkReference = new SwarmChunkReference(
+                        Reference = new SwarmReference(
                             EntryHash.Value,
-                            EntryEncryptionKey,
-                            EntryUseRecursiveEncryption),
+                            EntryEncryptionKey),
                         Metadata = Metadata,
                     };
             

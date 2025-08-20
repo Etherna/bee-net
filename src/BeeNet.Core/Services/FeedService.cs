@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Services
             }
         }
         
-        public async Task<SwarmChunkReference> UploadFeedManifestAsync(
+        public async Task<SwarmReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
             Hasher hasher,
             ushort compactLevel = 0,

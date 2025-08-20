@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using System;
 using System.Buffers.Binary;
 
@@ -79,6 +80,51 @@ namespace Etherna.BeeNet.Models
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 
         // Static methods.
+        public static (int DataShards, int Parities) CountIntermediateReferences(
+            ulong spanLength,
+            RedundancyLevel redundancyLevel,
+            bool isEncrypted)
+        {
+            if (spanLength <= DataSize)
+                throw new ArgumentOutOfRangeException(nameof(spanLength), $"Span length is not from intermediate chunk, it must be greater than {DataSize} bytes");
+            
+            /*
+             * Assume we have a trie of size `span` then we can assume that all the forks except for
+             * the last one on the right are of equal size, this is due to how the splitter wraps levels.
+             * First the algorithm will search for a BMT level where span can be included,
+             * then identify how large data one reference can hold on that level,
+             * then count how many references can satisfy span,
+             * and finally how many parity shards should be on that level.
+             */
+            
+            //branching factor is how many data shard references can fit into one intermediate chunk
+            var branching = (ulong)(isEncrypted ?
+                redundancyLevel.GetMaxEncryptedShards():
+                redundancyLevel.GetMaxShards());
+            ulong branchSize = DataSize;
+            
+            // Search for branch level big enough to include span.
+            var branchLevel = 1;
+            for (; branchSize < spanLength; branchLevel++)
+                branchSize *= branching;
+            
+            // Span in one full reference. referenceSize = branching ^ (branchLevel - 1)
+            ulong referenceSize = DataSize;
+            for (var i = 1; i < branchLevel - 1; i++)
+                referenceSize *= branchSize;
+
+            var dataShardAddresses = 1;
+            var spanOffset = referenceSize;
+            for (; spanOffset < spanLength; dataShardAddresses++)
+                spanOffset += referenceSize;
+
+            var parityAddresses = isEncrypted
+                ? redundancyLevel.GetEncryptedParities(dataShardAddresses)
+                : redundancyLevel.GetParities(dataShardAddresses);
+
+            return (dataShardAddresses, parityAddresses);
+        }
+        
         public static bool IsValid(SwarmHash hash, ReadOnlyMemory<byte> spanData, SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
