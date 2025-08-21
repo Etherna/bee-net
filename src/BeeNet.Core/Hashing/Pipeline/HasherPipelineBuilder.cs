@@ -38,32 +38,25 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             if (redundancyLevel != RedundancyLevel.None)
                 throw new NotImplementedException();
 
-            IHasherPipelineStage bmtStage;
-            if (isEncrypted)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                //build stages
-                var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
-                    new ChunkBmtPipelineStage(
-                        compactLevel,
-                        new ChunkStoreWriterPipelineStage(
-                            chunkStore,
-                            postageStamper,
-                            null,
-                            readOnly)),
-                    compactLevel > 0);
+            //build stages
+            var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
+                new ChunkBmtPipelineStage(
+                    compactLevel,
+                    isEncrypted,
+                    new ChunkStoreWriterPipelineStage(
+                        chunkStore,
+                        postageStamper,
+                        null,
+                        readOnly)),
+                compactLevel > 0);
                 
-                var storeWriterStage = new ChunkStoreWriterPipelineStage(
-                    chunkStore,
-                    postageStamper,
-                    chunkAggregatorStage,
-                    readOnly);
+            var storeWriterStage = new ChunkStoreWriterPipelineStage(
+                chunkStore,
+                postageStamper,
+                chunkAggregatorStage,
+                readOnly);
                 
-                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage);
-            }
+            var bmtStage = new ChunkBmtPipelineStage(compactLevel, isEncrypted, storeWriterStage);
             
             return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);
         }

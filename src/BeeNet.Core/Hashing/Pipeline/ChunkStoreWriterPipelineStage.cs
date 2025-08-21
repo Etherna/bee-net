@@ -41,15 +41,15 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
             ArgumentNullException.ThrowIfNull(args, nameof(args));
-            if (args.Hash is null) throw new InvalidOperationException();
+            if (args.ChunkReference is null) throw new InvalidOperationException();
 
             if (!readOnly)
             {
                 // Stamp chunk and store stamp.
-                postageStamper.Stamp(args.Hash.Value);
+                postageStamper.Stamp(args.ChunkReference.Value.Hash);
             
                 // Store chunk.
-                var chunk = new SwarmCac(args.Hash.Value, args.SpanData);
+                var chunk = new SwarmCac(args.ChunkReference.Value.Hash, args.SpanData);
                 await chunkStore.AddAsync(chunk).ConfigureAwait(false);
             }
 

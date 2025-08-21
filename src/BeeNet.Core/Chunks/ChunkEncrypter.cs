@@ -59,17 +59,23 @@ namespace Etherna.BeeNet.Chunks
             return SwarmReference.EncryptedSize * dataShards + parities * SwarmHash.HashSize;
         }
         
-        public static (EncryptionKey256 Key, byte[] EncSpan, byte[] EncData) EncryptChunk(
+        public static EncryptionKey256 EncryptChunk(
+            Span<byte> chunkSpanData,
+            EncryptionKey256? key,
+            Hasher hasher) =>
+            EncryptChunk(chunkSpanData, key, chunkSpanData[..SwarmCac.SpanSize], chunkSpanData[SwarmCac.SpanSize..], hasher);
+        
+        public static EncryptionKey256 EncryptChunk(
             ReadOnlySpan<byte> chunkSpanData,
             EncryptionKey256? key,
-            Hasher hasher)
+            Hasher hasher,
+            out byte[] encryptedSpan,
+            out byte[] encryptedData)
         {
-            var encryptedSpan = new byte[SwarmCac.SpanSize];
-            var encryptedData = new byte[SwarmCac.DataSize];
+            encryptedSpan = new byte[SwarmCac.SpanSize];
+            encryptedData = new byte[SwarmCac.DataSize];
 
-            key = EncryptChunk(chunkSpanData, key, encryptedSpan, encryptedData, hasher);
-            
-            return (key.Value, encryptedSpan, encryptedData);
+            return EncryptChunk(chunkSpanData, key, encryptedSpan, encryptedData, hasher);
         }
 
         public static EncryptionKey256 EncryptChunk(
