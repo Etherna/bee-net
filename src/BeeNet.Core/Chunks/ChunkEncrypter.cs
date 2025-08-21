@@ -24,19 +24,6 @@ namespace Etherna.BeeNet.Chunks
     public static class ChunkEncrypter
     {
         // Methods.
-        public static void Decrypt(
-            ReadOnlySpan<byte> data,
-            EncryptionKey256 key,
-            uint initCtr,
-            Span<byte> decryptedData,
-            Hasher hasher)
-        {
-            if (data.Length != decryptedData.Length)
-                throw new ArgumentException("Data length must be equal to decrypted data length");
-
-            Transform(data, key, initCtr, decryptedData, hasher);
-        }
-
         /// <summary>
         /// Decrypt a chunk
         /// </summary>
