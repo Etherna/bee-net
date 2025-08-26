@@ -183,11 +183,11 @@ namespace Etherna.BeeNet.Chunks
                     
                     // Decrypt chunk's data.
                     int dataLength;
-                    if (reference.EncryptionKey.HasValue)
+                    if (reference.IsEncrypted)
                     {
                         dataLength = ChunkEncrypter.DecryptChunk(
                             chunk.SpanData.Span,
-                            reference.EncryptionKey.Value,
+                            reference.EncryptionKey!.Value,
                             chunkSpanbuffer,
                             chunkDataBuffer,
                             hasher);
@@ -299,7 +299,7 @@ namespace Etherna.BeeNet.Chunks
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                 }
                 
-                // Resolve child chunks from reference list.
+                // Resolve child chunks from the reference list.
                 levelChunkReferencePairs = levelChildReferences.Select(reference =>
                     ((SwarmCac)childChunksPool[reference.Hash], reference)).ToArray();
             }

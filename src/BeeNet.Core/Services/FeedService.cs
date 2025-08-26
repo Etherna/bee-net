@@ -100,7 +100,7 @@ namespace Etherna.BeeNet.Services
             feedManifest.Add(
                 MantarayManifestBase.RootPath,
                 ManifestEntry.NewFile(
-                    SwarmHash.Zero,
+                    SwarmReference.Zero,
                     new Dictionary<string, string>
                     {
                         [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
@@ -108,7 +108,7 @@ namespace Etherna.BeeNet.Services
                         [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                     }));
 
-            return await feedManifest.GetHashAsync(hasher).ConfigureAwait(false);
+            return await feedManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
         }
     }
 }

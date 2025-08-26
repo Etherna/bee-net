@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.JsonConverters
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
 
-            return reader.GetString()!;
+            return SwarmReference.FromString(reader.GetString()!);
         }
 
         public override SwarmReference ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.JsonConverters
             if (reader.TokenType != JsonTokenType.PropertyName)
                 throw new JsonException();
 
-            return reader.GetString()!;
+            return SwarmReference.FromString(reader.GetString()!);
         }
 
         public override void Write(Utf8JsonWriter writer, SwarmReference value, JsonSerializerOptions options)

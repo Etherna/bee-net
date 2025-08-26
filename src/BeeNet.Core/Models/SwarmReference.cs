@@ -89,7 +89,7 @@ namespace Etherna.BeeNet.Models
         public int Size => byteReference.Length;
         
         // Static properties.
-        public static SwarmReference Zero { get; } = new byte[PlainSize];
+        public static SwarmReference Zero { get; } = SwarmHash.Zero;
         
         // Methods.
         public bool Equals(SwarmReference other) => byteReference.Span.SequenceEqual(other.byteReference.Span);

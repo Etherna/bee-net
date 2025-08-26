@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     /// Calculate hash of each chunk
     /// </summary>
     /// <param name="compactLevel">Number of hashes to try when searching for the best fist in buckets</param>
-    /// <param name="isEncrypted">Encrypt chunk with random keys. KeysToTest = Max(compactLevel, 1)</param>
+    /// <param name="isEncrypted">Encrypt chunk with random keys. If true, "KeysToTest = Max(compactLevel, 1)"</param>
     /// <param name="nextStage">Next pipeline stage</param>
     internal sealed class ChunkBmtPipelineStage(
         ushort compactLevel,
@@ -36,12 +36,10 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         : IHasherPipelineStage
     {
         // Private classes.
-        private class EncryptedChunkResult(
-            SwarmReference chunkReference,
-            ReadOnlyMemory<byte> encryptedSpanData)
+        private readonly struct EncryptedChunkResult
         {
-            public SwarmReference ChunkReference { get; } = chunkReference;
-            public ReadOnlyMemory<byte> EncryptedSpanData { get; } = encryptedSpanData;
+            public SwarmReference Reference { init; get; }
+            public ReadOnlyMemory<byte> SpanData { init; get; }
         }
         
         // Fields.
@@ -65,11 +63,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             if (args.SpanData.Length > SwarmCac.SpanDataSize)
                 throw new InvalidOperationException("Data can't be longer than chunk + span size here");
             
-            // Decide to encrypt chunk or not.
+            // Decide if encrypt chunk or not.
             if (compactLevel == 0 && !isEncrypted)
             {
                 // If no chunk compaction or encryption are involved, simply calculate the hash and proceed.
-                args.ChunkReference = args.SwarmChunkBmt.Hash(args.SpanData);
+                args.Reference = SwarmReference.FromSwarmHash(args.SwarmChunkBmt.Hash(args.SpanData));
                 args.SwarmChunkBmt.Clear();
             }
             else
@@ -79,8 +77,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     GetEncryptedChunk(args, isEncrypted) :
                     await GetBestEncryptedChunkAsync(args, compactLevel, isEncrypted).ConfigureAwait(false);
                 
-                args.ChunkReference = encryptionResult.ChunkReference;
-                args.SpanData = encryptionResult.EncryptedSpanData;
+                args.Reference = encryptionResult.Reference;
+                args.SpanData = encryptionResult.SpanData;
             }
 
             await nextStage.FeedAsync(args).ConfigureAwait(false);
@@ -158,7 +156,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     return encryptionCache[bestKeyAttempt];
             
                 // Check the optimistic result, and keep if valid.
-                var bestBucketId = encryptionCache[bestKeyAttempt].ChunkReference.Hash.ToBucketId();
+                var bestBucketId = encryptionCache[bestKeyAttempt].Reference.Hash.ToBucketId();
                 var actualCollisions = PostageStamper.StampIssuer.Buckets.GetCollisions(bestBucketId);
             
                 if (actualCollisions == expectedCollisions)
@@ -196,9 +194,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Calculate the hash and return result.
             var encryptedChunkHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
             args.SwarmChunkBmt.Clear();
-            return new EncryptedChunkResult(
-                new SwarmReference(encryptedChunkHash, chunkKey.Value),
-                encryptedSpanData);
+            return new EncryptedChunkResult
+            {
+                Reference = new SwarmReference(encryptedChunkHash, chunkKey.Value),
+                SpanData = encryptedSpanData
+            };
         }
         
         private (ushort bestKeyAttempt, uint expectedCollisions, bool wasAlreadyStamped) SearchFirstBestChunkKey(
@@ -218,7 +218,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 
                 if (optimisticCache.TryGetValue(i, out var cachedValues))
                 {
-                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(cachedValues.ChunkReference.Hash.ToBucketId());
+                    collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(cachedValues.Reference.Hash.ToBucketId());
                 }
                 else
                 {
@@ -237,7 +237,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
                     args.SwarmChunkBmt.Clear();
-                    optimisticCache[i] = new(new SwarmReference(encryptedHash, chunkKey.Value), encryptedSpanData);
+                    optimisticCache[i] = new EncryptedChunkResult
+                    {
+                        Reference = new SwarmReference(encryptedHash, chunkKey.Value),
+                        SpanData = encryptedSpanData
+                    };
 
                     // Check key collisions.
                     collisions = PostageStamper.StampIssuer.Buckets.GetCollisions(encryptedHash.ToBucketId());
@@ -249,7 +253,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 
                 // Check if hash was already stamped.
                 if (PostageStamper.StampStore.TryGet(
-                        StampStoreItem.BuildId(PostageStamper.StampIssuer.PostageBatch.Id, optimisticCache[i].ChunkReference.Hash),
+                        StampStoreItem.BuildId(PostageStamper.StampIssuer.PostageBatch.Id, optimisticCache[i].Reference.Hash),
                         out _))
                     return (i, collisions, true);
                 

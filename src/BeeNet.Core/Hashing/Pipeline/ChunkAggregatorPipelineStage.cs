@@ -81,7 +81,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     await AddChunkToLevelAsync(
                         1,
                         new ChunkHeader(
-                            processingChunk.ChunkReference!.Value,
+                            processingChunk.Reference!.Value,
                             processingChunk.Span,
                             false),
                         args.SwarmChunkBmt).ConfigureAwait(false);
@@ -194,7 +194,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         {
             var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
             await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
-            return args.ChunkReference!.Value;
+            return args.Reference!.Value;
         }
     }
 }

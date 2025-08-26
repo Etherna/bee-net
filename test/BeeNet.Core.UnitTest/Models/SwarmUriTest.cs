@@ -31,18 +31,18 @@ namespace Etherna.BeeNet.Models
         }
 
         public class HashAndPathToUriTestElement(
-            SwarmHash? inputHash,
+            SwarmReference? inputReference,
             string? inputPath,
             Type? expectedExceptionType,
-            SwarmHash? expectedHash,
+            SwarmReference? expectedReference,
             string expectedPath,
             UriKind expectedUriKind,
             bool expectedIsRooted)
         {
-            public SwarmHash? InputHash { get; } = inputHash;
+            public SwarmReference? InputReference { get; } = inputReference;
             public string? InputPath { get; } = inputPath;
             public Type? ExpectedExceptionType { get; } = expectedExceptionType;
-            public SwarmHash? ExpectedHash { get; } = expectedHash;
+            public SwarmReference? ExpectedReference { get; } = expectedReference;
             public string ExpectedPath { get; } = expectedPath;
             public bool ExpectedIsRooted { get; } = expectedIsRooted;
             public UriKind ExpectedUriKind { get; } = expectedUriKind;
@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Models
             string inputString,
             UriKind inputUriKind,
             Type? expectedExceptionType,
-            SwarmHash? expectedHash,
+            SwarmReference? expectedReference,
             string expectedPath,
             UriKind expectedUriKind,
             bool expectedIsRooted)
@@ -82,7 +82,7 @@ namespace Etherna.BeeNet.Models
             public string InputString { get; } = inputString;
             public UriKind InputUriKind { get; } = inputUriKind;
             public Type? ExpectedExceptionType { get; } = expectedExceptionType;
-            public SwarmHash? ExpectedHash { get; } = expectedHash;
+            public SwarmReference? ExpectedReference { get; } = expectedReference;
             public string ExpectedPath { get; } = expectedPath;
             public bool ExpectedIsRooted { get; } = expectedIsRooted;
             public UriKind ExpectedUriKind { get; } = expectedUriKind;
@@ -112,14 +112,14 @@ namespace Etherna.BeeNet.Models
                         new SwarmUri("/rooted/path", UriKind.Relative)),
                     
                     // Relative and absolute paths.
-                    new(["Im", "a", "relative", new SwarmUri(SwarmHash.Zero, "absolute"), "path"],
+                    new(["Im", "a", "relative", new SwarmUri(SwarmReference.Zero, "absolute"), "path"],
                         new SwarmUri("0000000000000000000000000000000000000000000000000000000000000000/absolute/path", UriKind.Absolute)),
                     
                     // Multi absolute paths.
                     new([
-                            new SwarmUri(new SwarmHash("0000000000000000000000000000000000000000000000000000000000000000"), null),
+                            new SwarmUri(new SwarmReference("0000000000000000000000000000000000000000000000000000000000000000"), null),
                             new SwarmUri(null, "zeros"),
-                            new SwarmUri(new SwarmHash("1111111111111111111111111111111111111111111111111111111111111111"), null),
+                            new SwarmUri(new SwarmReference("1111111111111111111111111111111111111111111111111111111111111111"), null),
                             new SwarmUri(null, "ones")
                         ],
                         new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111/ones", UriKind.Absolute)),
@@ -145,10 +145,10 @@ namespace Etherna.BeeNet.Models
                         false),
                     
                     // Only hash.
-                    new(SwarmHash.Zero,
+                    new(SwarmReference.Zero,
                         null,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -172,19 +172,19 @@ namespace Etherna.BeeNet.Models
                         true),
                     
                     // Hash and not rooted path.
-                    new(SwarmHash.Zero,
+                    new(SwarmReference.Zero,
                         "not/rooted/path",
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/not/rooted/path",
                         UriKind.Absolute,
                         true),
                     
                     // Hash and rooted path.
-                    new(SwarmHash.Zero,
+                    new(SwarmReference.Zero,
                         "/rooted/path",
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/rooted/path",
                         UriKind.Absolute,
                         true),
@@ -222,7 +222,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000",
                         UriKind.RelativeOrAbsolute,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -231,7 +231,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000/not/rooted/path",
                         UriKind.RelativeOrAbsolute,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/not/rooted/path",
                         UriKind.Absolute,
                         true),
@@ -267,7 +267,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000",
                         UriKind.Absolute,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -276,7 +276,7 @@ namespace Etherna.BeeNet.Models
                     new("/0000000000000000000000000000000000000000000000000000000000000000/",
                         UriKind.Absolute,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -285,7 +285,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
                         UriKind.Absolute,
                         null,
-                        SwarmHash.Zero,
+                        SwarmReference.Zero,
                         "/Im/a/path",
                         UriKind.Absolute,
                         true),
@@ -312,8 +312,8 @@ namespace Etherna.BeeNet.Models
                 {
                     // Relative uri with prefix address.
                     new(new SwarmUri(null, "Im/path"),
-                        new SwarmAddress(SwarmHash.Zero, "Im/prefix"),
-                        new SwarmAddress(SwarmHash.Zero, "/Im/prefix/Im/path"),
+                        new SwarmAddress(SwarmReference.Zero, "Im/prefix"),
+                        new SwarmAddress(SwarmReference.Zero, "/Im/prefix/Im/path"),
                         null),
                     
                     // relative uri without prefix address.
@@ -324,7 +324,7 @@ namespace Etherna.BeeNet.Models
                     
                     // Absolute uri with prefix address.
                     new(new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
-                        new SwarmAddress(SwarmHash.Zero, "Im/prefix"),
+                        new SwarmAddress(SwarmReference.Zero, "Im/prefix"),
                         new SwarmAddress("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
                         null),
                     
@@ -346,13 +346,13 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<TryGetRelativeToUriTestElement>
                 {
                     // Hash and not hash.
-                    new (SwarmHash.Zero,
+                    new (SwarmReference.Zero,
                         "not/an/hash",
                         null),
                     
                     // Different hashes.
-                    new (SwarmHash.Zero,
-                        new SwarmHash("1111111111111111111111111111111111111111111111111111111111111111"),
+                    new (SwarmReference.Zero,
+                        new SwarmReference("1111111111111111111111111111111111111111111111111111111111111111"),
                         null),
                     
                     // Different paths
@@ -430,11 +430,11 @@ namespace Etherna.BeeNet.Models
                         "/relative/rooted/path"),
                     
                     // Absolute with not rooted path.
-                    new(new SwarmUri(SwarmHash.Zero, "relative/not/rooted/path"),
+                    new(new SwarmUri(SwarmReference.Zero, "relative/not/rooted/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/relative/not/rooted/path"),
                     
                     // Absolute with rooted path.
-                    new(new SwarmUri(SwarmHash.Zero, "/relative/rooted/path"),
+                    new(new SwarmUri(SwarmReference.Zero, "/relative/rooted/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/relative/rooted/path"),
                 };
 
@@ -448,7 +448,7 @@ namespace Etherna.BeeNet.Models
         {
             var result = SwarmUri.Combine(test.InputUris);
             
-            Assert.Equal(test.ExpectedUri.Hash, result.Hash);
+            Assert.Equal(test.ExpectedUri.Reference, result.Reference);
             Assert.Equal(test.ExpectedUri.Path, result.Path);
         }
         
@@ -459,13 +459,13 @@ namespace Etherna.BeeNet.Models
             {
                 Assert.Throws(
                     test.ExpectedExceptionType,
-                    () => new SwarmUri(test.InputHash, test.InputPath));
+                    () => new SwarmUri(test.InputReference, test.InputPath));
             }
             else
             {
-                var result = new SwarmUri(test.InputHash, test.InputPath);
+                var result = new SwarmUri(test.InputReference, test.InputPath);
         
-                Assert.Equal(test.ExpectedHash, result.Hash);
+                Assert.Equal(test.ExpectedReference, result.Reference);
                 Assert.Equal(test.ExpectedPath, result.Path);
                 Assert.Equal(test.ExpectedUriKind, result.UriKind);
                 Assert.Equal(test.ExpectedIsRooted, result.IsRooted);
@@ -485,7 +485,7 @@ namespace Etherna.BeeNet.Models
             {
                 var result = test.OriginUri.ToSwarmAddress(test.PrefixAddress);
         
-                Assert.Equal(test.ExpectedAddress!.Value.Hash, result.Hash);
+                Assert.Equal(test.ExpectedAddress!.Value.Reference, result.Reference);
                 Assert.Equal(test.ExpectedAddress!.Value.Path, result.Path);
             }
         }
@@ -502,7 +502,7 @@ namespace Etherna.BeeNet.Models
             else
             {
                 Assert.True(success);
-                Assert.Equal(test.ExpectedUri.Value.Hash, result.Hash);
+                Assert.Equal(test.ExpectedUri.Value.Reference, result.Reference);
                 Assert.Equal(test.ExpectedUri.Value.Path, result.Path);
             }
         }
@@ -520,7 +520,7 @@ namespace Etherna.BeeNet.Models
             {
                 var result = new SwarmUri(test.InputString, test.InputUriKind);
 
-                Assert.Equal(test.ExpectedHash, result.Hash);
+                Assert.Equal(test.ExpectedReference, result.Reference);
                 Assert.Equal(test.ExpectedPath, result.Path);
                 Assert.Equal(test.ExpectedUriKind, result.UriKind);
                 Assert.Equal(test.ExpectedIsRooted, result.IsRooted);

@@ -41,8 +41,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
         
         // Properties.
-        public SwarmReference? ChunkReference { get; internal set; }
-
         /// <summary>
         /// Ordered id, from 0 to n with the last chunk
         /// </summary>
@@ -52,9 +50,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         /// Previous chunk semaphore. Occuped resource until chunk is processing.
         /// </summary>
         public SemaphoreSlim? PrevChunkSemaphore { get; }
+        
+        public SwarmReference? Reference { get; internal set; }
 
         /// <summary>
-        /// Always unecrypted span uint64
+        /// Always not encrypted span uint64
         /// </summary>
         public ReadOnlyMemory<byte> Span { get; }
 

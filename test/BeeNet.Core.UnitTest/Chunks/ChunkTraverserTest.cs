@@ -603,7 +603,7 @@ namespace Etherna.BeeNet.Chunks
                     fileCEntryMetadata));
 
             // Build manifest chunks.
-            await dirManifest.GetHashAsync(new Hasher()).ConfigureAwait(false);
+            await dirManifest.GetReferenceAsync(new Hasher()).ConfigureAwait(false);
 
             return chunkStore;
         }
