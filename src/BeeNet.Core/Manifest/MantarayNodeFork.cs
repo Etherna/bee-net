@@ -63,8 +63,8 @@ namespace Etherna.BeeNet.Manifest
             Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
             bytes.AddRange(prefixBytes);
 
-            // Node hash.
-            bytes.AddRange(Node.Hash.ToByteArray());
+            // Node reference.
+            bytes.AddRange(Node.Reference.ToByteArray());
 
             // Metadata.
             if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))

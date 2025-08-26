@@ -30,17 +30,12 @@ namespace Etherna.BeeNet.Manifest
         public const int VersionHashSize = 31;
 
         // Properties.
-        public EncryptionKey256? EntryEncryptionKey  =>
-            Metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr) ?
-                new EncryptionKey256(encryptKeyStr) : (EncryptionKey256?)null;
-        public abstract SwarmHash? EntryHash { get; }
-        public bool EntryUseRecursiveEncryption =>
-            Metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr) && bool.Parse(useRecursiveEncrypStr);
+        public abstract SwarmReference? EntryReference { get; }
         public abstract IReadOnlyDictionary<char, MantarayNodeFork> Forks { get; }
-        public abstract SwarmHash Hash { get; }
         public abstract IReadOnlyDictionary<string, string> Metadata { get; }
         public abstract NodeType NodeTypeFlags { get; }
         public abstract EncryptionKey256? ObfuscationKey { get; }
+        public abstract SwarmReference Reference { get; }
         
         // Methods.
         public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
@@ -75,12 +70,10 @@ namespace Etherna.BeeNet.Manifest
             // If the path is empty and entry is not null, return the entry
             if (path.Length == 0)
             {
-                if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
+                if (EntryReference.HasValue && EntryReference != SwarmReference.Zero)
                     return new()
                     {
-                        Reference = new SwarmReference(
-                            EntryHash.Value,
-                            EntryEncryptionKey),
+                        Reference = EntryReference.Value,
                         Metadata = Metadata,
                     };
             

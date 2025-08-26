@@ -118,15 +118,12 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var dirManifest = new WritableMantarayManifest(
-                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    redundancyLevel,
-                    encrypt,
-                    0,
-                    chunkCuncorrency,
-                    readOnlyPipeline),
-                compactLevel);
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                compactLevel,
+                chunkCuncorrency);
 
             // Iterate through the files.
             foreach (var filePath in fileNames)
@@ -252,15 +249,12 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var manifest = new WritableMantarayManifest(
-                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    redundancyLevel,
-                    encrypt,
-                    0,
-                    chunkCuncorrency,
-                    readOnlyPipeline),
-                compactLevel);
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                compactLevel,
+                chunkCuncorrency);
 
             manifest.Add(
                 MantarayManifestBase.RootPath,
@@ -289,7 +283,7 @@ namespace Etherna.BeeNet.Services
                 postageStamper.StampIssuer);
         }
 
-        public Task<SwarmHash> WriteDataChunksAsync(
+        public Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             byte[] data,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -309,7 +303,7 @@ namespace Etherna.BeeNet.Services
                 chunkCuncorrency);
         }
 
-        public async Task<SwarmHash> WriteDataChunksAsync(
+        public async Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             Stream stream,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -324,7 +318,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer,
                 new MemoryStampStore());
             
-            // Create chunks and get file hash.
+            // Create chunks and get file reference.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
                 postageStamper,
@@ -332,10 +326,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            
-            // Return file hash.
-            return fileHashingResult.Hash;
+            return await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
         }
     }
 }

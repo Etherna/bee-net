@@ -21,8 +21,8 @@ namespace Etherna.BeeNet.Manifest
     public interface IReadOnlyMantarayNode
     {
         // Properties.
-        SwarmHash? EntryHash { get; }
-        SwarmHash Hash { get; }
+        SwarmReference? EntryReference { get; }
+        SwarmReference Reference { get; }
         IReadOnlyDictionary<string, string> Metadata { get; }
         NodeType NodeTypeFlags { get; }
         EncryptionKey256? ObfuscationKey { get; }

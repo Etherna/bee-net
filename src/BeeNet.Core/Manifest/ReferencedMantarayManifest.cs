@@ -27,25 +27,32 @@ namespace Etherna.BeeNet.Manifest
         // Constructors.
         public ReferencedMantarayManifest(
             IReadOnlyChunkStore chunkStore,
-            SwarmHash rootHash,
+            SwarmReference rootReference,
             bool useChunkStoreCache = false)
         {
-            rootNode = new ReferencedMantarayNode(chunkStore, rootHash, null, NodeType.Edge, useChunkStoreCache);
+            rootNode = new ReferencedMantarayNode(chunkStore, rootReference, null, NodeType.Edge, useChunkStoreCache);
         }
 
         public ReferencedMantarayManifest(
             IReadOnlyChunkStore chunkStore,
             SwarmCac rootChunk,
+            SwarmReference rootChunkReference,
             bool useChunkStoreCache = false)
         {
-            rootNode = new ReferencedMantarayNode(chunkStore, rootChunk, null, NodeType.Edge, useChunkStoreCache);
+            rootNode = new ReferencedMantarayNode(
+                chunkStore,
+                rootChunk,
+                rootChunkReference,
+                null,
+                NodeType.Edge,
+                useChunkStoreCache);
         }
 
         // Properties.
         public override IReadOnlyMantarayNode RootNode => rootNode;
 
         // Methods.
-        public override Task<SwarmReference> GetHashAsync(Hasher hasher) =>
-            Task.FromResult(new SwarmReference(RootNode.Hash, null));
+        public override Task<SwarmReference> GetReferenceAsync(Hasher hasher) =>
+            Task.FromResult(RootNode.Reference);
     }
 }
