@@ -173,12 +173,8 @@ namespace Etherna.BeeNet.Chunks
                         continue;
                     }
                     await onChunkFoundAsync(cac).ConfigureAwait(false);
-
-                    // Skip iteration on data chunks.
-                    if (cac.IsDataChunk)
-                        continue;
-
-                    // Extract intermediate chunk data and decrypt.
+                    
+                    // Decrypt chunk.
                     ReadOnlyMemory<byte> cacData;
                     if (reference.IsEncrypted)
                     {
@@ -187,6 +183,10 @@ namespace Etherna.BeeNet.Chunks
                         cacData = dataBuffer.AsMemory(0, dataLength);
                     }
                     else cacData = cac.Data;
+
+                    // Skip iteration on data chunks.
+                    if (SwarmCac.SpanToLength(spanBuffer) <= SwarmCac.DataSize)
+                        continue;
 
                     // Decode child chunk.
                     for (int i = 0; i < cacData.Length;)

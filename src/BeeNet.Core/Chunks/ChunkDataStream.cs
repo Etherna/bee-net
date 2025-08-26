@@ -171,7 +171,7 @@ namespace Etherna.BeeNet.Chunks
             (SwarmCac Chunk, SwarmReference Reference)[] levelChunkReferencePairs = [new(rootChunk, rootReference)];
             
             // Reuse these for memory optimization.
-            var chunkSpanbuffer = new byte[SwarmCac.SpanSize];
+            var chunkSpanBuffer = new byte[SwarmCac.SpanSize];
             var chunkDataBuffer = new byte[SwarmCac.DataSize];
             var levelChildReferences = new List<SwarmReference>();
 
@@ -201,7 +201,7 @@ namespace Etherna.BeeNet.Chunks
                         dataLength = ChunkEncrypter.DecryptChunk(
                             chunk.SpanData.Span,
                             reference.EncryptionKey!.Value,
-                            chunkSpanbuffer,
+                            chunkSpanBuffer,
                             chunkDataBuffer,
                             hasher);
                     }
@@ -212,7 +212,8 @@ namespace Etherna.BeeNet.Chunks
                     }
                     
                     // If is a data chunk, report data on buffer and update bounds. Then continue.
-                    if (chunk.IsDataChunk)
+                    var referredDataSize = SwarmCac.SpanToLength(chunkSpanBuffer);
+                    if (referredDataSize <= SwarmCac.DataSize)
                     {
                         //check end offset consistency
                         var dataToCopyStart = isFirstChunkInLevel ? (int)levelStartDataOffset : 0;
@@ -235,7 +236,6 @@ namespace Etherna.BeeNet.Chunks
                         throw new InvalidOperationException("Intermediate chunk's data length is not multiple of segment size.");
             
                     // Find referred data size by segment.
-                    var referredDataSize = SwarmCac.SpanToLength(chunkSpanbuffer);
                     var segmentsAmount = (uint)(dataLength / segmentSize);
                     while (dataSizeBySegment * segmentsAmount < referredDataSize)
                         dataSizeBySegment *= maxSegmentsInChunk;
