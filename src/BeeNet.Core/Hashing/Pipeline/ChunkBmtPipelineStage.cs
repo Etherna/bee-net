@@ -231,7 +231,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     }
                     
                     // Encrypt chunk and extract key.
-                    var encryptedSpanData = args.SpanData.ToArray();
+                    var encryptedSpanData = new byte[SwarmCac.SpanDataSize];
+                    args.SpanData.CopyTo(encryptedSpanData);
                     chunkKey = ChunkEncrypter.EncryptChunk(encryptedSpanData, chunkKey, args.SwarmChunkBmt.Hasher);
                     
                     // Calculate hash, bucket id, and save in cache.

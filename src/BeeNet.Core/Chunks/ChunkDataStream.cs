@@ -254,9 +254,12 @@ namespace Etherna.BeeNet.Chunks
                     }
 
                     // Reverse read child chunks references and prepend them on reference list.
-                    for (var cursor = chunkEndPosition; cursor > chunkStartPosition; cursor -= (int)segmentSize)
+                    for (var cursor = chunkEndPosition; cursor > chunkStartPosition;)
+                    {
+                        cursor -= (int)segmentSize;
                         levelChildReferences.Insert(0, 
                             new SwarmReference(chunkDataBuffer.Slice(cursor, cursor + (int)segmentSize)));
+                    }
                 }
                 
                 // If next level is empty, set cache and return.
