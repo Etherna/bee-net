@@ -80,8 +80,21 @@ namespace Etherna.BeeNet.Chunks
             IReadOnlyChunkStore chunkStore)
         {
             ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
-            
-            var length =  SwarmCac.SpanToLength(rootChunk.Span.Span);
+
+            ulong length;
+            if (reference.IsEncrypted)
+            {
+                var spanBuffer = new byte[SwarmCac.SpanSize];
+                var dataBuffer = new byte[SwarmCac.DataSize];
+                ChunkEncrypter.DecryptChunk(
+                    rootChunk.Span.Span,
+                    reference.EncryptionKey!.Value,
+                    spanBuffer,
+                    dataBuffer,
+                    new Hasher());
+                length =  SwarmCac.SpanToLength(spanBuffer);
+            }
+            else length =  SwarmCac.SpanToLength(rootChunk.Span.Span);
 
             return new ChunkDataStream(
                 rootChunk,
@@ -222,7 +235,7 @@ namespace Etherna.BeeNet.Chunks
                         throw new InvalidOperationException("Intermediate chunk's data length is not multiple of segment size.");
             
                     // Find referred data size by segment.
-                    var referredDataSize = SwarmCac.SpanToLength(chunk.Span.Span);
+                    var referredDataSize = SwarmCac.SpanToLength(chunkSpanbuffer);
                     var segmentsAmount = (uint)(dataLength / segmentSize);
                     while (dataSizeBySegment * segmentsAmount < referredDataSize)
                         dataSizeBySegment *= maxSegmentsInChunk;
