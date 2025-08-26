@@ -141,7 +141,7 @@ namespace Etherna.BeeNet
                     reference?.ToString(),
                     cancellationToken).ConfigureAwait(false);
             return new CheckPinsResult(
-                hash: response.Reference,
+                reference: response.Reference,
                 invalid: response.Invalid,
                 missing: response.Missing,
                 total: response.Total);

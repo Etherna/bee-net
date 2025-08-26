@@ -15,12 +15,12 @@
 namespace Etherna.BeeNet.Models
 {
     public sealed class CheckPinsResult(
-        SwarmHash hash,
+        SwarmReference reference,
         int invalid,
         int missing,
         int total)
     {
-        public SwarmHash Hash { get; } = hash;
+        public SwarmReference Reference { get; } = reference;
         public int Invalid { get; } = invalid;
         public int Missing { get; } = missing;
         public int Total { get; } = total;
