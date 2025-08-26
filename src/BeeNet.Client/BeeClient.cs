@@ -448,7 +448,7 @@ namespace Etherna.BeeNet
             }
             var chunkData = memoryStream.ToArray();
 
-            return SwarmChunk.BuildChunkFromReferenceAndData(reference, chunkData, swarmChunkBmt);
+            return SwarmChunk.BuildChunkFromHashAndData(reference.Hash, chunkData, swarmChunkBmt);
         }
 
         public async Task<Stream> GetChunkStreamAsync(

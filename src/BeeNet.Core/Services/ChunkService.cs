@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Services
                 compactLevel);
 
             // Iterate through the files.
-            foreach (var file in fileNames)
+            foreach (var filePath in fileNames)
             {
                 using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
@@ -139,30 +139,24 @@ namespace Etherna.BeeNet.Services
                     compactLevel,
                     chunkCuncorrency);
                 
-                var fileContentType = FileContentTypeProvider.GetContentType(file);
-                var fileName = Path.GetFileName(file);
-                var fileStream = getFileStream(file);
+                var fileContentType = FileContentTypeProvider.GetContentType(filePath);
+                var fileName = Path.GetFileName(filePath);
+                var fileStream = getFileStream(filePath);
                 await using (fileStream.ConfigureAwait(false))
                 {
-                    var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                    var fileReference = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
                     totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
                 
                     // Add file entry to dir manifest.
-                    var fileEntryMetadata = new Dictionary<string, string>
-                    {
-                        [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
-                    };
-                    if (fileHashingResult.EncryptionKey != null)
-                        fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
-                    if (fileHashingResult.UseRecursiveEncryption)
-                        fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
-                
                     dirManifest.Add(
-                        file,
+                        filePath,
                         ManifestEntry.NewFile(
-                            fileHashingResult.Hash,
-                            fileEntryMetadata));
+                            fileReference,
+                            new Dictionary<string, string>
+                            {
+                                [ManifestEntry.ContentTypeKey] = fileContentType,
+                                [ManifestEntry.FilenameKey] = fileName
+                            }));
                 }
             }
             
@@ -182,7 +176,7 @@ namespace Etherna.BeeNet.Services
             }
 
             // Get manifest hash.
-            var chunkHashingResult = await dirManifest.GetHashAsync(hasher).ConfigureAwait(false);
+            var chunkHashingResult = await dirManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
@@ -250,11 +244,11 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            var fileReference = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // If file name is null or empty, use the file hash as name.
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = fileHashingResult.Hash.ToString();
+                fileName = fileReference.ToString();
             
             // Create manifest.
             var manifest = new WritableMantarayManifest(
@@ -275,24 +269,18 @@ namespace Etherna.BeeNet.Services
                     {
                         [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
                     }));
-
-            var fileEntryMetadata = new Dictionary<string, string>
-            {
-                [ManifestEntry.ContentTypeKey] = fileContentType,
-                [ManifestEntry.FilenameKey] = fileName
-            };
-            if (fileHashingResult.EncryptionKey != null)
-                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
-            if (fileHashingResult.UseRecursiveEncryption)
-                fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileHashingResult.Hash,
-                    fileEntryMetadata));
+                    fileReference,
+                    new Dictionary<string, string>
+                    {
+                        [ManifestEntry.ContentTypeKey] = fileContentType,
+                        [ManifestEntry.FilenameKey] = fileName
+                    }));
 
-            var chunkHashingResult = await manifest.GetHashAsync(hasher).ConfigureAwait(false);
+            var chunkHashingResult = await manifest.GetReferenceAsync(hasher).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
