@@ -207,6 +207,7 @@ namespace Etherna.BeeNet.Chunks
                     }
                     else
                     {
+                        chunk.Span.CopyTo(chunkSpanBuffer);
                         chunk.Data.CopyTo(chunkDataBuffer);
                         dataLength = chunk.Data.Length;
                     }
