@@ -182,7 +182,11 @@ namespace Etherna.BeeNet.Chunks
                             cac, reference.EncryptionKey!.Value, spanBuffer, dataBuffer, hasher);
                         cacData = dataBuffer.AsMemory(0, dataLength);
                     }
-                    else cacData = cac.Data;
+                    else
+                    {
+                        cac.Span.CopyTo(spanBuffer);
+                        cacData = cac.Data;
+                    }
 
                     // Skip iteration on data chunks.
                     if (SwarmCac.SpanToLength(spanBuffer) <= SwarmCac.DataSize)
