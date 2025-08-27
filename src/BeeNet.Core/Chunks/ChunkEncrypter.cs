@@ -27,14 +27,43 @@ namespace Etherna.BeeNet.Chunks
         /// <summary>
         /// Decrypt a chunk
         /// </summary>
-        /// <param name="chunkSpanData"></param>
-        /// <param name="key"></param>
-        /// <param name="decryptedSpan"></param>
-        /// <param name="decryptedData"></param>
-        /// <param name="hasher"></param>
+        /// <param name="chunk">Encrypted chunk</param>
+        /// <param name="key">Encryption key</param>
+        /// <param name="decryptedSpan">Output buffer for decrypted span</param>
+        /// <param name="decryptedData">Output buffer for decrypted data</param>
+        /// <param name="hasher">Hasher instance</param>
         /// <returns>Decrypted chunk data length</returns>
         public static int DecryptChunk(
-            ReadOnlySpan<byte> chunkSpanData,
+            SwarmCac chunk,
+            EncryptionKey256 key,
+            Span<byte> decryptedSpan,
+            Span<byte> decryptedData,
+            Hasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            
+            return DecryptChunk(
+                chunk.Span.Span,
+                chunk.Data.Span,
+                key,
+                decryptedSpan,
+                decryptedData,
+                hasher);
+        }
+
+        /// <summary>
+        /// Decrypt a chunk
+        /// </summary>
+        /// <param name="chunkSpan">Encrypted chunk span</param>
+        /// <param name="chunkData">Encrypted chunk data</param>
+        /// <param name="key">Encryption key</param>
+        /// <param name="decryptedSpan">Output buffer for decrypted span</param>
+        /// <param name="decryptedData">Output buffer for decrypted data</param>
+        /// <param name="hasher">Hasher instance</param>
+        /// <returns>Decrypted chunk data length</returns>
+        public static int DecryptChunk(
+            ReadOnlySpan<byte> chunkSpan,
+            ReadOnlySpan<byte> chunkData,
             EncryptionKey256 key,
             Span<byte> decryptedSpan,
             Span<byte> decryptedData,
@@ -46,8 +75,8 @@ namespace Etherna.BeeNet.Chunks
                 throw new ArgumentException($"{nameof(decryptedData)} must have size {SwarmCac.DataSize}");
             
             // Decrypt.
-            Transform(chunkSpanData[..SwarmCac.SpanSize], key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher);
-            Transform(chunkSpanData[SwarmCac.SpanSize..], key, 0, decryptedData, hasher);
+            Transform(chunkSpan, key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher);
+            Transform(chunkData, key, 0, decryptedData, hasher);
 
             // Calculate real data length removing added padding.
             var (level, decodedSpan) = ChunkRedundancy.DecodeSpanLevel(decryptedSpan);
@@ -58,28 +87,75 @@ namespace Etherna.BeeNet.Chunks
             var (dataShards, parities) = SwarmCac.CountIntermediateReferences(length, level, true);
             return SwarmReference.EncryptedSize * dataShards + parities * SwarmHash.HashSize;
         }
-        
-        public static EncryptionKey256 EncryptChunk(
-            Span<byte> chunkSpanData,
-            EncryptionKey256? key,
-            Hasher hasher) =>
-            EncryptChunk(chunkSpanData, key, chunkSpanData[..SwarmCac.SpanSize], chunkSpanData[SwarmCac.SpanSize..], hasher);
-        
-        public static EncryptionKey256 EncryptChunk(
-            ReadOnlySpan<byte> chunkSpanData,
-            EncryptionKey256? key,
-            Hasher hasher,
-            out byte[] encryptedSpan,
-            out byte[] encryptedData)
-        {
-            encryptedSpan = new byte[SwarmCac.SpanSize];
-            encryptedData = new byte[SwarmCac.DataSize];
 
-            return EncryptChunk(chunkSpanData, key, encryptedSpan, encryptedData, hasher);
+        /// <summary>
+        /// Decrypt a chunk
+        /// </summary>
+        /// <param name="chunkSpan">Encrypted chunk span</param>
+        /// <param name="chunkData">Encrypted chunk data</param>
+        /// <param name="key">Encryption key</param>
+        /// <param name="hasher">Hasher instance</param>
+        /// <param name="decryptedSpanData">Output decrypted spanData</param>
+        public static void DecryptChunk(
+            ReadOnlySpan<byte> chunkSpan,
+            ReadOnlySpan<byte> chunkData,
+            EncryptionKey256 key,
+            Hasher hasher,
+            out ReadOnlyMemory<byte> decryptedSpanData)
+        {
+            var decryptedSpanDataArray = new byte[SwarmCac.SpanDataSize];
+
+            var dataLength = DecryptChunk(
+                chunkSpan,
+                chunkData,
+                key,
+                decryptedSpanDataArray.AsSpan()[..SwarmCac.SpanSize],
+                decryptedSpanDataArray.AsSpan()[SwarmCac.SpanSize..],
+                hasher);
+
+            decryptedSpanData = decryptedSpanDataArray.AsMemory()[..(SwarmCac.SpanSize + dataLength)];
         }
 
+        /// <summary>
+        /// Encrypt a chunk
+        /// </summary>
+        /// <param name="chunk">Source chunk to encrypt</param>
+        /// <param name="key">Encryption key, can be null to create a new random key</param>
+        /// <param name="encryptedSpan">Output buffer for encrypted span</param>
+        /// <param name="encryptedData">Output buffer for encrypted data</param>
+        /// <param name="hasher">Hasher instance</param>
+        /// <returns>The encryption key used</returns>
         public static EncryptionKey256 EncryptChunk(
-            ReadOnlySpan<byte> chunkSpanData,
+            SwarmCac chunk,
+            EncryptionKey256? key,
+            Span<byte> encryptedSpan,
+            Span<byte> encryptedData,
+            Hasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+
+            return EncryptChunk(
+                chunk.Span.Span,
+                chunk.Data.Span,
+                key,
+                encryptedSpan,
+                encryptedData,
+                hasher);
+        }
+
+        /// <summary>
+        /// Encrypt a chunk
+        /// </summary>
+        /// <param name="chunkSpan">Source chunk span to encrypt</param>
+        /// <param name="chunkData">Source chunk data to encrypt</param>
+        /// <param name="key">Encryption key, can be null to create a new random key</param>
+        /// <param name="encryptedSpan">Output buffer for encrypted span</param>
+        /// <param name="encryptedData">Output buffer for encrypted data</param>
+        /// <param name="hasher">Hasher instance</param>
+        /// <returns>The encryption key used</returns>
+        public static EncryptionKey256 EncryptChunk(
+            ReadOnlySpan<byte> chunkSpan,
+            ReadOnlySpan<byte> chunkData,
             EncryptionKey256? key,
             Span<byte> encryptedSpan,
             Span<byte> encryptedData,
@@ -92,10 +168,37 @@ namespace Etherna.BeeNet.Chunks
             
             key ??= EncryptionKey256.BuildNewRandom();
             
-            Transform(chunkSpanData[..SwarmCac.SpanSize], key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
-            Transform(chunkSpanData[SwarmCac.SpanSize..], key.Value, 0, encryptedData, hasher);
+            Transform(chunkSpan, key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
+            Transform(chunkData, key.Value, 0, encryptedData, hasher);
 
             return key.Value;
+        }
+        
+        /// <summary>
+        /// Encrypt a chunk
+        /// </summary>
+        /// <param name="chunkSpan">Source chunk span to encrypt</param>
+        /// <param name="chunkData">Source chunk data to encrypt</param>
+        /// <param name="key">Encryption key, can be null to create a new random key</param>
+        /// <param name="hasher">Hasher instance</param>
+        /// <param name="encryptedSpanData">Output encrypted spanData</param>
+        /// <returns>The encryption key used</returns>
+        public static EncryptionKey256 EncryptChunk(
+            ReadOnlySpan<byte> chunkSpan,
+            ReadOnlySpan<byte> chunkData,
+            EncryptionKey256? key,
+            Hasher hasher,
+            out byte[] encryptedSpanData)
+        {
+            encryptedSpanData = new byte[SwarmCac.SpanDataSize];
+
+            return EncryptChunk(
+                chunkSpan,
+                chunkData,
+                key,
+                encryptedSpanData.AsSpan()[..SwarmCac.SpanSize],
+                encryptedSpanData.AsSpan()[SwarmCac.SpanSize..],
+                hasher);
         }
         
         // Helpers.

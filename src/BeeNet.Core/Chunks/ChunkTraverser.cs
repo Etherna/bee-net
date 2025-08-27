@@ -179,7 +179,7 @@ namespace Etherna.BeeNet.Chunks
                     if (reference.IsEncrypted)
                     {
                         var dataLength = ChunkEncrypter.DecryptChunk(
-                            cac.SpanData.Span, reference.EncryptionKey!.Value, spanBuffer, dataBuffer, hasher);
+                            cac, reference.EncryptionKey!.Value, spanBuffer, dataBuffer, hasher);
                         cacData = dataBuffer.AsMemory(0, dataLength);
                     }
                     else cacData = cac.Data;

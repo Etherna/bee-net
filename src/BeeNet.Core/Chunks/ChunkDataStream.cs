@@ -87,7 +87,7 @@ namespace Etherna.BeeNet.Chunks
                 var spanBuffer = new byte[SwarmCac.SpanSize];
                 var dataBuffer = new byte[SwarmCac.DataSize];
                 ChunkEncrypter.DecryptChunk(
-                    rootChunk.Span.Span,
+                    rootChunk,
                     reference.EncryptionKey!.Value,
                     spanBuffer,
                     dataBuffer,
@@ -199,7 +199,7 @@ namespace Etherna.BeeNet.Chunks
                     if (reference.IsEncrypted)
                     {
                         dataLength = ChunkEncrypter.DecryptChunk(
-                            chunk.SpanData.Span,
+                            chunk,
                             reference.EncryptionKey!.Value,
                             chunkSpanBuffer,
                             chunkDataBuffer,
