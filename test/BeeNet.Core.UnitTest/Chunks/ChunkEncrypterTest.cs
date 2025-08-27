@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Chunks
         {
             public byte[] SpanData { get; } = spanData;
         }
-        
+
         // Data.
         public static IEnumerable<object[]> CanEncryptDecryptTest
         {
@@ -38,58 +38,55 @@ namespace Etherna.BeeNet.Chunks
 
                 // Chunk with Span value < SwarmCac.DataSize
                 {
-                    ulong dataLength = 1234;
-                    var span = SwarmCac.LengthToSpan(dataLength);
-                    var data = new byte[dataLength];
+                    var span = SwarmCac.LengthToSpan(1234);
+                    var data = new byte[1234];
                     new Random(0).NextBytes(data);
-                    
+
                     tests.Add(new CanEncryptDecryptTestElement(span.Concat(data).ToArray()));
                 }
 
                 // Chunk with Span value == SwarmCac.DataSize
                 {
-                    ulong dataLength = SwarmCac.DataSize;
-                    var span = SwarmCac.LengthToSpan(dataLength);
-                    var data = new byte[dataLength];
+                    var span = SwarmCac.LengthToSpan(SwarmCac.DataSize);
+                    var data = new byte[SwarmCac.DataSize];
                     new Random(0).NextBytes(data);
-                    
+
                     tests.Add(new CanEncryptDecryptTestElement(span.Concat(data).ToArray()));
                 }
 
                 // Chunk with Span value > SwarmCac.DataSize
                 {
-                    ulong dataLength = 1024 * 1024; //1MB
-                    var span = SwarmCac.LengthToSpan(dataLength);
-                    var data = new byte[SwarmCac.DataSize];
+                    var span = SwarmCac.LengthToSpan(1575194); //~1.6MB
+                    var data = new byte[448];
                     new Random(0).NextBytes(data);
-                    
+
                     tests.Add(new CanEncryptDecryptTestElement(span.Concat(data).ToArray()));
                 }
 
                 return tests.Select(t => new object[] { t });
             }
         }
-        
+
         // Tests.
         [Theory, MemberData(nameof(CanEncryptDecryptTest))]
         public void CanEncryptDecrypt(CanEncryptDecryptTestElement test)
         {
             var hasher = new Hasher();
-            
+
             var key = ChunkEncrypter.EncryptChunk(
                 test.SpanData[..SwarmCac.SpanSize],
                 test.SpanData[SwarmCac.SpanSize..],
                 null,
                 hasher,
                 out var encryptedSpanData);
-            
+
             ChunkEncrypter.DecryptChunk(
                 encryptedSpanData[..SwarmCac.SpanSize],
                 encryptedSpanData[SwarmCac.SpanSize..],
                 key,
                 hasher,
                 out var decryptedSpanData);
-            
+
             // Assert.
             Assert.Equal(test.SpanData, decryptedSpanData);
         }

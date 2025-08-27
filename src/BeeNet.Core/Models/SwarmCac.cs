@@ -109,7 +109,7 @@ namespace Etherna.BeeNet.Models
             // Span in one full reference. referenceSize = branching ^ (branchLevel - 1)
             ulong referenceSize = DataSize;
             for (var i = 1; i < branchLevel - 1; i++)
-                referenceSize *= branchSize;
+                referenceSize *= branching;
 
             var dataShardAddresses = 1;
             var spanOffset = referenceSize;
