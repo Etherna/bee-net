@@ -16,7 +16,6 @@ using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using System;
 using System.Buffers.Binary;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace Etherna.BeeNet.Chunks
@@ -41,7 +40,7 @@ namespace Etherna.BeeNet.Chunks
             Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            
+
             return DecryptChunk(
                 chunk.Span.Span,
                 chunk.Data.Span,
@@ -100,7 +99,7 @@ namespace Etherna.BeeNet.Chunks
                 throw new ArgumentException($"{nameof(decryptedSpan)} must have size {SwarmCac.SpanSize}");
             if (decryptedData.Length != SwarmCac.DataSize)
                 throw new ArgumentException($"{nameof(decryptedData)} must have size {SwarmCac.DataSize}");
-            
+
             // Decrypt.
             Transform(chunkSpan, key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher);
             Transform(chunkData, key, 0, decryptedData, hasher);
@@ -110,7 +109,7 @@ namespace Etherna.BeeNet.Chunks
             var length = SwarmCac.SpanToLength(decodedSpan);
             if (length <= SwarmCac.DataSize)
                 return (int)length;
-            
+
             var (dataShards, parities) = SwarmCac.CountIntermediateReferences(length, level, true);
             return SwarmReference.EncryptedSize * dataShards + parities * SwarmHash.HashSize;
         }
@@ -168,7 +167,7 @@ namespace Etherna.BeeNet.Chunks
                 encryptedData,
                 hasher);
         }
-        
+
         /// <summary>
         /// Encrypt a chunk
         /// </summary>
@@ -184,7 +183,7 @@ namespace Etherna.BeeNet.Chunks
             out byte[] encryptedSpanData)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            
+
             encryptedSpanData = new byte[SwarmCac.SpanDataSize];
             return EncryptChunk(
                 chunk.Span.Span,
@@ -217,15 +216,15 @@ namespace Etherna.BeeNet.Chunks
                 throw new ArgumentException($"{nameof(encryptedSpan)} must have size {SwarmCac.SpanSize}");
             if (encryptedData.Length != SwarmCac.DataSize)
                 throw new ArgumentException($"{nameof(encryptedData)} must have size {SwarmCac.DataSize}");
-            
+
             key ??= EncryptionKey256.BuildNewRandom();
-            
+
             Transform(chunkSpan, key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
             Transform(chunkData, key.Value, 0, encryptedData, hasher);
 
             return key.Value;
         }
-        
+
         /// <summary>
         /// Encrypt a chunk
         /// </summary>
@@ -251,7 +250,7 @@ namespace Etherna.BeeNet.Chunks
                 encryptedSpanData.AsSpan()[SwarmCac.SpanSize..],
                 hasher);
         }
-        
+
         // Helpers.
         private static void Transform(
             ReadOnlySpan<byte> input,
@@ -261,7 +260,7 @@ namespace Etherna.BeeNet.Chunks
             Hasher hasher)
         {
             var index = 0;
-                
+
             var inputLength = input.Length;
             for (var i = 0; i < inputLength; i += EncryptionKey256.KeySize)
             {
@@ -269,7 +268,7 @@ namespace Etherna.BeeNet.Chunks
                 Transcript(input[i..(i + l)], key, index, initCtr, output[i..(i + l)], hasher);
                 index++;
             }
-            
+
             // Pad the rest if output is longer.
             RandomNumberGenerator.Fill(output[inputLength..]);
         }
@@ -283,24 +282,18 @@ namespace Etherna.BeeNet.Chunks
             Hasher hasher)
         {
             // First hash key with counter (initial counter + index).
-            List<byte> dataToHash = [];
-            dataToHash.AddRange(key.ToByteArray());
-
             var ctrBytes = new byte[4];
             BinaryPrimitives.WriteUInt32LittleEndian(ctrBytes, (uint)index + initCtr);
-            dataToHash.AddRange(ctrBytes);
-            
-            var ctrHash = hasher.ComputeHash(dataToHash.ToArray());
-            dataToHash.Clear();
+            var ctrHash = hasher.ComputeHash([key.ToReadOnlyMemory(), ctrBytes]);
 
             // Second round of hashing for selective disclosure.
             var segmentKey = hasher.ComputeHash(ctrHash);
-            
+
             // XOR input with segmentKey.
             var inputLength = input.Length;
             for (var i = 0; i < inputLength; i++)
                 output[i] = (byte)(input[i] ^ segmentKey[i]);
-            
+
             // Pad the rest if output is longer.
             RandomNumberGenerator.Fill(output[inputLength..]);
         }
