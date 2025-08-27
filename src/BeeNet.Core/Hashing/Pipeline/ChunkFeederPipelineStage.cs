@@ -94,7 +94,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public IPostageStamper PostageStamper => nextStage.PostageStamper;
 
         // Methods.
-        public async Task<SwarmChunkReference> HashDataAsync(byte[] data)
+        public async Task<SwarmReference> HashDataAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data, nameof(data));
 
@@ -102,7 +102,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             return await HashDataAsync(memoryStream).ConfigureAwait(false);
         }
         
-        public async Task<SwarmChunkReference> HashDataAsync(Stream dataStream)
+        public async Task<SwarmReference> HashDataAsync(Stream dataStream)
         {
             ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
 

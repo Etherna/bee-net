@@ -29,7 +29,7 @@ namespace Etherna.BeeNet.Manifest
         public abstract IReadOnlyMantarayNode RootNode { get; }
         
         // Methods.
-        public abstract Task<SwarmChunkReference> GetHashAsync(Hasher hasher);
+        public abstract Task<SwarmReference> GetReferenceAsync(Hasher hasher);
 
         public async Task<ManifestPathResolutionResult<IReadOnlyDictionary<string, string>>> GetMetadataAsync(
             string path,

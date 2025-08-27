@@ -20,20 +20,18 @@ namespace Etherna.BeeNet.Manifest
     public class ManifestEntry
     {
         // Consts.
-        public const string ChunkEncryptKeyKey = "chunkEncryptKey";
         public const string ContentTypeKey = "Content-Type";
         public const string FilenameKey = "Filename";
         public const string WebsiteErrorDocPathKey = "website-error-document";
         public const string WebsiteIndexDocPathKey = "website-index-document";
-        public const string UseRecursiveEncryptionKey = "recursiveEncrypt";
         
         // Constructor.
         private ManifestEntry(
-            SwarmHash hash,
+            SwarmReference reference,
             bool isDirectory,
             IReadOnlyDictionary<string, string> metadata)
         {
-            Hash = hash;
+            Reference = reference;
             IsDirectory = isDirectory;
             Metadata = metadata;
         }
@@ -41,16 +39,16 @@ namespace Etherna.BeeNet.Manifest
         // Static builders.
         public static ManifestEntry NewDirectory(
             IReadOnlyDictionary<string, string> metadata) =>
-            new(SwarmHash.Zero, true, metadata);
+            new(SwarmReference.Zero, true, metadata);
 
         public static ManifestEntry NewFile(
-            SwarmHash fileHash,
+            SwarmReference fileReference,
             IReadOnlyDictionary<string, string> metadata) =>
-            new(fileHash, false, metadata);
+            new(fileReference, false, metadata);
         
         // Properties.
-        public SwarmHash Hash { get; }
         public bool IsDirectory { get; }
         public IReadOnlyDictionary<string, string> Metadata { get; }
+        public SwarmReference Reference { get; }
     }
 }

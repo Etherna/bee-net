@@ -29,22 +29,22 @@ namespace Etherna.BeeNet.Manifest
         private readonly IReadOnlyChunkStore chunkStore;
         private readonly bool useChunkStoreCache;
         
-        private SwarmHash? _entryHash;
+        private SwarmReference? _entryReference;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
         private readonly Dictionary<string, string> _metadata;
-        private XorEncryptKey? _obfuscationKey;
+        private EncryptionKey256? _obfuscationKey;
 
         // Constructor.
         public ReferencedMantarayNode(
             IReadOnlyChunkStore chunkStore,
-            SwarmHash chunkHash,
+            SwarmReference chunkReference,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
             bool useChunkStoreCache = false)
         {
             this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
             this.useChunkStoreCache = useChunkStoreCache;
-            Hash = chunkHash;
+            Reference = chunkReference;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
         }
@@ -52,15 +52,18 @@ namespace Etherna.BeeNet.Manifest
         public ReferencedMantarayNode(
             IReadOnlyChunkStore chunkStore,
             SwarmCac chunk,
+            SwarmReference chunkReference,
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags,
             bool useChunkStoreCache = false)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            if (chunk.Hash != chunkReference.Hash)
+                throw new ArgumentException("chunk hash does not match reference hash");
             
             this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
             this.useChunkStoreCache = useChunkStoreCache;
-            Hash = chunk.Hash;
+            Reference = chunkReference;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
             
@@ -70,17 +73,17 @@ namespace Etherna.BeeNet.Manifest
 
         // Properties.
         public SwarmCac? Chunk { get; private set; }
-        public override SwarmHash? EntryHash => IsDecoded
-            ? _entryHash
+        public override SwarmReference? EntryReference => IsDecoded
+            ? _entryReference
             : throw new InvalidOperationException("Node is not decoded from chunk");
         public override IReadOnlyDictionary<char, MantarayNodeFork> Forks => IsDecoded
             ? _forks
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public override SwarmHash Hash { get; }
+        public override SwarmReference Reference { get; }
         public bool IsDecoded => Chunk != null;
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
         public override NodeType NodeTypeFlags { get; }
-        public override XorEncryptKey? ObfuscationKey => IsDecoded
+        public override EncryptionKey256? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
 
@@ -91,7 +94,7 @@ namespace Etherna.BeeNet.Manifest
                 return;
 
             var chunk = await chunkStore.GetAsync(
-                Hash,
+                Reference.Hash,
                 useChunkStoreCache).ConfigureAwait(false);
             if (chunk is not SwarmCac cac)
                 throw new InvalidOperationException("Chunk is not a Content Addressed Chunk");
@@ -108,16 +111,16 @@ namespace Etherna.BeeNet.Manifest
         // Helpers.
         private void DecodeCacHelper(SwarmCac chunk)
         {
-            if (chunk.Hash != Hash)
-                throw new ArgumentException("Chunk hash not match");
+            if (chunk.Hash != Reference.Hash)
+                throw new ArgumentException("chunk hash does not match reference hash");
             
             var data = chunk.Data.ToArray();
             var readIndex = 0;
             
             // Get obfuscation key and de-obfuscate.
-            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
-            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
-            readIndex += XorEncryptKey.KeySize;
+            _obfuscationKey = new EncryptionKey256(data.AsMemory()[..EncryptionKey256.KeySize]);
+            _obfuscationKey.Value.XorEncryptDecrypt(data.AsSpan()[EncryptionKey256.KeySize..]);
+            readIndex += EncryptionKey256.KeySize;
             
             // Read header.
             var versionHash = data.AsMemory()[readIndex..(readIndex + VersionHashSize)];
@@ -137,13 +140,13 @@ namespace Etherna.BeeNet.Manifest
             var readIndex = 0;
             
             // Read last entry hash.
-            var entryHashSize = data.Span[readIndex];
+            var entryReferenceSize = data.Span[readIndex];
             readIndex++;
             
-            if (entryHashSize != 0)
+            if (entryReferenceSize != 0)
             {
-                _entryHash = new SwarmHash(data[readIndex..(readIndex + entryHashSize)]);
-                readIndex += entryHashSize;
+                _entryReference = new SwarmReference(data[readIndex..(readIndex + entryReferenceSize)]);
+                readIndex += entryReferenceSize;
             }
             
             // Read forks.
@@ -188,8 +191,8 @@ namespace Etherna.BeeNet.Manifest
                     
                     //skip padding
                     var metadataTotalSize = metadataBytes.Length + MantarayNodeFork.MetadataBytesSize;
-                    if (metadataTotalSize % XorEncryptKey.KeySize != 0)
-                        readIndex += XorEncryptKey.KeySize - metadataTotalSize % XorEncryptKey.KeySize;
+                    if (metadataTotalSize % EncryptionKey256.KeySize != 0)
+                        readIndex += EncryptionKey256.KeySize - metadataTotalSize % EncryptionKey256.KeySize;
                 }
                 
                 //add fork

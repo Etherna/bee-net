@@ -27,7 +27,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
         protected string pathTestFileForUpload = "Data/TestFileForUpload_Gateway.txt";
         protected const string version = "4.0.0";
 
-        protected async Task<SwarmHash> UploadBZZFileAndGetReferenceAsync(string filePath = null)
+        protected async Task<SwarmReference> UploadBZZFileAndGetReferenceAsync(string filePath = null)
         {
             var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);
@@ -43,7 +43,7 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2
             return result;
         }
 
-        protected async Task<SwarmHash> UploadChunkFileAndGetReferenceAsync()
+        protected async Task<SwarmReference> UploadChunkFileAndGetReferenceAsync()
         {
             var (batch, _) = await beeNodeClient.BuyPostageBatchAsync(500, 32);
             await Task.Delay(180000);

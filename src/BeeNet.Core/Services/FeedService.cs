@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Services
             }
         }
         
-        public async Task<SwarmChunkReference> UploadFeedManifestAsync(
+        public async Task<SwarmReference> UploadFeedManifestAsync(
             SwarmFeedBase swarmFeed,
             Hasher hasher,
             ushort compactLevel = 0,
@@ -87,20 +87,17 @@ namespace Etherna.BeeNet.Services
 
             // Create manifest.
             var feedManifest = new WritableMantarayManifest(
-                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    RedundancyLevel.None,
-                    false,
-                    0,
-                    null,
-                    readOnlyPipeline),
-                compactLevel);
+                chunkStore,
+                postageStamper,
+                RedundancyLevel.None,
+                false,
+                compactLevel,
+                null);
 
             feedManifest.Add(
                 MantarayManifestBase.RootPath,
                 ManifestEntry.NewFile(
-                    SwarmHash.Zero,
+                    SwarmReference.Zero,
                     new Dictionary<string, string>
                     {
                         [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
@@ -108,7 +105,7 @@ namespace Etherna.BeeNet.Services
                         [FeedMetadataEntryType] = swarmFeed.Type.ToString()
                     }));
 
-            return await feedManifest.GetHashAsync(hasher).ConfigureAwait(false);
+            return await feedManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
         }
     }
 }

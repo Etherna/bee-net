@@ -14,7 +14,9 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Pipeline;
+using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
 
@@ -31,22 +33,45 @@ namespace Etherna.BeeNet.Manifest
         // Constructors.
         public WritableMantarayManifest(
             BuildHasherPipeline hasherPipelineBuilder,
-            ushort compactLevel)
-            : this(
-                hasherPipelineBuilder,
-                new WritableMantarayNode(
-                    compactLevel,
-                    compactLevel > 0
-                        ? (XorEncryptKey?)null //auto-generate on hash building
-                        : XorEncryptKey.Zero))
-        { }
-
-        public WritableMantarayManifest(
-            BuildHasherPipeline hasherPipelineBuilder,
             WritableMantarayNode rootNode)
         {
             this.hasherPipelineBuilder = hasherPipelineBuilder;
             this.rootNode = rootNode;
+        }
+        
+        public WritableMantarayManifest(
+            IChunkStore chunkStore,
+            IPostageStamper postageStamper,
+            RedundancyLevel redundancyLevel,
+            bool encrypt,
+            ushort compactLevel,
+            int? chunkHashingConcurrency)
+        {
+            /*
+             * If encrypted:
+             * - compact chunks and encrypt with the hashing pipeline
+             * - use obfuscation with random keys (initialize key == null). Don't mine on obfuscation
+             *
+             * If not encrypted, but compacted:
+             * - compact chunks when required using deterministic obfuscation keys
+             *
+             * If not encrypted and not compacted:
+             * - set obfuscation key to EncryptionKey256.Zero
+             */
+
+            hasherPipelineBuilder = readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                encrypt ? compactLevel : (ushort)0,
+                chunkHashingConcurrency,
+                readOnlyPipeline);
+            rootNode = new WritableMantarayNode(
+                encrypt ? (ushort)0 : compactLevel,
+                !encrypt && compactLevel == 0 ?
+                    EncryptionKey256.Zero :
+                    (EncryptionKey256?)null); //auto-generate on hash building
         }
 
         // Properties.
@@ -61,10 +86,10 @@ namespace Etherna.BeeNet.Manifest
             rootNode.Add(path, entry);
         }
 
-        public override async Task<SwarmChunkReference> GetHashAsync(Hasher hasher)
+        public override async Task<SwarmReference> GetReferenceAsync(Hasher hasher)
         {
             await rootNode.ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
-            return new SwarmChunkReference(rootNode.Hash, null, false);
+            return rootNode.Reference;
         }
     }
 }

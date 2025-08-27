@@ -27,7 +27,7 @@ public partial class BeeNetWasmUtil
             fileContentType,
             fileName,
             new Hasher()).ConfigureAwait(false);
-        return result.ChunkReference.Hash.ToString();
+        return result.Reference.Hash.ToString();
     }
 }
 #pragma warning restore CA1515

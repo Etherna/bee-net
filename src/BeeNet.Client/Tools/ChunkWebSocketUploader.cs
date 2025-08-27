@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Tools
         : IChunkWebSocketUploader
     {
         // Fields.
-        private readonly byte[] responseBuffer = new byte[SwarmHash.HashSize]; //not really used
+        private readonly byte[] responseBuffer = new byte[SwarmReference.EncryptedSize]; //not really used
         
         // Dispose.
         public void Dispose() =>

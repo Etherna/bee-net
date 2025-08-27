@@ -55,12 +55,12 @@ namespace Etherna.BeeNet.Chunks
         
         public class TraverseFromMantarayNodeChunkTestElement(
             IChunkStore chunkStore,
-            SwarmHash rootHash,
+            SwarmReference rootReference,
             IEnumerable<SwarmHash> expectedFoundHashes,
             IEnumerable<SwarmHash> expectedNotFoundHashes)
         {
             public IChunkStore ChunkStore { get; } = chunkStore;
-            public SwarmHash RootHash { get; } = rootHash;
+            public SwarmReference RootReference { get; } = rootReference;
             public IEnumerable<SwarmHash> ExpectedFoundHashes { get; } = expectedFoundHashes;
             public IEnumerable<SwarmHash> ExpectedNotFoundHashes { get; } = expectedNotFoundHashes;
         }
@@ -428,7 +428,7 @@ namespace Etherna.BeeNet.Chunks
             List<SwarmHash> invalidFoundChunkHashes = [];
         
             await chunkTraverser.TraverseFromDataChunkAsync(
-                new SwarmChunkReference(test.RootHash, null, false),
+                new SwarmReference(test.RootHash, null),
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
                 c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
                 h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
@@ -466,9 +466,7 @@ namespace Etherna.BeeNet.Chunks
             List<SwarmHash> invalidFoundChunkHashes = [];
         
             await chunkTraverser.TraverseFromMantarayNodeChunkAsync(
-                test.RootHash,
-                null,
-                null,
+                test.RootReference,
                 NodeType.Edge,
                 c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
                 c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
@@ -531,14 +529,12 @@ namespace Etherna.BeeNet.Chunks
             
             // Build manifest.
             var dirManifest = new WritableMantarayManifest(
-                _ => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    RedundancyLevel.None,
-                    false,
-                    0,
-                    null),
-                0);
+                chunkStore,
+                postageStamper,
+                RedundancyLevel.None,
+                false,
+                0,
+                null);
 
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
@@ -603,7 +599,7 @@ namespace Etherna.BeeNet.Chunks
                     fileCEntryMetadata));
 
             // Build manifest chunks.
-            await dirManifest.GetHashAsync(new Hasher()).ConfigureAwait(false);
+            await dirManifest.GetReferenceAsync(new Hasher()).ConfigureAwait(false);
 
             return chunkStore;
         }

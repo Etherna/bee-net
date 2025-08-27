@@ -19,32 +19,32 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class XorEncryptKeyJsonConverter : JsonConverter<XorEncryptKey>
+    public sealed class SwarmReferenceJsonConverter : JsonConverter<SwarmReference>
     {
-        public override XorEncryptKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SwarmReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.String)
                 throw new JsonException();
 
-            return reader.GetString()!;
+            return SwarmReference.FromString(reader.GetString()!);
         }
 
-        public override XorEncryptKey ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SwarmReference ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.PropertyName)
                 throw new JsonException();
 
-            return reader.GetString()!;
+            return SwarmReference.FromString(reader.GetString()!);
         }
 
-        public override void Write(Utf8JsonWriter writer, XorEncryptKey value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, SwarmReference value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
             
             writer.WriteStringValue(value.ToString());
         }
 
-        public override void WriteAsPropertyName(Utf8JsonWriter writer, XorEncryptKey value, JsonSerializerOptions options)
+        public override void WriteAsPropertyName(Utf8JsonWriter writer, SwarmReference value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         

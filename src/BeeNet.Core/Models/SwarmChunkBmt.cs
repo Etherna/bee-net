@@ -22,6 +22,7 @@ namespace Etherna.BeeNet.Models
     public sealed class SwarmChunkBmt
     {
         // Consts.
+        public const int EncryptedSegmentsCount = SegmentsCount / 2;
         public const int SegmentsCount = SwarmCac.DataSize / SegmentSize;
         public const int SegmentSize = SwarmHash.HashSize;
         

@@ -24,18 +24,16 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkAggregatorPipelineStage(
         ChunkBmtPipelineStage shortBmtPipelineStage,
-        bool useRecursiveEncryption)
+        bool isEncrypted)
         : IHasherPipelineStage
     {
         // Private classes.
         private sealed class ChunkHeader(
-            SwarmHash hash,
+            SwarmReference reference,
             ReadOnlyMemory<byte> span,
-            XorEncryptKey? chunkKey,
             bool isParityChunk)
         {
-            public XorEncryptKey? ChunkKey { get; } = chunkKey;
-            public SwarmHash Hash { get; } = hash;
+            public SwarmReference Reference { get; } = reference;
             public ReadOnlyMemory<byte> Span { get; } = span;
             public bool IsParityChunk { get; } = isParityChunk;
         }
@@ -44,8 +42,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels = []; //[level][chunk]
-        private readonly byte maxChildrenChunks = (byte)(useRecursiveEncryption
-            ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
+        private readonly byte maxChildrenChunks = (byte)(isEncrypted
+            ? SwarmChunkBmt.EncryptedSegmentsCount
             : SwarmChunkBmt.SegmentsCount);
         
         private long feededChunkNumberId;
@@ -83,9 +81,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     await AddChunkToLevelAsync(
                         1,
                         new ChunkHeader(
-                            processingChunk.Hash!.Value,
+                            processingChunk.Reference!.Value,
                             processingChunk.Span,
-                            processingChunk.ChunkKey,
                             false),
                         args.SwarmChunkBmt).ConfigureAwait(false);
                 }
@@ -96,7 +93,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
+        public async Task<SwarmReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
         {
             bool rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
@@ -129,7 +126,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
 
-            return new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption);
+            return rootChunk.Reference;
         }
 
         // Helpers.
@@ -163,7 +160,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
-            var totalDataLength = SwarmCac.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
+            var totalDataLength = SwarmCac.SpanSize + levelChunks.Count *
+                (isEncrypted ? SwarmReference.EncryptedSize : SwarmReference.PlainSize);
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             
@@ -171,23 +169,17 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             totalDataIndex += SwarmCac.SpanSize;
             foreach (var chunk in levelChunks)
             {
-                chunk.Hash.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
-                totalDataIndex += SwarmHash.HashSize;
-                if (useRecursiveEncryption)
-                {
-                    chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
-                    totalDataIndex += XorEncryptKey.KeySize;
-                }
+                chunk.Reference.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
+                totalDataIndex += chunk.Reference.Size;
             }
 
             // Run hashing on the new chunk, and add it to next level.
-            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
+            var intermediateRef = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new ChunkHeader(
-                    hashingResult.Hash,
+                    intermediateRef,
                     totalSpan,
-                    hashingResult.EncryptionKey,
                     false),
                 swarmChunkBmt).ConfigureAwait(false);
             
@@ -195,14 +187,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
         
         // Helpers.
-        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(
+        private async Task<SwarmReference> HashIntermediateChunkAsync(
             ReadOnlyMemory<byte> span,
             ReadOnlyMemory<byte> spanData,
             SwarmChunkBmt swarmChunkBmt)
         {
             var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
             await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
-            return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
+            return args.Reference!.Value;
         }
     }
 }
