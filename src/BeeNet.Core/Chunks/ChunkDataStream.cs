@@ -73,6 +73,15 @@ namespace Etherna.BeeNet.Chunks
                 reference,
                 chunkStore);
         }
+
+        public static Stream BuildNew(
+            SwarmCac rootChunk,
+            IReadOnlyChunkStore chunkStore,
+            EncryptionKey256? encryptionKey = null)
+        {
+            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
+            return BuildNew(rootChunk, new SwarmReference(rootChunk.Hash, encryptionKey), chunkStore);
+        }
         
         public static Stream BuildNew(
             SwarmCac rootChunk,
