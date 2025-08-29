@@ -74,7 +74,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             {
                 // Search best chunk key optimistically or simply encrypt. Use random keys when encrypting.
                 var encryptionResult = compactLevel <= 1 ?
-                    GetEncryptedChunk(args, isEncrypted) :
+                    GetEncryptedChunk(args, !isEncrypted) :
                     await GetBestEncryptedChunkAsync(args, compactLevel, isEncrypted).ConfigureAwait(false);
                 
                 args.Reference = encryptionResult.Reference;
@@ -176,15 +176,16 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
         private static EncryptedChunkResult GetEncryptedChunk(
             HasherPipelineFeedArgs args,
-            bool useRandomKeys)
+            bool deterministic)
         {
             // If not using random keys, generate deterministic key.
             EncryptionKey256? chunkKey = null;
-            if (!useRandomKeys)
+            SwarmHash? plainChunkHash = null;
+            if (deterministic)
             {
-                var plainChunkHash = args.SwarmChunkBmt.Hash(args.SpanData);
+                plainChunkHash = args.SwarmChunkBmt.Hash(args.SpanData);
                 args.SwarmChunkBmt.Clear();
-                chunkKey = args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHash.ToReadOnlyMemory().Span);
+                chunkKey = args.SwarmChunkBmt.Hasher.ComputeHash(plainChunkHash.Value.ToReadOnlyMemory().Span);
             }
                 
             // Encrypt chunk and extract key.
@@ -193,7 +194,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 args.SpanData.Span[SwarmCac.SpanSize..],
                 chunkKey,
                 args.SwarmChunkBmt.Hasher,
-                out var encryptedSpanData);
+                out var encryptedSpanData,
+                deterministic ? plainChunkHash!.Value.ToReadOnlyMemory() : null);
             
             // Calculate the hash and return result.
             var encryptedChunkHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
@@ -240,7 +242,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         args.SpanData.Span[SwarmCac.SpanSize..],
                         chunkKey,
                         args.SwarmChunkBmt.Hasher,
-                        out var encryptedSpanData);
+                        out var encryptedSpanData,
+                        plainChunkHashArray);
                     
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(encryptedSpanData);

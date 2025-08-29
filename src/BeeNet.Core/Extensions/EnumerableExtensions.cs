@@ -22,6 +22,45 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class EnumerableExtensions
     {
+        public static void Fill(this ReadOnlySpan<byte> pattern, Span<byte> destination)
+        {
+            if (destination.IsEmpty) return;
+            if (pattern.IsEmpty)
+                throw new ArgumentException("Pattern can't be empty", nameof(pattern));
+            
+            // Faster edge case.
+            if (pattern.Length == 1)
+            {
+                destination.Fill(pattern[0]);
+                return;
+            }
+
+            // Initial copy into destination.
+            var filled = Math.Min(destination.Length, pattern.Length);
+            pattern[..filled].CopyTo(destination);
+
+            // Double copied to fill, reducing `.CopyTo` invokes.
+            while (filled < destination.Length)
+            {
+                var toCopy = Math.Min(filled, destination.Length - filled);
+                destination[..toCopy].CopyTo(destination[filled..]);
+                filled += toCopy;
+            }
+        }
+        
+        public static void Fill(this Span<byte> pattern, Span<byte> destination)
+            => ((ReadOnlySpan<byte>)pattern).Fill(destination);
+        
+        public static string FindCommonPrefix(this string x, string y)
+        {
+            ArgumentNullException.ThrowIfNull(x, nameof(x));
+            ArgumentNullException.ThrowIfNull(y, nameof(y));
+            return new(FindCommonPrefix(x.ToCharArray(), y.ToCharArray()));
+        }
+
+        public static T[] FindCommonPrefix<T>(this T[] x, T[] y) =>
+            x.TakeWhile((current, i) => i < y.Length && EqualityComparer<T>.Default.Equals(y[i], current)).ToArray();
+        
         public static DateTimeOffset UnixTimeNanosecondsToDateTimeOffset(this byte[] unixTimeBytes) =>
             UnixTimeNanosecondsToDateTimeOffset((ReadOnlySpan<byte>)unixTimeBytes.AsSpan());
         
@@ -52,15 +91,5 @@ namespace Etherna.BeeNet.Extensions
             var unixSeconds = BinaryPrimitives.ReadUInt64BigEndian(unixTimeBytes);
             return DateTimeOffset.FromUnixTimeSeconds((long)unixSeconds);
         }
-
-        public static string FindCommonPrefix(this string x, string y)
-        {
-            ArgumentNullException.ThrowIfNull(x, nameof(x));
-            ArgumentNullException.ThrowIfNull(y, nameof(y));
-            return new(FindCommonPrefix(x.ToCharArray(), y.ToCharArray()));
-        }
-
-        public static T[] FindCommonPrefix<T>(this T[] x, T[] y) =>
-            x.TakeWhile((current, i) => i < y.Length && EqualityComparer<T>.Default.Equals(y[i], current)).ToArray();
     }
 }

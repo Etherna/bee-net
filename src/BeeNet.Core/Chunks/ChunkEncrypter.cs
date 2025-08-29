@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using System;
@@ -101,8 +102,8 @@ namespace Etherna.BeeNet.Chunks
                 throw new ArgumentException($"{nameof(decryptedData)} must have size {SwarmCac.DataSize}");
 
             // Decrypt.
-            Transform(chunkSpan, key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher);
-            Transform(chunkData, key, 0, decryptedData, hasher);
+            Transform(chunkSpan, key, SwarmCac.DataSize / EncryptionKey256.KeySize, decryptedSpan, hasher, null);
+            Transform(chunkData, key, 0, decryptedData, hasher, null);
 
             // Calculate real data length removing added padding.
             var (level, decodedSpan) = ChunkRedundancy.DecodeSpanLevel(decryptedSpan);
@@ -149,13 +150,15 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="encryptedSpan">Output buffer for encrypted span</param>
         /// <param name="encryptedData">Output buffer for encrypted data</param>
         /// <param name="hasher">Hasher instance</param>
+        /// <param name="paddingBytes">Optional custom padding bytes. Generate random if null</param>
         /// <returns>The encryption key used</returns>
         public static EncryptionKey256 EncryptChunk(
             SwarmCac chunk,
             EncryptionKey256? key,
             Span<byte> encryptedSpan,
             Span<byte> encryptedData,
-            Hasher hasher)
+            Hasher hasher,
+            ReadOnlyMemory<byte>? paddingBytes = null)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
@@ -165,7 +168,8 @@ namespace Etherna.BeeNet.Chunks
                 key,
                 encryptedSpan,
                 encryptedData,
-                hasher);
+                hasher,
+                paddingBytes);
         }
 
         /// <summary>
@@ -175,12 +179,14 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="key">Encryption key, can be null to create a new random key</param>
         /// <param name="hasher">Hasher instance</param>
         /// <param name="encryptedSpanData">Output encrypted spanData</param>
+        /// <param name="paddingBytes">Optional custom padding bytes. Generate random if null</param>
         /// <returns>The encryption key used</returns>
         public static EncryptionKey256 EncryptChunk(
             SwarmCac chunk,
             EncryptionKey256? key,
             Hasher hasher,
-            out byte[] encryptedSpanData)
+            out byte[] encryptedSpanData,
+            ReadOnlyMemory<byte>? paddingBytes = null)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
@@ -191,7 +197,8 @@ namespace Etherna.BeeNet.Chunks
                 key,
                 encryptedSpanData.AsSpan()[..SwarmCac.SpanSize],
                 encryptedSpanData.AsSpan()[SwarmCac.SpanSize..],
-                hasher);
+                hasher,
+                paddingBytes);
         }
 
         /// <summary>
@@ -203,6 +210,7 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="encryptedSpan">Output buffer for encrypted span</param>
         /// <param name="encryptedData">Output buffer for encrypted data</param>
         /// <param name="hasher">Hasher instance</param>
+        /// <param name="paddingBytes">Optional custom padding bytes. Generate random if null</param>
         /// <returns>The encryption key used</returns>
         public static EncryptionKey256 EncryptChunk(
             ReadOnlySpan<byte> chunkSpan,
@@ -210,7 +218,8 @@ namespace Etherna.BeeNet.Chunks
             EncryptionKey256? key,
             Span<byte> encryptedSpan,
             Span<byte> encryptedData,
-            Hasher hasher)
+            Hasher hasher,
+            ReadOnlyMemory<byte>? paddingBytes = null)
         {
             if (encryptedSpan.Length != SwarmCac.SpanSize)
                 throw new ArgumentException($"{nameof(encryptedSpan)} must have size {SwarmCac.SpanSize}");
@@ -219,8 +228,8 @@ namespace Etherna.BeeNet.Chunks
 
             key ??= EncryptionKey256.BuildNewRandom();
 
-            Transform(chunkSpan, key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher);
-            Transform(chunkData, key.Value, 0, encryptedData, hasher);
+            Transform(chunkSpan, key.Value, SwarmCac.DataSize / EncryptionKey256.KeySize, encryptedSpan, hasher, paddingBytes);
+            Transform(chunkData, key.Value, 0, encryptedData, hasher, paddingBytes);
 
             return key.Value;
         }
@@ -233,13 +242,15 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="key">Encryption key, can be null to create a new random key</param>
         /// <param name="hasher">Hasher instance</param>
         /// <param name="encryptedSpanData">Output encrypted spanData</param>
+        /// <param name="paddingBytes">Optional custom padding bytes. Generate random if null</param>
         /// <returns>The encryption key used</returns>
         public static EncryptionKey256 EncryptChunk(
             ReadOnlySpan<byte> chunkSpan,
             ReadOnlySpan<byte> chunkData,
             EncryptionKey256? key,
             Hasher hasher,
-            out byte[] encryptedSpanData)
+            out byte[] encryptedSpanData,
+            ReadOnlyMemory<byte>? paddingBytes = null)
         {
             encryptedSpanData = new byte[SwarmCac.SpanDataSize];
             return EncryptChunk(
@@ -248,7 +259,8 @@ namespace Etherna.BeeNet.Chunks
                 key,
                 encryptedSpanData.AsSpan()[..SwarmCac.SpanSize],
                 encryptedSpanData.AsSpan()[SwarmCac.SpanSize..],
-                hasher);
+                hasher,
+                paddingBytes);
         }
 
         // Helpers.
@@ -257,7 +269,8 @@ namespace Etherna.BeeNet.Chunks
             EncryptionKey256 key,
             uint initCtr,
             Span<byte> output,
-            Hasher hasher)
+            Hasher hasher,
+            ReadOnlyMemory<byte>? paddingBytes)
         {
             var index = 0;
 
@@ -265,12 +278,15 @@ namespace Etherna.BeeNet.Chunks
             for (var i = 0; i < inputLength; i += EncryptionKey256.KeySize)
             {
                 var l = Math.Min(EncryptionKey256.KeySize, inputLength - i);
-                Transcript(input[i..(i + l)], key, index, initCtr, output[i..(i + l)], hasher);
+                Transcript(input[i..(i + l)], key, index, initCtr, output[i..(i + l)], hasher, paddingBytes);
                 index++;
             }
 
             // Pad the rest if output is longer.
-            RandomNumberGenerator.Fill(output[inputLength..]);
+            if (paddingBytes.HasValue)
+                paddingBytes.Value.Span.Fill(output[inputLength..]);
+            else
+                RandomNumberGenerator.Fill(output[inputLength..]);
         }
 
         private static void Transcript(
@@ -279,7 +295,8 @@ namespace Etherna.BeeNet.Chunks
             int index,
             uint initCtr,
             Span<byte> output,
-            Hasher hasher)
+            Hasher hasher,
+            ReadOnlyMemory<byte>? paddingBytes)
         {
             // First hash key with counter (initial counter + index).
             var ctrBytes = new byte[4];
@@ -295,7 +312,10 @@ namespace Etherna.BeeNet.Chunks
                 output[i] = (byte)(input[i] ^ segmentKey[i]);
 
             // Pad the rest if output is longer.
-            RandomNumberGenerator.Fill(output[inputLength..]);
+            if (paddingBytes.HasValue)
+                paddingBytes.Value.Span.Fill(output[inputLength..]);
+            else
+                RandomNumberGenerator.Fill(output[inputLength..]);
         }
     }
 }
