@@ -195,7 +195,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 chunkKey,
                 args.SwarmChunkBmt.Hasher,
                 out var encryptedSpanData,
-                deterministic ? plainChunkHash!.Value.ToReadOnlyMemory() : null);
+                deterministic ? plainChunkHash!.Value.ToReadOnlyMemory() : (ReadOnlyMemory<byte>?)null);
             
             // Calculate the hash and return result.
             var encryptedChunkHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
