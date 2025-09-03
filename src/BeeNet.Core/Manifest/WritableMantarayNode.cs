@@ -284,10 +284,15 @@ namespace Etherna.BeeNet.Manifest
             // Write version.
             bytes.AddRange(Version02Hash);
 
-            // Write last entry hash.
-            bytes.Add((byte)(skipWriteEntryHash ? 0 : SwarmHash.HashSize));
-            if (!skipWriteEntryHash)
-                bytes.AddRange((EntryReference ?? SwarmReference.Zero).ToByteArray());
+            // Write entry hash.
+            if (skipWriteEntryHash)
+                bytes.Add(0);
+            else
+            {
+                var reference = EntryReference ?? SwarmReference.Zero;
+                bytes.Add((byte)reference.Size);
+                bytes.AddRange(reference.ToByteArray());
+            }
 
             // Write forks.
             bytes.AddRange(ForksToByteArray());
