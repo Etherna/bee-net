@@ -180,9 +180,9 @@ namespace Etherna.BeeNet.Manifest
                 var prefix = Encoding.UTF8.GetString(data.Span[readIndex..(readIndex + MantarayNodeFork.PrefixMaxSize)])[..prefixLength];
                 readIndex += MantarayNodeFork.PrefixMaxSize;
 
-                //read child node hash
-                var childNodeHash = new SwarmHash(data[readIndex..(readIndex + SwarmHash.HashSize)]);
-                readIndex += SwarmHash.HashSize;
+                //read child node reference
+                var childNodeReference = new SwarmReference(data[readIndex..(readIndex + entryReferenceSize)]);
+                readIndex += entryReferenceSize;
                 
                 //read metadata
                 Dictionary<string, string>? childNodeMetadata = null;
@@ -209,7 +209,7 @@ namespace Etherna.BeeNet.Manifest
                     prefix,
                     new ReferencedMantarayNode(
                         chunkStore,
-                        childNodeHash,
+                        childNodeReference,
                         childNodeMetadata,
                         childNodeTypeFlags,
                         useChunkStoreCache));
