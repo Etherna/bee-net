@@ -89,7 +89,8 @@ namespace Etherna.BeeNet.Models
         public int Size => byteReference.Length;
         
         // Static properties.
-        public static SwarmReference Zero { get; } = SwarmHash.Zero;
+        public static SwarmReference EncryptedZero { get; } = new byte[EncryptedSize];
+        public static SwarmReference PlainZero { get; } = new byte[PlainSize];
         
         // Methods.
         public bool Equals(SwarmReference other) => byteReference.Span.SequenceEqual(other.byteReference.Span);
@@ -115,6 +116,8 @@ namespace Etherna.BeeNet.Models
                 return false;
             }
         }
+        public static bool IsZero(SwarmReference value) =>
+            value.IsEncrypted ? value == EncryptedZero : value == PlainZero;
         public static SwarmReference Parse(string s, IFormatProvider? provider) => FromString(s);
         public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmReference result)
         {

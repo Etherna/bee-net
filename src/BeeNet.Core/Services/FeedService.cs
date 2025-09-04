@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Services
             feedManifest.Add(
                 MantarayManifestBase.RootPath,
                 ManifestEntry.NewFile(
-                    SwarmReference.Zero,
+                    SwarmReference.PlainZero,
                     new Dictionary<string, string>
                     {
                         [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),

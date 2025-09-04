@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Manifest
         // Static builders.
         public static ManifestEntry NewDirectory(
             IReadOnlyDictionary<string, string> metadata) =>
-            new(SwarmReference.Zero, true, metadata);
+            new(SwarmReference.PlainZero, true, metadata);
 
         public static ManifestEntry NewFile(
             SwarmReference fileReference,

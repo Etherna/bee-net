@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Manifest
             // If the path is empty and entry is not null, return the entry
             if (path.Length == 0)
             {
-                if (EntryReference.HasValue && EntryReference != SwarmReference.Zero)
+                if (EntryReference.HasValue && !SwarmReference.IsZero(EntryReference.Value))
                     return new()
                     {
                         Reference = EntryReference.Value,

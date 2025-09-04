@@ -248,7 +248,7 @@ namespace Etherna.BeeNet.Chunks
             
             // Traverse data.
             if (manifestNode.EntryReference.HasValue &&
-                manifestNode.EntryReference != SwarmReference.Zero &&
+                !SwarmReference.IsZero(manifestNode.EntryReference.Value) &&
                 !visitedReferences.Contains(manifestNode.EntryReference.Value)) //skip already visited chunks
                 await TraverseDataHelperAsync(
                     manifestNode.EntryReference.Value,

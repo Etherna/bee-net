@@ -33,10 +33,12 @@ namespace Etherna.BeeNet.Manifest
         private NodeType _nodeTypeFlags;
         private EncryptionKey256? _obfuscationKey;
         private SwarmReference? _reference;
+        private readonly bool encryptedReferences;
         private bool skipWriteEntryHash = true;
 
         // Constructors.
         public WritableMantarayNode(
+            bool encryptedReferences,
             ushort obfuscationCompactLevel = 0,
             EncryptionKey256? obfuscationKey = null)
         {
@@ -44,6 +46,7 @@ namespace Etherna.BeeNet.Manifest
                 throw new ArgumentException("Can't preset obfuscation key with compactLevel > 0");
             
             ObfuscationCompactLevel = obfuscationCompactLevel;
+            this.encryptedReferences = encryptedReferences;
             _obfuscationKey = obfuscationKey;
         }
 
@@ -101,7 +104,8 @@ namespace Etherna.BeeNet.Manifest
                         
                         // Create new parent node.
                         //parentPrefix = commonPrefix
-                        var parentNode = new WritableMantarayNode(ObfuscationCompactLevel, ObfuscationKey)
+                        var parentNode = new WritableMantarayNode(
+                            encryptedReferences, ObfuscationCompactLevel, ObfuscationKey)
                         {
                             _forks = { [childPrefix[0]] = new MantarayNodeFork(childPrefix, childNode) },
                             skipWriteEntryHash = skipWriteEntryHash
@@ -134,7 +138,7 @@ namespace Etherna.BeeNet.Manifest
                     var prefixRest = path.Length > MantarayNodeFork.PrefixMaxSize ?
                         path[MantarayNodeFork.PrefixMaxSize..] : "";
                     
-                    var newNode = new WritableMantarayNode(ObfuscationCompactLevel, ObfuscationKey)
+                    var newNode = new WritableMantarayNode(encryptedReferences, ObfuscationCompactLevel, ObfuscationKey)
                     {
                         skipWriteEntryHash = skipWriteEntryHash
                     };
@@ -289,7 +293,8 @@ namespace Etherna.BeeNet.Manifest
                 bytes.Add(0);
             else
             {
-                var reference = EntryReference ?? SwarmReference.Zero;
+                var reference = EntryReference ?? (encryptedReferences ?
+                    SwarmReference.EncryptedZero : SwarmReference.PlainZero);
                 bytes.Add((byte)reference.Size);
                 bytes.AddRange(reference.ToByteArray());
             }

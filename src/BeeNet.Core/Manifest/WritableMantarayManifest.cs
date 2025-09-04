@@ -68,6 +68,7 @@ namespace Etherna.BeeNet.Manifest
                 chunkHashingConcurrency,
                 readOnlyPipeline);
             rootNode = new WritableMantarayNode(
+                encrypt,
                 encrypt ? (ushort)0 : compactLevel,
                 !encrypt && compactLevel == 0 ?
                     EncryptionKey256.Zero :
