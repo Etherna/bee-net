@@ -243,7 +243,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         chunkKey,
                         args.SwarmChunkBmt.Hasher,
                         out var encryptedSpanData,
-                        plainChunkHashArray);
+                        plainChunkHashArray?.AsMemory());
                     
                     // Calculate hash, bucket id, and save in cache.
                     var encryptedHash = args.SwarmChunkBmt.Hash(encryptedSpanData);
