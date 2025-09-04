@@ -112,7 +112,7 @@ namespace Etherna.BeeNet.Models
                         new SwarmUri("/rooted/path", UriKind.Relative)),
                     
                     // Relative and absolute paths.
-                    new(["Im", "a", "relative", new SwarmUri(SwarmReference.Zero, "absolute"), "path"],
+                    new(["Im", "a", "relative", new SwarmUri(SwarmReference.PlainZero, "absolute"), "path"],
                         new SwarmUri("0000000000000000000000000000000000000000000000000000000000000000/absolute/path", UriKind.Absolute)),
                     
                     // Multi absolute paths.
@@ -145,10 +145,10 @@ namespace Etherna.BeeNet.Models
                         false),
                     
                     // Only hash.
-                    new(SwarmReference.Zero,
+                    new(SwarmReference.PlainZero,
                         null,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -172,19 +172,19 @@ namespace Etherna.BeeNet.Models
                         true),
                     
                     // Hash and not rooted path.
-                    new(SwarmReference.Zero,
+                    new(SwarmReference.PlainZero,
                         "not/rooted/path",
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/not/rooted/path",
                         UriKind.Absolute,
                         true),
                     
                     // Hash and rooted path.
-                    new(SwarmReference.Zero,
+                    new(SwarmReference.PlainZero,
                         "/rooted/path",
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/rooted/path",
                         UriKind.Absolute,
                         true),
@@ -222,7 +222,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000",
                         UriKind.RelativeOrAbsolute,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -231,7 +231,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000/not/rooted/path",
                         UriKind.RelativeOrAbsolute,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/not/rooted/path",
                         UriKind.Absolute,
                         true),
@@ -267,7 +267,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000",
                         UriKind.Absolute,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -276,7 +276,7 @@ namespace Etherna.BeeNet.Models
                     new("/0000000000000000000000000000000000000000000000000000000000000000/",
                         UriKind.Absolute,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/",
                         UriKind.Absolute,
                         true),
@@ -285,7 +285,7 @@ namespace Etherna.BeeNet.Models
                     new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
                         UriKind.Absolute,
                         null,
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/Im/a/path",
                         UriKind.Absolute,
                         true),
@@ -312,8 +312,8 @@ namespace Etherna.BeeNet.Models
                 {
                     // Relative uri with prefix address.
                     new(new SwarmUri(null, "Im/path"),
-                        new SwarmAddress(SwarmReference.Zero, "Im/prefix"),
-                        new SwarmAddress(SwarmReference.Zero, "/Im/prefix/Im/path"),
+                        new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
+                        new SwarmAddress(SwarmReference.PlainZero, "/Im/prefix/Im/path"),
                         null),
                     
                     // relative uri without prefix address.
@@ -324,7 +324,7 @@ namespace Etherna.BeeNet.Models
                     
                     // Absolute uri with prefix address.
                     new(new SwarmUri("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
-                        new SwarmAddress(SwarmReference.Zero, "Im/prefix"),
+                        new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
                         new SwarmAddress("1111111111111111111111111111111111111111111111111111111111111111", "Im/path"),
                         null),
                     
@@ -346,12 +346,12 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<TryGetRelativeToUriTestElement>
                 {
                     // Hash and not hash.
-                    new (SwarmReference.Zero,
+                    new (SwarmReference.PlainZero,
                         "not/an/hash",
                         null),
                     
                     // Different hashes.
-                    new (SwarmReference.Zero,
+                    new (SwarmReference.PlainZero,
                         new SwarmReference("1111111111111111111111111111111111111111111111111111111111111111"),
                         null),
                     
@@ -430,11 +430,11 @@ namespace Etherna.BeeNet.Models
                         "/relative/rooted/path"),
                     
                     // Absolute with not rooted path.
-                    new(new SwarmUri(SwarmReference.Zero, "relative/not/rooted/path"),
+                    new(new SwarmUri(SwarmReference.PlainZero, "relative/not/rooted/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/relative/not/rooted/path"),
                     
                     // Absolute with rooted path.
-                    new(new SwarmUri(SwarmReference.Zero, "/relative/rooted/path"),
+                    new(new SwarmUri(SwarmReference.PlainZero, "/relative/rooted/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/relative/rooted/path"),
                 };
 

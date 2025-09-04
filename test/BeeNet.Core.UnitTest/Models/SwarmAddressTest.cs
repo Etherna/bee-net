@@ -47,23 +47,23 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<AddressToStringTestElement>
                 {
                     // Only hash.
-                    new(new SwarmAddress(SwarmReference.Zero),
+                    new(new SwarmAddress(SwarmReference.PlainZero),
                         "0000000000000000000000000000000000000000000000000000000000000000/"),
                     
                     // With path without root.
-                    new(new SwarmAddress(SwarmReference.Zero, "Im/a/relative/path"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/a/relative/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"),
                     
                     // With path with root.
-                    new(new SwarmAddress(SwarmReference.Zero, "/I/have/a/root"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "/I/have/a/root"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"),
                     
                     // With path with root.
-                    new(new SwarmAddress(SwarmReference.Zero, "I/have/final/slash/"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "I/have/final/slash/"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/"),
                     
                     // With special chars.
-                    new(new SwarmAddress(SwarmReference.Zero, "I have a % of special\\chars!"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "I have a % of special\\chars!"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!")
                 };
 
@@ -79,42 +79,42 @@ namespace Etherna.BeeNet.Models
                 {
                     // Only hash without ending slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // Only hash with ending slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000/",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With initial root.
                     new("/0000000000000000000000000000000000000000000000000000000000000000",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With initial root and ending slash.
                     new("/0000000000000000000000000000000000000000000000000000000000000000/",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With path.
                     new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/Im/a/path"),
                     
                     // With initial root and path.
                     new("/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/Im/a/path"),
                     
                     // With final slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/I/have/final/slash/"),
                     
                     // With special chars.
                     new("0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
-                        SwarmReference.Zero,
+                        SwarmReference.PlainZero,
                         "/I have a % of special\\chars!")
                 };
 
