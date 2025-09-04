@@ -48,7 +48,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         postageStamper,
                         null,
                         readOnly)),
-                compactLevel > 0);
+                isEncrypted || compactLevel > 0);
                 
             var storeWriterStage = new ChunkStoreWriterPipelineStage(
                 chunkStore,

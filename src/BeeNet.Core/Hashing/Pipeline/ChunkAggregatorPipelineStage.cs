@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkAggregatorPipelineStage(
         ChunkBmtPipelineStage shortBmtPipelineStage,
-        bool isEncrypted)
+        bool encriptedReferences)
         : IHasherPipelineStage
     {
         // Private classes.
@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
         private readonly List<List<ChunkHeader>> chunkLevels = []; //[level][chunk]
-        private readonly byte maxChildrenChunks = (byte)(isEncrypted
+        private readonly byte maxChildrenChunks = (byte)(encriptedReferences
             ? SwarmChunkBmt.EncryptedSegmentsCount
             : SwarmChunkBmt.SegmentsCount);
         
@@ -161,7 +161,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Build total data from total span, and all the hashes in level.
             // If chunks are compacted, append the encryption key after the chunk hash.
             var totalDataLength = SwarmCac.SpanSize + levelChunks.Count *
-                (isEncrypted ? SwarmReference.EncryptedSize : SwarmReference.PlainSize);
+                (encriptedReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize);
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             
