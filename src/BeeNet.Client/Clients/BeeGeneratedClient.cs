@@ -230,10 +230,9 @@ namespace Etherna.BeeNet.Clients
         /// <remarks>
         /// Tags can be thought of as upload sessions which can be tracked using the tags endpoint. It will keep track of the chunks that are uploaded as part of the tag and will push them out to the network once a done split is called on the Tag. This happens internally if you use the `Swarm-Deferred-Upload` header.
         /// </remarks>
-        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2687,10 +2686,9 @@ namespace Etherna.BeeNet.Clients
         /// <remarks>
         /// Tags can be thought of as upload sessions which can be tracked using the tags endpoint. It will keep track of the chunks that are uploaded as part of the tag and will push them out to the network once a done split is called on the Tag. This happens internally if you use the `Swarm-Deferred-Upload` header.
         /// </remarks>
-        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, string? swarm_postage_batch_id = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -2701,9 +2699,6 @@ namespace Etherna.BeeNet.Clients
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
-                    if (swarm_postage_batch_id != null)
-                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");

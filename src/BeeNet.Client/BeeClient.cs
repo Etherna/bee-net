@@ -169,12 +169,10 @@ namespace Etherna.BeeNet
 
         public async Task<TagInfo> CreateTagAsync(
             SwarmHash hash,
-            PostageBatchId postageBatchId,
             CancellationToken cancellationToken = default)
         {
             var response = await generatedClient.TagsPostAsync(
                 new Body3 { Address = hash.ToString() },
-                postageBatchId.ToString(),
                 cancellationToken).ConfigureAwait(false);
             return new TagInfo(
                 id: new TagId(response.Uid),
