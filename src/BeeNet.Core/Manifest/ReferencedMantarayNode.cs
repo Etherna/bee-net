@@ -12,6 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Chunks;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using Newtonsoft.Json;
@@ -114,10 +116,17 @@ namespace Etherna.BeeNet.Manifest
             if (chunk.Hash != Reference.Hash)
                 throw new ArgumentException("chunk hash does not match reference hash");
             
-            var data = chunk.Data.ToArray();
-            var readIndex = 0;
+            // Decrypt chunk.
+            byte[] data;
+            if (Reference.IsEncrypted)
+            {
+                ChunkEncrypter.DecryptChunk(chunk, Reference.EncryptionKey!.Value, new Hasher(), out var spanData);
+                data = spanData[SwarmCac.SpanSize..].ToArray();
+            }
+            else data = chunk.Data.ToArray();
             
             // Get obfuscation key and de-obfuscate.
+            var readIndex = 0;
             _obfuscationKey = new EncryptionKey256(data.AsMemory()[..EncryptionKey256.KeySize]);
             _obfuscationKey.Value.XorEncryptDecrypt(data.AsSpan()[EncryptionKey256.KeySize..]);
             readIndex += EncryptionKey256.KeySize;
