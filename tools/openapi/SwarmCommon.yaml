@@ -704,6 +704,7 @@ components:
 
     SwapCashoutResult:
       type: object
+      nullable: true
       properties:
         recipient:
           $ref: "#/components/schemas/EthereumAddress"

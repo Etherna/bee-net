@@ -11639,7 +11639,7 @@ namespace Etherna.BeeNet.Clients
         public string TransactionHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("result")]
-        public Result Result { get; set; } = default!;
+        public Result? Result { get; set; } = default!;
 
         /// <summary>
         /// Numeric string that represents integer which might exceed `Number.MAX_SAFE_INTEGER` limit (2^53-1)

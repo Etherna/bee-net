@@ -399,10 +399,12 @@ namespace Etherna.BeeNet
                         BzzValue.FromPlurString(response.LastCashedCheque.Payout))
                     : null,
                 transactionHash: response.TransactionHash,
-                result: new ResultChequebook(
-                    recipient: response.Result.Recipient,
-                    lastPayout: BzzValue.FromPlurString(response.Result.LastPayout),
-                    bounced: response.Result.Bounced),
+                result: response.Result is not null
+                    ? new ResultChequebook(
+                        recipient: response.Result.Recipient,
+                        lastPayout: BzzValue.FromPlurString(response.Result.LastPayout),
+                        bounced: response.Result.Bounced)
+                    : null,
                 uncashedAmount: BzzValue.FromPlurString(response.UncashedAmount));
         }
 
