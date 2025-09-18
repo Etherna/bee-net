@@ -87,6 +87,7 @@ namespace Etherna.BeeNet.Models
         
         // Static methods.
         public static SwarmAddress FromString(string value) => new(value);
+        public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
         public static SwarmAddress FromSwarmReference(SwarmReference value) => new(value);
         public static SwarmAddress Parse(string s, IFormatProvider? provider) => FromString(s);
         public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmAddress result)
@@ -117,6 +118,7 @@ namespace Etherna.BeeNet.Models
         
         // Implicit conversion operator methods.
         public static implicit operator SwarmAddress(string value) => new(value);
+        public static implicit operator SwarmAddress(SwarmHash value) => new(value);
         public static implicit operator SwarmAddress(SwarmReference value) => new(value);
         
         // Explicit conversion operator methods.
