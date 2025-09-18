@@ -647,7 +647,6 @@ paths:
             $ref: "SwarmCommon.yaml#/components/schemas/Uid"
           required: true
           description: Uid
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
       responses:
         "204":
           $ref: "SwarmCommon.yaml#/components/responses/204"
@@ -670,7 +669,6 @@ paths:
             $ref: "SwarmCommon.yaml#/components/schemas/Uid"
           required: true
           description: Uid
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
       requestBody:
         description: Can contain swarm hash to use for the tag
         required: false

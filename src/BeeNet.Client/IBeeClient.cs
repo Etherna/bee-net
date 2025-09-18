@@ -118,7 +118,6 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task DeleteTagAsync(
             TagId id,
-            PostageBatchId? batchId = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Cancel existing transaction</summary>
@@ -774,7 +773,6 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task UpdateTagAsync(
             TagId id,
-            PostageBatchId? batchId = null,
             SwarmHash? hash = null,
             CancellationToken cancellationToken = default);
 
