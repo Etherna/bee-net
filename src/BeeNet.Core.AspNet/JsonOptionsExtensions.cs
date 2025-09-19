@@ -26,7 +26,7 @@ namespace Etherna.BeeNet.AspNet
         {
             ArgumentNullException.ThrowIfNull(options, nameof(options));
             
-            options.JsonSerializerOptions.Converters.Add(new BzzBalanceJsonConverter(writeBalancesAsString));
+            options.JsonSerializerOptions.Converters.Add(new BzzValueJsonConverter(writeBalancesAsString));
             options.JsonSerializerOptions.Converters.Add(new EncryptionKey256JsonConverter());
             options.JsonSerializerOptions.Converters.Add(new EthAddressJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new EthTxHashJsonConverter());
@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.AspNet
             options.JsonSerializerOptions.Converters.Add(new SwarmSocSignatureJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new SwarmUriJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new TagIdJsonConverter());
-            options.JsonSerializerOptions.Converters.Add(new XDaiBalanceJsonConverter(writeBalancesAsString));
+            options.JsonSerializerOptions.Converters.Add(new XDaiValueJsonConverter(writeBalancesAsString));
         }
     }
 }

@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class BzzBalanceJsonConverter(bool writeAsString)
+    public sealed class BzzValueJsonConverter(bool writeAsString)
         : JsonConverter<BzzValue>
     {
         public override BzzValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
