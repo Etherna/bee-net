@@ -8147,6 +8147,15 @@ namespace Etherna.BeeNet.Clients
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
+                            if (objectResponse_.Object.Message == "batch not usable")
+                            {
+                                return new Response52()
+                                {
+                                    BatchID = batch_id,
+                                    Exists = true,
+                                    Usable = false
+                                };
+                            }
                             throw new BeeNetApiException<Response199>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else

@@ -26,9 +26,9 @@ namespace Etherna.BeeNet.Models
         // Public constructor.
         public PostageBatch(
             PostageBatchId id,
-            BzzValue amount,
+            BzzValue? amount,
             ulong blockNumber,
-            int depth,
+            int? depth,
             bool exists,
             bool isImmutable,
             bool isUsable,
@@ -70,7 +70,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Amount paid for the batch
         /// </summary>
-        public BzzValue Amount { get; }
+        public BzzValue? Amount { get; }
         
         /// <summary>
         /// Block number when this batch was created
@@ -80,7 +80,7 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Batch depth: batchSize = 2^depth * chunkSize
         /// </summary>
-        public int Depth { get; }
+        public int? Depth { get; }
         
         public bool Exists { get; }
         

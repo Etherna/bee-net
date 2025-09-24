@@ -611,7 +611,7 @@ namespace Etherna.BeeNet
             var response = await generatedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
             return response.Stamps.Select(b =>
                 new PostageBatch(
-                    amount: BzzValue.FromPlurString(b.Amount),
+                    amount: b.Amount != null ? BzzValue.FromPlurString(b.Amount) : null,
                     depth: b.Depth,
                     blockNumber: b.BlockNumber,
                     exists: b.Exists,
@@ -664,7 +664,7 @@ namespace Etherna.BeeNet
                 batchId.ToString(),
                 cancellationToken).ConfigureAwait(false);
             return new PostageBatch(
-                amount: BzzValue.FromPlurString(response.Amount),
+                amount: response.Amount != null ? BzzValue.FromPlurString(response.Amount) : null,
                 depth: response.Depth,
                 blockNumber: response.BlockNumber,
                 exists: response.Exists,
