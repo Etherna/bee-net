@@ -14,11 +14,13 @@
 
 using Etherna.BeeNet.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Etherna.BeeNet.AspNet
 {
     public static class ServiceCollectionExtensions
     {
+        [Obsolete("This implementation will be removed")]
         public static IServiceCollection AddBeeNet(this IServiceCollection services)
         {
             // Register services.

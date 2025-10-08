@@ -20,6 +20,7 @@ namespace Etherna.BeeNet.AspNet
 {
     public static class JsonOptionsExtensions
     {
+        [Obsolete("This implementation will be removed")]
         public static void AddBeeNetJsonConverters(
             this JsonOptions options,
             bool writeBalancesAsString = true)
