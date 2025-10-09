@@ -96,9 +96,7 @@ namespace Etherna.BeeNet.Models
              */
             
             //branching factor is how many data shard references can fit into one intermediate chunk
-            var branching = (ulong)(isEncrypted ?
-                redundancyLevel.GetMaxEncryptedShards():
-                redundancyLevel.GetMaxShards());
+            var branching = (ulong)redundancyLevel.GetMaxShards(isEncrypted);
             ulong branchSize = DataSize;
             
             // Search for branch level big enough to include span.
@@ -116,9 +114,7 @@ namespace Etherna.BeeNet.Models
             for (; spanOffset < spanLength; dataShardAddresses++)
                 spanOffset += referenceSize;
 
-            var parityAddresses = isEncrypted
-                ? redundancyLevel.GetEncryptedParities(dataShardAddresses)
-                : redundancyLevel.GetParities(dataShardAddresses);
+            var parityAddresses = redundancyLevel.GetParities(isEncrypted, dataShardAddresses);
 
             return (dataShardAddresses, parityAddresses);
         }
@@ -141,6 +137,14 @@ namespace Etherna.BeeNet.Models
 
         public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
             BinaryPrimitives.ReadUInt64LittleEndian(span);
+
+        public static bool IsSpanRedundancyLevelEncoded(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            return span[SpanSize - 1] > 128;
+        }
 
         public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
             BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);
