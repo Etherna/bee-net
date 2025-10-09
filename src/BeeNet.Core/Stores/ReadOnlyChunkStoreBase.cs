@@ -79,7 +79,18 @@ namespace Etherna.BeeNet.Stores
             return results;
         }
 
-        public abstract Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default);
+        public virtual async Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+        }
 
         public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
