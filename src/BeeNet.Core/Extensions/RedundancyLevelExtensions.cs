@@ -19,38 +19,11 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class RedundancyLevelExtensions
     {
-        public static ErasureTable? TryGetEncryptedErasureTable(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => null,
-                RedundancyLevel.Medium => ErasureTable.EncMedium,
-                RedundancyLevel.Strong => ErasureTable.EncStrong,
-                RedundancyLevel.Insane => ErasureTable.EncInsane,
-                RedundancyLevel.Paranoid => ErasureTable.EncParanoid,
-                _ => throw new InvalidOperationException()
-            };
-        
-        public static ErasureTable? TryGetErasureTable(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => null,
-                RedundancyLevel.Medium => ErasureTable.Medium,
-                RedundancyLevel.Strong => ErasureTable.Strong,
-                RedundancyLevel.Insane => ErasureTable.Insane,
-                RedundancyLevel.Paranoid => ErasureTable.Paranoid,
-                _ => throw new InvalidOperationException()
-            };
-
-        public static int GetEncryptedParities(this RedundancyLevel level, int shards)
+        public static RedundancyLevel Decrement(this RedundancyLevel level)
         {
-            var erasureTable = level.TryGetEncryptedErasureTable();
-            return erasureTable?.GetOptimalParities(shards) ?? 0;
-        }
-        
-        public static int GetMaxEncryptedShards(this RedundancyLevel level)
-        {
-            var parities = level.GetEncryptedParities(SwarmChunkBmt.EncryptedSegmentsCount);
-            return (SwarmChunkBmt.SegmentsCount - parities) / 2;
+            if (level == RedundancyLevel.None)
+                throw new ArgumentOutOfRangeException(nameof(level));
+            return level - 1;
         }
         
         /// <summary>
@@ -58,15 +31,21 @@ namespace Etherna.BeeNet.Extensions
         /// </summary>
         /// <param name="level">Redundancy level</param>
         /// <returns>Maximum number of effective data chunks</returns>
-        public static int GetMaxShards(this RedundancyLevel level)
+        public static int GetMaxShards(this RedundancyLevel level, bool isEncrypted)
         {
-            var parities = level.GetParities(SwarmChunkBmt.SegmentsCount);
-            return SwarmChunkBmt.SegmentsCount - parities;
+            var parities = level.GetParities(
+                isEncrypted,
+                isEncrypted ?
+                    SwarmChunkBmt.EncryptedSegmentsCount :
+                    SwarmChunkBmt.SegmentsCount);
+            return isEncrypted ?
+                (SwarmChunkBmt.SegmentsCount - parities) / 2 :
+                SwarmChunkBmt.SegmentsCount - parities;
         }
-
-        public static int GetParities(this RedundancyLevel level, int shards)
+        
+        public static int GetParities(this RedundancyLevel level, bool isEncrypted, int shards)
         {
-            var erasureTable = level.TryGetErasureTable();
+            var erasureTable = level.TryGetErasureTable(isEncrypted);
             return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
 
@@ -84,5 +63,26 @@ namespace Etherna.BeeNet.Extensions
                 RedundancyLevel.Paranoid => 16,
                 _ => throw new InvalidOperationException()
             };
+
+        public static ErasureTable? TryGetErasureTable(this RedundancyLevel level, bool isEncrypted) =>
+            isEncrypted ?
+                level switch
+                {
+                    RedundancyLevel.None => null,
+                    RedundancyLevel.Medium => ErasureTable.EncMedium,
+                    RedundancyLevel.Strong => ErasureTable.EncStrong,
+                    RedundancyLevel.Insane => ErasureTable.EncInsane,
+                    RedundancyLevel.Paranoid => ErasureTable.EncParanoid,
+                    _ => throw new InvalidOperationException()
+                } :
+                level switch
+                {
+                    RedundancyLevel.None => null,
+                    RedundancyLevel.Medium => ErasureTable.Medium,
+                    RedundancyLevel.Strong => ErasureTable.Strong,
+                    RedundancyLevel.Insane => ErasureTable.Insane,
+                    RedundancyLevel.Paranoid => ErasureTable.Paranoid,
+                    _ => throw new InvalidOperationException()
+                };
     }
 }
