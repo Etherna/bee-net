@@ -23,7 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmHashTypeConverter))]
-    public readonly struct SwarmHash : IEquatable<SwarmHash>, IParsable<SwarmHash>
+    public readonly struct SwarmHash : IComparable<SwarmHash>, IEquatable<SwarmHash>, IParsable<SwarmHash>
     {
         // Consts.
         public const int HashSize = 32;
@@ -61,6 +61,7 @@ namespace Etherna.BeeNet.Models
         public static SwarmHash Zero { get; } = new byte[HashSize];
 
         // Methods.
+        public int CompareTo(SwarmHash other) => byteHash.Span.SequenceCompareTo(other.byteHash.Span);
         public bool Equals(SwarmHash other) => byteHash.Span.SequenceEqual(other.byteHash.Span);
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
         public byte[] GetDistanceBytesFrom(SwarmHash other) => GetDistanceBytes(byteHash.Span, other.byteHash.Span);
@@ -139,6 +140,10 @@ namespace Etherna.BeeNet.Models
         // Operator methods.
         public static bool operator ==(SwarmHash left, SwarmHash right) => left.Equals(right);
         public static bool operator !=(SwarmHash left, SwarmHash right) => !(left == right);
+        public static bool operator <(SwarmHash left, SwarmHash right) => left.CompareTo(right) < 0;
+        public static bool operator <=(SwarmHash left, SwarmHash right) => left.CompareTo(right) <= 0;
+        public static bool operator >(SwarmHash left, SwarmHash right) => left.CompareTo(right) > 0;
+        public static bool operator >=(SwarmHash left, SwarmHash right) => left.CompareTo(right) >= 0;
         
         // Implicit conversion operator methods.
         public static implicit operator SwarmHash(string value) => new(value);
