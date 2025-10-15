@@ -13,16 +13,28 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Signer;
 
 namespace Etherna.BeeNet.Hashing.Signer
 {
-    public interface ISigner
+    public class PrivateKeySigner(EthECKey privateKey) : ISigner
     {
+        // Fields.
+        private readonly EthereumMessageSigner messageSigner = new();
+        
         // Properties.
-        EthAddress PublicAddress { get; }
+        public EthAddress PublicAddress => privateKey.GetPublicAddress();
         
         // Methods.
-        byte[] GetPublicKey();
-        byte[] Sign(byte[] toSign);
+        public byte[] GetPublicKey() => privateKey.GetPubKeyNoPrefix();
+
+        /// <summary>
+        /// Signs data with ethereum prefix (eip191 type 0x45)
+        /// </summary>
+        /// <param name="toSign">Data to sign</param>
+        /// <returns>Signature</returns>
+        public byte[] Sign(byte[] toSign) =>
+            messageSigner.Sign(toSign, privateKey).HexToByteArray();
     }
 }
