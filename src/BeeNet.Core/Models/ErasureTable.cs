@@ -99,5 +99,27 @@ namespace Etherna.BeeNet.Models
 
             return 0;
         }
+        
+        // Static methods.
+        public static ErasureTable? TryGetFromRedundancyLevel(RedundancyLevel level, bool isEncrypted) =>
+            isEncrypted ?
+                level switch
+                {
+                    RedundancyLevel.None => null,
+                    RedundancyLevel.Medium => EncMedium,
+                    RedundancyLevel.Strong => EncStrong,
+                    RedundancyLevel.Insane => EncInsane,
+                    RedundancyLevel.Paranoid => EncParanoid,
+                    _ => throw new InvalidOperationException()
+                } :
+                level switch
+                {
+                    RedundancyLevel.None => null,
+                    RedundancyLevel.Medium => Medium,
+                    RedundancyLevel.Strong => Strong,
+                    RedundancyLevel.Insane => Insane,
+                    RedundancyLevel.Paranoid => Paranoid,
+                    _ => throw new InvalidOperationException()
+                };
     }
 }

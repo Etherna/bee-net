@@ -45,7 +45,7 @@ namespace Etherna.BeeNet.Extensions
         
         public static int GetParities(this RedundancyLevel level, bool isEncrypted, int shards)
         {
-            var erasureTable = level.TryGetErasureTable(isEncrypted);
+            var erasureTable = ErasureTable.TryGetFromRedundancyLevel(level, isEncrypted);
             return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
 
@@ -63,26 +63,5 @@ namespace Etherna.BeeNet.Extensions
                 RedundancyLevel.Paranoid => 16,
                 _ => throw new InvalidOperationException()
             };
-
-        public static ErasureTable? TryGetErasureTable(this RedundancyLevel level, bool isEncrypted) =>
-            isEncrypted ?
-                level switch
-                {
-                    RedundancyLevel.None => null,
-                    RedundancyLevel.Medium => ErasureTable.EncMedium,
-                    RedundancyLevel.Strong => ErasureTable.EncStrong,
-                    RedundancyLevel.Insane => ErasureTable.EncInsane,
-                    RedundancyLevel.Paranoid => ErasureTable.EncParanoid,
-                    _ => throw new InvalidOperationException()
-                } :
-                level switch
-                {
-                    RedundancyLevel.None => null,
-                    RedundancyLevel.Medium => ErasureTable.Medium,
-                    RedundancyLevel.Strong => ErasureTable.Strong,
-                    RedundancyLevel.Insane => ErasureTable.Insane,
-                    RedundancyLevel.Paranoid => ErasureTable.Paranoid,
-                    _ => throw new InvalidOperationException()
-                };
     }
 }
