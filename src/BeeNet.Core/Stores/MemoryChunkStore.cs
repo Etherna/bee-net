@@ -26,6 +26,9 @@ namespace Etherna.BeeNet.Stores
         // Fields.
         private readonly ConcurrentDictionary<SwarmHash, SwarmChunk> chunks = new();
         
+        // Properties.
+        public IReadOnlyDictionary<SwarmHash, SwarmChunk> AllChunks => chunks;
+        
         // Methods.
         protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
             Task.FromResult(chunks.Remove(hash, out _));
