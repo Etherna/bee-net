@@ -29,41 +29,23 @@ namespace Etherna.BeeNet.Chunks
     public class ChunkTraverserTest
     {
         // Internal classes.
-        public class TraverseFromDataChunkTestElement(
-            IChunkStore chunkStore,
-            SwarmHash rootHash,
-            IEnumerable<SwarmHash> expectedFoundHashes,
-            IEnumerable<SwarmHash> expectedNotFoundHashes)
-        {
-            public IChunkStore ChunkStore { get; } = chunkStore;
-            public SwarmHash RootHash { get; } = rootHash;
-            public IEnumerable<SwarmHash> ExpectedFoundHashes { get; } = expectedFoundHashes;
-            public IEnumerable<SwarmHash> ExpectedNotFoundHashes { get; } = expectedNotFoundHashes;
-        }
-        
-        public class TraverseFromMantarayManifestRootTestElement(
-            IChunkStore chunkStore,
-            SwarmHash rootHash,
-            IEnumerable<SwarmHash> expectedFoundHashes,
-            IEnumerable<SwarmHash> expectedNotFoundHashes)
-        {
-            public IChunkStore ChunkStore { get; } = chunkStore;
-            public SwarmHash RootHash { get; } = rootHash;
-            public IEnumerable<SwarmHash> ExpectedFoundHashes { get; } = expectedFoundHashes;
-            public IEnumerable<SwarmHash> ExpectedNotFoundHashes { get; } = expectedNotFoundHashes;
-        }
-        
-        public class TraverseFromMantarayNodeChunkTestElement(
-            IChunkStore chunkStore,
-            SwarmReference rootReference,
-            IEnumerable<SwarmHash> expectedFoundHashes,
-            IEnumerable<SwarmHash> expectedNotFoundHashes)
-        {
-            public IChunkStore ChunkStore { get; } = chunkStore;
-            public SwarmReference RootReference { get; } = rootReference;
-            public IEnumerable<SwarmHash> ExpectedFoundHashes { get; } = expectedFoundHashes;
-            public IEnumerable<SwarmHash> ExpectedNotFoundHashes { get; } = expectedNotFoundHashes;
-        }
+        public record TraverseFromDataChunkTestElement(
+            IChunkStore ChunkStore,
+            SwarmHash RootHash,
+            IEnumerable<SwarmHash> ExpectedFoundHashes,
+            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
+
+        public record TraverseFromMantarayManifestRootTestElement(
+            IChunkStore ChunkStore,
+            SwarmHash RootHash,
+            IEnumerable<SwarmHash> ExpectedFoundHashes,
+            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
+
+        public record TraverseFromMantarayNodeChunkTestElement(
+            IChunkStore ChunkStore,
+            SwarmReference RootReference,
+            IEnumerable<SwarmHash> ExpectedFoundHashes,
+            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
         
         // Data.
         public static IEnumerable<object[]> TraverseFromDataChunkTests
