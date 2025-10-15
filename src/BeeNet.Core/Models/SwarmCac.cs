@@ -72,7 +72,13 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
-        
+
+        public RedundancyLevel RedundancyLevel => GetSpanRedundancyLevel(Span.Span);
+        public ulong SpanLength => SpanToLength(
+            IsSpanEncoded(Span.Span) ?
+                DecodeSpan(Span.Span) :
+                Span.Span);
+
         // Methods.
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
@@ -119,6 +125,78 @@ namespace Etherna.BeeNet.Models
             return (dataShardAddresses, parityAddresses);
         }
         
+        /// <summary>
+        /// Remove redundancy level from span keeping the real byte count for the chunk
+        /// </summary>
+        /// <param name="span">Span to decode</param>
+        /// <returns>Decoded span</returns>
+        public static byte[] DecodeSpan(ReadOnlySpan<byte> span)
+        {
+            var decodedSpan = new byte[SpanSize];
+            span.CopyTo(decodedSpan);
+            DecodeSpan(decodedSpan);
+            return decodedSpan;
+        }
+        
+        /// <summary>
+        /// Remove redundancy level from span keeping the real byte count for the chunk
+        /// </summary>
+        /// <param name="span">Span to decode</param>
+        public static void DecodeSpan(Span<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+
+            // Remove redundancy level from the most significant byte.
+            span[SpanSize - 1] = 0;
+        }
+
+        /// <summary>
+        /// Encodes redundancy level into span
+        /// </summary>
+        /// <param name="span">Span to encode</param>
+        /// <param name="level">Redundancy level to encode into span</param>
+        /// <returns>Encoded span</returns>
+        public static byte[] EncodeSpan(ReadOnlySpan<byte> span, RedundancyLevel level)
+        {
+            var encodedSpan = new byte[SpanSize];
+            span.CopyTo(encodedSpan);
+            EncodeSpan(encodedSpan, level);
+            return encodedSpan;
+        }
+
+        /// <summary>
+        /// Encodes redundancy level into span
+        /// </summary>
+        /// <param name="span">Span to encode</param>
+        /// <param name="level">Redundancy level to encode into span</param>
+        public static void EncodeSpan(Span<byte> span, RedundancyLevel level)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+
+            // Set redundancy level in the most significant byte.
+            span[SpanSize - 1] = (byte)(level + 128);
+        }
+        
+        public static RedundancyLevel GetSpanRedundancyLevel(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            if (!IsSpanEncoded(span))
+                return RedundancyLevel.None;
+            return (RedundancyLevel)(span[SpanSize - 1] & 127);
+        }
+
+        public static bool IsSpanEncoded(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            return span[SpanSize - 1] > 128;
+        }
+        
         public static bool IsValid(SwarmHash hash, ReadOnlyMemory<byte> spanData, SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
@@ -137,14 +215,6 @@ namespace Etherna.BeeNet.Models
 
         public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
             BinaryPrimitives.ReadUInt64LittleEndian(span);
-
-        public static bool IsSpanRedundancyLevelEncoded(ReadOnlySpan<byte> span)
-        {
-            if (span.Length != SpanSize)
-                throw new ArgumentException("Span length must be " + SpanSize);
-            
-            return span[SpanSize - 1] > 128;
-        }
 
         public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
             BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);
