@@ -128,7 +128,7 @@ namespace Etherna.BeeNet.Hashing
                         "5f6e64c34304e1d5bdbc2ae538b8a61fee3c92869444d100fe382a2a8bdd9cdd",
                         "c309d663a1bd0e307d246dd65f1131fa08377bf5b53210238154ad79258b42b8"
                     ]),
-
+                    
                     // Redundancy Strong, 0B
                     new(0, RedundancyLevel.Strong,
                     [
