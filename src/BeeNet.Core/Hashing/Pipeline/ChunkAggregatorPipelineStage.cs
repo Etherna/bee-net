@@ -27,17 +27,6 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         bool encriptedReferences)
         : IHasherPipelineStage
     {
-        // Private classes.
-        private sealed class ChunkHeader(
-            SwarmReference reference,
-            ReadOnlyMemory<byte> span,
-            bool isParityChunk)
-        {
-            public SwarmReference Reference { get; } = reference;
-            public ReadOnlyMemory<byte> Span { get; } = span;
-            public bool IsParityChunk { get; } = isParityChunk;
-        }
-        
         // Fields.
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
@@ -80,7 +69,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 {
                     await AddChunkToLevelAsync(
                         1,
-                        new ChunkHeader(
+                        new SwarmChunkHeader(
                             processingChunk.Reference!.Value,
                             processingChunk.Span,
                             false),
@@ -130,7 +119,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         }
 
         // Helpers.
-        private async Task AddChunkToLevelAsync(int level, ChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt)
+        private async Task AddChunkToLevelAsync(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(chunkHeader, nameof(chunkHeader));
 
@@ -141,7 +130,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 await WrapFullLevelAsync(level, swarmChunkBmt).ConfigureAwait(false);
         }
 
-        private List<ChunkHeader> GetLevelChunks(int level)
+        private List<SwarmChunkHeader> GetLevelChunks(int level)
         {
             while (chunkLevels.Count < level + 1)
                 chunkLevels.Add([]);
@@ -159,7 +148,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             
             // Build total data from total span, and all the hashes in level.
-            // If chunks are compacted, append the encryption key after the chunk hash.
+            // If chunks are encrypted, append the encryption key after the chunk hash.
             var totalDataLength = SwarmCac.SpanSize + levelChunks.Count *
                 (encriptedReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize);
             var totalSpanData = new byte[totalDataLength];
@@ -177,7 +166,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             var intermediateRef = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
-                new ChunkHeader(
+                new SwarmChunkHeader(
                     intermediateRef,
                     totalSpan,
                     false),

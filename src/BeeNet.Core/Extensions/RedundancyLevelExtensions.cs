@@ -25,7 +25,7 @@ namespace Etherna.BeeNet.Extensions
         /// <returns>Maximum number of effective data chunks</returns>
         public static int GetMaxShards(this RedundancyLevel level, bool isEncrypted)
         {
-            var parities = level.GetParities(
+            var parities = level.GetParitiesAmount(
                 isEncrypted,
                 isEncrypted ?
                     SwarmChunkBmt.EncryptedSegmentsCount :
@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Extensions
                 SwarmChunkBmt.SegmentsCount - parities;
         }
         
-        public static int GetParities(this RedundancyLevel level, bool isEncrypted, int shards)
+        public static int GetParitiesAmount(this RedundancyLevel level, bool isEncrypted, int shards)
         {
             var erasureTable = ErasureTable.TryGetFromRedundancyLevel(level, isEncrypted);
             return erasureTable?.GetOptimalParities(shards) ?? 0;

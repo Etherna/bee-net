@@ -23,21 +23,36 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Chunks
 {
-    public class ChunkReplicator(
-        RedundancyLevel redundancyLevel,
-        IChunkStore chunkStore,
-        IPostageStamper postageStamper,
-        ISigner signer)
+    public class ChunkReplicator
     {
+        // Fields.
+        private readonly IChunkStore chunkStore;
+        private readonly IPostageStamper postageStamper;
+        private readonly RedundancyLevel redundancyLevel;
+        private readonly ISigner signer;
+
+        // Constructor.
+        public ChunkReplicator(
+            RedundancyLevel redundancyLevel,
+            IChunkStore chunkStore,
+            IPostageStamper postageStamper,
+            ISigner signer)
+        {
+            this.redundancyLevel = redundancyLevel;
+            this.chunkStore = chunkStore;
+            this.postageStamper = postageStamper;
+            this.signer = signer ?? throw new ArgumentNullException(nameof(signer));
+
+            if (signer.PublicAddress != SwarmSoc.ReplicasOwner)
+                throw new ArgumentException("Signer has invalid owner for replicas");
+        }
+
         // Methods.
         public async Task AddChunkReplicasAsync(
             SwarmCac chunk,
             Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-
-            if (signer.PublicAddress != SwarmSoc.ReplicasOwner)
-                throw new ArgumentException("Signer has invalid owner for replicas");
             
             if (redundancyLevel == RedundancyLevel.None)
                 return;

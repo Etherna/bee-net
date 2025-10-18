@@ -120,7 +120,7 @@ namespace Etherna.BeeNet.Models
             for (; spanOffset < spanLength; dataShardAddresses++)
                 spanOffset += referenceSize;
 
-            var parityAddresses = redundancyLevel.GetParities(isEncrypted, dataShardAddresses);
+            var parityAddresses = redundancyLevel.GetParitiesAmount(isEncrypted, dataShardAddresses);
 
             return (dataShardAddresses, parityAddresses);
         }
