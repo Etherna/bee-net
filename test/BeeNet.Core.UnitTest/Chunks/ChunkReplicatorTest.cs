@@ -12,15 +12,15 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Hashing.Replica;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Etherna.BeeNet.Hashing
+namespace Etherna.BeeNet.Chunks
 {
-    public class ReplicaTest
+    public class ChunkReplicatorTest
     {
         // Internal classes.
         public record GenerateReplicasTestElement(
@@ -97,7 +97,7 @@ namespace Etherna.BeeNet.Hashing
         [Theory, MemberData(nameof(GenerateReplicasTests))]
         public void GenerateReplicas(GenerateReplicasTestElement test)
         {
-            var result = ReplicasGenerator.GenerateReplicaIds(test.ChunkHash, test.RedundancyLevel, new Hasher());
+            var result = ChunkReplicator.GenerateReplicaHeaders(test.ChunkHash, test.RedundancyLevel, new Hasher());
 
             Assert.Equal(test.ExpectedReplicaHashes, result.Select(c => c.Hash));
         }

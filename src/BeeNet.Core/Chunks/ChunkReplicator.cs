@@ -12,14 +12,50 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Hashing.Replica
+namespace Etherna.BeeNet.Chunks
 {
-    public static class ReplicasGenerator
+    public class ChunkReplicator(
+        RedundancyLevel redundancyLevel,
+        IChunkStore chunkStore,
+        IPostageStamper postageStamper,
+        ISigner signer)
     {
+        // Methods.
+        public async Task AddChunkReplicasAsync(
+            SwarmCac chunk,
+            Hasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+
+            if (signer.PublicAddress != SwarmSoc.ReplicasOwner)
+                throw new ArgumentException("Signer has invalid owner for replicas");
+            
+            if (redundancyLevel == RedundancyLevel.None)
+                return;
+
+            List<Task> tasks = [];
+            foreach (var replicaHeader in GenerateReplicaHeaders(chunk.Hash, redundancyLevel, new Hasher()))
+            {
+                var replicaSoc = new SwarmSoc(replicaHeader.SocId, signer.PublicAddress, chunk);
+                replicaSoc.Sign(signer, hasher);
+
+                postageStamper.Stamp(replicaHeader.Hash);
+                tasks.Add(chunkStore.AddAsync(replicaSoc));
+            }
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+        
+        // Static methods.
         /// <summary>
         /// Generate an array of replica Ids from a hash and a redundancy level.
         /// Order of replicas is so that addresses are always maximally dispersed in successive sets of addresses.
@@ -28,7 +64,7 @@ namespace Etherna.BeeNet.Hashing.Replica
         /// <param name="redundancyLevel">Input redundancy level</param>
         /// <param name="hasher">Hasher</param>
         /// <returns>Replica Ids</returns>
-        public static SwarmReplicaId[] GenerateReplicaIds(
+        public static SwarmReplicaHeader[] GenerateReplicaHeaders(
             SwarmHash hash,
             RedundancyLevel redundancyLevel,
             Hasher hasher)
@@ -44,16 +80,16 @@ namespace Etherna.BeeNet.Hashing.Replica
             var foundNeighborhoodsByDepth = new bool[(int)redundancyLevel][];
             for (var i = 1; i <= (int)redundancyLevel; i++)
                 foundNeighborhoodsByDepth[i - 1] = new bool[1 << i];
-            var replicaIds = new List<SwarmReplicaId>();
+            var replicaHeaders = new List<SwarmReplicaHeader>();
             
             // Build queue and cursor.
-            var queue = new SwarmReplicaId?[targetReplicas];
+            var queue = new SwarmReplicaHeader?[targetReplicas];
             var queueCursorsByDepth = new int[(int)redundancyLevel];
             for (int i = 1; i < (int)redundancyLevel; i++)
                 queueCursorsByDepth[i] = 1 << i;
             
             // Search replica ids.
-            for (byte i = 0; i < 255 && replicaIds.Count < targetReplicas; i++)
+            for (byte i = 0; i < 255 && replicaHeaders.Count < targetReplicas; i++)
             {
                 // Generate Soc Id and Hash.
                 var socIdArray = hash.ToByteArray();
@@ -62,7 +98,7 @@ namespace Etherna.BeeNet.Hashing.Replica
 
                 // Try to add new replica to queue, and drain it.
                 var isValid = TryAddAtDepth(
-                    new SwarmReplicaId
+                    new SwarmReplicaHeader
                     {
                         Hash = socHash,
                         SocId = socIdArray
@@ -74,38 +110,39 @@ namespace Etherna.BeeNet.Hashing.Replica
 
                 if (!isValid) continue;
                 
-                for (var j = replicaIds.Count; j < queue.Length; j++)
+                for (var j = replicaHeaders.Count; j < queue.Length; j++)
                 {
                     if (queue[j] == null) break;
-                    replicaIds.Add(queue[j]!);
+                    replicaHeaders.Add(queue[j]!);
                 }
             }
             
-            return replicaIds.ToArray();
+            return replicaHeaders.ToArray();
         }
 
+        // Helpers.
         private static bool TryAddAtDepth(
-            SwarmReplicaId replicaId,
+            SwarmReplicaHeader replicaHeader,
             int depth,
             bool[][] foundNeighborhoodsByDepth,
             int[] queueCursorsByDepth,
-            SwarmReplicaId?[] queue)
+            SwarmReplicaHeader?[] queue)
         {
             if (depth == 0)
                 return false;
 
             // Find neighborhood and verify collisions.
-            var neighborhood = replicaId.Hash.ToReadOnlyMemory().Span[0] >> (8 - (byte)depth);
+            var neighborhood = replicaHeader.Hash.ToReadOnlyMemory().Span[0] >> (8 - (byte)depth);
             if (foundNeighborhoodsByDepth[depth - 1][neighborhood])
                 return false;
             foundNeighborhoodsByDepth[depth - 1][neighborhood] = true;
             
             // Try to add at lower depth.
-            if (TryAddAtDepth(replicaId, depth - 1, foundNeighborhoodsByDepth, queueCursorsByDepth, queue))
+            if (TryAddAtDepth(replicaHeader, depth - 1, foundNeighborhoodsByDepth, queueCursorsByDepth, queue))
                 return true;
             
             // If recursion didn't insert at lower depth, insert here.
-            queue[queueCursorsByDepth[depth - 1]] = replicaId;
+            queue[queueCursorsByDepth[depth - 1]] = replicaHeader;
             queueCursorsByDepth[depth - 1]++;
 
             return true;

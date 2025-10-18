@@ -13,19 +13,11 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System;
 
 namespace Etherna.BeeNet.Extensions
 {
     public static class RedundancyLevelExtensions
     {
-        public static RedundancyLevel Decrement(this RedundancyLevel level)
-        {
-            if (level == RedundancyLevel.None)
-                throw new ArgumentOutOfRangeException(nameof(level));
-            return level - 1;
-        }
-        
         /// <summary>
         /// Returns the maximum number of effective data chunks
         /// </summary>
@@ -48,20 +40,5 @@ namespace Etherna.BeeNet.Extensions
             var erasureTable = ErasureTable.TryGetFromRedundancyLevel(level, isEncrypted);
             return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
-
-        /// <summary>
-        /// Get the actual number of replicas needed to keep the error rate below 1/10^6.
-        /// For the five levels of redundancy are 0, 2, 4, 5, 19, we use an approximation as the successive powers of 2.
-        /// </summary>
-        public static int GetReplicaCount(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => 0,
-                RedundancyLevel.Medium => 2,
-                RedundancyLevel.Strong => 4,
-                RedundancyLevel.Insane => 8,
-                RedundancyLevel.Paranoid => 16,
-                _ => throw new InvalidOperationException()
-            };
     }
 }
