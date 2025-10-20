@@ -181,8 +181,11 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are encrypted, append the encryption key after the chunk hash.
-            var totalDataLength = SwarmCac.SpanSize + levelChunks.Count *
-                (redundancyGenerator.EncryptChunks ? SwarmReference.EncryptedSize : SwarmReference.PlainSize);
+            var dataChunksInLevel = levelChunks.Count(c => !c.IsParityChunk);
+            var parityChunksInLevel = levelChunks.Count - dataChunksInLevel;
+            var totalDataLength = SwarmCac.SpanSize +
+                dataChunksInLevel * (redundancyGenerator.EncryptChunks ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) +
+                parityChunksInLevel * SwarmReference.PlainSize; //parity references only have hashes
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             

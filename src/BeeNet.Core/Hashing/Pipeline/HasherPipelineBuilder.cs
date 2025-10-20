@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     redundancyLevel,
                     isEncrypted || compactLevel > 0,
                     new ChunkBmtPipelineStage(
-                        compactLevel,
+                        0, //parities don't have an encryption key, so don't support chunks compaction (sig...)
                         false,
                         new ChunkStoreWriterPipelineStage(
                             chunkStore,
