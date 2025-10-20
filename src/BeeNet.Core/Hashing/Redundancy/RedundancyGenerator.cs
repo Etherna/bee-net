@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Hashing.Redundancy
 {
     internal delegate Task AddChunkToLevel(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt);
 
-    internal sealed class RedundancyProcessor(
+    internal sealed class RedundancyGenerator(
         RedundancyLevel redundancyLevel,
         bool encryptChunks,
         ChunkBmtPipelineStage shortBmtPipelineStage)
@@ -53,17 +53,20 @@ namespace Etherna.BeeNet.Hashing.Redundancy
         private readonly List<ShardsBufferLevel> bufferLevels = [];
 
         // Properties.
-        public bool EncryptChunks { get; } = encryptChunks;
+        public bool EncryptChunks => encryptChunks;
+        public int MaxChildrenChunks { get; } =
+            redundancyLevel.GetMaxShards(encryptChunks) +
+            redundancyLevel.GetParitiesAmount(encryptChunks, redundancyLevel.GetMaxShards(encryptChunks));
         
         /// <summary>
         /// Number of chunks after which the parity encode function should be called
         /// </summary>
         public int MaxShards { get; } = redundancyLevel.GetMaxShards(encryptChunks);
         
-        public RedundancyLevel RedundancyLevel { get; } = redundancyLevel;
+        public RedundancyLevel RedundancyLevel => redundancyLevel;
 
         // Methods.
-        public int GetParitiesAmount(int shards) => RedundancyLevel.GetParitiesAmount(EncryptChunks, shards);
+        public int GetParitiesAmount(int shards) => redundancyLevel.GetParitiesAmount(EncryptChunks, shards);
 
         /// <summary>
         /// Get the topmost chunk span data on levels.
