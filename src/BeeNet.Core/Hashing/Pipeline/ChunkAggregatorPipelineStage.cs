@@ -68,7 +68,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 foreach (var processingChunk in chunksToProcess)
                 {
                     await AddChunkToLevelAsync(
-                        1,
+                        0,
                         new SwarmChunkHeader(
                             processingChunk.Reference!.Value,
                             processingChunk.Span,
@@ -90,7 +90,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
         public async Task<SwarmReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
         {
-            bool rootChunkFound = false;
+            var rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
             {
                 var levelChunks = GetLevelChunks(i);
@@ -112,13 +112,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             levelChunks.Clear();
                             
                             await redundancyGenerator.ElevateCarrierChunkAsync(
-                                i - 1, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
+                                i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         }
                         break;
                     
                     default:
                         await redundancyGenerator.EncodeErasureDataAsync(
-                            i - 1, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
+                            i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         await WrapFullLevelAsync(i, swarmChunkBmt).ConfigureAwait(false);
                         break;
                 }
@@ -208,7 +208,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
             // Add chunk to redundancy generator.
             await redundancyGenerator.AddChunkToLevelAsync(
-                level,
+                level + 1,
                 totalSpanData.AsMemory(),
                 AddChunkToLevelAsync,
                 swarmChunkBmt).ConfigureAwait(false);

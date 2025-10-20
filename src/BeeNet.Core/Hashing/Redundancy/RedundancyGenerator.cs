@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.Hashing.Redundancy
                 await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
 
                 await addParityChunkCallback(
-                    chunkLevel + 1,
+                    chunkLevel,
                     new SwarmChunkHeader(
                         args.Reference!.Value,
                         span,
