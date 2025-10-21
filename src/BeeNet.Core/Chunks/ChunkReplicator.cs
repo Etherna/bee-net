@@ -58,7 +58,8 @@ namespace Etherna.BeeNet.Chunks
                 return;
 
             List<Task> tasks = [];
-            foreach (var replicaHeader in GenerateReplicaHeaders(chunk.Hash, redundancyLevel, new Hasher()))
+            var replicaHeaders = GenerateReplicaHeaders(chunk.Hash, redundancyLevel, new Hasher());
+            foreach (var replicaHeader in replicaHeaders)
             {
                 var replicaSoc = new SwarmSoc(replicaHeader.SocId, signer.PublicAddress, chunk);
                 replicaSoc.Sign(signer, hasher);

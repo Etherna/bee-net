@@ -27,7 +27,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
     internal sealed class ChunkAggregatorPipelineStage(
         RedundancyGenerator redundancyGenerator,
         ChunkReplicator chunkReplicator,
-        ChunkBmtPipelineStage shortBmtPipelineStage)
+        ChunkBmtPipelineStage shortBmtPipelineStage,
+        bool readOnly)
         : IHasherPipelineStage
     {
         // Fields.
@@ -126,8 +127,8 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             
             var rootChunk = chunkLevels.Last()[0];
             
-            // Create disperse replicas of root chunk.
-            if (redundancyGenerator.RedundancyLevel != RedundancyLevel.None)
+            // Create disperse replicas of root chunk. Don't add if is readOnly.
+            if (redundancyGenerator.RedundancyLevel != RedundancyLevel.None && !readOnly)
             {
                 var rootSpanData = redundancyGenerator.GetRootSpanData();
                 await chunkReplicator.AddChunkReplicasAsync(
