@@ -80,7 +80,7 @@ namespace Etherna.BeeNet.Chunks
         /// <param name="redundancyLevel">Input redundancy level</param>
         /// <param name="hasher">Hasher</param>
         /// <returns>Replica Ids</returns>
-        public static SwarmReplicaHeader[] GenerateReplicaHeaders(
+        public static IEnumerable<SwarmReplicaHeader> GenerateReplicaHeaders(
             SwarmHash hash,
             RedundancyLevel redundancyLevel,
             Hasher hasher)
@@ -88,7 +88,7 @@ namespace Etherna.BeeNet.Chunks
             ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
 
             if (redundancyLevel == RedundancyLevel.None)
-                return [];
+                yield break;
             
             // For the five levels of redundancy, the actual numbers of replicas needed to keep
             // the error rate below 1/10^6 are [0, 2, 4, 5, 19], but we use an approximation to powers of 2.
@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Chunks
             var foundNeighborhoodsByDepth = new bool[(int)redundancyLevel][];
             for (var i = 1; i <= (int)redundancyLevel; i++)
                 foundNeighborhoodsByDepth[i - 1] = new bool[1 << i];
-            var replicaHeaders = new List<SwarmReplicaHeader>();
+            var foundReplicas = 0;
             
             // Build queue and cursor.
             var queue = new SwarmReplicaHeader?[targetReplicas];
@@ -105,7 +105,7 @@ namespace Etherna.BeeNet.Chunks
                 queueCursorsByDepth[i] = 1 << i;
             
             // Search replica ids.
-            for (byte i = 0; i < 255 && replicaHeaders.Count < targetReplicas; i++)
+            for (byte i = 0; i < 255 && foundReplicas < targetReplicas; i++)
             {
                 // Generate Soc Id and Hash.
                 var socIdArray = hash.ToByteArray();
@@ -126,14 +126,13 @@ namespace Etherna.BeeNet.Chunks
 
                 if (!isValid) continue;
                 
-                for (var j = replicaHeaders.Count; j < queue.Length; j++)
+                for (var j = foundReplicas; j < queue.Length; j++)
                 {
                     if (queue[j] == null) break;
-                    replicaHeaders.Add(queue[j]!);
+                    foundReplicas++;
+                    yield return queue[j]!;
                 }
             }
-            
-            return replicaHeaders.ToArray();
         }
 
         // Helpers.
