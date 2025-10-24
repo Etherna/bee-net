@@ -28,47 +28,26 @@ namespace Etherna.BeeNet.Models
     public class SwarmEpochFeedTest
     {
         // Internal classes.
-        public class FindLastEpochChunkBeforeDateTestElement(
-            SwarmEpochFeed feed,
-            ulong at,
-            SwarmEpochFeedChunk startingChunk,
-            Action<Mock<IReadOnlyChunkStore>> arrangeAction,
-            Action<Mock<IReadOnlyChunkStore>> asserts,
-            SwarmEpochFeedChunk expectedResult)
-        {
-            public SwarmEpochFeed Feed { get; } = feed;
-            public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
-            public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
-            public ulong At { get; } = at;
-            public SwarmEpochFeedChunk ExpectedResult { get; } = expectedResult;
-            public SwarmEpochFeedChunk StartingChunk { get; } = startingChunk;
-        }
+        public record FindLastEpochChunkBeforeDateTestElement(
+            SwarmEpochFeed Feed,
+            ulong At,
+            SwarmEpochFeedChunk StartingChunk,
+            Action<Mock<IReadOnlyChunkStore>> ArrangeAction,
+            Action<Mock<IReadOnlyChunkStore>> Asserts,
+            SwarmEpochFeedChunk ExpectedResult);
 
-        public class FindStartingEpochOfflineTestElement(
-            ulong at,
-            SwarmEpochFeedIndex? knownNearEpoch,
-            SwarmEpochFeedIndex expectedResult)
-        {
-            public ulong At { get; } = at;
-            public SwarmEpochFeedIndex ExpectedResult { get; } = expectedResult;
-            public SwarmEpochFeedIndex? KnownNearEpoch { get; } = knownNearEpoch;
-        }
+        public record FindStartingEpochOfflineTestElement(
+            ulong At,
+            SwarmEpochFeedIndex? KnownNearEpoch,
+            SwarmEpochFeedIndex ExpectedResult);
 
-        public class TryFindStartingEpochChunkOnlineTestElement(
-            SwarmEpochFeed feed,
-            ulong at,
-            SwarmEpochFeedIndex epochIndex,
-            Action<Mock<IReadOnlyChunkStore>> arrangeAction,
-            Action<Mock<IReadOnlyChunkStore>> asserts,
-            SwarmEpochFeedChunk? expectedResult)
-        {
-            public SwarmEpochFeed Feed { get; } = feed;
-            public Action<Mock<IReadOnlyChunkStore>> ArrangeAction { get; } = arrangeAction;
-            public Action<Mock<IReadOnlyChunkStore>> Asserts { get; } = asserts;
-            public ulong At { get; } = at;
-            public SwarmEpochFeedIndex EpochIndex { get; } = epochIndex;
-            public SwarmEpochFeedChunk? ExpectedResult { get; } = expectedResult;
-        }
+        public record TryFindStartingEpochChunkOnlineTestElement(
+            SwarmEpochFeed Feed,
+            ulong At,
+            SwarmEpochFeedIndex EpochIndex,
+            Action<Mock<IReadOnlyChunkStore>> ArrangeAction,
+            Action<Mock<IReadOnlyChunkStore>> Asserts,
+            SwarmEpochFeedChunk? ExpectedResult);
 
         // Consts.
         private static readonly SwarmEpochFeed EpochFeed = new(

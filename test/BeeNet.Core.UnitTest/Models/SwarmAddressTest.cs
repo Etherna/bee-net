@@ -21,23 +21,14 @@ namespace Etherna.BeeNet.Models
     public class SwarmAddressTest
     {
         // Internal classes.
-        public class AddressToStringTestElement(
-            SwarmAddress address,
-            string expectedString)
-        {
-            public SwarmAddress Address { get; } = address;
-            public string ExpectedString { get; } = expectedString;
-        }
+        public record AddressToStringTestElement(
+            SwarmAddress Address,
+            string ExpectedString);
 
-        public class StringToAddressTestElement(
-            string inputString,
-            SwarmReference expectedReference,
-            string expectedRelativePath)
-        {
-            public string InputString { get; } = inputString;
-            public SwarmReference ExpectedReference { get; } = expectedReference;
-            public string ExpectedRelativePath { get; } = expectedRelativePath;
-        }
+        public record StringToAddressTestElement(
+            string InputString,
+            SwarmReference ExpectedReference,
+            string ExpectedRelativePath);
 
         // Data.
         public static IEnumerable<object[]> AddressToStringTests
