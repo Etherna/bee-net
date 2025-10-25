@@ -79,7 +79,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove root
-                    var deleteTask = chunkStore.DeleteAsync("3abeb3b5c9690c1d453c20a1d492664a1f5336c2cb359cce04a37df996f45466");
+                    var deleteTask = chunkStore.RemoveAsync("3abeb3b5c9690c1d453c20a1d492664a1f5336c2cb359cce04a37df996f45466");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromDataChunkTestElement(
@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileB" leaf data
-                    var deleteTask = chunkStore.DeleteAsync("4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb");
+                    var deleteTask = chunkStore.RemoveAsync("4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromDataChunkTestElement(
@@ -159,7 +159,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove root
-                    var deleteTask = chunkStore.DeleteAsync("46be4f99d106518c74fe02262aa4d738117eee47f9bb6bceea523346762372cc");
+                    var deleteTask = chunkStore.RemoveAsync("46be4f99d106518c74fe02262aa4d738117eee47f9bb6bceea523346762372cc");
                     deleteTask.Wait();
                 
                     tests.Add(new TraverseFromMantarayManifestRootTestElement(
@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "A" fork node
-                    var deleteTask = chunkStore.DeleteAsync("b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1");
+                    var deleteTask = chunkStore.RemoveAsync("b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1");
                     deleteTask.Wait();
                 
                     tests.Add(new TraverseFromMantarayManifestRootTestElement(
@@ -208,7 +208,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileA" intermediate data
-                    var deleteTask = chunkStore.DeleteAsync("72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e");
+                    var deleteTask = chunkStore.RemoveAsync("72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e");
                     deleteTask.Wait();
 
                     tests.Add(new TraverseFromMantarayManifestRootTestElement(
@@ -241,7 +241,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileA" leaf data
-                    var deleteTask = chunkStore.DeleteAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
+                    var deleteTask = chunkStore.RemoveAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromMantarayManifestRootTestElement(
@@ -310,7 +310,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove root
-                    var deleteTask = chunkStore.DeleteAsync("df08922becf846a73648dd793d2b4e8c7d8e14d812ae953b169c3948cc7208db");
+                    var deleteTask = chunkStore.RemoveAsync("df08922becf846a73648dd793d2b4e8c7d8e14d812ae953b169c3948cc7208db");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromMantarayNodeChunkTestElement(
@@ -327,7 +327,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "A" fork node
-                    var deleteTask = chunkStore.DeleteAsync("b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1");
+                    var deleteTask = chunkStore.RemoveAsync("b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromMantarayNodeChunkTestElement(
@@ -351,7 +351,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileA" intermediate data
-                    var deleteTask = chunkStore.DeleteAsync("72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e");
+                    var deleteTask = chunkStore.RemoveAsync("72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromMantarayNodeChunkTestElement(
@@ -376,7 +376,7 @@ namespace Etherna.BeeNet.Chunks
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileA" leaf data
-                    var deleteTask = chunkStore.DeleteAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
+                    var deleteTask = chunkStore.RemoveAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
                     deleteTask.Wait();
                     
                     tests.Add(new TraverseFromMantarayNodeChunkTestElement(

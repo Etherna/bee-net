@@ -43,9 +43,9 @@ namespace Etherna.BeeNet.Stores
             return result;
         }
 
-        public Task<bool> DeleteAsync(SwarmHash hash)
+        public Task<bool> RemoveAsync(SwarmHash hash)
         {
-            var result = DeleteChunkAsync(hash);
+            var result = RemoveChunkAsync(hash);
 
             ChunksCache.Remove(hash);
 
@@ -53,7 +53,7 @@ namespace Etherna.BeeNet.Stores
         }
 
         // Protected methods.
-        protected abstract Task<bool> DeleteChunkAsync(SwarmHash hash);
+        protected abstract Task<bool> RemoveChunkAsync(SwarmHash hash);
         protected abstract Task<bool> SaveChunkAsync(SwarmChunk chunk);
     }
 }

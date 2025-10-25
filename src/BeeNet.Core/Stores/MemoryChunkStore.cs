@@ -30,9 +30,6 @@ namespace Etherna.BeeNet.Stores
         public IReadOnlyDictionary<SwarmHash, SwarmChunk> AllChunks => chunks;
         
         // Methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
-            Task.FromResult(chunks.Remove(hash, out _));
-
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             Task.FromResult(chunks.ContainsKey(hash));
 
@@ -40,6 +37,9 @@ namespace Etherna.BeeNet.Stores
             SwarmHash hash,
             CancellationToken cancellationToken = default) =>
             Task.FromResult(chunks[hash]);
+
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash) =>
+            Task.FromResult(chunks.Remove(hash, out _));
 
         protected override Task<bool> SaveChunkAsync(SwarmChunk chunk)
         {

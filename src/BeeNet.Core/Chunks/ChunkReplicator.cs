@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Chunks
         
         // Static methods.
         /// <summary>
-        /// Generate an array of replica Ids from a hash and a redundancy level.
+        /// Lazy generate an array of replica Ids from a hash and a redundancy level.
         /// Order of replicas is so that addresses are always maximally dispersed in successive sets of addresses.
         /// </summary>
         /// <param name="hash">Input hash</param>
