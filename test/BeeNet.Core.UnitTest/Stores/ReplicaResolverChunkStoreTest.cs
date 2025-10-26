@@ -170,5 +170,50 @@ namespace Etherna.BeeNet.Stores
                 Assert.Equal(test.RequestsByLevel[i].Order(), requestsBatches[i].Order());
             Assert.Empty(requestsBatches.Last());
         }
+
+        [Fact]
+        public async Task CanFindOriginalChunk()
+        {
+            // Setup.
+            var originalHash = "662d90f2aa5d1c2194573f761861e264e9e43c2cc26695b03dbdeb05f022e576";
+            var originalChunk = SwarmCac.BuildFromData(
+                originalHash,
+                Enumerable.Range(0, 100).Select(i => (byte)i).ToArray());
+            
+            var sourceChunkStore = new MemoryChunkStore();
+            await sourceChunkStore.AddAsync(originalChunk);
+            var chunkStore = new ReplicaResolverChunkStore(sourceChunkStore, RedundancyLevel.Paranoid, new Hasher());
+                
+            // Run.
+            var chunkResult = await chunkStore.GetAsync(originalHash);
+            
+            // Assert.
+            Assert.Equal(originalChunk, chunkResult);
+        }
+
+        [Fact]
+        public async Task CanFindReplicaChunk()
+        {
+            // Setup.
+            var originalHash = "662d90f2aa5d1c2194573f761861e264e9e43c2cc26695b03dbdeb05f022e576";
+            var originalChunk = new SwarmCac(
+                originalHash,
+                Enumerable.Range(0, 100).Select(i => (byte)i).ToArray());
+            
+            var replicaSoc = new SwarmSoc(
+                "2b2d90f2aa5d1c2194573f761861e264e9e43c2cc26695b03dbdeb05f022e576",
+                SwarmSoc.ReplicasOwner,
+                originalChunk);
+
+            var sourceChunkStore = new MemoryChunkStore();
+            await sourceChunkStore.AddAsync(replicaSoc);
+            var chunkStore = new ReplicaResolverChunkStore(sourceChunkStore, RedundancyLevel.Paranoid, new Hasher());
+
+            // Run.
+            var chunkResult = await chunkStore.GetAsync(originalHash);
+
+            // Assert.
+            Assert.Equal(originalChunk, chunkResult);
+        }
     }
 }
