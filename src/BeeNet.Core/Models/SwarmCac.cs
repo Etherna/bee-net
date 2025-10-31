@@ -72,7 +72,6 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
-
         public RedundancyLevel RedundancyLevel => GetSpanRedundancyLevel(Span.Span);
         public ulong SpanLength => SpanToLength(
             IsSpanEncoded(Span.Span) ?
@@ -82,6 +81,10 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
+        public SwarmShardReference[] GetIntermediateReferences(
+            int parityReferencesAmount,
+            bool encryptedDataReferences) =>
+            GetIntermediateReferencesFromData(Data.Span, parityReferencesAmount, encryptedDataReferences);
 
         // Static methods.
         public static (int DataShards, int Parities) CountIntermediateReferences(
@@ -177,6 +180,41 @@ namespace Etherna.BeeNet.Models
 
             // Set redundancy level in the most significant byte.
             span[SpanSize - 1] = (byte)(level + 128);
+        }
+
+        public static SwarmShardReference[] GetIntermediateReferencesFromData(
+            ReadOnlySpan<byte> data,
+            int parityReferencesAmount,
+            bool encryptedDataReferences)
+        {
+            var parityRefLength = SwarmReference.PlainSize;
+            var parityRefsLength = parityReferencesAmount * parityRefLength;
+            if (data.Length < parityRefsLength)
+                throw new ArgumentException("Data can't be shorter than parity references length: " + parityRefsLength);
+            
+            var dataRefLength = encryptedDataReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize;
+            var dataRefsLength = data.Length - parityRefsLength;
+            if (dataRefsLength % dataRefLength != 0)
+                throw new ArgumentException($"Data length must be multiple of {dataRefLength}");
+
+            var dataReferencesAmount = dataRefsLength / dataRefLength;
+            var references = new SwarmShardReference[dataReferencesAmount + parityReferencesAmount];
+            var cursor = 0;
+            for (int i = 0; i < references.Length; i++)
+            {
+                if (i < dataReferencesAmount) //data reference
+                {
+                    references[i] = new SwarmShardReference(data[cursor..(cursor + dataRefLength)].ToArray(), false);
+                    cursor += dataRefLength;
+                }
+                else //parity reference
+                {
+                    references[i] = new SwarmShardReference(data[cursor..(cursor + parityRefLength)].ToArray(), true);
+                    cursor += parityRefLength;
+                }
+            }
+
+            return references;
         }
         
         public static RedundancyLevel GetSpanRedundancyLevel(ReadOnlySpan<byte> span)
