@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
@@ -29,64 +30,107 @@ namespace Etherna.BeeNet.Chunks
     {
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
+        private readonly uint dataSegmentSize;
         private readonly Hasher hasher = new();
         private List<SwarmCac> levelsCache = [];
-        private readonly uint maxSegmentsInChunk;
+        private readonly uint maxDataSegmentsInChunk;
+        private readonly RedundancyStrategy redundancyStrategy;
+        private readonly bool redundancyStrategyFallback;
         private readonly SwarmCac rootChunk;
+        private readonly int rootParities;
         private readonly SwarmReference rootReference;
-        private readonly uint segmentSize;
 
         // Constructor.
         private ChunkDataStream(
             SwarmCac rootChunk,
             SwarmReference rootReference,
             IReadOnlyChunkStore chunkStore,
-            long length)
+            long length,
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback)
         {
             if (rootChunk.Hash != rootReference.Hash)
                 throw new ArgumentException("root chunk hash does not match root reference hash");
-            
+
             this.chunkStore = chunkStore;
             this.rootChunk = rootChunk;
             this.rootReference = rootReference;
             Length = length;
             Position = 0;
-            
+
             // Define segments info.
-            segmentSize = (uint)rootReference.Size;
-            maxSegmentsInChunk = SwarmCac.DataSize / segmentSize;
+            dataSegmentSize = (uint)rootReference.Size;
+
+            if (rootChunk.RedundancyLevel == RedundancyLevel.None)
+            {
+                rootParities = 0;
+                maxDataSegmentsInChunk = SwarmCac.DataSize / dataSegmentSize;
+
+                // If root chunk has no redundancy, strategy is ignored and set to DATA without fallback.
+                this.redundancyStrategy = RedundancyStrategy.Data;
+                this.redundancyStrategyFallback = false;
+            }
+            else
+            {
+                var (_, parities) = rootChunk.CountIntermediateReferences(rootReference.IsEncrypted);
+                rootParities = parities;
+                maxDataSegmentsInChunk = (uint)rootChunk.RedundancyLevel.GetMaxDataShards(rootReference.IsEncrypted);
+                
+                this.redundancyStrategy = redundancyStrategy;
+                this.redundancyStrategyFallback = redundancyStrategyFallback;
+            }
         }
 
         // Static builder.
         public static async Task<Stream> BuildNewAsync(
             SwarmReference reference,
-            IReadOnlyChunkStore chunkStore)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyLevel redundancyLevel,
+            RedundancyStrategy redundancyStrategy, 
+            bool redundancyStrategyFallback)
         {
             ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
             
-            var rootChunk = await chunkStore.GetAsync(reference.Hash).ConfigureAwait(false);
+            // Use chunk redundancy resolver if required.
+            var rootChunkStore = redundancyLevel == RedundancyLevel.None ?
+                chunkStore :
+                new ReplicaResolverChunkStore(chunkStore, redundancyLevel, new Hasher());
+            
+            // Resolve root chunk.
+            var rootChunk = await rootChunkStore.GetAsync(reference.Hash).ConfigureAwait(false);
             if (rootChunk is not SwarmCac rootCac) //soc are not supported
                 throw new InvalidOperationException($"Chunk {reference} is not a Content Addressed Chunk.");
             
             return BuildNew(
                 rootCac,
                 reference,
-                chunkStore);
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback);
         }
 
         public static Stream BuildNew(
             SwarmCac rootChunk,
             IReadOnlyChunkStore chunkStore,
+            RedundancyStrategy redundancyStrategy, 
+            bool redundancyStrategyFallback,
             EncryptionKey256? encryptionKey = null)
         {
             ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
-            return BuildNew(rootChunk, new SwarmReference(rootChunk.Hash, encryptionKey), chunkStore);
+            return BuildNew(
+                rootChunk,
+                new SwarmReference(rootChunk.Hash, encryptionKey),
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback);
         }
         
         public static Stream BuildNew(
             SwarmCac rootChunk,
             SwarmReference reference,
-            IReadOnlyChunkStore chunkStore)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyStrategy redundancyStrategy, 
+            bool redundancyStrategyFallback)
         {
             ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
 
@@ -109,7 +153,9 @@ namespace Etherna.BeeNet.Chunks
                 rootChunk,
                 reference,
                 chunkStore,
-                (long)length);
+                (long)length,
+                redundancyStrategy,
+                redundancyStrategyFallback);
         }
         
         // Properties.
@@ -242,20 +288,20 @@ namespace Etherna.BeeNet.Chunks
                     }
 
                     // Else if it's an intermediate chunk
-                    if (dataLength % segmentSize != 0)
+                    if (dataLength % dataSegmentSize != 0)
                         throw new InvalidOperationException("Intermediate chunk's data length is not multiple of segment size.");
             
                     // Find referred data size by segment.
-                    var segmentsAmount = (uint)(dataLength / segmentSize);
+                    var segmentsAmount = (uint)(dataLength / dataSegmentSize);
                     while (dataSizeBySegment * segmentsAmount < referredDataSize)
-                        dataSizeBySegment *= maxSegmentsInChunk;
+                        dataSizeBySegment *= maxDataSegmentsInChunk;
                     
                     // Define chunk's segments to read and set bounds for the next level.
                     var chunkStartPosition = 0;
                     if (isFirstChunkInLevel)
                     {
                         var startSegmentsToSkip = levelStartDataOffset / dataSizeBySegment;
-                        chunkStartPosition = (int)(startSegmentsToSkip * segmentSize);
+                        chunkStartPosition = (int)(startSegmentsToSkip * dataSegmentSize);
                         levelStartDataOffset -= startSegmentsToSkip * dataSizeBySegment;
                     }
                     var chunkEndPosition = dataLength;
@@ -269,7 +315,7 @@ namespace Etherna.BeeNet.Chunks
                             if (lastPartialSegmentDataSize > 0)
                                 endSegmentsToSkip++;
                         }
-                        chunkEndPosition = dataLength - (int)(endSegmentsToSkip * segmentSize);
+                        chunkEndPosition = dataLength - (int)(endSegmentsToSkip * dataSegmentSize);
                         if (endSegmentsToSkip > 0)
                             levelEndDataOffset -= referredDataSize % dataSizeBySegment == 0
                                 ? endSegmentsToSkip * dataSizeBySegment
@@ -279,9 +325,9 @@ namespace Etherna.BeeNet.Chunks
                     // Reverse read child chunks references and prepend them on reference list.
                     for (var cursor = chunkEndPosition; cursor > chunkStartPosition;)
                     {
-                        cursor -= (int)segmentSize;
+                        cursor -= (int)dataSegmentSize;
                         levelChildReferences.Insert(0, 
-                            new SwarmReference(chunkDataBuffer.Slice(cursor, cursor + (int)segmentSize)));
+                            new SwarmReference(chunkDataBuffer.Slice(cursor, cursor + (int)dataSegmentSize)));
                     }
                 }
                 

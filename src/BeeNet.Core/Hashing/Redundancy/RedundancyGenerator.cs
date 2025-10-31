@@ -55,13 +55,13 @@ namespace Etherna.BeeNet.Hashing.Redundancy
         // Properties.
         public bool EncryptChunks => encryptChunks;
         public int MaxChildrenChunks { get; } =
-            redundancyLevel.GetMaxShards(encryptChunks) +
-            redundancyLevel.GetParitiesAmount(encryptChunks, redundancyLevel.GetMaxShards(encryptChunks));
+            redundancyLevel.GetMaxDataShards(encryptChunks) +
+            redundancyLevel.GetParitiesAmount(encryptChunks, redundancyLevel.GetMaxDataShards(encryptChunks));
         
         /// <summary>
         /// Number of chunks after which the parity encode function should be called
         /// </summary>
-        public int MaxShards { get; } = redundancyLevel.GetMaxShards(encryptChunks);
+        public int MaxDataShards { get; } = redundancyLevel.GetMaxDataShards(encryptChunks);
         
         public RedundancyLevel RedundancyLevel => redundancyLevel;
 
@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Hashing.Redundancy
             bufferLevel.AddNewChunk(spanData.ToArray());
             
             // Add parity chunks if the level is full.
-            if (bufferLevel.Length == MaxShards)
+            if (bufferLevel.Length == MaxDataShards)
                 await EncodeErasureDataAsync(chunkLevel, addParityChunkCallback, swarmChunkBmt).ConfigureAwait(false);
         }
 

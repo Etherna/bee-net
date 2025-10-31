@@ -19,11 +19,11 @@ namespace Etherna.BeeNet.Extensions
     public static class RedundancyLevelExtensions
     {
         /// <summary>
-        /// Returns the maximum number of effective data chunks
+        /// Returns the maximum number of effective data references
         /// </summary>
         /// <param name="level">Redundancy level</param>
-        /// <returns>Maximum number of effective data chunks</returns>
-        public static int GetMaxShards(this RedundancyLevel level, bool isEncrypted)
+        /// <returns>Maximum number of effective data references</returns>
+        public static int GetMaxDataShards(this RedundancyLevel level, bool isEncrypted)
         {
             var parities = level.GetParitiesAmount(
                 isEncrypted,

@@ -25,6 +25,9 @@ namespace Etherna.BeeNet.Models
         public const int SpanDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
+        // Fields.
+        private RedundancyLevel? _redundancyLevel;
+        
         // Constructors.
         public SwarmCac(SwarmHash hash, ReadOnlyMemory<byte> spanData)
         {
@@ -72,13 +75,15 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
-        public RedundancyLevel RedundancyLevel => GetSpanRedundancyLevel(Span.Span);
+        public RedundancyLevel RedundancyLevel => _redundancyLevel ??= GetSpanRedundancyLevel(Span.Span);
         public ulong SpanLength => SpanToLength(
             IsSpanEncoded(Span.Span) ?
                 DecodeSpan(Span.Span) :
                 Span.Span);
 
         // Methods.
+        public (int DataShards, int Parities) CountIntermediateReferences(bool encryptedDataReferences) =>
+            CountIntermediateReferences(SpanLength, RedundancyLevel, encryptedDataReferences);
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
         public SwarmShardReference[] GetIntermediateReferences(
@@ -87,7 +92,7 @@ namespace Etherna.BeeNet.Models
             GetIntermediateReferencesFromData(Data.Span, parityReferencesAmount, encryptedDataReferences);
 
         // Static methods.
-        public static (int DataShards, int Parities) CountIntermediateReferences(
+        public static (int DataShards, int ParityShards) CountIntermediateReferences(
             ulong spanLength,
             RedundancyLevel redundancyLevel,
             bool isEncrypted)
@@ -105,11 +110,11 @@ namespace Etherna.BeeNet.Models
              */
             
             //branching factor is how many data shard references can fit into one intermediate chunk
-            var branching = (ulong)redundancyLevel.GetMaxShards(isEncrypted);
-            ulong branchSize = DataSize;
+            var branching = (ulong)redundancyLevel.GetMaxDataShards(isEncrypted);
             
             // Search for branch level big enough to include span.
             var branchLevel = 1;
+            ulong branchSize = DataSize;
             for (; branchSize < spanLength; branchLevel++)
                 branchSize *= branching;
             
@@ -118,14 +123,13 @@ namespace Etherna.BeeNet.Models
             for (var i = 1; i < branchLevel - 1; i++)
                 referenceSize *= branching;
 
-            var dataShardAddresses = 1;
-            var spanOffset = referenceSize;
-            for (; spanOffset < spanLength; dataShardAddresses++)
-                spanOffset += referenceSize;
+            var dataShards = (int)(spanLength / referenceSize);
+            if (spanLength % referenceSize != 0)
+                dataShards++;
 
-            var parityAddresses = redundancyLevel.GetParitiesAmount(isEncrypted, dataShardAddresses);
+            var parityShards = redundancyLevel.GetParitiesAmount(isEncrypted, dataShards);
 
-            return (dataShardAddresses, parityAddresses);
+            return (dataShards, parityShards);
         }
         
         /// <summary>

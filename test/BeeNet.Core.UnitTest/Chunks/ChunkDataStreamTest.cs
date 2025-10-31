@@ -101,7 +101,7 @@ namespace Etherna.BeeNet.Chunks
         public async Task JoinChunkData(JoinChunkDataTestElement test)
         {
             await using var memoryStream = new MemoryStream();
-            await using var chunkDataStream = await ChunkDataStream.BuildNewAsync(test.RootReference, test.ChunkStore);
+            await using var chunkDataStream = await ChunkDataStream.BuildNewAsync(test.RootReference, test.ChunkStore, RedundancyLevel.None, RedundancyStrategy.Data, false);
             
             await chunkDataStream.CopyToAsync(memoryStream);
             memoryStream.Seek(0, SeekOrigin.Begin);
