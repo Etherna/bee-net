@@ -82,14 +82,15 @@ namespace Etherna.BeeNet.Models
                 Span.Span);
 
         // Methods.
-        public (int DataShards, int Parities) CountIntermediateReferences(bool encryptedDataReferences) =>
+        public (int DataShards, int ParityShards) CountIntermediateReferences(bool encryptedDataReferences) =>
             CountIntermediateReferences(SpanLength, RedundancyLevel, encryptedDataReferences);
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
-        public SwarmShardReference[] GetIntermediateReferences(
-            int parityReferencesAmount,
-            bool encryptedDataReferences) =>
-            GetIntermediateReferencesFromData(Data.Span, parityReferencesAmount, encryptedDataReferences);
+        public SwarmShardReference[] GetIntermediateReferences(bool encryptedDataReferences)
+        {
+            var (_, parities) = CountIntermediateReferences(encryptedDataReferences);
+            return GetIntermediateReferencesFromData(Data.Span, parities, encryptedDataReferences);
+        }
 
         // Static methods.
         public static (int DataShards, int ParityShards) CountIntermediateReferences(
