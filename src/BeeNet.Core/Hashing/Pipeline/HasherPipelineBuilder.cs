@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Hashing.Redundancy;
 using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
@@ -40,7 +39,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
             //build stages
             var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
-                new RedundancyGenerator(
+                new ChunkRedundancyGenerator(
                     redundancyLevel,
                     isEncrypted || compactLevel > 0,
                     new ChunkBmtPipelineStage(

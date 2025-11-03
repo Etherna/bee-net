@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Hashing.Postage;
-using Etherna.BeeNet.Hashing.Redundancy;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkAggregatorPipelineStage(
-        RedundancyGenerator redundancyGenerator,
+        ChunkRedundancyGenerator redundancyGenerator,
         ChunkReplicator chunkReplicator,
         ChunkBmtPipelineStage shortBmtPipelineStage,
         bool readOnly)

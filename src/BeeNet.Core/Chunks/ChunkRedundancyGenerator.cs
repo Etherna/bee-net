@@ -20,11 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Hashing.Redundancy
+namespace Etherna.BeeNet.Chunks
 {
     internal delegate Task AddChunkToLevel(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt);
 
-    internal sealed class RedundancyGenerator(
+    internal sealed class ChunkRedundancyGenerator(
         RedundancyLevel redundancyLevel,
         bool encryptChunks,
         ChunkBmtPipelineStage shortBmtPipelineStage)
