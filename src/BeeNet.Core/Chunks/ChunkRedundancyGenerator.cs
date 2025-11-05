@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Chunks
         {
             // Properties.
             public byte[][] Buffer { get; } = new byte[SwarmChunkBmt.SegmentsCount][];
-            public int Length { get; private set; }
+            public int DataShardsAmount { get; private set; }
 
             // Methods.
             public void AddNewChunk(byte[] spanData)
@@ -42,11 +42,11 @@ namespace Etherna.BeeNet.Chunks
                 if (spanData.Length != SwarmCac.SpanDataSize)
                     throw new ArgumentException("Span data is not padded", nameof(spanData));
                 
-                Buffer[Length] = spanData;
-                Length++;
+                Buffer[DataShardsAmount] = spanData;
+                DataShardsAmount++;
             }
 
-            public void Clear() => Length = 0;
+            public void Clear() => DataShardsAmount = 0;
         }
         
         // Fields.
@@ -79,7 +79,7 @@ namespace Etherna.BeeNet.Chunks
                 throw new InvalidOperationException("No chunks has been added");
 
             var lastBufferLevel = bufferLevels.Last();
-            if (lastBufferLevel.Length == 0)
+            if (lastBufferLevel.DataShardsAmount == 0)
                 throw new InvalidOperationException("Invalid empty level");
 
             var rootSpanData = lastBufferLevel.Buffer[0];
@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Chunks
             bufferLevel.AddNewChunk(spanData.ToArray());
             
             // Add parity chunks if the level is full.
-            if (bufferLevel.Length == MaxDataShards)
+            if (bufferLevel.DataShardsAmount == MaxDataShards)
                 await EncodeErasureDataAsync(chunkLevel, addParityChunkCallback, swarmChunkBmt).ConfigureAwait(false);
         }
 
@@ -131,7 +131,7 @@ namespace Etherna.BeeNet.Chunks
                 return;
             
             var bufferLevel = bufferLevels[chunkLevel];
-            if (bufferLevel.Length != 1)
+            if (bufferLevel.DataShardsAmount != 1)
                 throw new InvalidOperationException("Cannot elevate carrier chunk because it is not the only one on level");
 
             await AddChunkToLevelAsync(
@@ -153,21 +153,21 @@ namespace Etherna.BeeNet.Chunks
                 return;
             
             var bufferLevel = bufferLevels[chunkLevel];
-            if (bufferLevel.Length == 0)
+            if (bufferLevel.DataShardsAmount == 0)
                 return;
             
             // Initialize parity shards.
-            var parities = GetParitiesAmount(bufferLevel.Length);
-            var totalShards = bufferLevel.Length + parities;
-            for (var i = bufferLevel.Length; i < totalShards; i++)
+            var parities = GetParitiesAmount(bufferLevel.DataShardsAmount);
+            var totalShards = bufferLevel.DataShardsAmount + parities;
+            for (var i = bufferLevel.DataShardsAmount; i < totalShards; i++)
                 bufferLevel.Buffer[i] = new byte[SwarmCac.SpanDataSize];
             
             // Calculate parity chunks.
-            var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(bufferLevel.Length, parities);
+            var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(bufferLevel.DataShardsAmount, parities);
             reedSolomonEncoder.EncodeParity(bufferLevel.Buffer[..totalShards], 0, SwarmCac.SpanDataSize);
 
             // Report parity chunks.
-            for (var i = bufferLevel.Length; i < totalShards; i++)
+            for (var i = bufferLevel.DataShardsAmount; i < totalShards; i++)
             {
                 var spanData = bufferLevel.Buffer[i];
                 var span = spanData[..SwarmCac.SpanSize];
