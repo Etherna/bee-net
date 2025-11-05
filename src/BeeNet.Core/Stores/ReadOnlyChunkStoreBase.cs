@@ -16,6 +16,7 @@ using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -121,19 +122,17 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
-            
-            var results = new Dictionary<SwarmHash, SwarmChunk>();
-            foreach (var hash in hashes)
-            {
-                try
-                {
-                    var chunk = await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
-                    results.Add(hash, chunk);
-                }
-                catch (KeyNotFoundException) { }
-            }
 
-            return results;
+            var tasks = hashes.Select(async hash =>
+            {
+                try { return await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false); }
+                catch (KeyNotFoundException) { return null; }
+            });
+
+            var chunkResults = await Task.WhenAll(tasks).ConfigureAwait(false);
+            return chunkResults.Where(c => c != null).ToDictionary(
+                c => c!.Hash,
+                c => c!);
         }
     }
 }
