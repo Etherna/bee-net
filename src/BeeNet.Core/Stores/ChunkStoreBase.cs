@@ -15,6 +15,7 @@
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
@@ -28,14 +29,16 @@ namespace Etherna.BeeNet.Stores
         /// </summary>
         /// <param name="chunk">The chuck to add</param>
         /// <param name="cacheChunk">Add chunk in cache</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>True if chunk has been added, false if already existing</returns>
         public async Task<bool> AddAsync(
             SwarmChunk chunk,
-            bool cacheChunk = false)
+            bool cacheChunk = false,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             
-            var result = await SaveChunkAsync(chunk).ConfigureAwait(false);
+            var result = await SaveChunkAsync(chunk, cancellationToken).ConfigureAwait(false);
             
             if (cacheChunk)
                 ChunksCache[chunk.Hash] = chunk;
@@ -43,9 +46,11 @@ namespace Etherna.BeeNet.Stores
             return result;
         }
 
-        public Task<bool> RemoveAsync(SwarmHash hash)
+        public Task<bool> RemoveAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default)
         {
-            var result = RemoveChunkAsync(hash);
+            var result = RemoveChunkAsync(hash, cancellationToken);
 
             ChunksCache.Remove(hash);
 
@@ -53,7 +58,7 @@ namespace Etherna.BeeNet.Stores
         }
 
         // Protected methods.
-        protected abstract Task<bool> RemoveChunkAsync(SwarmHash hash);
-        protected abstract Task<bool> SaveChunkAsync(SwarmChunk chunk);
+        protected abstract Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken);
+        protected abstract Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken);
     }
 }

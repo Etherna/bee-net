@@ -30,10 +30,10 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken = default) =>
             throw new KeyNotFoundException("Chunk get on a fake chunk store");
 
-        protected override Task<bool> RemoveChunkAsync(SwarmHash hash) =>
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken) =>
             Task.FromResult(false);
 
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk) =>
+        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken) =>
             Task.FromResult(true);
     }
 }

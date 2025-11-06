@@ -108,7 +108,7 @@ namespace Etherna.BeeNet.Stores
             throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
         }
         
-        protected override Task<bool> RemoveChunkAsync(SwarmHash hash)
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken)
         {
             // Try cac.
             var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Stores
             return Task.FromResult(false);
         }
 
-        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
+        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
@@ -151,8 +151,8 @@ namespace Etherna.BeeNet.Stores
                 //write tmp file, and complete writing.
                 using (var fileStream = File.Create(tmpChunkPath))
                 {
-                    await fileStream.WriteAsync(chunk.GetFullPayload()).ConfigureAwait(false);
-                    await fileStream.FlushAsync().ConfigureAwait(false);
+                    await fileStream.WriteAsync(chunk.GetFullPayload(), cancellationToken).ConfigureAwait(false);
+                    await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
                 }
                 
                 //rename it. This method prevent concurrent reading/writing 

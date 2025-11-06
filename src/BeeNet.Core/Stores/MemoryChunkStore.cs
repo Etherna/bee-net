@@ -38,10 +38,10 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken = default) =>
             Task.FromResult(chunks[hash]);
 
-        protected override Task<bool> RemoveChunkAsync(SwarmHash hash) =>
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken) =>
             Task.FromResult(chunks.Remove(hash, out _));
 
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk)
+        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
             
