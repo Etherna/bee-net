@@ -50,6 +50,7 @@ namespace Etherna.BeeNet.Stores
         public async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
             IEnumerable<SwarmHash> hashes,
             bool cacheChunk = false,
+            int? canReturnAfterFound = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
@@ -65,9 +66,13 @@ namespace Etherna.BeeNet.Stores
                     cacheMissedHashes.Add(hash);
 
             // Get from store only missing chunks.
-            if (cacheMissedHashes.Count != 0)
+            if (cacheMissedHashes.Count != 0 &&
+                (!canReturnAfterFound.HasValue || canReturnAfterFound > results.Count))
             {
-                var storeResults = await LoadChunksAsync(cacheMissedHashes, cancellationToken).ConfigureAwait(false);
+                var storeResults = await LoadChunksAsync(
+                    cacheMissedHashes,
+                    canReturnAfterFound.HasValue ? canReturnAfterFound - results.Count : null,
+                    cancellationToken).ConfigureAwait(false);
                 foreach (var result in storeResults)
                     results.Add(result.Key, result.Value);
             }
@@ -119,6 +124,7 @@ namespace Etherna.BeeNet.Stores
 
         protected virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> LoadChunksAsync(
             IEnumerable<SwarmHash> hashes,
+            int? canReturnAfterFound,
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
@@ -127,12 +133,22 @@ namespace Etherna.BeeNet.Stores
             {
                 try { return await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false); }
                 catch (KeyNotFoundException) { return null; }
-            });
+            }).ToList();
 
-            var chunkResults = await Task.WhenAll(tasks).ConfigureAwait(false);
-            return chunkResults.Where(c => c != null).ToDictionary(
-                c => c!.Hash,
-                c => c!);
+            Dictionary<SwarmHash, SwarmChunk> results = [];
+            while (tasks.Count > 0)
+            {
+                var completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+                tasks.Remove(completedTask);
+                
+                var chunkResult = await completedTask.ConfigureAwait(false);
+                if (chunkResult != null)
+                    results.Add(chunkResult.Hash, chunkResult);
+
+                if (canReturnAfterFound <= results.Count)
+                    break;
+            }
+            return results;
         }
     }
 }
