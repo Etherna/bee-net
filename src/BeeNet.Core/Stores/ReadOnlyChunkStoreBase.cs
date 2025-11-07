@@ -47,15 +47,16 @@ namespace Etherna.BeeNet.Stores
             return chunk;
         }
 
-        public async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
+        public async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> GetAsync(
             IEnumerable<SwarmHash> hashes,
             bool cacheChunk = false,
-            int? canReturnAfterFound = null,
+            int? canReturnAfterFailed = null,
+            int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
             
-            var results = new Dictionary<SwarmHash, SwarmChunk>();
+            var results = new Dictionary<SwarmHash, SwarmChunk?>();
             var cacheMissedHashes = new List<SwarmHash>();
             
             // Try read chunks from cache.
@@ -67,11 +68,12 @@ namespace Etherna.BeeNet.Stores
 
             // Get from store only missing chunks.
             if (cacheMissedHashes.Count != 0 &&
-                (!canReturnAfterFound.HasValue || canReturnAfterFound > results.Count))
+                (!canReturnAfterSucceeded.HasValue || canReturnAfterSucceeded > results.Count))
             {
                 var storeResults = await LoadChunksAsync(
                     cacheMissedHashes,
-                    canReturnAfterFound.HasValue ? canReturnAfterFound - results.Count : null,
+                    canReturnAfterFailed,
+                    canReturnAfterSucceeded.HasValue ? canReturnAfterSucceeded - results.Count : null,
                     cancellationToken).ConfigureAwait(false);
                 foreach (var result in storeResults)
                     results.Add(result.Key, result.Value);
@@ -79,8 +81,8 @@ namespace Etherna.BeeNet.Stores
 
             // Report chunks to cache, if required.
             if (cacheChunk)
-                foreach (var result in results)
-                    ChunksCache.TryAdd(result.Key, result.Value);
+                foreach (var result in results.Where(r => r.Value != null))
+                    ChunksCache.TryAdd(result.Key, result.Value!);
             
             return results;
         }
@@ -122,9 +124,10 @@ namespace Etherna.BeeNet.Stores
             SwarmHash hash,
             CancellationToken cancellationToken = default);
 
-        protected virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> LoadChunksAsync(
+        protected virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> LoadChunksAsync(
             IEnumerable<SwarmHash> hashes,
-            int? canReturnAfterFound,
+            int? canReturnAfterFailed,
+            int? canReturnAfterSucceeded,
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
@@ -135,7 +138,8 @@ namespace Etherna.BeeNet.Stores
                 catch (KeyNotFoundException) { return null; }
             }).ToList();
 
-            Dictionary<SwarmHash, SwarmChunk> results = [];
+            Dictionary<SwarmHash, SwarmChunk?> results = [];
+            var failedChunks = 0;
             while (tasks.Count > 0)
             {
                 var completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
@@ -144,8 +148,11 @@ namespace Etherna.BeeNet.Stores
                 var chunkResult = await completedTask.ConfigureAwait(false);
                 if (chunkResult != null)
                     results.Add(chunkResult.Hash, chunkResult);
+                else
+                    failedChunks++;
 
-                if (canReturnAfterFound <= results.Count)
+                if (canReturnAfterSucceeded <= results.Count ||
+                    canReturnAfterFailed <= failedChunks)
                     break;
             }
             return results;
