@@ -37,7 +37,7 @@ namespace Etherna.BeeNet.Chunks
         private readonly Dictionary<SwarmHash, int> hashIndexMap = new();
         
         private readonly SwarmShardReference[] _shardReferences;
-        private readonly byte[][] shardsBuffer;
+        private readonly byte[][] shardsBuffer; //byte[i] could be null when relative chunk is not present
         private int lastChunkLength = SwarmCac.SpanDataSize;
         
         private readonly int dataShardsAmount;
@@ -93,11 +93,39 @@ namespace Etherna.BeeNet.Chunks
             return new SwarmCac(hash, chunkSpanData);
         }
         
+        /// <summary>
+        /// Get all missing shards, from both data and parities
+        /// </summary>
         public SwarmShardReference[] GetMissingShards() =>
             shardsBuffer
                 .Zip(_shardReferences)
                 .Where(zip => zip.First == null!)
                 .Select(zip => zip.Second).ToArray();
+        
+        public async Task<bool> TryFetchAndRecoverAsync(
+            RedundancyStrategy firstStrategy,
+            bool strategyFallback,
+            TimeSpan? customStrategyTimeout = null,
+            bool forceRecoverParities = false,
+            CancellationToken cancellationToken = default)
+        {
+            // Verify if recovery has already been completed with success.
+            if (RecoverySucceeded)
+                return true;
+
+            // Run fetch and proceed if succeeded.
+            var fetched = await TryFetchChunksAsync(
+                firstStrategy,
+                strategyFallback,
+                customStrategyTimeout,
+                cancellationToken).ConfigureAwait(false);
+
+            if (!fetched)
+                return false;
+
+            // Run recovery.
+            return TryRecoverChunks(forceRecoverParities);
+        }
 
         /// <summary>
         /// Try to retrieve enough missing chunks to perform redundancy recovery.
@@ -164,6 +192,10 @@ namespace Etherna.BeeNet.Chunks
             // Verify if recovery has already been completed with success.
             if (RecoverySucceeded)
                 return true;
+            
+            // Verify if there are enough recovered shards.
+            if (shardsBuffer.Count(b => b != null!) < dataShardsAmount)
+                return false;
             
             // If all data shards are not null, recovery is not needed.
             if (!forceRecoverParities &&
@@ -263,6 +295,8 @@ namespace Etherna.BeeNet.Chunks
                     case false: failedFetches++; break;
                 }
             }
+            if (hashesToQuery.Length == 0)
+                return succeededFetches >= dataShardsAmount;
             if (succeededFetches >= dataShardsAmount)
                 return true;
             if (failedFetches > allowedErrors)
