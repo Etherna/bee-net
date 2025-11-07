@@ -23,354 +23,355 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Chunks
 {
+    /// <summary>
+    /// Tries to recover data children of an intermediate chunk using redundancy
+    /// </summary>
     public sealed class ChunkRedundancyDecoder : IDisposable
     {
         // Consts.
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
         
         // Fields.
-        private readonly Dictionary<SwarmHash, int> cache = new();
-        private readonly int[] inflight;
-        private readonly SwarmShardReference[] references;
+        private readonly IReadOnlyChunkStore chunkStore;
+        private readonly Dictionary<SwarmHash, int> hashIndexMap = new();
+
+        private readonly ReaderWriterLockSlim recoveryLock = new(LockRecursionPolicy.NoRecursion);
+        
+        private readonly SwarmShardReference[] _shardReferences;
+        private readonly byte[][] shardsBuffer;
+        private readonly ReaderWriterLockSlim shardsBufferLock = new(LockRecursionPolicy.NoRecursion);
+        private int lastChunkLength;
+        
         private readonly int dataShardsAmount;
-        private readonly IChunkStore destinationChunkStore;
-        private readonly int parityShardsAmount;
-        private readonly RedundancyStrategy strategy;
-        private readonly bool strategyFallback;
-        private readonly IReadOnlyChunkStore sourceChunkStore;
-        private readonly TaskCompletionSource<bool>[] waits;
-
-        private readonly TaskCompletionSource<bool> initRecoveryTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly TaskCompletionSource<bool> recoveryTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        private int failedCnt;
-        private int fetchedCnt;
-        private int lastLen;
-        private byte[][] shardsBuffer;
-        private SemaphoreSlim shardsBufferSemaphore = new(1, 1);
-
+        
         // Constructor.
         public ChunkRedundancyDecoder(
             SwarmCac parentChunk,
             bool encryptedDataReferences,
-            RedundancyStrategy strategy,
-            bool strategyFallback,
-            IReadOnlyChunkStore sourceChunkStore,
-            IChunkStore destinationChunkStore)
+            IReadOnlyChunkStore chunkStore)
         {
             ArgumentNullException.ThrowIfNull(parentChunk, nameof(parentChunk));
             
-            references = parentChunk.GetIntermediateReferences(encryptedDataReferences);
-            dataShardsAmount = references.Count(r => !r.IsParity);
-            parityShardsAmount = references.Length - dataShardsAmount;
+            this.chunkStore = chunkStore;
             
-            inflight = new int[references.Length];
-            this.strategy = strategy;
-            this.strategyFallback = strategyFallback;
-            this.sourceChunkStore = sourceChunkStore;
-            this.destinationChunkStore = destinationChunkStore;
-            waits = new TaskCompletionSource<bool>[references.Length];
-            for (int i = 0; i < references.Length; i++)
-            {
-                if (!references[i].IsParity)
-                    cache[references[i].Reference.Hash] = i;
-                waits[i] = new TaskCompletionSource<bool>();
-            }
+            _shardReferences = parentChunk.GetIntermediateReferences(encryptedDataReferences);
+            shardsBuffer = new byte[_shardReferences.Length][];
+            dataShardsAmount = _shardReferences.Count(r => !r.IsParity);
             
-            shardsBuffer = new byte[references.Length][];
+            for (int i = 0; i < _shardReferences.Length; i++)
+                hashIndexMap[_shardReferences[i].Reference.Hash] = i;
         }
         
         // Dispose.
         public void Dispose()
         {
-            shardsBufferSemaphore.Dispose();
+            recoveryLock.Dispose();
+            shardsBufferLock.Dispose();
         }
+        
+        // Properties.
+        public bool RecoverySucceeded { get; private set; }
+        public ReadOnlySpan<SwarmShardReference> ShardReferences => _shardReferences;
         
         // Methods.
-        public async Task<SwarmCac> GetChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        public async Task AddChunksToStoreAsync(
+            IChunkStore destinationStore,
+            IEnumerable<SwarmHash> hashes,
+            CancellationToken cancellationToken)
         {
-            var i = cache[hash];
-            await TryFetch(i, true, cancellationToken).ConfigureAwait(false);
-            return new SwarmCac(hash, await TryGetData(i).ConfigureAwait(false));
+            ArgumentNullException.ThrowIfNull(destinationStore, nameof(destinationStore));
+            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            
+            foreach (var hash in hashes)
+            {
+                var chunk = GetChunk(hash);
+                await destinationStore.AddAsync(chunk, false, cancellationToken).ConfigureAwait(false);
+            }
         }
-        
-        public async Task PrefetchAsync(CancellationToken cancellationToken)
+
+        public SwarmCac GetChunk(SwarmHash hash)
         {
-            var succeeded = false;
+            shardsBufferLock.EnterReadLock();
             try
             {
-                // Run redundancy strategies.
-                var strategySucceeded = false;
-                for (int s = (int)strategy; s <= (int)RedundancyStrategy.Race; s++)
-                {
-                    strategySucceeded = await TryRunStrategyAsync((RedundancyStrategy)s, cancellationToken)
-                        .ConfigureAwait(false);
-                    if (strategySucceeded || !strategyFallback)
-                        break;
-                }
-
-                if (!strategySucceeded)
-                    throw new KeyNotFoundException("Can't fetch child chunks");
-
-                // Recover missing data chunks.
-                initRecoveryTcs.SetResult(true);
-                await RecoverAsync().ConfigureAwait(false);
-
-                // Set as succeeded
-                succeeded = true;
+                var i = hashIndexMap[hash];
+                if (shardsBuffer[i] == null!)
+                    throw new InvalidOperationException($"Chunk with hash {hash} has not been recovered");
+                    
+                var chunkSpanData = i == dataShardsAmount - 1 && lastChunkLength > 0 ?
+                    shardsBuffer[i][..lastChunkLength] :
+                    shardsBuffer[i];
+        
+                return new SwarmCac(hash, chunkSpanData);
             }
             finally
             {
-                recoveryTcs.SetResult(succeeded);
+                shardsBufferLock.ExitReadLock();
+            }
+        }
+        
+        public SwarmShardReference[] GetMissingShards()
+        {
+            shardsBufferLock.EnterReadLock();
+            try
+            {
+                return shardsBuffer
+                    .Zip(_shardReferences)
+                    .Where(zip => zip.First == null!)
+                    .Select(zip => zip.Second).ToArray();
+            }
+            finally
+            {
+                shardsBufferLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Try to retrieve enough missing chunks to perform redundancy recovery.
+        /// </summary>
+        /// <param name="firstStrategy">First strategy to try. None is not allowed</param>
+        /// <param name="strategyFallback">When true and a strategy fails, fallback to try the next</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Succeeded recovery</returns>
+        public async Task<bool> TryFetchChunksAsync(
+            RedundancyStrategy firstStrategy,
+            bool strategyFallback,
+            CancellationToken cancellationToken)
+        {
+            // Verify if recovery has already been completed with success.
+            recoveryLock.EnterReadLock();
+            try
+            {
+                if (RecoverySucceeded)
+                    return true;
+            }
+            finally
+            {
+                recoveryLock.ExitReadLock();
+            }
+            
+            // Init chunk fetch tasks list with already found chunks.
+            bool?[] fetchResults;
+            shardsBufferLock.EnterReadLock();
+            try
+            {
+                fetchResults = shardsBuffer.Select(b => (bool?)(b != null! ? true : null)).ToArray();
+            }
+            finally
+            {
+                shardsBufferLock.ExitReadLock();
+            }
+            
+            // Run redundancy strategies.
+            var succeeded = false;
+            for (int s = (int)firstStrategy; !succeeded && s <= (int)RedundancyStrategy.Race; s++)
+            {
+                var strategy = (RedundancyStrategy)s;
+                
+                succeeded = await TryRunStrategyAsync(strategy, fetchResults, cancellationToken).ConfigureAwait(false);
+                if (!strategyFallback)
+                    break;
+            }
+        
+            return succeeded;
+        }
+        
+        /// <summary>
+        /// Try to perform redundancy recovery.
+        /// </summary>
+        /// <param name="forceRecoverParities">When false skip recovery if all data chunks are present</param>
+        /// <returns>Succeeded recovery</returns>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        public bool TryRecoverChunks(bool forceRecoverParities)
+        {
+            // Verify if recovery has already been completed with success.
+            recoveryLock.EnterReadLock();
+            try
+            {
+                if (RecoverySucceeded)
+                    return true;
+            }
+            finally
+            {
+                recoveryLock.ExitReadLock();
+            }
+            
+            // If all data shards are not null, recovery is not needed.
+            if (!forceRecoverParities)
+            {
+                shardsBufferLock.EnterReadLock();
+                try
+                {
+                    if (shardsBuffer.Take(dataShardsAmount).All(s => s != null!))
+                        return true;
+                }
+                finally
+                {
+                    shardsBufferLock.ExitReadLock();
+                }
+            }
+            
+            // Run actual recovery.
+            recoveryLock.EnterWriteLock();
+            try
+            {
+                // Use Reed-Solomon erasure coding decoder to recover data shards.
+                var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(
+                    dataShardsAmount,
+                    shardsBuffer.Length - dataShardsAmount);
+                
+                var shardsPresent = new bool[shardsBuffer.Length];
+                
+                shardsBufferLock.EnterWriteLock();
+                try
+                {
+                    for (int i = 0; i < shardsBuffer.Length; i++)
+                    {
+                        if (shardsBuffer[i] == null!)
+                            shardsBuffer[i] = new byte[SwarmCac.SpanDataSize];
+                        else
+                            shardsPresent[i] = true;
+                    }
+        
+                    //decode missing shards
+                    reedSolomonEncoder.DecodeMissing(shardsBuffer, shardsPresent, 0, SwarmCac.SpanDataSize);
+                }
+                catch
+                {
+                    // Restore missing chunks in buffer in case of error.
+                    for (int i = 0; i < shardsBuffer.Length; i++)
+                        if (!shardsPresent[i])
+                            shardsBuffer[i] = null!;
+                    
+                    return false;
+                }
+                finally
+                {
+                    shardsBufferLock.ExitWriteLock();
+                }
+                
+                // Return as succeeded.
+                return true;
+            }
+            finally
+            {
+                recoveryLock.ExitWriteLock();
             }
         }
         
         // Helpers.
-        private bool Fly(int i) => Interlocked.CompareExchange(ref inflight[i], 1, 0) == 0;
         
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        private async Task<bool> TryFetch(
-            int i,
-            bool waitForRecovery,
-            CancellationToken cancellationToken)
-        {
-            // Recovery has started, wait for result instead of fetching from the network.
-            if (initRecoveryTcs.Task.IsCompleted)
-            {
-                if (waitForRecovery)
-                    return await WaitRecoveryAsync(cancellationToken).ConfigureAwait(false);
-                return true;
-            }
-
-            // first time
-            if (Fly(i))
-            {
-                using var timeoutCts = new CancellationTokenSource(DefaultTimeout);
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
-
-                // Run guard to cancel fetch if recovery is initiated.
-                if (waitForRecovery)
-                {
-                    _ = initRecoveryTcs.Task.ContinueWith(
-                        static (_, cts) =>
-                        {
-                            try { ((CancellationTokenSource)cts!).Cancel(); }
-                            catch (ObjectDisposedException) { }
-                        },
-                        linkedCts,
-                        CancellationToken.None,
-                        TaskContinuationOptions.ExecuteSynchronously,
-                        TaskScheduler.Default);
-                }
-                
-                // retrieval
-                SwarmChunk ch;
-                try
-                {
-                    ch = await sourceChunkStore.GetAsync(references[i].Reference.Hash, false, linkedCts.Token).ConfigureAwait(false);
-                    await SetDataAsync(i, ch.GetFullPayload()).ConfigureAwait(false);
-                    waits[i].SetResult(true);
-                    Interlocked.Add(ref fetchedCnt, 1);
-                    return true;
-                }
-                catch
-                {
-                    Interlocked.Add(ref failedCnt, 1);
-                    waits[i].SetResult(false);
-                    if (waitForRecovery)
-                        return await WaitRecoveryAsync(cancellationToken).ConfigureAwait(false);
-                    return false;
-                }
-            }
-            
-            await waits[i].Task.ConfigureAwait(false);
-
-            if (TryGetData(i) != null)
-                return true;
-
-            if (waitForRecovery)
-                return await WaitRecoveryAsync(cancellationToken).ConfigureAwait(false);
-            return false;
-        }
-
-        private async Task<byte[]?> TryGetData(int i)
-        {
-            await shardsBufferSemaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                return i == dataShardsAmount - 1 && lastLen > 0 ? shardsBuffer[i][..lastLen] : shardsBuffer[i];
-            }
-            finally
-            {
-                shardsBufferSemaphore.Release();
-            }
-        }
-        
-        private async Task RecoverAsync()
-        {
-            // recover wraps the stages of data shard recovery:
-            // 1. gather missing data shards
-            // 2. decode using Reed-Solomon decoder
-            // 3. save reconstructed chunks
-            
-            // gather missing shards
-            var m = new List<int>();
-            for (int i = 0; i < dataShardsAmount; i++)
-                if (TryGetData(i) == null)
-                    m.Add(i);
-            
-            // if recovery is not needed as there are no missing data chunks
-            if (m.Count == 0)
-                return;
-
-            // decode uses Reed-Solomon erasure coding decoder to recover data shards
-            // it must be called after shqrdcnt shards are retrieved
-            await shardsBufferSemaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(dataShardsAmount, parityShardsAmount);
-
-                var shardsPresent = new bool[shardsBuffer.Length];
-                for (int i = 0; i < shardsBuffer.Length; i++)
-                {
-                    if (shardsBuffer[i] == null)
-                        shardsBuffer[i] = new byte[SwarmCac.SpanDataSize];
-                    else
-                        shardsPresent[i] = true;
-                }
-                
-                // decode data
-                reedSolomonEncoder.DecodeMissing(shardsBuffer, shardsPresent, 0, SwarmCac.SpanDataSize);
-            }
-            finally
-            {
-                shardsBufferSemaphore.Release();
-            }
-
-            // save chunks
-            await SaveAsync(m).ConfigureAwait(false);
-        }
-
-        private async Task SaveAsync(List<int> missing)
-        {
-            await shardsBufferSemaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                foreach (var i in missing)
-                {
-                    await destinationChunkStore.AddAsync(new SwarmCac(references[i].Reference.Hash, shardsBuffer[i])).ConfigureAwait(false);
-                }
-            }
-            finally
-            {
-                shardsBufferSemaphore.Release();
-            }
-        }
-
-        private async Task SetDataAsync(int i, ReadOnlyMemory<byte> chdata)
-        {
-            await shardsBufferSemaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                var data = chdata.ToArray();
-            
-                // pad the chunk with zeros if it is smaller than swarm.ChunkSize
-                if (data.Length < SwarmCac.SpanDataSize)
-                {
-                    lastLen = data.Length;
-                    data = new byte[SwarmCac.SpanDataSize];
-                    chdata.CopyTo(data);
-                }
-                
-                shardsBuffer[i] = data;
-            }
-            finally
-            {
-                shardsBufferSemaphore.Release();
-            }
-        }
-
+        /// <summary>
+        /// Common goal is to fetch at least as many chunks as the number of data shards.
+        /// DATA strategy has a max error tolerance of zero.
+        /// RACE strategy has a max error tolerance of number of parity chunks.
+        /// </summary>
+        /// <param name="strategy"></param>
+        /// <param name="fetchResults"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         private async Task<bool> TryRunStrategyAsync(
             RedundancyStrategy strategy,
+            bool?[] fetchResults,
             CancellationToken cancellationToken)
         {
-            /*
-             * Across the different strategies, the common goal is to fetch at least as many chunks
-             * as the number of data shards.
-             * DATA strategy has a max error tolerance of zero.
-             * RACE strategy has a max error tolerance of number of parity chunks.
-             */
-            int allowedErrs;
-            List<int> m;
-
+            // Define allowed errors and hashes to query, based on strategy.
+            var allowedErrors = 0;
+            SwarmHash[] hashesToQuery;
+        
             switch (strategy)
             {
                 case RedundancyStrategy.None:
-                    throw new ArgumentException($"Strategy {strategy} not allowed here", nameof(strategy));
+                    throw new ArgumentException($"Strategy None is not allowed here", nameof(strategy));
                 
                 case RedundancyStrategy.Data: //only retrieve data shards
-                    m = UnattemptedDataShards();
-                    allowedErrs = 0;
+                    hashesToQuery = fetchResults
+                        .Zip(_shardReferences.Where(sr => !sr.IsParity))
+                        .Where(zip => zip.First == null)
+                        .Select(zip => zip.Second.Reference.Hash)
+                        .ToArray();
                     break;
                 
                 case RedundancyStrategy.Prox: //proximity driven selective fetching
                     return false; //TODO: strategy not implemented
                 
                 case RedundancyStrategy.Race:
-                    allowedErrs = parityShardsAmount;
-                    
-                    //retrieve all chunks at once enabling race among chunks
-                    m = UnattemptedDataShards();
-                    m.AddRange(Enumerable.Range(dataShardsAmount, parityShardsAmount));
+                    allowedErrors = _shardReferences.Length - dataShardsAmount;
+                    hashesToQuery = fetchResults
+                        .Zip(_shardReferences)
+                        .Where(zip => zip.First == null)
+                        .Select(zip => zip.Second.Reference.Hash)
+                        .ToArray();
                     break;
                 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
             }
-
-            if (m.Count == 0)
+            
+            // Define and verify requirements.
+            var succeededFetches = 0;
+            var failedFetches = 0;
+            foreach (var result in fetchResults)
+            {
+                switch (result)
+                {
+                    case true: succeededFetches++; break;
+                    case false: failedFetches++; break;
+                }
+            }
+            if (succeededFetches >= dataShardsAmount)
                 return true;
-
-            List<Task<bool>> fetchTasks = [..m.Select(i => TryFetch(i, false, cancellationToken))];
-            while (fetchTasks.Count != 0)
-            {
-                var completedTask = await Task.WhenAny(fetchTasks).ConfigureAwait(false);
-                fetchTasks.Remove(completedTask);
-
-                if (fetchedCnt >= dataShardsAmount) return true;
-                if (failedCnt > allowedErrs) return false;
-            }
-            
-            throw new InvalidOperationException("Should never reach this point");
-        }
-        
-        private List<int> UnattemptedDataShards()
-        {
-            var m = new List<int>();
-            for (int i = 0; i < dataShardsAmount; i++)
-            {
-                if (!waits[i].Task.IsCompleted)
-                    m.Add(i);
-            }
-            return m;
-        }
-        
-        private async Task<bool> WaitRecoveryAsync(CancellationToken cancellationToken)
-        {
-            var cancelTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var regTask = cancellationToken.Register(
-                s => ((TaskCompletionSource<bool>)s!).TrySetResult(true),
-                cancelTcs);
-            await using var reg = regTask.ConfigureAwait(false);
-
-            var completedTask = await Task.WhenAny(recoveryTcs.Task, cancelTcs.Task).ConfigureAwait(false);
-            
-            // If cancellation token has been canceled, return false.
-            if (completedTask == cancelTcs.Task)
+            if (failedFetches > allowedErrors)
                 return false;
-                
-            // Else, return recovery result.
-            return await recoveryTcs.Task.ConfigureAwait(false);
+        
+            // Run chunks query.
+            using var timeoutCts = new CancellationTokenSource(DefaultTimeout);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+            var results = await chunkStore.GetAsync(
+                hashesToQuery,
+                canReturnAfterFailed: allowedErrors + 1,
+                canReturnAfterSucceeded: dataShardsAmount - succeededFetches,
+                cancellationToken: linkedCts.Token).ConfigureAwait(false);
+            
+            // Verify results.
+            shardsBufferLock.EnterWriteLock();
+            try
+            {
+                foreach (var hash in hashesToQuery)
+                {
+                    if (!results.TryGetValue(hash, out var chunk))
+                        continue;
+
+                    var shardIndex = hashIndexMap[hash];
+                    if (chunk != null)
+                    {
+                        // Store found chunk. Pad data with zeros if it is smaller than SpanDataSize.
+                        var spanData = new byte[SwarmCac.SpanDataSize];
+                        chunk.GetFullPayload().CopyTo(spanData);
+                        shardsBuffer[shardIndex] = spanData;
+                        
+                        var dataLength = chunk.GetFullPayload().Length;
+                        if (dataLength < SwarmCac.SpanDataSize)
+                            lastChunkLength = dataLength;
+                        
+                        // Update results.
+                        fetchResults[shardIndex] = true;
+                        succeededFetches++;
+                    }
+                    else
+                    {
+                        // Update results.
+                        fetchResults[shardIndex] = false;
+                        failedFetches++;
+                    }
+                }
+            }
+            finally
+            {
+                shardsBufferLock.ExitWriteLock();
+            }
+            
+            return succeededFetches >= dataShardsAmount;
         }
     }
 }
