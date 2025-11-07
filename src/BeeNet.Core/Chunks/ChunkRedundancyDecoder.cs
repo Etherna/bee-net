@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.Chunks
         {
             var i = hashIndexMap[hash];
             if (shardsBuffer[i] == null!)
-                throw new InvalidOperationException($"Chunk with hash {hash} has not been recovered");
+                throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
                     
             var chunkSpanData = i == dataShardsAmount - 1 && lastChunkLength < SwarmCac.SpanDataSize ?
                 shardsBuffer[i][..lastChunkLength] :
@@ -145,7 +145,8 @@ namespace Etherna.BeeNet.Chunks
                 chunk = GetChunk(hash);
                 return true;
             }
-            catch (InvalidOperationException)
+            catch (Exception e) when (e is InvalidOperationException
+                                          or KeyNotFoundException)
             {
                 chunk = null;
                 return false;
@@ -167,10 +168,7 @@ namespace Etherna.BeeNet.Chunks
             // If all data shards are not null, recovery is not needed.
             if (!forceRecoverParities &&
                 shardsBuffer.Take(dataShardsAmount).All(s => s != null!))
-            {
-                RecoverySucceeded = true;
                 return true;
-            }
             
             // Run actual recovery. Use Reed-Solomon erasure coding decoder to recover data shards.
             var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(
@@ -294,8 +292,14 @@ namespace Etherna.BeeNet.Chunks
                     shardsBuffer[shardIndex] = spanData;
                         
                     var dataLength = chunk.GetFullPayload().Length;
-                    if (dataLength < SwarmCac.SpanDataSize) //only last chunk could be shorter
-                        lastChunkLength = dataLength;
+                    if (dataLength < SwarmCac.SpanDataSize)
+                    {
+                        if (shardIndex == dataShardsAmount - 1)
+                            lastChunkLength = dataLength;
+                        else
+                            throw new InvalidOperationException(
+                                $"Only last chunk can be shorter than {SwarmCac.SpanDataSize}");
+                    }
                         
                     // Update results.
                     fetchResults[shardIndex] = true;
