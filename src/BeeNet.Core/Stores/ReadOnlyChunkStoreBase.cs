@@ -131,10 +131,13 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            
+            //cancel all pendent load tasks when returning before all of them are completed
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
             var tasks = hashes.Select(async hash =>
             {
-                try { return await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false); }
+                try { return await LoadChunkAsync(hash, cts.Token).ConfigureAwait(false); }
                 catch (KeyNotFoundException) { return null; }
             }).ToList();
 
