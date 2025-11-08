@@ -93,6 +93,21 @@ namespace Etherna.BeeNet.Models
         }
 
         // Static methods.
+        public static int CalculatePlainDataLength(
+            ulong spanLength,
+            RedundancyLevel redundancyLevel,
+            bool encryptedDataReferences)
+        {
+            // If is data chunk.
+            if (spanLength <= DataSize)
+                return (int)spanLength;
+            
+            // If is intermediate chunk.
+            var (dataShards, parities) = CountIntermediateReferences(spanLength, redundancyLevel, encryptedDataReferences);
+            return (encryptedDataReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) * dataShards +
+                   parities * SwarmHash.HashSize;
+        }
+        
         public static (int DataShards, int ParityShards) CountIntermediateReferences(
             ulong spanLength,
             RedundancyLevel redundancyLevel,

@@ -38,7 +38,6 @@ namespace Etherna.BeeNet.Chunks
         
         private readonly SwarmShardReference[] _shardReferences;
         private readonly byte[][] shardsBuffer; //byte[i] could be null when relative chunk is not present
-        private int lastChunkLength = SwarmCac.SpanDataSize;
         
         private readonly int dataShardsAmount;
         
@@ -85,12 +84,18 @@ namespace Etherna.BeeNet.Chunks
             var i = hashIndexMap[hash];
             if (shardsBuffer[i] == null!)
                 throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
-                    
-            var chunkSpanData = i == dataShardsAmount - 1 && lastChunkLength < SwarmCac.SpanDataSize ?
-                shardsBuffer[i][..lastChunkLength] :
-                shardsBuffer[i];
-        
-            return new SwarmCac(hash, chunkSpanData);
+
+            // If is not last chunk, or if is encrypted, simply read from buffer.
+            if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
+                return new SwarmCac(hash, shardsBuffer[i]);
+            
+            // Else, if is last chunk and not encrypted, try to remove possible padding.
+            ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
+            var spanLength = SwarmCac.SpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
+            var redundancyLevel = SwarmCac.GetSpanRedundancyLevel(span);
+
+            return new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
+                SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false)));
         }
         
         /// <summary>
@@ -324,16 +329,6 @@ namespace Etherna.BeeNet.Chunks
                     var spanData = new byte[SwarmCac.SpanDataSize];
                     chunk.GetFullPayload().CopyTo(spanData);
                     shardsBuffer[shardIndex] = spanData;
-                        
-                    var dataLength = chunk.GetFullPayload().Length;
-                    if (dataLength < SwarmCac.SpanDataSize)
-                    {
-                        if (shardIndex == dataShardsAmount - 1)
-                            lastChunkLength = dataLength;
-                        else
-                            throw new InvalidOperationException(
-                                $"Only last chunk can be shorter than {SwarmCac.SpanDataSize}");
-                    }
                         
                     // Update results.
                     fetchResults[shardIndex] = true;

@@ -109,11 +109,7 @@ namespace Etherna.BeeNet.Chunks
             var level = SwarmCac.GetSpanRedundancyLevel(decryptedSpan);
             var decodedSpan = SwarmCac.DecodeSpan((ReadOnlySpan<byte>)decryptedSpan);
             var length = SwarmCac.SpanToLength(decodedSpan);
-            if (length <= SwarmCac.DataSize)
-                return (int)length;
-
-            var (dataShards, parities) = SwarmCac.CountIntermediateReferences(length, level, true);
-            return SwarmReference.EncryptedSize * dataShards + parities * SwarmHash.HashSize;
+            return SwarmCac.CalculatePlainDataLength(length, level, true);
         }
 
         /// <summary>
