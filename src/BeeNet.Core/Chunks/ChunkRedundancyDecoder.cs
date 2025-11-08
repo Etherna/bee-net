@@ -60,6 +60,7 @@ namespace Etherna.BeeNet.Chunks
         }
         
         // Properties.
+        public bool ReadyDataChunks => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
         public bool RecoverySucceeded { get; private set; }
         public ReadOnlySpan<SwarmShardReference> ShardReferences => _shardReferences;
         
@@ -124,7 +125,6 @@ namespace Etherna.BeeNet.Chunks
                 strategyFallback,
                 customStrategyTimeout,
                 cancellationToken).ConfigureAwait(false);
-
             if (!fetched)
                 return false;
 
@@ -147,7 +147,7 @@ namespace Etherna.BeeNet.Chunks
             CancellationToken cancellationToken = default)
         {
             // Verify if recovery has already been completed with success.
-            if (RecoverySucceeded)
+            if (ReadyDataChunks)
                 return true;
             
             // Init chunk fetch tasks list with already found chunks.
@@ -203,8 +203,7 @@ namespace Etherna.BeeNet.Chunks
                 return false;
             
             // If all data shards are not null, recovery is not needed.
-            if (!forceRecoverParities &&
-                shardsBuffer.Take(dataShardsAmount).All(s => s != null!))
+            if (!forceRecoverParities && ReadyDataChunks)
                 return true;
             
             // Run actual recovery. Use Reed-Solomon erasure coding decoder to recover data shards.
