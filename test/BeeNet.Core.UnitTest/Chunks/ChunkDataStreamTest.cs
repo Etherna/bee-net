@@ -28,15 +28,10 @@ namespace Etherna.BeeNet.Chunks
     public class ChunkDataStreamTest
     {
         // Internal classes.
-        public class JoinChunkDataTestElement(
-            IChunkStore chunkStore,
-            byte[] data,
-            SwarmReference rootReference)
-        {
-            public IChunkStore ChunkStore { get; } = chunkStore;
-            public byte[] Data { get; } = data;
-            public SwarmReference RootReference { get; } = rootReference;
-        }
+        public record JoinChunkDataTestElement(
+            IChunkStore ChunkStore,
+            byte[] Data,
+            SwarmReference RootReference);
         
         // Data.
         public static IEnumerable<object[]> JoinChunkDataTests

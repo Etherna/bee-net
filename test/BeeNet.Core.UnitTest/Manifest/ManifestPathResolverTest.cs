@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.Manifest
     public class ManifestPathResolverTest
     {
         // Internal classes.
-        public class InvokeResolvingPathTestElement
+        public record InvokeResolvingPathTestElement
         {
             public required string Path { get; init; }
             public required ManifestPathResolver Resolver { get; init; }

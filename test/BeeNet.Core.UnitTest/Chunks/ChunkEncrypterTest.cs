@@ -23,11 +23,8 @@ namespace Etherna.BeeNet.Chunks
 {
     public class ChunkEncrypterTest
     {
-        // Internal classes.
-        public class CanEncryptDecryptTestElement(byte[] spanData)
-        {
-            public byte[] SpanData { get; } = spanData;
-        }
+        // Internal records.
+        public record CanEncryptDecryptTestElement(byte[] SpanData);
 
         // Data.
         public static IEnumerable<object[]> CanEncryptDecryptTest
