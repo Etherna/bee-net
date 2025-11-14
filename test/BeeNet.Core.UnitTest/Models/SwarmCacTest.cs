@@ -34,7 +34,7 @@ namespace Etherna.BeeNet.Models
             {
                 var tests = new List<CanGetIntermediateReferencesFromSpanDataTestElement>
                 {
-                    //Redundancy level None, plain data shards
+                    // Redundancy level None, plain data shards.
                     new(Convert.FromBase64String("ACgAAAAAAADd8Q1YvCn/iqRZbQ1vHHrU3Ja0IsH4h58i+9XLYsY/rEWi+zMBY3580jWn9KJq542moRXYfV+O74QONewdmDO/bhg56kd+r2uKP2+QDMP++e9jivOONR4WzGgVGk/+j+k="),
                         false,
                         [
@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.Models
                             new("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9", false)
                         ]),
                     
-                    //Redundancy level Medium, plain data shards
+                    // Redundancy level Medium, plain data shards.
                     new(Convert.FromBase64String("ACgAAAAAAIHd8Q1YvCn/iqRZbQ1vHHrU3Ja0IsH4h58i+9XLYsY/rEWi+zMBY3580jWn9KJq542moRXYfV+O74QONewdmDO/bhg56kd+r2uKP2+QDMP++e9jivOONR4WzGgVGk/+j+mIvL8VM1ODio4RifrmCIgJOd6sf++BwuoxaeOvqvxQrO2n7PEAownddFmICQrzyybmiREY+x4+qZmGzF/71d0wucMNudgYNVhjl5E+VVVpgHV1mYVpxn96sE+jEtZqr7w="),
                         false,
                         [
@@ -55,7 +55,7 @@ namespace Etherna.BeeNet.Models
                             new("b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc", true)
                         ]),
                     
-                    //Redundancy level Strong, plain data shards
+                    // Redundancy level Strong, plain data shards.
                     new(Convert.FromBase64String("ACgAAAAAAILd8Q1YvCn/iqRZbQ1vHHrU3Ja0IsH4h58i+9XLYsY/rEWi+zMBY3580jWn9KJq542moRXYfV+O74QONewdmDO/bhg56kd+r2uKP2+QDMP++e9jivOONR4WzGgVGk/+j+mIvL8VM1ODio4RifrmCIgJOd6sf++BwuoxaeOvqvxQrO2n7PEAownddFmICQrzyybmiREY+x4+qZmGzF/71d0wucMNudgYNVhjl5E+VVVpgHV1mYVpxn96sE+jEtZqr7wXdSX+OARG4tFEmJVrk8qMAQxiXb3G/Qa8ES5c54l6MWejF3yKJFAanjIWjy9BHdB5TFhgtA/mj9Is3eQGZQX7"),
                         false,
                         [
@@ -69,7 +69,7 @@ namespace Etherna.BeeNet.Models
                             new("67a3177c8a24501a9e32168f2f411dd0794c5860b40fe68fd22cdde4066505fb", true)
                         ]),
                     
-                    //Redundancy level Insane, plain data shards
+                    // Redundancy level Insane, plain data shards.
                     new(Convert.FromBase64String("ACgAAAAAAIPd8Q1YvCn/iqRZbQ1vHHrU3Ja0IsH4h58i+9XLYsY/rEWi+zMBY3580jWn9KJq542moRXYfV+O74QONewdmDO/bhg56kd+r2uKP2+QDMP++e9jivOONR4WzGgVGk/+j+mIvL8VM1ODio4RifrmCIgJOd6sf++BwuoxaeOvqvxQrO2n7PEAownddFmICQrzyybmiREY+x4+qZmGzF/71d0wucMNudgYNVhjl5E+VVVpgHV1mYVpxn96sE+jEtZqr7wXdSX+OARG4tFEmJVrk8qMAQxiXb3G/Qa8ES5c54l6MWejF3yKJFAanjIWjy9BHdB5TFhgtA/mj9Is3eQGZQX7V0t21CQZnjxZotphCaCuABz74rXyIKbGJWPw5glMLqOrAr06lnBIwwLBFuFrXN+1iOnGVr1Bivk+Q+S9WJlXIQ=="),
                         false,
                         [
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Models
                             new("ab02bd3a967048c302c116e16b5cdfb588e9c656bd418af93e43e4bd58995721", true)
                         ]),
                     
-                    //Redundancy level Paranoid, plain data shards
+                    // Redundancy level Paranoid, plain data shards.
                     new(Convert.FromBase64String("ACgAAAAAAITd8Q1YvCn/iqRZbQ1vHHrU3Ja0IsH4h58i+9XLYsY/rEWi+zMBY3580jWn9KJq542moRXYfV+O74QONewdmDO/bhg56kd+r2uKP2+QDMP++e9jivOONR4WzGgVGk/+j+mIvL8VM1ODio4RifrmCIgJOd6sf++BwuoxaeOvqvxQrO2n7PEAownddFmICQrzyybmiREY+x4+qZmGzF/71d0wucMNudgYNVhjl5E+VVVpgHV1mYVpxn96sE+jEtZqr7wXdSX+OARG4tFEmJVrk8qMAQxiXb3G/Qa8ES5c54l6MWejF3yKJFAanjIWjy9BHdB5TFhgtA/mj9Is3eQGZQX7V0t21CQZnjxZotphCaCuABz74rXyIKbGJWPw5glMLqOrAr06lnBIwwLBFuFrXN+1iOnGVr1Bivk+Q+S9WJlXIVpsbAV6eP3P+d2hcNaoJwocdpQS9sHpUKBhBZdL7vkst2/cA1PkGWc7fb1k8o/dFRSPBFGR0C8sOf5NatZGQXvr1nMIgjOprrMuYEEaEkptVBUWP5P+QxK8fzGAYeO5PLoDvhXwQmBcu0bkCEWI6kIXqaTv5GraAZWB+mX1VorlSD1upUqZrRcFvM0BA/l3G3a8+J9h3ZpwtPKE8AiS+RoIBYANuvbpI9ZiWXayYh11SgpGMMpWl19av2Qt71YTbj6Yum7PnYeRb8mZiI7iczwtOgbixX5MYw3iip+7nWKfLiIZPTYbEg2frwLkggKrhNys1mQYDbRuM5nYzZfsJssmJ01WJZ8VtKhnLJGHWQEELAHFOfI6sek8Eu0L9buQkLT6/ZodYwoSZ/uo+RCHj3BKMXQbIKkDmG5d5X8ihH86LBQSmzDQBZlHreguym8CMCH6jbeB4YRaQmPSVZySFifEYjnAE+cbOWwPVIxglIGOHBGqX9/aC/TLeex0QFI/8vBc9H794ZadAnMYjUfV8Ew/YUxog5K4rYC79nNV+JRrUCEav/wFaAbTWoBGXwhYryTkKlEiZJHd2SKcSeWavBFL/JvNcruUJCfbOogksg0Wgp5BchZj9Zeq9S8wCBBDdaZoF+P1xp0KkmMWXrIfaEiCcUKevlPmYBLyt9bKe8mXawP/3AVLbtuv4dcdNZyiiySM7jhSnFd2lDIENwmgQngwALrVMD7YEC/op/EUkWTZ3Mwo3hbQnFvK7jKeONrtFll93mLzP8Pj7SV0U0mhnwZPc2sC6MKaLuZ3wbDb9A1E"),
                         false,
                         [
@@ -120,7 +120,7 @@ namespace Etherna.BeeNet.Models
                             new("597dde62f33fc3e3ed25745349a19f064f736b02e8c29a2ee677c1b0dbf40d44", true)
                         ]),
                     
-                    //Redundancy level None, encrypted data shards
+                    // Redundancy level None, encrypted data shards.
                     new(Convert.FromBase64String("ACgAAAAAAAD2hUvSbpo90kPjYy9fEapP2yiDIOdSBrtChwmJCVQdYPS0RfFG8s5Y/u9xZheyRaZXvgtCEj42AnG/ox0fIDCughovj+TBOl96eLrylk+J6U5hWc7dKA7vc7mXzH74SGXnSVYIJtK9oq3nypUfZGzHjY6/Y6CfxmqQ98lTICeb8VuzvpPwpyvcsGnaRUTWPF6H6YMDQ9WpUp+cGlbOzRdIk8jTrnwBJ7xVNh3O9PULLkRHQgdRT3vI/wpHXBT6YR4="),
                         true,
                         [
@@ -129,7 +129,7 @@ namespace Etherna.BeeNet.Models
                             new("5bb3be93f0a72bdcb069da4544d63c5e87e9830343d5a9529f9c1a56cecd174893c8d3ae7c0127bc55361dcef4f50b2e44474207514f7bc8ff0a475c14fa611e", false)
                         ]),
                     
-                    //Redundancy level Medium, encrypted data shards
+                    // Redundancy level Medium, encrypted data shards.
                     new(Convert.FromBase64String("ACgAAAAAAIHCX+jr/ldB1nrx5JCZznyxG8uww0XBq+xuKeVGoVoBFXFtDUfEDtWlhs/eBZgJwgACvddXv00WEHaXZnDWoAqHQNzYO0EHpgu8L5gVqA9s+AABcX3F+ZT4inLK/tXE2ERQnBjVBiljm0ElbYX8kSco+rHuJQSV/i1VignznrcbteuUNY07jNzvWKvqr7TOHeAulArw0fQt505jhSkSzGAhpVs68o4NF8Mt7KcmHNnlG2DH01eKtT5mSu6veK35XKPXPx9sfLMNOTaXxx3tA0Cheq6enJA5MWSWDMp415bE7EobqaAzeIZ1eid73wOgucg5wBSkd1y4jZwD609fBrSgvtWayqvTSOLd3TGAd6N0d+2i4H3k0ghtkJ1gqXLHIMF7jtPns9OT+OtQ8SsZ8d5lniIItnBbGRIGI23Xf7ZZyw=="),
                         true,
                         [
@@ -142,7 +142,7 @@ namespace Etherna.BeeNet.Models
                             new("7b8ed3e7b3d393f8eb50f12b19f1de659e2208b6705b191206236dd77fb659cb", true)
                         ]),
                     
-                    //Redundancy level Strong, encrypted data shards
+                    // Redundancy level Strong, encrypted data shards.
                     new(Convert.FromBase64String("ACgAAAAAAILijjpwpxbflP8vE04VjTU8XXlIQj7QJZXiZXFWQKasLOrd4ejRzKDWDTve6KRLewnNdKsrAErujanZNcbemlA3ga19IoKrypj0QZQ/C88L2DulTR7hlIgHq8PrTec6q06qcM9g2+8N+7O0WziRxeCZz2hsjKNfadalZFCkXfwvqo/TIMUuDZa/aRdo5ycFSzfzYxWe0N4m0KGtdDplCdzoDa48yp+hES9JUV7n5Hb/9fdaTG7eFRrrDxOFOA1RkdP0aLHivuALFZCOAY76Al/bd8gUYX9ZIHmZ43R1pgqA5zvibzFuGw1Q2t5MmSkBfx5p2Au81dIaFHf2k7vT5gSeVcZPQZSK+rqBGyR3v30CVLeREhuR2veKFIzVdNmADMdhxMD2ujOZH/NxBqxdxCVY6ttAo7PU2aFG8qUU8sbjSu2SyNFZWL99uJVGRvd2hZZkmBa0/qM7Fy6551tF3ziqEBCZBgObgYqqOJ1QeKPVDyQBcdjbQTxgx/TGXWnse+2LyT8cc1mNGF41nzGgMbLup5SPqxow/95+fdSc+j+0VA=="),
                         true,
                         [
@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Models
                             new("8bc93f1c73598d185e359f31a031b2eea7948fab1a30ffde7e7dd49cfa3fb454", true)
                         ]),
                     
-                    //Redundancy level Insane, encrypted data shards
+                    // Redundancy level Insane, encrypted data shards.
                     new(Convert.FromBase64String("ACgAAAAAAINVmmK/daTHnvPEuu4M1O9ZgmIh0S3hLswTbXCSaezBBg1m0ZrhbwTAJpLmr1BSz04Zh6YST1hTkPXMXUKtkuXs5D7StBG/l2GPXODiha/bafudH/82TS4aY7PDe4I+xNWdMjTngT7aGHEnTZZ5OP30zGQBxMT9mdK1iaWSw5GahAPlyINGYsoHBC87ofq0+s8xKrc88x0DcERdFkpBD9YErbANxhMGxa3OtHuCla1gdMUNOeYROYT7OB/3Iu1Y9+Q9OhzK2eoFjx/Yyw+8sKuyaXxibAiMz7Jh23Zaj0Gj+oaXY2xzNGadB5o78DN+rmiuYj8phnKTKiQ4xYbmr6BSUtELSbF9zVI1CIeNO2tGoPPKKbfYCWru256qBgZFkMcVlbnYaVKrEujlXO/2AMsEu9ZsW5xZZBiI98c3MkhZTF2BTOCkFGkcIjRFqgkb1002Qj1L/AOv1MYwiDyWyTfBBmON/0wiQECQy2waBAR483hsnAJ4KkSqfr9X/Jgy9u/Yh89uBLB2xm6I4xIF/pKK8DSpz8gQUNURkfAQcPQBNmgwjjq2fqwSdmeMOvyRdexbymcdG47e5i86j1v7+y36FeUD9dF2LUCZ+V0otYbkhs1OmlpUPuTZFOVJ1qpRf8o="),
                         true,
                         [
@@ -176,7 +176,7 @@ namespace Etherna.BeeNet.Models
                             new("15e503f5d1762d4099f95d28b586e486cd4e9a5a543ee4d914e549d6aa517fca", true)
                         ]),
                     
-                    //Redundancy level Paranoid, encrypted data shards
+                    // Redundancy level Paranoid, encrypted data shards.
                     new(Convert.FromBase64String("ACgAAAAAAITc+tI3XV9oFkcT1PKQorF/tApWn7ngEwJ/njSWRdDMX+o6iEtc5wg02Xe5aXJq7PBkxP6VrnouqmCe0/cRNuUq1twk6pLJBID/7w1MiC9wPF0K7iLkXQ7EL4H/hwzSS3SCoxxIkNZTEqOcJr/hIEFfkhqfMDR0sIRju5WbrVrDy/Itq0MkfVSAOwZiGXnPFaEJqoBLMHwMM5vsK19QT/rz3F8SYfnpPhiEVqKyzCD9mWOqpn/yz5/BxFa/TmEj1IKnmvM6Sx2kPJhYm4wcXq1HjUAuRquN+uGSOYynmtjP83kWPr0tTuB1/hvAMAIpqsMm3qpMsn8UHIUC9E+OcVnjPwtLbuiN8uweX/lFtmvku0wshkme1JCCDyPABnVBl6eeqMFGGKIHvChAg5e5Wi8fDRgp2QGAPf4kQLwRn8X25iWXir/H5yyEHu90TI28TdYJ2U/B8enx1ZHojD4PSpieDc+n2dQfew6s0T6YkWsENsnDLbnAbuTWogH4HL4aqeHc3JwKJCJKWC8ebHY3r7vE/P5iTJsyBNBanw5Ue+SuC9QXswWH/QGKUBV79TR1bhB2DqS0Kh6mdV12lWNxaYRVwKwgM/29OMB0vM42FhzXT59vL83fmowvmnHpJRqtTBLBWZZ1iAEvW0gJHJEzINdxFBS7tPOxeqOJezCa8ONXHhULWo+DZrQAz5QcFbed8wap5dKnOgQyX8gRGcTNZEDcxh7d334Hsj0lGXsXRMAe4tQZu9xfPEgSH3qrN2IX8maD/omCA5gnRPMFdpW0avlsw6EL+fdx+R9mMlH2mrNj0Feq/VBKw8kuJcTqn9Kwm9PTflaF9JTdT3EyBhYQV2Wi6//uesyu5w2XSvqr8m1swQihqrv7rcuia0NbP65V+TqpTvbLBlFcP29UXl9aTPSaREvhUpiYD1znMb0eJ4/SRY5gcrmhZBjDx6A7cvhneAfdRgIMfGLq47r7nPzy+10DTVL62Wk5vYpkmQn2f550PfieiYcXYojhqH+OqklzztxhnZZtx8ckuHoLiXaf8Gzj0UyAyZeGRAZLGdBGdNbDfbh5V9OntRvh8nLRJG/8oQysByx87PV6yfN/dbU9spI/0Wp9k/Axr0QyF6r7EbviQGNftwyU9Sl+stUhl5zv2jzjSM4wIlHOnC5yynpcCeVSuhNuax3DouoWVaqLNP0cohLA3oYXgf0Yj4PLScCkJFW2BI1/ziiTs/GFQZN1K2cXQ1JOP7xugGqcBxR1VQ1hPjpGdTvvUiKn9w5j6GOXoa65XPL+4GXgVykJiBrdBorizvzr/FIwmObUwxnsvqAckmCiGUg2uPSUDalLxvDUe3tKrW9AH21NfiktvqZ0CqFn8WsyFfIYDnmDmCLdVxkWgbuV6k51SEyTqy23BR8/rls37SvlCdP3X3FtiYtYrro/JPNdIaZoaE8PK4IaCmV9FFTJ7E+4PnUCEYsfKrtRmNBvja+QKN0sZcDOA1whJH1uJj+pETgkfPOnTlFeU5iyk9ddpRCVuuDMLhAQMENo4itstPUAfv8aJnkApGh9ud8WHfbQ6oEm6w1YXek9Pig1pJ/kSJtkVDvnQh/9m16joZKiHoHayVFOOPDdZ5ziufDeHyGXbSPAVff1LwwtOjsQYmg+GDmFFPN/PSB5mNjQ/fkzH0ijo5uWbvMSW7JVh/WD80U2dTsCJLhoMX4mchhyqA=="),
                         true,
                         [
