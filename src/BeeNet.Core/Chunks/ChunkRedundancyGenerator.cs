@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Chunks
         public RedundancyLevel RedundancyLevel => redundancyLevel;
 
         // Methods.
-        public int GetParitiesAmount(int shards) => redundancyLevel.GetParitiesAmount(EncryptChunks, shards);
+        public int GetParitiesAmount(int shards) => redundancyLevel.GetParitiesAmount(encryptChunks, shards);
 
         /// <summary>
         /// Get the topmost chunk span data on levels.

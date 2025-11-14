@@ -43,22 +43,25 @@ namespace Etherna.BeeNet.Chunks
         
         // Constructor.
         public ChunkRedundancyDecoder(
-            SwarmCac parentChunk,
+            ReadOnlySpan<byte> plainSpanData,
             bool encryptedDataReferences,
             IReadOnlyChunkStore chunkStore)
+            : this(SwarmCac.GetIntermediateReferencesFromSpanData(plainSpanData, encryptedDataReferences), chunkStore)
+        { }
+
+        public ChunkRedundancyDecoder(
+            SwarmShardReference[] shardReferences,
+            IReadOnlyChunkStore chunkStore)
         {
-            ArgumentNullException.ThrowIfNull(parentChunk, nameof(parentChunk));
-            
             this.chunkStore = chunkStore;
-            
-            _shardReferences = parentChunk.GetIntermediateReferences(encryptedDataReferences);
-            shardsBuffer = new byte[_shardReferences.Length][];
-            dataShardsAmount = _shardReferences.Count(r => !r.IsParity);
-            
-            for (int i = 0; i < _shardReferences.Length; i++)
-                hashIndexMap[_shardReferences[i].Reference.Hash] = i;
+            _shardReferences = shardReferences ?? throw new ArgumentNullException(nameof(shardReferences));
+            shardsBuffer = new byte[shardReferences.Length][];
+            dataShardsAmount = shardReferences.Count(r => !r.IsParity);
+
+            for (var i = 0; i < shardReferences.Length; i++)
+                hashIndexMap[shardReferences[i].Reference.Hash] = i;
         }
-        
+
         // Properties.
         public bool ReadyDataChunks => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
         public bool RecoverySucceeded { get; private set; }
