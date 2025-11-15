@@ -25,6 +25,12 @@ namespace Etherna.BeeNet.Chunks
     public class ChunkRedundancyDecoderTest
     {
         // Internal classes.
+        public record CanFetchChunkWithStrategyTestElement(
+            IChunkStore ChunkStore,
+            RedundancyStrategy Strategy,
+            bool ExpectedResult,
+            Type? ExpectedExceptionType);
+        
         public record CanGetChunkTestElement(
             SwarmHash ChunkHash,
             Type? ExpectedExceptionType);
@@ -67,6 +73,76 @@ namespace Etherna.BeeNet.Chunks
         };
         
         // Data.
+        public static IEnumerable<object[]> CanFetchChunkWithStrategyTest
+        {
+            get
+            {
+                var tests = new List<CanFetchChunkWithStrategyTestElement>();
+                
+                // None strategy throws ArgumentException.
+                {
+                    tests.Add(new(new MemoryChunkStore(), RedundancyStrategy.None, false, typeof(ArgumentException)));
+                }
+                
+                // Data strategy fails.
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
+                    // chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data, missing
+                    chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]).Wait(); //parity
+                    chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity
+                    chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.Data, false, null));
+                }
+                
+                // Data strategy succeeds.
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.Data, true, null));
+                }
+                
+                // Prox strategy fails.
+                //not implemented
+                
+                // Prox strategy succeeds.
+                //not implemented
+                
+                // Race strategy fails.
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    // chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data, missing
+                    // chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data, missing
+                    // chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]).Wait(); //parity, missing
+                    // chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity, missing
+                    chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.Race, false, null));
+                }
+                
+                // Race strategy succeeds.
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    // chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data, missing
+                    // chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data, missing
+                    chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]).Wait(); //parity
+                    // chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity, missing
+                    chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.Race, true, null));
+                }
+                
+                return tests.Select(t => new object[] { t });
+            }
+        }
+        
         public static IEnumerable<object[]> CanGetChunkTest
         {
             get
@@ -103,6 +179,25 @@ namespace Etherna.BeeNet.Chunks
             Assert.False(decoder.ReadyDataChunks);
             Assert.False(decoder.RecoverySucceeded);
             Assert.Equal(references, decoder.ShardReferences);
+        }
+
+        [Theory, MemberData(nameof(CanFetchChunkWithStrategyTest))]
+        public async Task CanFetchChunkWithStrategy(CanFetchChunkWithStrategyTestElement test)
+        {
+            var decoder = new ChunkRedundancyDecoder(references, test.ChunkStore);
+
+            if (test.ExpectedExceptionType != null)
+            {
+                await Assert.ThrowsAsync(
+                    test.ExpectedExceptionType,
+                    () => decoder.TryFetchChunksAsync(test.Strategy, false));
+            }
+            else
+            {
+                var result = await decoder.TryFetchChunksAsync(test.Strategy, false);
+
+                Assert.Equal(test.ExpectedResult, result);
+            }
         }
 
         [Theory]
