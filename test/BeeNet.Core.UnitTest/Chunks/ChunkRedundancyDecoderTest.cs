@@ -172,6 +172,29 @@ namespace Etherna.BeeNet.Chunks
         
         // Tests.
         [Fact]
+        public async Task CanAddChunksToStore()
+        {
+            var sourceChunkStore = new MemoryChunkStore();
+            await sourceChunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]); //data
+            await sourceChunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]); //data
+            await sourceChunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]); //parity
+            
+            var destinationChunkStore = new MemoryChunkStore();
+            
+            var decoder = new ChunkRedundancyDecoder(references, sourceChunkStore);
+            await decoder.TryFetchChunksAsync(RedundancyStrategy.Race, false);
+
+            await decoder.AddChunksToStoreAsync(destinationChunkStore,
+            [
+                "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                "88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"
+            ]);
+            
+            Assert.Equal(sourceChunkStore.AllChunks.Keys.Order(), destinationChunkStore.AllChunks.Keys.Order());
+        }
+        
+        [Fact]
         public void CanConstruct()
         {
             var decoder = new ChunkRedundancyDecoder(references, new MemoryChunkStore());
@@ -264,6 +287,27 @@ namespace Etherna.BeeNet.Chunks
                     new("b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc", true)
                 ],
                 missingChunks);
+        }
+
+        [Fact]
+        public async Task CanFetchAndRecoverDataChunks()
+        {
+            var chunkStore = new MemoryChunkStore();
+            await chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]); //data
+            await chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]); //data
+            // await chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]); //data, missing
+            await chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]); //parity
+            
+            var decoder = new ChunkRedundancyDecoder(references, chunkStore);
+            var result = await decoder.TryFetchAndRecoverAsync(RedundancyStrategy.Race, false);
+            var recoveredChunk = decoder.GetChunk("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
+
+            Assert.True(result);
+            Assert.True(decoder.ReadyDataChunks);
+            Assert.True(decoder.RecoverySucceeded);
+            Assert.Equal("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9", recoveredChunk.Hash);
+            Assert.Equal(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"].SpanData,
+                recoveredChunk.SpanData);
         }
     }
 }

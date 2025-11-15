@@ -71,7 +71,7 @@ namespace Etherna.BeeNet.Chunks
         public async Task AddChunksToStoreAsync(
             IChunkStore destinationStore,
             IEnumerable<SwarmHash> hashes,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(destinationStore, nameof(destinationStore));
             ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
