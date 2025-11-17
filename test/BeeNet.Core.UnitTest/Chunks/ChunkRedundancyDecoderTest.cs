@@ -259,10 +259,10 @@ namespace Etherna.BeeNet.Chunks
             await decoder.TryFetchChunksAsync(RedundancyStrategy.Race, false);
 
             if (test.ExpectedExceptionType != null)
-                Assert.Throws(test.ExpectedExceptionType, () => decoder.GetChunk(test.ChunkHash));
+                await Assert.ThrowsAsync(test.ExpectedExceptionType, () => decoder.GetAsync(test.ChunkHash));
             else
             {
-                var chunk = decoder.GetChunk(test.ChunkHash);
+                var chunk = await decoder.GetAsync(test.ChunkHash);
                 Assert.Equal(test.ChunkHash, chunk.Hash);
             }
         }
@@ -300,14 +300,14 @@ namespace Etherna.BeeNet.Chunks
             
             var decoder = new ChunkRedundancyDecoder(references, chunkStore);
             var result = await decoder.TryFetchAndRecoverAsync(RedundancyStrategy.Race, false);
-            var recoveredChunk = decoder.GetChunk("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
+            var recoveredChunk = await decoder.GetAsync("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
 
             Assert.True(result);
             Assert.True(decoder.ReadyDataChunks);
             Assert.True(decoder.RecoverySucceeded);
             Assert.Equal("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9", recoveredChunk.Hash);
             Assert.Equal(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"].SpanData,
-                recoveredChunk.SpanData);
+                ((SwarmCac)recoveredChunk).SpanData);
         }
     }
 }

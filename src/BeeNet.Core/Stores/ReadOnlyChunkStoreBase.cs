@@ -109,11 +109,10 @@ namespace Etherna.BeeNet.Stores
             {
                 return await GetAsync(hash, cacheChunk, cancellationToken).ConfigureAwait(false);
             }
-            catch (BeeNetApiException)
-            {
-                return null;
-            }
-            catch (OperationCanceledException)
+            catch (Exception e) when (e is BeeNetApiException
+                                          or InvalidOperationException
+                                          or KeyNotFoundException
+                                          or OperationCanceledException)
             {
                 return null;
             }

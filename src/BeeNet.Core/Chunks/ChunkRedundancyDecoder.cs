@@ -27,7 +27,7 @@ namespace Etherna.BeeNet.Chunks
     /// Tries to recover data children of an intermediate chunk using redundancy.
     /// Class is not thread-safe, execute Fetch and Recovery in sequence.
     /// </summary>
-    public sealed class ChunkRedundancyDecoder
+    public sealed class ChunkRedundancyDecoder : ReadOnlyChunkStoreBase
     {
         // Consts.
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
@@ -78,28 +78,9 @@ namespace Etherna.BeeNet.Chunks
             
             foreach (var hash in hashes)
             {
-                var chunk = GetChunk(hash);
+                var chunk = await LoadChunkAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
                 await destinationStore.AddAsync(chunk, false, cancellationToken).ConfigureAwait(false);
             }
-        }
-
-        public SwarmCac GetChunk(SwarmHash hash)
-        {
-            var i = hashIndexMap[hash];
-            if (shardsBuffer[i] == null!)
-                throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
-
-            // If is not last chunk, or if is encrypted, simply read from buffer.
-            if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
-                return new SwarmCac(hash, shardsBuffer[i]);
-            
-            // Else, if is last chunk and not encrypted, try to remove possible padding.
-            ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
-            var spanLength = SwarmCac.SpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
-            var redundancyLevel = SwarmCac.GetSpanRedundancyLevel(span);
-
-            return new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
-                SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false)));
         }
         
         /// <summary>
@@ -110,6 +91,13 @@ namespace Etherna.BeeNet.Chunks
                 .Zip(_shardReferences)
                 .Where(zip => zip.First == null!)
                 .Select(zip => zip.Second).ToArray();
+
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        {
+            if (!hashIndexMap.TryGetValue(hash, out var i))
+                return Task.FromResult(false);
+            return Task.FromResult(shardsBuffer[i] != null!);
+        }
         
         public async Task<bool> TryFetchAndRecoverAsync(
             RedundancyStrategy firstStrategy,
@@ -174,21 +162,6 @@ namespace Etherna.BeeNet.Chunks
             return succeeded;
         }
 
-        public bool TryGetChunk(SwarmHash hash, out SwarmCac? chunk)
-        {
-            try
-            {
-                chunk = GetChunk(hash);
-                return true;
-            }
-            catch (Exception e) when (e is InvalidOperationException
-                                          or KeyNotFoundException)
-            {
-                chunk = null;
-                return false;
-            }
-        }
-        
         /// <summary>
         /// Try to perform redundancy recovery.
         /// </summary>
@@ -244,6 +217,44 @@ namespace Etherna.BeeNet.Chunks
             return true;
         }
         
+        // Protected methods.
+        protected override Task<SwarmChunk> LoadChunkAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default)
+        {
+            var i = hashIndexMap[hash];
+            if (shardsBuffer[i] == null!)
+                throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
+
+            // If is not last chunk, or if is encrypted, simply read from buffer.
+            if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
+                return Task.FromResult<SwarmChunk>(new SwarmCac(hash, shardsBuffer[i]));
+            
+            // Else, if is last chunk and not encrypted, try to remove possible padding.
+            ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
+            var spanLength = SwarmCac.SpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
+            var redundancyLevel = SwarmCac.GetSpanRedundancyLevel(span);
+
+            return Task.FromResult<SwarmChunk>(new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
+                SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false))));
+        }
+
+        protected override async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> LoadChunksAsync(
+            IEnumerable<SwarmHash> hashes,
+            int? canReturnAfterFailed,
+            int? canReturnAfterSucceeded,
+            CancellationToken cancellationToken)
+        {
+            var getTasks = hashes.Select<SwarmHash, Task<(SwarmHash Hash, SwarmChunk? Chunk)>>(async hash =>
+            {
+                if (await HasChunkAsync(hash, cancellationToken).ConfigureAwait(false))
+                    return (hash, await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false));
+                return (hash, null);
+            });
+            var results = await Task.WhenAll(getTasks).ConfigureAwait(false);
+            return results.ToDictionary(p => p.Hash, p => p.Chunk);
+        }
+
         // Helpers.
         
         /// <summary>
