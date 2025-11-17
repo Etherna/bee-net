@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Stores
             int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            ArgumentNullException.ThrowIfNull(hashes);
             
             var results = new Dictionary<SwarmHash, SwarmChunk?>();
             var cacheMissedHashes = new List<SwarmHash>();
@@ -130,7 +130,7 @@ namespace Etherna.BeeNet.Stores
             int? canReturnAfterSucceeded,
             CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            ArgumentNullException.ThrowIfNull(hashes);
             
             //cancel all pendent load tasks when returning before all of them are completed
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);

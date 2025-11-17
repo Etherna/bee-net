@@ -28,6 +28,11 @@ namespace Etherna.BeeNet.Chunks
 {
     public sealed class ChunkDataStream : Stream
     {
+        // Internal classes.
+        private record ChunkInfo(
+            SwarmReference Reference,
+            SwarmCac Chunk);
+        
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
         private readonly uint dataSegmentSize;
@@ -36,9 +41,7 @@ namespace Etherna.BeeNet.Chunks
         private readonly uint maxDataSegmentsInChunk;
         private readonly RedundancyStrategy redundancyStrategy;
         private readonly bool redundancyStrategyFallback;
-        private readonly SwarmCac rootChunk;
-        private readonly int rootParities;
-        private readonly SwarmReference rootReference;
+        private readonly ChunkInfo rootChunkInfo;
 
         // Constructor.
         private ChunkDataStream(
@@ -53,17 +56,13 @@ namespace Etherna.BeeNet.Chunks
                 throw new ArgumentException("root chunk hash does not match root reference hash");
 
             this.chunkStore = chunkStore;
-            this.rootChunk = rootChunk;
-            this.rootReference = rootReference;
             Length = length;
             Position = 0;
 
             // Define segments info.
             dataSegmentSize = (uint)rootReference.Size;
-
             if (rootChunk.RedundancyLevel == RedundancyLevel.None)
             {
-                rootParities = 0;
                 maxDataSegmentsInChunk = SwarmCac.DataSize / dataSegmentSize;
 
                 // If root chunk has no redundancy, strategy is ignored and set to DATA without fallback.
@@ -72,13 +71,13 @@ namespace Etherna.BeeNet.Chunks
             }
             else
             {
-                var (_, parities) = rootChunk.CountIntermediateReferences(rootReference.IsEncrypted);
-                rootParities = parities;
                 maxDataSegmentsInChunk = (uint)rootChunk.RedundancyLevel.GetMaxDataShards(rootReference.IsEncrypted);
                 
                 this.redundancyStrategy = redundancyStrategy;
                 this.redundancyStrategyFallback = redundancyStrategyFallback;
             }
+
+            rootChunkInfo = new(rootReference, rootChunk);
         }
 
         // Static builder.
@@ -89,7 +88,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy redundancyStrategy, 
             bool redundancyStrategyFallback)
         {
-            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
+            ArgumentNullException.ThrowIfNull(chunkStore);
             
             // Use chunk redundancy resolver if required.
             var rootChunkStore = redundancyLevel == RedundancyLevel.None ?
@@ -116,7 +115,7 @@ namespace Etherna.BeeNet.Chunks
             bool redundancyStrategyFallback,
             EncryptionKey256? encryptionKey = null)
         {
-            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
+            ArgumentNullException.ThrowIfNull(rootChunk);
             return BuildNew(
                 rootChunk,
                 new SwarmReference(rootChunk.Hash, encryptionKey),
@@ -132,7 +131,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy redundancyStrategy, 
             bool redundancyStrategyFallback)
         {
-            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
+            ArgumentNullException.ThrowIfNull(rootChunk);
 
             ulong length;
             if (reference.IsEncrypted)
@@ -223,7 +222,7 @@ namespace Etherna.BeeNet.Chunks
             // Init with root level info.
             var levelStartDataOffset = (ulong)Position;
             var levelEndDataOffset = (ulong)(Length - (Position + buffer.Length));
-            (SwarmCac Chunk, SwarmReference Reference)[] levelChunkReferencePairs = [new(rootChunk, rootReference)];
+            ChunkInfo[] levelChunksInfo = [rootChunkInfo];
             
             // Reuse these for memory optimization.
             var chunkSpanBuffer = new byte[SwarmCac.SpanSize];
@@ -239,11 +238,11 @@ namespace Etherna.BeeNet.Chunks
                 ulong dataSizeBySegment = SwarmCac.DataSize;
 
                 // Parse all chunks on current level. Start from end to copy data first, if present in level.
-                for (int chunkIndex = levelChunkReferencePairs.Length - 1; chunkIndex >= 0; chunkIndex--)
+                for (int chunkIndex = levelChunksInfo.Length - 1; chunkIndex >= 0; chunkIndex--)
                 {
-                    var (chunk, reference) = levelChunkReferencePairs[chunkIndex];
+                    var (reference, chunk) = levelChunksInfo[chunkIndex];
                     var isFirstChunkInLevel = chunkIndex == 0;
-                    var isLastChunkInLevel = chunkIndex == levelChunkReferencePairs.Length - 1;
+                    var isLastChunkInLevel = chunkIndex == levelChunksInfo.Length - 1;
 
                     // If it's the last chunk on the level, and if some data remains to read in level, cache the chunk.
                     if (isLastChunkInLevel && levelEndDataOffset > 0)
@@ -345,7 +344,7 @@ namespace Etherna.BeeNet.Chunks
                 }
 
                 // Search chunks for the next level.
-                IReadOnlyDictionary<SwarmHash, SwarmChunk> childChunksPool;
+                Dictionary<SwarmHash, SwarmChunk> childChunksPool;
                 
                 //with cache
                 if (levelsCache.Count > levelIndex + 1 &&
@@ -354,10 +353,10 @@ namespace Etherna.BeeNet.Chunks
                     var hashesToGetFromStore = levelChildReferences
                         .Select(p => p.Hash)
                         .Where(h => h != levelsCache[levelIndex + 1].Hash).ToArray();
-                    IEnumerable<KeyValuePair<SwarmHash, SwarmChunk>> chunksFromStore =
-                        hashesToGetFromStore.Length != 0
-                            ? await chunkStore.GetAsync(hashesToGetFromStore, cancellationToken: cancellationToken).ConfigureAwait(false)
-                            : Array.Empty<KeyValuePair<SwarmHash, SwarmChunk>>();
+                    var chunksFromStore = hashesToGetFromStore.Length == 0 ? [] :
+                        (await chunkStore.GetAsync(hashesToGetFromStore, cancellationToken: cancellationToken).ConfigureAwait(false))
+                            .Where(p => p.Value != null)
+                            .Select(p => new KeyValuePair<SwarmHash, SwarmChunk>(p.Key, p.Value!));
                     
                     childChunksPool = new Dictionary<SwarmHash, SwarmChunk>(chunksFromStore)
                     {
@@ -366,14 +365,16 @@ namespace Etherna.BeeNet.Chunks
                 }
                 else //or without cache
                 {
-                    childChunksPool = await chunkStore.GetAsync(
-                        levelChildReferences.Select(p => p.Hash),
-                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    childChunksPool = (await chunkStore.GetAsync(
+                            levelChildReferences.Select(p => p.Hash),
+                            cancellationToken: cancellationToken).ConfigureAwait(false))
+                        .Where(p => p.Value != null)
+                        .ToDictionary(p => p.Key, p => p.Value!);
                 }
                 
                 // Resolve child chunks from the reference list.
-                levelChunkReferencePairs = levelChildReferences.Select(reference =>
-                    ((SwarmCac)childChunksPool[reference.Hash], reference)).ToArray();
+                levelChunksInfo = levelChildReferences.Select(reference =>
+                    new ChunkInfo(reference, (SwarmCac)childChunksPool[reference.Hash])).ToArray();
             }
         }
     }

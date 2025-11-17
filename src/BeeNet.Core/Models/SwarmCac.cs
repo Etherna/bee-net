@@ -107,6 +107,15 @@ namespace Etherna.BeeNet.Models
             return (encryptedDataReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) * dataShards +
                    parities * SwarmHash.HashSize;
         }
+
+        public static (int DataShards, int ParityShards) CountIntermediateReferences(
+            ReadOnlySpan<byte> span,
+            bool isEncrypted)
+        {
+            var spanLength = SpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
+            var redundancyLevel = GetSpanRedundancyLevel(span);
+            return CountIntermediateReferences(spanLength, redundancyLevel, isEncrypted);
+        }
         
         public static (int DataShards, int ParityShards) CountIntermediateReferences(
             ulong spanLength,

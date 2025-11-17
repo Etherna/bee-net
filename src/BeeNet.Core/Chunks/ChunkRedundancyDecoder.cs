@@ -73,8 +73,8 @@ namespace Etherna.BeeNet.Chunks
             IEnumerable<SwarmHash> hashes,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(destinationStore, nameof(destinationStore));
-            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            ArgumentNullException.ThrowIfNull(destinationStore);
+            ArgumentNullException.ThrowIfNull(hashes);
             
             foreach (var hash in hashes)
             {
