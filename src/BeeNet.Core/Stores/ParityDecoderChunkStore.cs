@@ -85,23 +85,7 @@ namespace Etherna.BeeNet.Stores
             }
         }
         
-        /// <summary>
-        /// Get all missing shards, from both data and parities
-        /// </summary>
-        public SwarmShardReference[] GetMissingShards() =>
-            shardsBuffer
-                .Zip(_shardReferences)
-                .Where(zip => zip.First == null!)
-                .Select(zip => zip.Second).ToArray();
-
-        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
-        {
-            if (!hashIndexMap.TryGetValue(hash, out var i))
-                return Task.FromResult(false);
-            return Task.FromResult(shardsBuffer[i] != null!);
-        }
-        
-        public async Task<bool> TryFetchAndRecoverAsync(
+        public async Task FetchAndRecoverAsync(
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
@@ -110,30 +94,27 @@ namespace Etherna.BeeNet.Stores
         {
             // Verify if recovery has already been completed with success.
             if (RecoverySucceeded)
-                return true;
+                return;
 
             // Run fetch and proceed if succeeded.
-            var fetched = await TryFetchChunksAsync(
+            await FetchChunksAsync(
                 firstStrategy,
                 strategyFallback,
                 customStrategyTimeout,
                 cancellationToken).ConfigureAwait(false);
-            if (!fetched)
-                return false;
 
             // Run recovery.
-            return TryRecoverChunks(forceRecoverParities);
+            RecoverChunks(forceRecoverParities);
         }
 
         /// <summary>
-        /// Try to retrieve enough missing chunks to perform redundancy recovery.
+        /// Retrieves missing chunks to perform redundancy recovery.
         /// </summary>
         /// <param name="firstStrategy">First strategy to try. None is not allowed</param>
         /// <param name="strategyFallback">When true and a strategy fails, fallback to try the next</param>
         /// <param name="customStrategyTimeout">Optional custom timeout for each strategy</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Succeeded recovery</returns>
-        public async Task<bool> TryFetchChunksAsync(
+        public async Task FetchChunksAsync(
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
@@ -141,7 +122,7 @@ namespace Etherna.BeeNet.Stores
         {
             // Verify if recovery has already been completed with success.
             if (ReadyDataChunks)
-                return true;
+                return;
             
             // Init chunk fetch tasks list with already found chunks.
             var fetchResults = shardsBuffer.Select(b => (bool?)(b != null! ? true : null)).ToArray();
@@ -160,29 +141,44 @@ namespace Etherna.BeeNet.Stores
                 if (!strategyFallback)
                     break;
             }
-        
-            return succeeded;
-        }
 
+            if (!succeeded)
+                throw new KeyNotFoundException();
+        }
+        
         /// <summary>
-        /// Try to perform redundancy recovery.
+        /// Get all missing shards, from both data and parities
+        /// </summary>
+        public SwarmShardReference[] GetMissingShards() =>
+            shardsBuffer
+                .Zip(_shardReferences)
+                .Where(zip => zip.First == null!)
+                .Select(zip => zip.Second).ToArray();
+
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        {
+            if (!hashIndexMap.TryGetValue(hash, out var i))
+                return Task.FromResult(false);
+            return Task.FromResult(shardsBuffer[i] != null!);
+        }
+        
+        /// <summary>
+        /// Perform redundancy recovery.
         /// </summary>
         /// <param name="forceRecoverParities">When false skip recovery if all data chunks are present</param>
-        /// <returns>Succeeded recovery</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        public bool TryRecoverChunks(bool forceRecoverParities)
+        public void RecoverChunks(bool forceRecoverParities)
         {
             // Verify if recovery has already been completed with success.
             if (RecoverySucceeded)
-                return true;
+                return;
             
             // Verify if there are enough recovered shards.
             if (shardsBuffer.Count(b => b != null!) < dataShardsAmount)
-                return false;
+                throw new InvalidOperationException("Not enough fetched shards");
             
             // If all data shards are not null, recovery is not needed.
             if (!forceRecoverParities && ReadyDataChunks)
-                return true;
+                return;
             
             // Run actual recovery. Use Reed-Solomon erasure coding decoder to recover data shards.
             var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(
@@ -210,13 +206,84 @@ namespace Etherna.BeeNet.Stores
                 for (int i = 0; i < shardsBuffer.Length; i++)
                     if (!shardsPresent[i])
                         shardsBuffer[i] = null!;
-                    
-                return false;
+
+                throw;
             }
                 
             // Return as succeeded.
             RecoverySucceeded = true;
-            return true;
+        }
+        
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        public async Task<bool> TryFetchAndRecoverAsync(
+            RedundancyStrategy firstStrategy,
+            bool strategyFallback,
+            TimeSpan? customStrategyTimeout = null,
+            bool forceRecoverParities = false,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await FetchAndRecoverAsync(
+                    firstStrategy,
+                    strategyFallback,
+                    customStrategyTimeout,
+                    forceRecoverParities,
+                    cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Try to retrieve enough missing chunks to perform redundancy recovery.
+        /// </summary>
+        /// <param name="firstStrategy">First strategy to try. None is not allowed</param>
+        /// <param name="strategyFallback">When true and a strategy fails, fallback to try the next</param>
+        /// <param name="customStrategyTimeout">Optional custom timeout for each strategy</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Succeeded recovery</returns>
+        public async Task<bool> TryFetchChunksAsync(
+            RedundancyStrategy firstStrategy,
+            bool strategyFallback,
+            TimeSpan? customStrategyTimeout = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await FetchChunksAsync(
+                    firstStrategy,
+                    strategyFallback,
+                    customStrategyTimeout,
+                    cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Try to perform redundancy recovery.
+        /// </summary>
+        /// <param name="forceRecoverParities">When false skip recovery if all data chunks are present</param>
+        /// <returns>Succeeded recovery</returns>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        public bool TryRecoverChunks(bool forceRecoverParities)
+        {
+            try
+            {
+                RecoverChunks(forceRecoverParities);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
         
         // Protected methods.
