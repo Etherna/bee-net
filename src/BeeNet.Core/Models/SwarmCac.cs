@@ -25,9 +25,6 @@ namespace Etherna.BeeNet.Models
         public const int SpanDataSize = SpanSize + DataSize;
         public const int SpanSize = 8;
         
-        // Fields.
-        private RedundancyLevel? _redundancyLevel;
-        
         // Constructors.
         public SwarmCac(SwarmHash hash, ReadOnlyMemory<byte> spanData)
         {
@@ -75,22 +72,10 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
-        public RedundancyLevel RedundancyLevel => _redundancyLevel ??= GetSpanRedundancyLevel(Span.Span);
-        public ulong SpanLength => SpanToLength(
-            IsSpanEncoded(Span.Span) ?
-                DecodeSpan(Span.Span) :
-                Span.Span);
 
         // Methods.
-        public (int DataShards, int ParityShards) CountIntermediateReferences(bool encryptedDataReferences) =>
-            CountIntermediateReferences(SpanLength, RedundancyLevel, encryptedDataReferences);
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
-        public SwarmShardReference[] GetIntermediateReferences(bool encryptedDataReferences)
-        {
-            var (_, parities) = CountIntermediateReferences(encryptedDataReferences);
-            return GetIntermediateReferencesFromData(Data.Span, parities, encryptedDataReferences);
-        }
 
         // Static methods.
         public static int CalculatePlainDataLength(
