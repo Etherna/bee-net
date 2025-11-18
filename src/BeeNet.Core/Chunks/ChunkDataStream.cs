@@ -31,7 +31,8 @@ namespace Etherna.BeeNet.Chunks
         // Internal classes.
         private record ChunkInfo(
             SwarmReference Reference,
-            SwarmCac Chunk);
+            SwarmCac Chunk,
+            RedundancyLevel RedundancyLevel);
         
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
@@ -45,23 +46,20 @@ namespace Etherna.BeeNet.Chunks
 
         // Constructor.
         private ChunkDataStream(
-            SwarmCac rootChunk,
-            SwarmReference rootReference,
+            ChunkInfo rootChunkInfo,
             IReadOnlyChunkStore chunkStore,
             long length,
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback)
         {
-            if (rootChunk.Hash != rootReference.Hash)
-                throw new ArgumentException("root chunk hash does not match root reference hash");
-
             this.chunkStore = chunkStore;
             Length = length;
             Position = 0;
+            this.rootChunkInfo = rootChunkInfo;
 
             // Define segments info.
-            dataSegmentSize = (uint)rootReference.Size;
-            if (rootChunk.RedundancyLevel == RedundancyLevel.None)
+            dataSegmentSize = (uint)rootChunkInfo.Reference.Size;
+            if (rootChunkInfo.RedundancyLevel == RedundancyLevel.None)
             {
                 maxDataSegmentsInChunk = SwarmCac.DataSize / dataSegmentSize;
 
@@ -71,13 +69,12 @@ namespace Etherna.BeeNet.Chunks
             }
             else
             {
-                maxDataSegmentsInChunk = (uint)rootChunk.RedundancyLevel.GetMaxDataShards(rootReference.IsEncrypted);
+                maxDataSegmentsInChunk = (uint)rootChunkInfo.RedundancyLevel.GetMaxDataShards(
+                    rootChunkInfo.Reference.IsEncrypted);
                 
                 this.redundancyStrategy = redundancyStrategy;
                 this.redundancyStrategyFallback = redundancyStrategyFallback;
             }
-
-            rootChunkInfo = new(rootReference, rootChunk);
         }
 
         // Static builder.
@@ -132,11 +129,15 @@ namespace Etherna.BeeNet.Chunks
             bool redundancyStrategyFallback)
         {
             ArgumentNullException.ThrowIfNull(rootChunk);
+            
+            if (rootChunk.Hash != reference.Hash)
+                throw new ArgumentException("root chunk hash does not match root reference hash");
 
-            ulong length;
+            // Extract and decrypt span.
+            byte[] spanBuffer;
             if (reference.IsEncrypted)
             {
-                var spanBuffer = new byte[SwarmCac.SpanSize];
+                spanBuffer = new byte[SwarmCac.SpanSize];
                 var dataBuffer = new byte[SwarmCac.DataSize];
                 ChunkEncrypter.DecryptChunk(
                     rootChunk,
@@ -144,13 +145,23 @@ namespace Etherna.BeeNet.Chunks
                     spanBuffer,
                     dataBuffer,
                     new Hasher());
-                length =  SwarmCac.SpanToLength(spanBuffer);
             }
-            else length =  SwarmCac.SpanToLength(rootChunk.Span.Span);
+            else
+            {
+                spanBuffer = rootChunk.Span.ToArray();
+            }
+            
+            // Extract redundancy level, decode span, then extract data length.
+            var redundancyLevel = SwarmCac.GetSpanRedundancyLevel(spanBuffer);
+            
+            if (SwarmCac.IsSpanEncoded(spanBuffer))
+                SwarmCac.DecodeSpan(spanBuffer);
+                
+            var length = SwarmCac.SpanToLength(spanBuffer);
 
+            // Build stream.
             return new ChunkDataStream(
-                rootChunk,
-                reference,
+                new ChunkInfo(reference, rootChunk, redundancyLevel),
                 chunkStore,
                 (long)length,
                 redundancyStrategy,
@@ -240,7 +251,7 @@ namespace Etherna.BeeNet.Chunks
                 // Parse all chunks on current level. Start from end to copy data first, if present in level.
                 for (int chunkIndex = levelChunksInfo.Length - 1; chunkIndex >= 0; chunkIndex--)
                 {
-                    var (reference, chunk) = levelChunksInfo[chunkIndex];
+                    var (reference, chunk, redundancyLevel) = levelChunksInfo[chunkIndex];
                     var isFirstChunkInLevel = chunkIndex == 0;
                     var isLastChunkInLevel = chunkIndex == levelChunksInfo.Length - 1;
 

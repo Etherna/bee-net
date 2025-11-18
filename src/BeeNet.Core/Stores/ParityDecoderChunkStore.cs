@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -21,13 +20,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Chunks
+namespace Etherna.BeeNet.Stores
 {
     /// <summary>
     /// Tries to recover data children of an intermediate chunk using redundancy.
     /// Class is not thread-safe, execute Fetch and Recovery in sequence.
     /// </summary>
-    public sealed class ChunkRedundancyDecoder : ReadOnlyChunkStoreBase
+    public sealed class ParityDecoderChunkStore : ReadOnlyChunkStoreBase
     {
         // Consts.
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
@@ -42,7 +41,7 @@ namespace Etherna.BeeNet.Chunks
         private readonly int dataShardsAmount;
         
         // Constructor.
-        public ChunkRedundancyDecoder(
+        public ParityDecoderChunkStore(
             ReadOnlySpan<byte> plainSpanData,
             bool encryptedDataReferences,
             IReadOnlyChunkStore chunkStore)
@@ -52,7 +51,7 @@ namespace Etherna.BeeNet.Chunks
                 encryptedDataReferences), chunkStore)
         { }
 
-        public ChunkRedundancyDecoder(
+        public ParityDecoderChunkStore(
             SwarmShardReference[] shardReferences,
             IReadOnlyChunkStore chunkStore)
         {
