@@ -247,14 +247,14 @@ namespace Etherna.BeeNet.Models
         }
 
         public static SwarmShardReference[] GetIntermediateReferencesFromSpanData(
-            ReadOnlySpan<byte> spanData,
+            ReadOnlySpan<byte> span,
+            ReadOnlySpan<byte> data,
             bool encryptedDataReferences)
         {
-            var span = spanData[..SpanSize];
             var spanLength = SpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
             var redundancyLevel = GetSpanRedundancyLevel(span);
             var (_, parities) = CountIntermediateReferences(spanLength, redundancyLevel, encryptedDataReferences);
-            return GetIntermediateReferencesFromData(spanData[SpanSize..], parities, encryptedDataReferences);
+            return GetIntermediateReferencesFromData(data, parities, encryptedDataReferences);
         }
         
         public static RedundancyLevel GetSpanRedundancyLevel(ReadOnlySpan<byte> span)

@@ -229,7 +229,9 @@ namespace Etherna.BeeNet.Models
         public void CanGetIntermediateReferencesFromSpanData(CanGetIntermediateReferencesFromSpanDataTestElement test)
         {
             var references = SwarmCac.GetIntermediateReferencesFromSpanData(
-                test.SpanData, test.EncryptedDataReferences);
+                test.SpanData[..SwarmCac.SpanSize],
+                test.SpanData[SwarmCac.SpanSize..],
+                test.EncryptedDataReferences);
             Assert.Equal(test.ExpectedShardReferences, references);
         }
     }

@@ -46,7 +46,10 @@ namespace Etherna.BeeNet.Chunks
             ReadOnlySpan<byte> plainSpanData,
             bool encryptedDataReferences,
             IReadOnlyChunkStore chunkStore)
-            : this(SwarmCac.GetIntermediateReferencesFromSpanData(plainSpanData, encryptedDataReferences), chunkStore)
+            : this(SwarmCac.GetIntermediateReferencesFromSpanData(
+                plainSpanData[..SwarmCac.SpanSize],
+                plainSpanData[SwarmCac.SpanSize..],
+                encryptedDataReferences), chunkStore)
         { }
 
         public ChunkRedundancyDecoder(
