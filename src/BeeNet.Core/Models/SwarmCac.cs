@@ -12,9 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Extensions;
-using Etherna.BeeNet.Hashing;
 using System;
 using System.Buffers.Binary;
 
@@ -76,46 +74,6 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> SpanData { get; }
 
         // Methods.
-        public SwarmDecodedCac Decode(
-            SwarmReference reference,
-            Hasher hasher)
-        {
-            if (Hash != reference.Hash)
-                throw new ArgumentException($"Chunk's hash {Hash} does not match reference {reference}");
-
-            // Decrypt and decode span.
-            ReadOnlyMemory<byte> plainData;
-            RedundancyLevel redundancyLevel;
-            ulong spanLength;
-            if (reference.IsEncrypted)
-            {
-                // Decrypt span.
-                var spanBuffer = new byte[SpanSize];
-                var dataBuffer = new byte[DataSize];
-                var dataLength = ChunkEncrypter.DecryptChunk(
-                    this,
-                    reference.EncryptionKey!.Value,
-                    spanBuffer,
-                    dataBuffer,
-                    hasher);
-                
-                plainData = dataBuffer.AsMemory(0, dataLength);
-                redundancyLevel = SpanToRedundancyLevel(spanBuffer);
-                spanLength = SpanToLength(spanBuffer);
-            }
-            else
-            {
-                plainData = Data;
-                redundancyLevel = SpanToRedundancyLevel(Span.Span);
-                spanLength = SpanToLength(Span.Span);
-            }
-
-            // Count parities if is an intermediate chunk.
-            var parities = spanLength <= DataSize ? 0 :
-                CountIntermediateReferences(spanLength, redundancyLevel, reference.IsEncrypted).ParityShards;
-            
-            return new SwarmDecodedCac(reference, redundancyLevel, parities, spanLength, plainData);
-        }
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 

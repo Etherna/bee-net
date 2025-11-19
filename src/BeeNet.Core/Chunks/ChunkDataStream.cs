@@ -315,7 +315,7 @@ namespace Etherna.BeeNet.Chunks
                     }
                 }
                 
-                // Wait all fetch and recover tasks for this level.
+                // Wait all "fetch and recover" tasks for this level, when "redundancyLevel != RedundancyLevel.None".
                 await Task.WhenAll(fetchAndRecoverTasks).ConfigureAwait(false);
                 
                 // If next level is empty, set cache and return.
