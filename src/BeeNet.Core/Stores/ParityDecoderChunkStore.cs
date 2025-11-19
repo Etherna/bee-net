@@ -301,8 +301,8 @@ namespace Etherna.BeeNet.Stores
             
             // Else, if is last chunk and not encrypted, try to remove possible padding.
             ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
-            var spanLength = SwarmCac.SpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
-            var redundancyLevel = SwarmCac.GetSpanRedundancyLevel(span);
+            var spanLength = SwarmCac.DecodedSpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
+            var redundancyLevel = SwarmCac.SpanToRedundancyLevel(span);
 
             return Task.FromResult<SwarmChunk>(new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
                 SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false))));

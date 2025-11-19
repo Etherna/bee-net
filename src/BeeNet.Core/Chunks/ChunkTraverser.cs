@@ -189,7 +189,7 @@ namespace Etherna.BeeNet.Chunks
                     }
 
                     // Skip iteration on data chunks.
-                    if (SwarmCac.SpanToLength(spanBuffer) <= SwarmCac.DataSize)
+                    if (SwarmCac.DecodedSpanToLength(spanBuffer) <= SwarmCac.DataSize)
                         continue;
 
                     // Decode child chunk.

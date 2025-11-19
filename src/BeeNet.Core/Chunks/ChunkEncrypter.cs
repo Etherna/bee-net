@@ -106,9 +106,9 @@ namespace Etherna.BeeNet.Chunks
             Transform(chunkData, key, 0, decryptedData, hasher, null);
 
             // Calculate real data length removing added padding.
-            var level = SwarmCac.GetSpanRedundancyLevel(decryptedSpan);
+            var level = SwarmCac.SpanToRedundancyLevel(decryptedSpan);
             var decodedSpan = SwarmCac.DecodeSpan((ReadOnlySpan<byte>)decryptedSpan);
-            var length = SwarmCac.SpanToLength(decodedSpan);
+            var length = SwarmCac.DecodedSpanToLength(decodedSpan);
             return SwarmCac.CalculatePlainDataLength(length, level, true);
         }
 

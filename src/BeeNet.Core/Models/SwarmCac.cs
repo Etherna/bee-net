@@ -12,7 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using System;
 using System.Buffers.Binary;
 
@@ -74,6 +76,46 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> SpanData { get; }
 
         // Methods.
+        public SwarmDecodedCac Decode(
+            SwarmReference reference,
+            Hasher hasher)
+        {
+            if (Hash != reference.Hash)
+                throw new ArgumentException($"Chunk's hash {Hash} does not match reference {reference}");
+
+            // Decrypt and decode span.
+            ReadOnlyMemory<byte> plainData;
+            RedundancyLevel redundancyLevel;
+            ulong spanLength;
+            if (reference.IsEncrypted)
+            {
+                // Decrypt span.
+                var spanBuffer = new byte[SpanSize];
+                var dataBuffer = new byte[DataSize];
+                var dataLength = ChunkEncrypter.DecryptChunk(
+                    this,
+                    reference.EncryptionKey!.Value,
+                    spanBuffer,
+                    dataBuffer,
+                    hasher);
+                
+                plainData = dataBuffer.AsMemory(0, dataLength);
+                redundancyLevel = SpanToRedundancyLevel(spanBuffer);
+                spanLength = SpanToLength(spanBuffer);
+            }
+            else
+            {
+                plainData = Data;
+                redundancyLevel = SpanToRedundancyLevel(Span.Span);
+                spanLength = SpanToLength(Span.Span);
+            }
+
+            // Count parities if is an intermediate chunk.
+            var parities = spanLength <= DataSize ? 0 :
+                CountIntermediateReferences(spanLength, redundancyLevel, reference.IsEncrypted).ParityShards;
+            
+            return new SwarmDecodedCac(reference, redundancyLevel, parities, spanLength, plainData);
+        }
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 
@@ -97,8 +139,8 @@ namespace Etherna.BeeNet.Models
             ReadOnlySpan<byte> span,
             bool isEncrypted)
         {
-            var spanLength = SpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
-            var redundancyLevel = GetSpanRedundancyLevel(span);
+            var spanLength = DecodedSpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
+            var redundancyLevel = SpanToRedundancyLevel(span);
             return CountIntermediateReferences(spanLength, redundancyLevel, isEncrypted);
         }
         
@@ -141,6 +183,9 @@ namespace Etherna.BeeNet.Models
 
             return (dataShards, parityShards);
         }
+
+        public static ulong DecodedSpanToLength(ReadOnlySpan<byte> span) =>
+            BinaryPrimitives.ReadUInt64LittleEndian(span);
         
         /// <summary>
         /// Remove redundancy level from span keeping the real byte count for the chunk
@@ -236,20 +281,10 @@ namespace Etherna.BeeNet.Models
             ReadOnlySpan<byte> data,
             bool encryptedDataReferences)
         {
-            var spanLength = SpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
-            var redundancyLevel = GetSpanRedundancyLevel(span);
+            var spanLength = DecodedSpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
+            var redundancyLevel = SpanToRedundancyLevel(span);
             var (_, parities) = CountIntermediateReferences(spanLength, redundancyLevel, encryptedDataReferences);
             return GetIntermediateReferencesFromData(data, parities, encryptedDataReferences);
-        }
-        
-        public static RedundancyLevel GetSpanRedundancyLevel(ReadOnlySpan<byte> span)
-        {
-            if (span.Length != SpanSize)
-                throw new ArgumentException("Span length must be " + SpanSize);
-            
-            if (!IsSpanEncoded(span))
-                return RedundancyLevel.None;
-            return (RedundancyLevel)(span[SpanSize - 1] & 127);
         }
 
         public static bool IsSpanEncoded(ReadOnlySpan<byte> span)
@@ -277,7 +312,19 @@ namespace Etherna.BeeNet.Models
         }
 
         public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
-            BinaryPrimitives.ReadUInt64LittleEndian(span);
+            DecodedSpanToLength(IsSpanEncoded(span) ?
+                DecodeSpan(span) :
+                span);
+        
+        public static RedundancyLevel SpanToRedundancyLevel(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            if (!IsSpanEncoded(span))
+                return RedundancyLevel.None;
+            return (RedundancyLevel)(span[SpanSize - 1] & 127);
+        }
 
         public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
             BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);

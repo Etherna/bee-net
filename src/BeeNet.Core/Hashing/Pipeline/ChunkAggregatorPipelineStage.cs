@@ -174,7 +174,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Calculate total span of all not parity chunks in level.
             var totalSpan = SwarmCac.LengthToSpan(
                 levelChunks.Where(c => !c.IsParityChunk) //don't add span of parity chunks to the common
-                    .Select(c => SwarmCac.SpanToLength(c.Span.Span))
+                    .Select(c => SwarmCac.DecodedSpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             if (levelChunks.Any(c => c.IsParityChunk))
                 SwarmCac.EncodeSpan(totalSpan, redundancyGenerator.RedundancyLevel);
