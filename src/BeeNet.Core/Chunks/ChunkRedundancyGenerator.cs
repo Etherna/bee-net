@@ -35,14 +35,16 @@ namespace Etherna.BeeNet.Chunks
             // Properties.
             public byte[][] Buffer { get; } = new byte[SwarmChunkBmt.SegmentsCount][];
             public int DataShardsAmount { get; private set; }
+            public int[] OriginalLengths { get; } = new int[SwarmChunkBmt.SegmentsCount];
 
             // Methods.
-            public void AddNewChunk(byte[] spanData)
+            public void AddNewChunk(byte[] spanData, int originalLength)
             {
                 if (spanData.Length != SwarmCac.SpanDataSize)
                     throw new ArgumentException("Span data is not padded", nameof(spanData));
                 
                 Buffer[DataShardsAmount] = spanData;
+                OriginalLengths[DataShardsAmount] = originalLength;
                 DataShardsAmount++;
             }
 
@@ -82,11 +84,7 @@ namespace Etherna.BeeNet.Chunks
             if (lastBufferLevel.DataShardsAmount == 0)
                 throw new InvalidOperationException("Invalid empty level");
 
-            var rootSpanData = lastBufferLevel.Buffer[0];
-            if (rootSpanData.Length != SwarmCac.SpanDataSize)
-                throw new InvalidOperationException("Invalid encoded span data length");
-
-            return rootSpanData;
+            return lastBufferLevel.Buffer[0].AsMemory()[..lastBufferLevel.OriginalLengths[0]];
         }
 
         /// <summary>
@@ -102,6 +100,7 @@ namespace Etherna.BeeNet.Chunks
                 return;
             
             // Pad data.
+            var originalLength = spanData.Length;
             if (spanData.Length != SwarmCac.SpanDataSize)
             {
                 var newSpanData = new byte[SwarmCac.SpanDataSize];
@@ -115,7 +114,7 @@ namespace Etherna.BeeNet.Chunks
             var bufferLevel = bufferLevels[chunkLevel];
             
             // Append chunk to the level buffer.
-            bufferLevel.AddNewChunk(spanData.ToArray());
+            bufferLevel.AddNewChunk(spanData.ToArray(), originalLength);
             
             // Add parity chunks if the level is full.
             if (bufferLevel.DataShardsAmount == MaxDataShards)
