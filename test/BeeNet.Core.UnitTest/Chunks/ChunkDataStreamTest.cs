@@ -294,7 +294,7 @@ namespace Etherna.BeeNet.Chunks
                 test.ChunkStore,
                 RedundancyLevel.Paranoid,
                 RedundancyStrategy.Data,
-                false);
+                true);
             
             await chunkDataStream.CopyToAsync(memoryStream);
             memoryStream.Seek(0, SeekOrigin.Begin);

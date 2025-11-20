@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Chunks
         private readonly IReadOnlyChunkStore chunkStore;
         private readonly uint dataSegmentSize;
         private readonly SwarmDecodedCac decodedRoot;
-        private readonly Hasher hasher = new();
+        private readonly ResourcePool<Hasher> hashersPool = new(() => new Hasher());
         private List<SwarmDecodedCac> levelsCache = [];
         private readonly uint maxDataSegmentsInChunk;
         private readonly RedundancyStrategy redundancyStrategy;
@@ -203,15 +203,19 @@ namespace Etherna.BeeNet.Chunks
              * specific decoder.
              * In case redundancy is not involved, the IReadOnlyChunkStore will simply be the source chunk store.
              */
-            List<(IReadOnlyChunkStore Store, SwarmReference[] References)> chunkStoresWithReferences = [];
+            List<(IReadOnlyChunkStore Store, Dictionary<SwarmHash, SwarmReference> HashReferenceMap)> chunkStoresWithReferences = [];
+            Dictionary<SwarmReference, SwarmDecodedCac> decodedChunks = [];
             List<Task> fetchAndRecoverTasks = [];
+            List<Task<IEnumerable<SwarmDecodedCac>>> getDecodedChunksTasks = [];
 
             // Iterate on all levels from root to data chunks. Terminate when no chunks remain.
             for (var levelIndex = 0;; levelIndex++)
             {
                 // Init level.
                 chunkStoresWithReferences.Clear();
+                decodedChunks.Clear();
                 fetchAndRecoverTasks.Clear();
+                getDecodedChunksTasks.Clear();
                 
                 // Optimize value search for chunks in level.
                 // Analyzing from right, it can only be monotonically non-decreasing.
@@ -290,7 +294,8 @@ namespace Etherna.BeeNet.Chunks
                             (chunkStore, references
                                 .Select(r => r.Reference)
                                 .Skip(startDataReferenceToSkip)
-                                .SkipLast(endDataReferencesToSkip).ToArray()));
+                                .SkipLast(endDataReferencesToSkip)
+                                .ToDictionary(r => r.Hash, r => r)));
                     }
                     else
                     {
@@ -302,7 +307,8 @@ namespace Etherna.BeeNet.Chunks
                                 .TakeWhile(r => !r.IsParity)
                                 .Select(r => r.Reference)
                                 .Skip(startDataReferenceToSkip)
-                                .SkipLast(endDataReferencesToSkip).ToArray()));
+                                .SkipLast(endDataReferencesToSkip)
+                                .ToDictionary(r => r.Hash, r => r)));
                         
                         // Run fetch and recover asynchronously.
                         fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(
@@ -328,49 +334,54 @@ namespace Etherna.BeeNet.Chunks
                     return;
                 }
 
-                // Search chunks for the next level.
-                Dictionary<SwarmHash, SwarmDecodedCac> childChunksPool;
-                
-                //with cache
-                if (levelsCache.Count > levelIndex + 1 &&
-                    chunkStoresWithReferences.SelectMany(p => p.References).Any(r => r.Hash == levelsCache[levelIndex + 1].Reference.Hash))
+                // Start get decoded chunks tasks for the next level.
+                foreach (var (chunkStore, hashReferenceMap) in chunkStoresWithReferences)
                 {
-                    var referencesToGetFromStore = chunkStoresWithReferences.SelectMany(p => p.References)
-                        .Where(r => r != levelsCache[levelIndex + 1].Reference).ToArray();
-                    var chunksFromStore = referencesToGetFromStore.Length == 0 ? [] :
-                        (await chunkStore.GetAsync(referencesToGetFromStore.Select(r => r.Hash), cancellationToken: cancellationToken).ConfigureAwait(false))
-                            .Where(p => p.Value != null)
-                            .Select(p =>
-                            {
-                                var reference = referencesToGetFromStore.First(r => r.Hash == p.Key);
-                                var decodedChunkInfo = ((SwarmCac)p.Value!).Decode(reference, hasher);
-                                
-                                return new KeyValuePair<SwarmHash, SwarmDecodedCac>(p.Key, decodedChunkInfo);
-                            });
-                    
-                    childChunksPool = new Dictionary<SwarmHash, SwarmDecodedCac>(chunksFromStore)
-                    {
-                        [levelsCache[levelIndex + 1].Reference.Hash] = levelsCache[levelIndex + 1]
-                    };
-                }
-                else //or without cache
-                {
-                    childChunksPool = (await chunkStore.GetAsync(
-                            chunkStoresWithReferences.SelectMany(p => p.References).Select(p => p.Hash),
-                            cancellationToken: cancellationToken).ConfigureAwait(false))
-                        .Where(p => p.Value != null)
-                        .ToDictionary(
-                            p => p.Key,
-                            p =>
-                            {
-                                var reference = chunkStoresWithReferences.SelectMany(q => q.References).First(r => r.Hash == p.Key);
-                                return ((SwarmCac)p.Value!).Decode(reference, hasher);
-                            });
+                    getDecodedChunksTasks.Add(Task.Run(async () =>
+                        {
+                            // Get and decode chunks from store.
+                            var hashesFromStore = hashReferenceMap.Values
+                                .Where(r => levelsCache.Count <= levelIndex + 1 ||
+                                    r != levelsCache[levelIndex + 1].Reference)
+                                .Select(r => r.Hash)
+                                .ToArray();
+
+                            var decodedChunks = hashesFromStore.Length == 0 ? [] :
+                                (await chunkStore.GetAsync(
+                                    hashesFromStore,
+                                    cancellationToken: cancellationToken).ConfigureAwait(false))
+                                .Select(p =>
+                                {
+                                    if (p.Value is not SwarmCac cac)
+                                        throw new KeyNotFoundException($"Can't find cac with hash {p.Key}");
+
+                                    var hasher = hashersPool.GetResource();
+                                    var decodedChunk = cac.Decode(hashReferenceMap[p.Key], hasher);
+                                    hashersPool.ReturnResource(hasher);
+
+                                    return decodedChunk;
+                                });
+
+                            // Add decoded chunk from cache.
+                            if (levelsCache.Count > levelIndex + 1 &&
+                                hashReferenceMap.ContainsKey(levelsCache[levelIndex + 1].Reference.Hash))
+                                decodedChunks = decodedChunks.Append(levelsCache[levelIndex + 1]);
+                            
+                            return decodedChunks;
+                        },
+                        cancellationToken));
                 }
                 
-                // Resolve child chunks from the reference list.
-                levelDecodedChunks = chunkStoresWithReferences.SelectMany(p => p.References).Select(reference =>
-                    childChunksPool[reference.Hash]).ToArray();
+                // Wait get decoded chunks tasks.
+                var getDecodedChunksResult = await Task.WhenAll(getDecodedChunksTasks).ConfigureAwait(false);
+                
+                // Merge results.
+                foreach (var decodedChunk in getDecodedChunksResult.SelectMany(c => c))
+                    decodedChunks.Add(decodedChunk.Reference, decodedChunk);
+
+                // Set new level decoded chunks in order.
+                levelDecodedChunks = chunkStoresWithReferences.SelectMany(p => p.HashReferenceMap.Values)
+                    .Select(r => decodedChunks[r]).ToArray();
             }
         }
     }
