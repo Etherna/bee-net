@@ -109,7 +109,7 @@ namespace Etherna.BeeNet.Chunks
                         hashResult));
                 }
                 
-                //encrypted && compact level == 65535
+                //compact level == 65535 && encrypted
                 {
                     var chunkStore = new MemoryChunkStore();
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
@@ -118,6 +118,94 @@ namespace Etherna.BeeNet.Chunks
                         RedundancyLevel.None,
                         true,
                         65535,
+                        null);
+                    using var dataStream = new MemoryStream(data);
+                    
+                    var task = fileHasherPipeline.HashDataAsync(dataStream);
+                    task.Wait();
+                    var hashResult = task.Result;
+                    
+                    tests.Add(new(
+                        chunkStore,
+                        data,
+                        hashResult));
+                }
+                
+                //redundancy level == Strong (all chunks)
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        new FakePostageStamper(),
+                        RedundancyLevel.Strong,
+                        false,
+                        0,
+                        null);
+                    using var dataStream = new MemoryStream(data);
+                    
+                    var task = fileHasherPipeline.HashDataAsync(dataStream);
+                    task.Wait();
+                    var hashResult = task.Result;
+                    
+                    tests.Add(new(
+                        chunkStore,
+                        data,
+                        hashResult));
+                }
+                
+                //redundancy level == Strong (all chunks) && compact level == 65535
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        new FakePostageStamper(),
+                        RedundancyLevel.Strong,
+                        false,
+                        65535,
+                        null);
+                    using var dataStream = new MemoryStream(data);
+                    
+                    var task = fileHasherPipeline.HashDataAsync(dataStream);
+                    task.Wait();
+                    var hashResult = task.Result;
+                    
+                    tests.Add(new(
+                        chunkStore,
+                        data,
+                        hashResult));
+                }
+                
+                //redundancy level == Strong (all chunks) && encrypted
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        new FakePostageStamper(),
+                        RedundancyLevel.Strong,
+                        true,
+                        0,
+                        null);
+                    using var dataStream = new MemoryStream(data);
+                    
+                    var task = fileHasherPipeline.HashDataAsync(dataStream);
+                    task.Wait();
+                    var hashResult = task.Result;
+                    
+                    tests.Add(new(
+                        chunkStore,
+                        data,
+                        hashResult));
+                }
+                
+                //redundancy level == Strong (all chunks) && compact level == 65535 && encrypted
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        new FakePostageStamper(),
+                        RedundancyLevel.Strong,
+                        true,
+                        0,
                         null);
                     using var dataStream = new MemoryStream(data);
                     

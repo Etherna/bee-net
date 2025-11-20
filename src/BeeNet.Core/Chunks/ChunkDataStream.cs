@@ -249,42 +249,38 @@ namespace Etherna.BeeNet.Chunks
 
                         continue;
                     }
-
-                    // Else if it's an intermediate chunk
-                    if (chunkData.Length % dataSegmentSize != 0)
-                        throw new InvalidOperationException("Intermediate chunk's data length is not multiple of segment size.");
-            
-                    // Find referred data size by segment.
-                    var segmentsAmount = (uint)(chunkData.Length / dataSegmentSize);
-                    while (dataSizeBySegment * segmentsAmount < spanLength)
+                    
+                    // Extract references.
+                    var references = SwarmCac.GetIntermediateReferencesFromData(
+                        chunkData.Span, parities, reference.IsEncrypted);
+                    
+                    // Find referred data size by data reference.
+                    var dataReferencesAmount = references.Count(r => !r.IsParity);
+                    while (dataSizeBySegment * dataReferencesAmount < spanLength)
                         dataSizeBySegment *= maxDataSegmentsInChunk;
                     
-                    // Define chunk's segments to read and set bounds for the next level.
-                    var startSegmentsToSkip = 0;
-                    var endSegmentsToSkip = 0;
+                    // Define chunk's data references to read and set bounds for the next level.
+                    var startDataReferenceToSkip = 0;
+                    var endDataReferencesToSkip = 0;
                     if (isFirstChunkInLevel)
                     {
-                        startSegmentsToSkip = (int)(levelStartDataOffset / dataSizeBySegment);
-                        levelStartDataOffset -= startSegmentsToSkip * dataSizeBySegment;
+                        startDataReferenceToSkip = (int)(levelStartDataOffset / dataSizeBySegment);
+                        levelStartDataOffset -= startDataReferenceToSkip * dataSizeBySegment;
                     }
                     if (isLastChunkInLevel)
                     {
                         var lastPartialSegmentDataSize = spanLength % dataSizeBySegment;
                         if (levelEndDataOffset >= lastPartialSegmentDataSize)
                         {
-                            endSegmentsToSkip = (int)((levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment);
+                            endDataReferencesToSkip = (int)((levelEndDataOffset - lastPartialSegmentDataSize) / dataSizeBySegment);
                             if (lastPartialSegmentDataSize > 0)
-                                endSegmentsToSkip++;
+                                endDataReferencesToSkip++;
                         }
-                        if (endSegmentsToSkip > 0)
+                        if (endDataReferencesToSkip > 0)
                             levelEndDataOffset -= spanLength % dataSizeBySegment == 0
-                                ? endSegmentsToSkip * dataSizeBySegment
-                                : (endSegmentsToSkip - 1) * dataSizeBySegment + spanLength % dataSizeBySegment;
+                                ? endDataReferencesToSkip * dataSizeBySegment
+                                : (endDataReferencesToSkip - 1) * dataSizeBySegment + spanLength % dataSizeBySegment;
                     }
-                    
-                    // Extract references.
-                    var references = SwarmCac.GetIntermediateReferencesFromData(
-                        chunkData.Span, parities, reference.IsEncrypted);
                     
                     // If chunk has redundancy, fetch and resolve child chunks.
                     if (redundancyLevel == RedundancyLevel.None)
@@ -293,8 +289,8 @@ namespace Etherna.BeeNet.Chunks
                         chunkStoresWithReferences.Insert(0,
                             (chunkStore, references
                                 .Select(r => r.Reference)
-                                .Skip(startSegmentsToSkip)
-                                .SkipLast(endSegmentsToSkip).ToArray()));
+                                .Skip(startDataReferenceToSkip)
+                                .SkipLast(endDataReferencesToSkip).ToArray()));
                     }
                     else
                     {
@@ -303,9 +299,10 @@ namespace Etherna.BeeNet.Chunks
                         
                         chunkStoresWithReferences.Insert(0,
                             (decoder, references
+                                .TakeWhile(r => !r.IsParity)
                                 .Select(r => r.Reference)
-                                .Skip(startSegmentsToSkip)
-                                .SkipLast(endSegmentsToSkip).ToArray()));
+                                .Skip(startDataReferenceToSkip)
+                                .SkipLast(endDataReferencesToSkip).ToArray()));
                         
                         // Run fetch and recover asynchronously.
                         fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(

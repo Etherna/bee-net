@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Stores
 
         // Properties.
         public bool ReadyDataChunks => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
-        public bool RecoverySucceeded { get; private set; }
+        public bool RecoveryPerformed { get; private set; }
         public ReadOnlySpan<SwarmShardReference> ShardReferences => _shardReferences;
         
         // Methods.
@@ -93,7 +93,7 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken = default)
         {
             // Verify if recovery has already been completed with success.
-            if (RecoverySucceeded)
+            if (RecoveryPerformed)
                 return;
 
             // Run fetch and proceed if succeeded.
@@ -169,7 +169,7 @@ namespace Etherna.BeeNet.Stores
         public void RecoverChunks(bool forceRecoverParities)
         {
             // Verify if recovery has already been completed with success.
-            if (RecoverySucceeded)
+            if (RecoveryPerformed)
                 return;
             
             // Verify if there are enough recovered shards.
@@ -211,7 +211,7 @@ namespace Etherna.BeeNet.Stores
             }
                 
             // Return as succeeded.
-            RecoverySucceeded = true;
+            RecoveryPerformed = true;
         }
         
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]

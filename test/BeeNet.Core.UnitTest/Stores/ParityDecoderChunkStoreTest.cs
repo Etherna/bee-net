@@ -199,7 +199,7 @@ namespace Etherna.BeeNet.Stores
             var decoder = new ParityDecoderChunkStore(references, new MemoryChunkStore());
 
             Assert.False(decoder.ReadyDataChunks);
-            Assert.False(decoder.RecoverySucceeded);
+            Assert.False(decoder.RecoveryPerformed);
             Assert.Equal(references, decoder.ShardReferences);
         }
 
@@ -303,7 +303,7 @@ namespace Etherna.BeeNet.Stores
 
             Assert.True(result);
             Assert.True(decoder.ReadyDataChunks);
-            Assert.True(decoder.RecoverySucceeded);
+            Assert.True(decoder.RecoveryPerformed);
             Assert.Equal("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9", recoveredChunk.Hash);
             Assert.Equal(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"].SpanData,
                 ((SwarmCac)recoveredChunk).SpanData);
