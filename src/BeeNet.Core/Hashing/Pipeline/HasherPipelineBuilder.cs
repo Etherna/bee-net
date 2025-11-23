@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
 
             //build stages
             var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
-                new ChunkRedundancyGenerator(
+                new ChunkParityGenerator(
                     redundancyLevel,
                     isEncrypted || compactLevel > 0,
                     new ChunkBmtPipelineStage(

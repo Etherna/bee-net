@@ -13,22 +13,22 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Chunks
 {
-    public class ParityDecoderChunkStoreTest
+    public class ChunkParityDecoderTest
     {
         // Internal classes.
         public record CanFetchChunkWithStrategyTestElement(
             IChunkStore ChunkStore,
             RedundancyStrategy Strategy,
-            bool ExpectedResult,
-            Type? ExpectedExceptionType);
+            bool ExpectedResult);
         
         public record CanGetChunkTestElement(
             SwarmHash ChunkHash,
@@ -78,9 +78,27 @@ namespace Etherna.BeeNet.Stores
             {
                 var tests = new List<CanFetchChunkWithStrategyTestElement>();
                 
-                // None strategy throws ArgumentException.
+                // None strategy fails. (like Data)
                 {
-                    tests.Add(new(new MemoryChunkStore(), RedundancyStrategy.None, false, typeof(ArgumentException)));
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
+                    // chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data, missing
+                    chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]).Wait(); //parity
+                    chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity
+                    chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.None, false));
+                }
+                
+                // None strategy succeeds. (like Data)
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
+                    chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data
+                    
+                    tests.Add(new(chunkStore, RedundancyStrategy.None, true));
                 }
                 
                 // Data strategy fails.
@@ -93,7 +111,7 @@ namespace Etherna.BeeNet.Stores
                     chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity
                     chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
                     
-                    tests.Add(new(chunkStore, RedundancyStrategy.Data, false, null));
+                    tests.Add(new(chunkStore, RedundancyStrategy.Data, false));
                 }
                 
                 // Data strategy succeeds.
@@ -103,7 +121,7 @@ namespace Etherna.BeeNet.Stores
                     chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
                     chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data
                     
-                    tests.Add(new(chunkStore, RedundancyStrategy.Data, true, null));
+                    tests.Add(new(chunkStore, RedundancyStrategy.Data, true));
                 }
                 
                 // Prox strategy fails.
@@ -122,7 +140,7 @@ namespace Etherna.BeeNet.Stores
                     // chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity, missing
                     chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
                     
-                    tests.Add(new(chunkStore, RedundancyStrategy.Race, false, null));
+                    tests.Add(new(chunkStore, RedundancyStrategy.Race, false));
                 }
                 
                 // Race strategy succeeds.
@@ -135,7 +153,7 @@ namespace Etherna.BeeNet.Stores
                     // chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity, missing
                     chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
                     
-                    tests.Add(new(chunkStore, RedundancyStrategy.Race, true, null));
+                    tests.Add(new(chunkStore, RedundancyStrategy.Race, true));
                 }
                 
                 return tests.Select(t => new object[] { t });
@@ -180,7 +198,7 @@ namespace Etherna.BeeNet.Stores
             
             var destinationChunkStore = new MemoryChunkStore();
             
-            var decoder = new ParityDecoderChunkStore(references, sourceChunkStore);
+            var decoder = new ChunkParityDecoder(references, sourceChunkStore);
             await decoder.TryFetchChunksAsync(RedundancyStrategy.Race, false);
 
             await decoder.AddChunksToStoreAsync(destinationChunkStore,
@@ -196,7 +214,7 @@ namespace Etherna.BeeNet.Stores
         [Fact]
         public void CanConstruct()
         {
-            var decoder = new ParityDecoderChunkStore(references, new MemoryChunkStore());
+            var decoder = new ChunkParityDecoder(references, new MemoryChunkStore());
 
             Assert.False(decoder.ReadyDataChunks);
             Assert.False(decoder.RecoveryPerformed);
@@ -206,20 +224,11 @@ namespace Etherna.BeeNet.Stores
         [Theory, MemberData(nameof(CanFetchChunkWithStrategyTest))]
         public async Task CanFetchChunkWithStrategy(CanFetchChunkWithStrategyTestElement test)
         {
-            var decoder = new ParityDecoderChunkStore(references, test.ChunkStore);
+            var decoder = new ChunkParityDecoder(references, test.ChunkStore);
 
-            if (test.ExpectedExceptionType != null)
-            {
-                await Assert.ThrowsAsync(
-                    test.ExpectedExceptionType,
-                    () => decoder.TryFetchChunksAsync(test.Strategy, false));
-            }
-            else
-            {
-                var result = await decoder.TryFetchChunksAsync(test.Strategy, false);
+            var result = await decoder.TryFetchChunksAsync(test.Strategy, false);
 
-                Assert.Equal(test.ExpectedResult, result);
-            }
+            Assert.Equal(test.ExpectedResult, result);
         }
 
         [Theory]
@@ -234,7 +243,7 @@ namespace Etherna.BeeNet.Stores
             // await chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]); //data, missing
             await chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]); //parity
             
-            var decoder = new ParityDecoderChunkStore(references, chunkStore);
+            var decoder = new ChunkParityDecoder(references, chunkStore);
 
             // Act.
             var result = await decoder.TryFetchChunksAsync(RedundancyStrategy.Data, useFallback);
@@ -254,14 +263,14 @@ namespace Etherna.BeeNet.Stores
             await chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]);
             await chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]);
             
-            var decoder = new ParityDecoderChunkStore(references, chunkStore);
+            var decoder = new ChunkParityDecoder(references, chunkStore);
             await decoder.TryFetchChunksAsync(RedundancyStrategy.Race, false);
 
             if (test.ExpectedExceptionType != null)
-                await Assert.ThrowsAsync(test.ExpectedExceptionType, () => decoder.GetAsync(test.ChunkHash));
+                Assert.Throws(test.ExpectedExceptionType, () => decoder.GetChunk(test.ChunkHash));
             else
             {
-                var chunk = await decoder.GetAsync(test.ChunkHash);
+                var chunk = decoder.GetChunk(test.ChunkHash);
                 Assert.Equal(test.ChunkHash, chunk.Hash);
             }
         }
@@ -273,7 +282,7 @@ namespace Etherna.BeeNet.Stores
             await chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]); //data
             await chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]); //parity
             
-            var decoder = new ParityDecoderChunkStore(references, chunkStore);
+            var decoder = new ChunkParityDecoder(references, chunkStore);
             await decoder.TryFetchChunksAsync(RedundancyStrategy.Race, false);
 
             var missingChunks = decoder.GetMissingShards();
@@ -297,9 +306,9 @@ namespace Etherna.BeeNet.Stores
             // await chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]); //data, missing
             await chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]); //parity
             
-            var decoder = new ParityDecoderChunkStore(references, chunkStore);
+            var decoder = new ChunkParityDecoder(references, chunkStore);
             var result = await decoder.TryFetchAndRecoverAsync(RedundancyStrategy.Race, false);
-            var recoveredChunk = await decoder.GetAsync("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
+            var recoveredChunk = decoder.GetChunk("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
 
             Assert.True(result);
             Assert.True(decoder.ReadyDataChunks);

@@ -24,7 +24,7 @@ namespace Etherna.BeeNet.Chunks
 {
     internal delegate Task AddChunkToLevel(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt);
 
-    internal sealed class ChunkRedundancyGenerator(
+    internal sealed class ChunkParityGenerator(
         RedundancyLevel redundancyLevel,
         bool encryptChunks,
         ChunkBmtPipelineStage shortBmtPipelineStage)

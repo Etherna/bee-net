@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using Etherna.BeeNet.Stores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -20,13 +21,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Chunks
 {
     /// <summary>
     /// Tries to recover data children of an intermediate chunk using redundancy.
     /// Class is not thread-safe, execute Fetch and Recovery in sequence.
     /// </summary>
-    public sealed class ParityDecoderChunkStore : ReadOnlyChunkStoreBase
+    public sealed class ChunkParityDecoder
     {
         // Consts.
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
@@ -41,7 +42,7 @@ namespace Etherna.BeeNet.Stores
         private readonly int dataShardsAmount;
         
         // Constructor.
-        public ParityDecoderChunkStore(
+        public ChunkParityDecoder(
             ReadOnlySpan<byte> plainSpanData,
             bool encryptedDataReferences,
             IReadOnlyChunkStore chunkStore)
@@ -51,7 +52,7 @@ namespace Etherna.BeeNet.Stores
                 encryptedDataReferences), chunkStore)
         { }
 
-        public ParityDecoderChunkStore(
+        public ChunkParityDecoder(
             SwarmShardReference[] shardReferences,
             IReadOnlyChunkStore chunkStore)
         {
@@ -80,7 +81,7 @@ namespace Etherna.BeeNet.Stores
             
             foreach (var hash in hashes)
             {
-                var chunk = await LoadChunkAsync(hash, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var chunk = GetChunk(hash);
                 await destinationStore.AddAsync(chunk, false, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -146,6 +147,25 @@ namespace Etherna.BeeNet.Stores
                 throw new KeyNotFoundException();
         }
         
+        public SwarmCac GetChunk(SwarmHash hash)
+        {
+            var i = hashIndexMap[hash];
+            if (shardsBuffer[i] == null!)
+                throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
+
+            // If is not last chunk, or if is encrypted, simply read from buffer.
+            if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
+                return new SwarmCac(hash, shardsBuffer[i]);
+            
+            // Else, if is last chunk and not encrypted, try to remove possible padding.
+            ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
+            var spanLength = SwarmCac.DecodedSpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
+            var redundancyLevel = SwarmCac.SpanToRedundancyLevel(span);
+
+            return new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
+                SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false)));
+        }
+        
         /// <summary>
         /// Get all missing shards, from both data and parities
         /// </summary>
@@ -155,11 +175,11 @@ namespace Etherna.BeeNet.Stores
                 .Where(zip => zip.First == null!)
                 .Select(zip => zip.Second).ToArray();
 
-        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        public bool HasChunk(SwarmHash hash)
         {
             if (!hashIndexMap.TryGetValue(hash, out var i))
-                return Task.FromResult(false);
-            return Task.FromResult(shardsBuffer[i] != null!);
+                return false;
+            return shardsBuffer[i] != null!;
         }
         
         /// <summary>
@@ -285,44 +305,6 @@ namespace Etherna.BeeNet.Stores
                 return false;
             }
         }
-        
-        // Protected methods.
-        protected override Task<SwarmChunk> LoadChunkAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default)
-        {
-            var i = hashIndexMap[hash];
-            if (shardsBuffer[i] == null!)
-                throw new InvalidOperationException($"Chunk not available. Ensure fetch and recover have succeeded");
-
-            // If is not last chunk, or if is encrypted, simply read from buffer.
-            if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
-                return Task.FromResult<SwarmChunk>(new SwarmCac(hash, shardsBuffer[i]));
-            
-            // Else, if is last chunk and not encrypted, try to remove possible padding.
-            ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
-            var spanLength = SwarmCac.DecodedSpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
-            var redundancyLevel = SwarmCac.SpanToRedundancyLevel(span);
-
-            return Task.FromResult<SwarmChunk>(new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
-                SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false))));
-        }
-
-        protected override async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> LoadChunksAsync(
-            IEnumerable<SwarmHash> hashes,
-            int? canReturnAfterFailed,
-            int? canReturnAfterSucceeded,
-            CancellationToken cancellationToken)
-        {
-            var getTasks = hashes.Select<SwarmHash, Task<(SwarmHash Hash, SwarmChunk? Chunk)>>(async hash =>
-            {
-                if (await HasChunkAsync(hash, cancellationToken).ConfigureAwait(false))
-                    return (hash, await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false));
-                return (hash, null);
-            });
-            var results = await Task.WhenAll(getTasks).ConfigureAwait(false);
-            return results.ToDictionary(p => p.Hash, p => p.Chunk);
-        }
 
         // Helpers.
         
@@ -345,8 +327,6 @@ namespace Etherna.BeeNet.Stores
             switch (strategy)
             {
                 case RedundancyStrategy.None:
-                    throw new ArgumentException($"Strategy None is not allowed here", nameof(strategy));
-                
                 case RedundancyStrategy.Data: //only retrieve data shards
                     hashesToQuery = fetchResults
                         .Zip(_shardReferences.Where(sr => !sr.IsParity))

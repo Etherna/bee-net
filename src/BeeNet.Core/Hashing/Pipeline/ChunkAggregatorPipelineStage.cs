@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkAggregatorPipelineStage(
-        ChunkRedundancyGenerator redundancyGenerator,
+        ChunkParityGenerator parityGenerator,
         ChunkReplicator chunkReplicator,
         ChunkBmtPipelineStage shortBmtPipelineStage,
         bool readOnly)
@@ -75,7 +75,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             false),
                         args.SwarmChunkBmt).ConfigureAwait(false);
                     
-                    await redundancyGenerator.AddChunkToLevelAsync(
+                    await parityGenerator.AddChunkToLevelAsync(
                         0,
                         processingChunk.SpanData,
                         AddChunkToLevelAsync,
@@ -111,13 +111,13 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             nextLevelChunks.Add(levelChunks.Single());
                             levelChunks.Clear();
                             
-                            await redundancyGenerator.ElevateCarrierChunkAsync(
+                            await parityGenerator.ElevateCarrierChunkAsync(
                                 i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         }
                         break;
                     
                     default:
-                        await redundancyGenerator.EncodeErasureDataAsync(
+                        await parityGenerator.EncodeErasureDataAsync(
                             i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         await WrapFullLevelAsync(i, swarmChunkBmt).ConfigureAwait(false);
                         break;
@@ -127,9 +127,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             var rootChunk = chunkLevels.Last()[0];
             
             // Create disperse replicas of root chunk. Don't add if is readOnly.
-            if (redundancyGenerator.RedundancyLevel != RedundancyLevel.None && !readOnly)
+            if (parityGenerator.RedundancyLevel != RedundancyLevel.None && !readOnly)
             {
-                var rootSpanData = redundancyGenerator.GetRootSpanData();
+                var rootSpanData = parityGenerator.GetRootSpanData();
                 await chunkReplicator.AddChunkReplicasAsync(
                     new SwarmCac(rootChunk.Reference.Hash, rootSpanData),
                     swarmChunkBmt.Hasher).ConfigureAwait(false);
@@ -146,7 +146,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             var levelChunks = GetLevelChunks(level);
             levelChunks.Add(chunkHeader);
             
-            if (levelChunks.Count == redundancyGenerator.MaxChildrenChunks)
+            if (levelChunks.Count == parityGenerator.MaxChildrenChunks)
                 await WrapFullLevelAsync(level, swarmChunkBmt).ConfigureAwait(false);
         }
 
@@ -177,14 +177,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     .Select(c => SwarmCac.DecodedSpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             if (levelChunks.Any(c => c.IsParityChunk))
-                SwarmCac.EncodeSpan(totalSpan, redundancyGenerator.RedundancyLevel);
+                SwarmCac.EncodeSpan(totalSpan, parityGenerator.RedundancyLevel);
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are encrypted, append the encryption key after the chunk hash.
             var dataChunksInLevel = levelChunks.Count(c => !c.IsParityChunk);
             var parityChunksInLevel = levelChunks.Count - dataChunksInLevel;
             var totalDataLength = SwarmCac.SpanSize +
-                dataChunksInLevel * (redundancyGenerator.EncryptChunks ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) +
+                dataChunksInLevel * (parityGenerator.EncryptChunks ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) +
                 parityChunksInLevel * SwarmReference.PlainSize; //parity references only have hashes
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
@@ -210,7 +210,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             levelChunks.Clear();
 
             // Add chunk to redundancy generator.
-            await redundancyGenerator.AddChunkToLevelAsync(
+            await parityGenerator.AddChunkToLevelAsync(
                 level + 1,
                 totalSpanData.AsMemory(),
                 AddChunkToLevelAsync,
