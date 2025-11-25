@@ -35,6 +35,8 @@ namespace Etherna.BeeNet.Chunks
         private readonly uint maxDataSegmentsInChunk;
         private readonly RedundancyStrategy redundancyStrategy;
         private readonly bool redundancyStrategyFallback;
+        
+        private long _position;
 
         // Constructor.
         private ChunkDataStream(
@@ -130,7 +132,19 @@ namespace Etherna.BeeNet.Chunks
         public override bool CanSeek => true;
         public override bool CanWrite => false;
         public override long Length => (long)decodedRoot.SpanLength;
-        public override long Position { get; set; }
+        public override long Position
+        {
+            get => _position;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Cannot set position before the beginning of the stream");
+                if (value > Length)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Cannot set position past the end of the stream");
+                
+                _position = value;
+            }
+        }
 
         // Methods.
         public override void Flush() { }
@@ -159,24 +173,14 @@ namespace Etherna.BeeNet.Chunks
             return dataToRead;
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            var newPosition = origin switch
+        public override long Seek(long offset, SeekOrigin origin) =>
+            Position = origin switch
             {
                 SeekOrigin.Begin => offset,
                 SeekOrigin.Current => Position + offset,
                 SeekOrigin.End => Length + offset,
                 _ => throw new ArgumentException("Invalid seek origin", nameof(origin))
             };
-
-            if (newPosition < 0)
-                throw new IOException("Cannot seek before the beginning of the stream");
-            if (newPosition > Length)
-                throw new IOException("Cannot seek past the end of the stream");
-
-            Position = newPosition;
-            return Position;
-        }
 
         public override void SetLength(long value) => throw new NotSupportedException();
 
