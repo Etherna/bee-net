@@ -21,5 +21,13 @@ namespace Etherna.BeeNet.Models
         RedundancyLevel RedundancyLevel,
         int Parities,
         ulong SpanLength,
-        ReadOnlyMemory<byte> Data);
+        ReadOnlyMemory<byte> Data)
+    {
+        // Properties.
+        public bool IsEncrypted => Reference.IsEncrypted;
+        
+        // Methods.
+        public SwarmShardReference[] GetChildReferencesAsIntermediate() =>
+            SwarmCac.GetIntermediateReferencesFromData(Data.Span, Parities, IsEncrypted);
+    }
 }
