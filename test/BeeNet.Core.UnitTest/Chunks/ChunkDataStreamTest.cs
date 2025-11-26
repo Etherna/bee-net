@@ -17,6 +17,7 @@ using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,9 +35,14 @@ namespace Etherna.BeeNet.Chunks
             SwarmReference RootReference);
         
         // Data.
-        public static IEnumerable<object[]> JoinChunkDataTests
+        private class JoinChunkDataClassData : IEnumerable<object[]>
         {
-            get
+            private IEnumerable<object[]> cases = [];
+
+            public JoinChunkDataClassData() =>
+                Task.Run(InitializeAsync).GetAwaiter().GetResult();
+
+            private async Task InitializeAsync()
             {
                 var tests = new List<JoinChunkDataTestElement>();
                 
@@ -53,11 +59,9 @@ namespace Etherna.BeeNet.Chunks
                         false,
                         0,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     tests.Add(new(
                         chunkStore,
@@ -75,11 +79,9 @@ namespace Etherna.BeeNet.Chunks
                         false,
                         65535,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     tests.Add(new(
                         chunkStore,
@@ -97,11 +99,9 @@ namespace Etherna.BeeNet.Chunks
                         true,
                         0,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     tests.Add(new(
                         chunkStore,
@@ -119,11 +119,9 @@ namespace Etherna.BeeNet.Chunks
                         true,
                         65535,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     tests.Add(new(
                         chunkStore,
@@ -141,14 +139,11 @@ namespace Etherna.BeeNet.Chunks
                         false,
                         0,
                         null);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    using var dataStream = new MemoryStream(data);
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
-                    
-                    chunkStore.RemoveAsync(hashResult.Hash).Wait();
+                    await chunkStore.RemoveAsync(hashResult.Hash);
                     
                     tests.Add(new(
                         chunkStore,
@@ -166,20 +161,19 @@ namespace Etherna.BeeNet.Chunks
                         false,
                         0,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                 
                     //remove chunks (and verify they are removed)
-                    var whenAllTasks = Task.WhenAll(
-                        chunkStore.RemoveAsync("1bdbaf2c4056f3615fb067f1c781f6767e342bd1dae40e12c8f3d3de69f316cf"),
-                        chunkStore.RemoveAsync("d41ac8c5e6e8fd2848d00e4c0ed01a39d31750f34df4016e4764a8b48a925b64"),
-                        chunkStore.RemoveAsync("1786d0bcfe9c52d57fa39e2f201843e3ef508474fe82cb49a688457db54c4d5c"));
-                    whenAllTasks.Wait();
-                    foreach (var result in whenAllTasks.Result)
-                        Assert.True(result);
+                    var hashes = new SwarmHash[]
+                    {
+                        "1bdbaf2c4056f3615fb067f1c781f6767e342bd1dae40e12c8f3d3de69f316cf",
+                        "d41ac8c5e6e8fd2848d00e4c0ed01a39d31750f34df4016e4764a8b48a925b64",
+                        "1786d0bcfe9c52d57fa39e2f201843e3ef508474fe82cb49a688457db54c4d5c"
+                    };
+                    foreach (var hash in hashes)
+                        Assert.True(await chunkStore.RemoveAsync(hash));
                     
                     tests.Add(new(
                         chunkStore,
@@ -197,20 +191,19 @@ namespace Etherna.BeeNet.Chunks
                         false,
                         65535,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     //remove chunks (and verify they are removed)
-                    var whenAllTasks = Task.WhenAll(
-                        chunkStore.RemoveAsync("b8fafb9d8688fd40f37016ca4eecae1b4a5ad0e1eda646d00e6ca4ba8531e5a3"),
-                        chunkStore.RemoveAsync("ba60b3bf6ad8546b7a1f686f48832b0702e55dc0aec7aeef935efd45c4b83dab"),
-                        chunkStore.RemoveAsync("f54cef97c490651e875190e80b063dd46187dc82e60db1e0733ede2944ac6c91"));
-                    whenAllTasks.Wait();
-                    foreach (var result in whenAllTasks.Result)
-                        Assert.True(result);
+                    var hashes = new SwarmHash[]
+                    {
+                        "b8fafb9d8688fd40f37016ca4eecae1b4a5ad0e1eda646d00e6ca4ba8531e5a3",
+                        "ba60b3bf6ad8546b7a1f686f48832b0702e55dc0aec7aeef935efd45c4b83dab",
+                        "f54cef97c490651e875190e80b063dd46187dc82e60db1e0733ede2944ac6c91"
+                    };
+                    foreach (var hash in hashes)
+                        Assert.True(await chunkStore.RemoveAsync(hash));
                     
                     tests.Add(new(
                         chunkStore,
@@ -228,11 +221,9 @@ namespace Etherna.BeeNet.Chunks
                         true,
                         0,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     //remove random chunks
                     var random = new Random();
@@ -241,7 +232,7 @@ namespace Etherna.BeeNet.Chunks
                                  .Take(3)
                                  .Select(p => p.Key)
                                  .ToArray())
-                        chunkStore.RemoveAsync(hash).Wait();
+                        await chunkStore.RemoveAsync(hash);
                     
                     tests.Add(new(
                         chunkStore,
@@ -259,11 +250,9 @@ namespace Etherna.BeeNet.Chunks
                         true,
                         0,
                         null);
-                    using var dataStream = new MemoryStream(data);
+                    await using var dataStream = new MemoryStream(data);
                     
-                    var task = fileHasherPipeline.HashDataAsync(dataStream);
-                    task.Wait();
-                    var hashResult = task.Result;
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
                     
                     //remove random chunks
                     var random = new Random();
@@ -272,7 +261,7 @@ namespace Etherna.BeeNet.Chunks
                                  .Take(3)
                                  .Select(p => p.Key)
                                  .ToArray())
-                        chunkStore.RemoveAsync(hash).Wait();
+                        await chunkStore.RemoveAsync(hash);
                     
                     tests.Add(new(
                         chunkStore,
@@ -280,12 +269,16 @@ namespace Etherna.BeeNet.Chunks
                         hashResult));
                 }
 
-                return tests.Select(t => new object[] { t });
+                cases = tests.Select(t => new object[] { t });
             }
+
+            public IEnumerator<object[]> GetEnumerator() => cases.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
+        
 
         // Tests.
-        [Theory, MemberData(nameof(JoinChunkDataTests))]
+        [Theory, ClassData(typeof(JoinChunkDataClassData))]
         public async Task JoinChunkData(JoinChunkDataTestElement test)
         {
             await using var memoryStream = new MemoryStream();
