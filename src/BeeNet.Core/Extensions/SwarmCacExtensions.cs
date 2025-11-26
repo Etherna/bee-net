@@ -21,7 +21,7 @@ namespace Etherna.BeeNet.Extensions
 {
     public static class SwarmCacExtensions
     {
-        public static SwarmDecodedCac Decode(
+        public static SwarmDecodedCacBase Decode(
             this SwarmCac chunk,
             SwarmReference reference,
             Hasher hasher)
@@ -58,11 +58,22 @@ namespace Etherna.BeeNet.Extensions
                 spanLength = SwarmCac.SpanToLength(chunk.Span.Span);
             }
 
-            // Count parities if is an intermediate chunk.
-            var parities = spanLength <= SwarmCac.DataSize ? 0 :
-                SwarmCac.CountIntermediateReferences(spanLength, redundancyLevel, reference.IsEncrypted).ParityShards;
-            
-            return new SwarmDecodedCac(reference, redundancyLevel, parities, spanLength, plainData);
+            //if data chunk
+            if (spanLength <= SwarmCac.DataSize)
+            {
+                return new SwarmDecodedDataCac(
+                    reference,
+                    spanLength,
+                    plainData);
+            }
+
+            //if intermediate chunk
+            return new SwarmDecodedIntermediateCac(
+                reference,
+                redundancyLevel,
+                SwarmCac.CountIntermediateReferences(spanLength, redundancyLevel, reference.IsEncrypted).ParityShards,
+                spanLength,
+                plainData);
         }
     }
 }

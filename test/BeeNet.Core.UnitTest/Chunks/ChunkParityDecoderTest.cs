@@ -216,8 +216,8 @@ namespace Etherna.BeeNet.Chunks
         {
             var decoder = new ChunkParityDecoder(references, new MemoryChunkStore());
 
-            Assert.False(decoder.ReadyDataChunks);
-            Assert.False(decoder.RecoveryPerformed);
+            Assert.False(decoder.AreDataChunksReady);
+            Assert.False(decoder.IsRecoveryPerformed);
             Assert.Equal(references, decoder.ShardReferences);
         }
 
@@ -311,8 +311,8 @@ namespace Etherna.BeeNet.Chunks
             var recoveredChunk = decoder.GetChunk("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9");
 
             Assert.True(result);
-            Assert.True(decoder.ReadyDataChunks);
-            Assert.True(decoder.RecoveryPerformed);
+            Assert.True(decoder.AreDataChunksReady);
+            Assert.True(decoder.IsRecoveryPerformed);
             Assert.Equal("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9", recoveredChunk.Hash);
             Assert.Equal(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"].SpanData,
                 ((SwarmCac)recoveredChunk).SpanData);

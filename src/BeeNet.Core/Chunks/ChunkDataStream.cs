@@ -29,9 +29,9 @@ namespace Etherna.BeeNet.Chunks
     {
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
-        private readonly SwarmDecodedCac decodedRoot;
+        private readonly SwarmDecodedCacBase decodedRoot;
         private readonly Hasher hasher = new();
-        private List<SwarmDecodedCac> levelsCache = [];
+        private List<Dictionary<SwarmReference, SwarmDecodedCacBase>> levelsCache = [];
         private readonly uint maxDataSegmentsInChunk;
         private readonly RedundancyStrategy redundancyStrategy;
         private readonly bool redundancyStrategyFallback;
@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Chunks
 
         // Constructor.
         private ChunkDataStream(
-            SwarmDecodedCac decodedRoot,
+            SwarmDecodedCacBase decodedRoot,
             IReadOnlyChunkStore chunkStore,
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback)
@@ -189,12 +189,12 @@ namespace Etherna.BeeNet.Chunks
         // Private helpers.
         private async Task CopyDataToBufferAsync(Memory<byte> buffer, CancellationToken cancellationToken)
         {
-            List<SwarmDecodedCac> newLevelsCache = [];
+            List<Dictionary<SwarmReference, SwarmDecodedCacBase>> newLevelsCache = [[]];
             
             // Init with root level info.
             var levelStartDataOffset = Position;
             var levelEndDataOffset = Length - (Position + buffer.Length);
-            SwarmDecodedCac[] levelDecodedChunks = [decodedRoot];
+            SwarmDecodedCacBase[] levelDecodedChunks = [decodedRoot];
             
             // Reuse these for memory optimization.
             /*
@@ -204,17 +204,21 @@ namespace Etherna.BeeNet.Chunks
              * Associated with each decoder there is also a list of references to explore, resolvable from that
              * specific decoder.
              */
-            List<(ChunkParityDecoder Decoder, Dictionary<SwarmHash, SwarmReference> HashReferenceMap)> chunkStoresWithReferences = [];
+            Dictionary<SwarmReference, SwarmDecodedCacBase> decodedChunksMap = [];
             List<Task> fetchAndRecoverTasks = [];
-            Dictionary<SwarmReference, SwarmDecodedCac> referenceDecodedChunkMap = [];
+            List<SwarmReference> nextLevelReferences = [];
+            List<ChunkParityDecoder> parityDecoders = [];
 
             // Iterate on all levels from root to data chunks. Terminate when no chunks remain.
             for (var levelIndex = 0;; levelIndex++)
             {
                 // Init level.
-                chunkStoresWithReferences.Clear();
+                IEnumerable<SwarmReference> referencesToCache = [];
+                
+                decodedChunksMap.Clear();
                 fetchAndRecoverTasks.Clear();
-                referenceDecodedChunkMap.Clear();
+                nextLevelReferences.Clear();
+                parityDecoders.Clear();
                 
                 // Optimize value search for chunks in level.
                 // Analyzing from right, it can only be monotonically non-decreasing.
@@ -224,27 +228,25 @@ namespace Etherna.BeeNet.Chunks
                 for (int chunkIndex = levelDecodedChunks.Length - 1; chunkIndex >= 0; chunkIndex--)
                 {
                     // Get decoded chunk info.
-                    var (reference, redundancyLevel, parities, _, chunkData) = levelDecodedChunks[chunkIndex];
-                    var spanLength = (long)levelDecodedChunks[chunkIndex].SpanLength;
+                    var decodedChunk = levelDecodedChunks[chunkIndex];
+                    var spanLength = (long)decodedChunk.SpanLength;
 
                     var isFirstChunkInLevel = chunkIndex == 0;
                     var isLastChunkInLevel = chunkIndex == levelDecodedChunks.Length - 1;
 
-                    // If it's the last chunk on the level, and if some data remains to read in level, cache the chunk.
-                    if (isLastChunkInLevel && levelEndDataOffset > 0)
-                        newLevelsCache.Add(levelDecodedChunks[chunkIndex]);
-
                     // If is a data chunk, report data on buffer and update bounds. Then continue.
-                    if (spanLength <= SwarmCac.DataSize)
+                    if (decodedChunk.IsDataChunk)
                     {
+                        var data = ((SwarmDecodedDataCac)decodedChunk).Data;
+                        
                         //check end offset consistency
                         var dataToCopyStart = isFirstChunkInLevel ? (int)levelStartDataOffset : 0;
-                        var dataToCopySize = chunkData.Length - dataToCopyStart - (int)levelEndDataOffset;
+                        var dataToCopySize = data.Length - dataToCopyStart - (int)levelEndDataOffset;
                         if (dataToCopySize <= 0)
                             throw new InvalidOperationException("Invalid data to copy size");
 
                         //copy data to end of buffer, and shrink buffer
-                        chunkData[dataToCopyStart..(dataToCopyStart + dataToCopySize)].CopyTo(buffer[^dataToCopySize..]);
+                        data[dataToCopyStart..(dataToCopyStart + dataToCopySize)].CopyTo(buffer[^dataToCopySize..]);
                         buffer = buffer[..^dataToCopySize];
 
                         //update level bounds
@@ -254,11 +256,10 @@ namespace Etherna.BeeNet.Chunks
                     }
 
                     // Extract references.
-                    var references = SwarmCac.GetIntermediateReferencesFromData(
-                        chunkData.Span, parities, reference.IsEncrypted);
+                    var childReferences = ((SwarmDecodedIntermediateCac)decodedChunk).ChildReferences;
 
                     // Find referred data size by data reference.
-                    var dataReferencesAmount = references.Count(r => !r.IsParity);
+                    var dataReferencesAmount = childReferences.TakeWhile(r => !r.IsParity).Count();
                     while (dataSizeBySegment * dataReferencesAmount < spanLength)
                         dataSizeBySegment *= maxDataSegmentsInChunk;
 
@@ -284,30 +285,48 @@ namespace Etherna.BeeNet.Chunks
                                 ? endDataReferencesToSkip * dataSizeBySegment
                                 : (endDataReferencesToSkip - 1) * dataSizeBySegment + spanLength % dataSizeBySegment;
                     }
+                    
+                    // Identify required child references.
+                    var requiredChildReferences = childReferences
+                        .TakeWhile(r => !r.IsParity)
+                        .Select(r => r.Reference)
+                        .Skip(startDataReferenceToSkip)
+                        .SkipLast(endDataReferencesToSkip)
+                        .ToArray();
+                    nextLevelReferences.InsertRange(0, requiredChildReferences);
 
-                    // Fetch and try to recover child chunks with parities.
-                    var decoder = new ChunkParityDecoder(references, chunkStore);
-
-                    chunkStoresWithReferences.Insert(0,
-                        (decoder, references
+                    // If is the last chunk on the level, evaluate to cache the chunk and its right brothers.
+                    if (isLastChunkInLevel)
+                    {
+                        if (endDataReferencesToSkip > 0)
+                            newLevelsCache[levelIndex].Add(decodedChunk.Reference, decodedChunk);
+                        
+                        referencesToCache = childReferences
                             .TakeWhile(r => !r.IsParity)
                             .Select(r => r.Reference)
-                            .Skip(startDataReferenceToSkip)
-                            .SkipLast(endDataReferencesToSkip)
-                            .ToDictionary(r => r.Hash, r => r)));
-
-                    // Run fetch and recover asynchronously.
+                            .TakeLast(endDataReferencesToSkip);
+                    }
+                    
+                    // If cache contains all required references, continue.
+                    if (levelsCache.Count > levelIndex + 1 &&
+                        requiredChildReferences.All(r => levelsCache[levelIndex + 1].ContainsKey(r)))
+                        continue;
+                    
+                    // Run fetch and recover with parity asynchronously.
+                    var decoder = new ChunkParityDecoder(childReferences, chunkStore);
                     fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(
                         redundancyStrategy,
                         redundancyStrategyFallback,
                         cancellationToken: cancellationToken));
+
+                    parityDecoders.Add(decoder);
                 }
 
-                // Wait all "fetch and recover" tasks for this level, when "redundancyLevel != RedundancyLevel.None".
+                // Wait all "fetch and recover" tasks for this level.
                 await Task.WhenAll(fetchAndRecoverTasks).ConfigureAwait(false);
                 
                 // If next level is empty, set cache and return.
-                if (chunkStoresWithReferences.Count == 0)
+                if (nextLevelReferences.Count == 0)
                 {
                     // Verify the full buffer has been written.
                     if (buffer.Length != 0)
@@ -319,27 +338,30 @@ namespace Etherna.BeeNet.Chunks
                     return;
                 }
 
-                // Start get decoded chunks tasks for the next level.
-                foreach (var (chunkStore, hashReferenceMap) in chunkStoresWithReferences)
+                // Get and decode CACs from parity decoders.
+                foreach (var decodedChunk in parityDecoders.SelectMany(
+                             decoder => decoder.ShardReferences
+                                 .TakeWhile(s => !s.IsParity)
+                                 .Select(s => decoder
+                                     .GetChunk(s.Reference.Hash)
+                                     .Decode(s.Reference, hasher))))
+                    decodedChunksMap.Add(decodedChunk.Reference, decodedChunk);
+                
+                // Copy decoded chunks to new level cache.
+                newLevelsCache.Add([]);
+                foreach (var reference in referencesToCache)
                 {
-                    // Get and decode chunks from store.
-                    var decodedChunks = hashReferenceMap.Values
-                        .Where(r => levelsCache.Count <= levelIndex + 1 ||
-                                    r != levelsCache[levelIndex + 1].Reference)
-                        .Select(r => chunkStore.GetChunk(r.Hash).Decode(hashReferenceMap[r.Hash], hasher));
-
-                    // Add decoded chunk from cache.
-                    if (levelsCache.Count > levelIndex + 1 &&
-                        hashReferenceMap.ContainsKey(levelsCache[levelIndex + 1].Reference.Hash))
-                        decodedChunks = decodedChunks.Append(levelsCache[levelIndex + 1]);
-                    
-                    foreach (var decodedChunk in decodedChunks)
-                        referenceDecodedChunkMap.Add(decodedChunk.Reference, decodedChunk);
+                    if (decodedChunksMap.TryGetValue(reference, out var chunk))
+                        newLevelsCache[levelIndex + 1][reference] = chunk;
+                    else
+                        newLevelsCache[levelIndex + 1][reference] = levelsCache[levelIndex + 1][reference];
                 }
 
                 // Set new level decoded chunks in order.
-                levelDecodedChunks = chunkStoresWithReferences.SelectMany(p => p.HashReferenceMap.Values)
-                    .Select(r => referenceDecodedChunkMap[r]).ToArray();
+                levelDecodedChunks = nextLevelReferences
+                    .Select(r => decodedChunksMap.TryGetValue(r, out var chunk) ?
+                        chunk : levelsCache[levelIndex + 1][r])
+                    .ToArray();
             }
         }
     }

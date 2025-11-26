@@ -53,22 +53,24 @@ namespace Etherna.BeeNet.Chunks
         { }
 
         public ChunkParityDecoder(
-            SwarmShardReference[] shardReferences,
+            IEnumerable<SwarmShardReference> shardReferences,
             IReadOnlyChunkStore chunkStore)
         {
+            ArgumentNullException.ThrowIfNull(shardReferences);
+            
             this.chunkStore = chunkStore;
-            _shardReferences = shardReferences ?? throw new ArgumentNullException(nameof(shardReferences));
-            shardsBuffer = new byte[shardReferences.Length][];
-            dataShardsAmount = shardReferences.Count(r => !r.IsParity);
+            _shardReferences = shardReferences.ToArray();
+            shardsBuffer = new byte[_shardReferences.Length][];
+            dataShardsAmount = _shardReferences.Count(r => !r.IsParity);
 
-            for (var i = 0; i < shardReferences.Length; i++)
-                hashIndexMap[shardReferences[i].Reference.Hash] = i;
+            for (var i = 0; i < _shardReferences.Length; i++)
+                hashIndexMap[_shardReferences[i].Reference.Hash] = i;
         }
 
         // Properties.
-        public bool ReadyDataChunks => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
-        public bool RecoveryPerformed { get; private set; }
-        public ReadOnlySpan<SwarmShardReference> ShardReferences => _shardReferences;
+        public bool AreDataChunksReady => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
+        public bool IsRecoveryPerformed { get; private set; }
+        public IReadOnlyList<SwarmShardReference> ShardReferences => _shardReferences;
         
         // Methods.
         public async Task AddChunksToStoreAsync(
@@ -94,7 +96,7 @@ namespace Etherna.BeeNet.Chunks
             CancellationToken cancellationToken = default)
         {
             // Verify if recovery has already been completed with success.
-            if (RecoveryPerformed)
+            if (IsRecoveryPerformed)
                 return;
 
             // Run fetch and proceed if succeeded.
@@ -122,7 +124,7 @@ namespace Etherna.BeeNet.Chunks
             CancellationToken cancellationToken = default)
         {
             // Verify if recovery has already been completed with success.
-            if (ReadyDataChunks)
+            if (AreDataChunksReady)
                 return;
             
             // Init chunk fetch tasks list with already found chunks.
@@ -189,7 +191,7 @@ namespace Etherna.BeeNet.Chunks
         public void RecoverChunks(bool forceRecoverParities)
         {
             // Verify if recovery has already been completed with success.
-            if (RecoveryPerformed)
+            if (IsRecoveryPerformed)
                 return;
             
             // Verify if there are enough recovered shards.
@@ -197,7 +199,7 @@ namespace Etherna.BeeNet.Chunks
                 throw new InvalidOperationException("Not enough fetched shards");
             
             // If all data shards are not null, recovery is not needed.
-            if (!forceRecoverParities && ReadyDataChunks)
+            if (!forceRecoverParities && AreDataChunksReady)
                 return;
             
             // Run actual recovery. Use Reed-Solomon erasure coding decoder to recover data shards.
@@ -231,7 +233,7 @@ namespace Etherna.BeeNet.Chunks
             }
                 
             // Return as succeeded.
-            RecoveryPerformed = true;
+            IsRecoveryPerformed = true;
         }
         
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
