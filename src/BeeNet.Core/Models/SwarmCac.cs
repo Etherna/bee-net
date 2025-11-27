@@ -126,7 +126,11 @@ namespace Etherna.BeeNet.Models
             var branchLevel = 1;
             ulong branchSize = DataSize;
             for (; branchSize < spanLength; branchLevel++)
-                branchSize *= branching;
+            {
+                var high = Math.BigMul(branchSize, branching, out branchSize);
+                if (high != 0) //overflow
+                    throw new OverflowException($"branchSize overflow with spanLength at {spanLength} bytes");
+            }
             
             // Span in one full reference. referenceSize = branching ^ (branchLevel - 1)
             ulong referenceSize = DataSize;
