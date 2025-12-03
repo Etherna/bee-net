@@ -187,7 +187,7 @@ namespace Etherna.BeeNet.Chunks
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                         chunkStore,
                         new FakePostageStamper(),
-                        RedundancyLevel.Strong,
+                        RedundancyLevel.Medium,
                         false,
                         65535,
                         null);
@@ -217,7 +217,7 @@ namespace Etherna.BeeNet.Chunks
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                         chunkStore,
                         new FakePostageStamper(),
-                        RedundancyLevel.Strong,
+                        RedundancyLevel.Medium,
                         true,
                         0,
                         null);
@@ -246,7 +246,7 @@ namespace Etherna.BeeNet.Chunks
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                         chunkStore,
                         new FakePostageStamper(),
-                        RedundancyLevel.Strong,
+                        RedundancyLevel.Medium,
                         true,
                         0,
                         null);
