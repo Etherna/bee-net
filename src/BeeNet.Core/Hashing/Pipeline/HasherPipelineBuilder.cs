@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             int? chunkConcurrency,
             bool readOnly = false)
         {
-            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
+            ArgumentNullException.ThrowIfNull(postageStamper);
 
             //build stages
             var chunkAggregatorStage = new ChunkAggregatorPipelineStage(

@@ -31,25 +31,26 @@ namespace Etherna.BeeNet.Chunks
     {
         // Consts.
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
-        
+
         // Fields.
         private readonly IReadOnlyChunkStore chunkStore;
         private readonly Dictionary<SwarmHash, int> hashIndexMap = new();
-        
+
         private readonly SwarmShardReference[] _shardReferences;
         private readonly byte[][] shardsBuffer; //byte[i] could be null when relative chunk is not present
-        
+
         private readonly int dataShardsAmount;
-        
+
         // Constructor.
         public ChunkParityDecoder(
             ReadOnlySpan<byte> plainSpanData,
             bool encryptedDataReferences,
             IReadOnlyChunkStore chunkStore)
             : this(SwarmCac.GetIntermediateReferencesFromSpanData(
-                plainSpanData[..SwarmCac.SpanSize],
-                plainSpanData[SwarmCac.SpanSize..],
-                encryptedDataReferences), chunkStore)
+                    plainSpanData[..SwarmCac.SpanSize],
+                    plainSpanData[SwarmCac.SpanSize..],
+                    encryptedDataReferences),
+                chunkStore)
         { }
 
         public ChunkParityDecoder(
@@ -57,7 +58,7 @@ namespace Etherna.BeeNet.Chunks
             IReadOnlyChunkStore chunkStore)
         {
             ArgumentNullException.ThrowIfNull(shardReferences);
-            
+
             this.chunkStore = chunkStore;
             _shardReferences = shardReferences.ToArray();
             shardsBuffer = new byte[_shardReferences.Length][];
@@ -71,7 +72,7 @@ namespace Etherna.BeeNet.Chunks
         public bool AreDataChunksReady => shardsBuffer.Take(dataShardsAmount).All(s => s != null!);
         public bool IsRecoveryPerformed { get; private set; }
         public IReadOnlyList<SwarmShardReference> ShardReferences => _shardReferences;
-        
+
         // Methods.
         public async Task AddChunksToStoreAsync(
             IChunkStore destinationStore,
@@ -80,14 +81,14 @@ namespace Etherna.BeeNet.Chunks
         {
             ArgumentNullException.ThrowIfNull(destinationStore);
             ArgumentNullException.ThrowIfNull(hashes);
-            
+
             foreach (var hash in hashes)
             {
                 var chunk = GetChunk(hash);
                 await destinationStore.AddAsync(chunk, false, cancellationToken).ConfigureAwait(false);
             }
         }
-        
+
         public async Task FetchAndRecoverAsync(
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
@@ -126,16 +127,16 @@ namespace Etherna.BeeNet.Chunks
             // Verify if recovery has already been completed with success.
             if (AreDataChunksReady)
                 return;
-            
+
             // Init chunk fetch tasks list with already found chunks.
             var fetchResults = shardsBuffer.Select(b => (bool?)(b != null! ? true : null)).ToArray();
-            
+
             // Run redundancy strategies.
             var succeeded = false;
             for (int s = (int)firstStrategy; !succeeded && s <= (int)RedundancyStrategy.Race; s++)
             {
                 var strategy = (RedundancyStrategy)s;
-                
+
                 succeeded = await TryRunStrategyAsync(
                     strategy,
                     fetchResults,
@@ -148,7 +149,7 @@ namespace Etherna.BeeNet.Chunks
             if (!succeeded)
                 throw new KeyNotFoundException();
         }
-        
+
         public SwarmCac GetChunk(SwarmHash hash)
         {
             var i = hashIndexMap[hash];
@@ -158,7 +159,7 @@ namespace Etherna.BeeNet.Chunks
             // If is not last chunk, or if is encrypted, simply read from buffer.
             if (i != dataShardsAmount - 1 || _shardReferences[i].Reference.IsEncrypted)
                 return new SwarmCac(hash, shardsBuffer[i]);
-            
+
             // Else, if is last chunk and not encrypted, try to remove possible padding.
             ReadOnlySpan<byte> span = shardsBuffer[i].AsSpan()[..SwarmCac.SpanSize];
             var spanLength = SwarmCac.DecodedSpanToLength(SwarmCac.IsSpanEncoded(span) ? SwarmCac.DecodeSpan(span) : span);
@@ -167,7 +168,7 @@ namespace Etherna.BeeNet.Chunks
             return new SwarmCac(hash, shardsBuffer[i].AsMemory(0,
                 SwarmCac.SpanSize + SwarmCac.CalculatePlainDataLength(spanLength, redundancyLevel, false)));
         }
-        
+
         /// <summary>
         /// Get all missing shards, from both data and parities
         /// </summary>
@@ -183,7 +184,7 @@ namespace Etherna.BeeNet.Chunks
                 return false;
             return shardsBuffer[i] != null!;
         }
-        
+
         /// <summary>
         /// Perform redundancy recovery.
         /// </summary>
@@ -193,22 +194,22 @@ namespace Etherna.BeeNet.Chunks
             // Verify if recovery has already been completed with success.
             if (IsRecoveryPerformed)
                 return;
-            
+
             // Verify if there are enough recovered shards.
             if (shardsBuffer.Count(b => b != null!) < dataShardsAmount)
                 throw new InvalidOperationException("Not enough fetched shards");
-            
+
             // If all data shards are not null, recovery is not needed.
             if (!forceRecoverParities && AreDataChunksReady)
                 return;
-            
+
             // Run actual recovery. Use Reed-Solomon erasure coding decoder to recover data shards.
             var reedSolomonEncoder = ReedSolomon.NET.ReedSolomon.Create(
                 dataShardsAmount,
                 shardsBuffer.Length - dataShardsAmount);
-                
+
             var shardsPresent = new bool[shardsBuffer.Length];
-            
+
             try
             {
                 for (int i = 0; i < shardsBuffer.Length; i++)
@@ -218,7 +219,7 @@ namespace Etherna.BeeNet.Chunks
                     else
                         shardsPresent[i] = true;
                 }
-        
+
                 //decode missing shards
                 reedSolomonEncoder.DecodeMissing(shardsBuffer, shardsPresent, 0, SwarmCac.SpanDataSize);
             }
@@ -231,11 +232,11 @@ namespace Etherna.BeeNet.Chunks
 
                 throw;
             }
-                
+
             // Return as succeeded.
             IsRecoveryPerformed = true;
         }
-        
+
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public async Task<bool> TryFetchAndRecoverAsync(
             RedundancyStrategy firstStrategy,
@@ -309,7 +310,7 @@ namespace Etherna.BeeNet.Chunks
         }
 
         // Helpers.
-        
+
         /// <summary>
         /// Common goal is to fetch at least as many chunks as the number of data shards.
         /// DATA strategy has a max error tolerance of zero.
@@ -325,7 +326,7 @@ namespace Etherna.BeeNet.Chunks
             // Define allowed errors and hashes to query, based on strategy.
             var allowedErrors = 0;
             SwarmHash[] hashesToQuery;
-        
+
             switch (strategy)
             {
                 case RedundancyStrategy.None:
@@ -336,10 +337,10 @@ namespace Etherna.BeeNet.Chunks
                         .Select(zip => zip.Second.Reference.Hash)
                         .ToArray();
                     break;
-                
+
                 case RedundancyStrategy.Prox: //proximity driven selective fetching
                     return false; //TODO: strategy not implemented
-                
+
                 case RedundancyStrategy.Race:
                     allowedErrors = _shardReferences.Length - dataShardsAmount;
                     hashesToQuery = fetchResults
@@ -348,11 +349,11 @@ namespace Etherna.BeeNet.Chunks
                         .Select(zip => zip.Second.Reference.Hash)
                         .ToArray();
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
             }
-            
+
             // Define and verify requirements.
             var succeededFetches = 0;
             var failedFetches = 0;
@@ -370,7 +371,7 @@ namespace Etherna.BeeNet.Chunks
                 return true;
             if (failedFetches > allowedErrors)
                 return false;
-        
+
             // Run chunks query.
             using var timeoutCts = new CancellationTokenSource(customStrategyTimeout ?? DefaultTimeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
@@ -379,7 +380,7 @@ namespace Etherna.BeeNet.Chunks
                 canReturnAfterFailed: allowedErrors + 1,
                 canReturnAfterSucceeded: dataShardsAmount - succeededFetches,
                 cancellationToken: linkedCts.Token).ConfigureAwait(false);
-            
+
             // Verify results.
             foreach (var hash in hashesToQuery)
             {
@@ -393,7 +394,7 @@ namespace Etherna.BeeNet.Chunks
                     var spanData = new byte[SwarmCac.SpanDataSize];
                     chunk.GetFullPayload().CopyTo(spanData);
                     shardsBuffer[shardIndex] = spanData;
-                        
+
                     // Update results.
                     fetchResults[shardIndex] = true;
                     succeededFetches++;
@@ -405,7 +406,7 @@ namespace Etherna.BeeNet.Chunks
                     failedFetches++;
                 }
             }
-            
+
             return succeededFetches >= dataShardsAmount;
         }
     }

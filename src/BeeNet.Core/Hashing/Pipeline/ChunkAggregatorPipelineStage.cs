@@ -157,14 +157,14 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             return chunkLevels[level];
         }
         
-        private async Task<SwarmReference> HashIntermediateChunkAsync(
+        private async Task<HasherPipelineFeedArgs> HashIntermediateChunkAsync(
             ReadOnlyMemory<byte> span,
             ReadOnlyMemory<byte> spanData,
             SwarmChunkBmt swarmChunkBmt)
         {
             var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
             await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
-            return args.Reference!.Value;
+            return args;
         }
         
         private async Task WrapFullLevelAsync(int level, SwarmChunkBmt swarmChunkBmt)
@@ -198,11 +198,12 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
 
             // Run hashing on the new chunk, and add it to next level.
-            var intermediateRef = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
+            var intermediateHashingArgs = await HashIntermediateChunkAsync(
+                totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
                 new SwarmChunkHeader(
-                    intermediateRef,
+                    intermediateHashingArgs.Reference!.Value,
                     totalSpan,
                     false),
                 swarmChunkBmt).ConfigureAwait(false);
@@ -212,7 +213,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Add chunk to redundancy generator.
             await parityGenerator.AddChunkToLevelAsync(
                 level + 1,
-                totalSpanData.AsMemory(),
+                intermediateHashingArgs.SpanData,
                 AddChunkToLevelAsync,
                 swarmChunkBmt).ConfigureAwait(false);
         }

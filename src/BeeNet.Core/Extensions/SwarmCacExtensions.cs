@@ -68,10 +68,12 @@ namespace Etherna.BeeNet.Extensions
             }
 
             //if intermediate chunk
+            var parities = SwarmCac.CountIntermediateReferences(
+                spanLength, redundancyLevel, reference.IsEncrypted).ParityShards;
             return new SwarmDecodedIntermediateCac(
                 reference,
                 redundancyLevel,
-                SwarmCac.CountIntermediateReferences(spanLength, redundancyLevel, reference.IsEncrypted).ParityShards,
+                parities,
                 spanLength,
                 plainData);
         }
