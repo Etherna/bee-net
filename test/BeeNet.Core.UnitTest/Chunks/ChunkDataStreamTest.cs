@@ -32,7 +32,8 @@ namespace Etherna.BeeNet.Chunks
         public record JoinChunkDataTestElement(
             IChunkStore ChunkStore,
             byte[] Data,
-            SwarmReference RootReference);
+            SwarmReference RootReference,
+            RedundancyStrategy Strategy);
         
         // Data.
         private class JoinChunkDataClassData : IEnumerable<object[]>
@@ -49,7 +50,7 @@ namespace Etherna.BeeNet.Chunks
                 var data = new byte[1024 * 1024]; //1MB
                 new Random(0).NextBytes(data);
                 
-                //plain
+                //plain with None strategy
                 {
                     var chunkStore = new MemoryChunkStore();
                     using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
@@ -66,7 +67,29 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.None));
+                }
+                
+                //plain with Data strategy
+                {
+                    var chunkStore = new MemoryChunkStore();
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        new FakePostageStamper(),
+                        RedundancyLevel.None,
+                        false,
+                        0,
+                        null);
+                    await using var dataStream = new MemoryStream(data);
+                    
+                    var hashResult = await fileHasherPipeline.HashDataAsync(dataStream);
+                    
+                    tests.Add(new(
+                        chunkStore,
+                        data,
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //compact level == 65535
@@ -86,7 +109,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //encrypted
@@ -106,7 +130,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //compact level == 65535 && encrypted
@@ -126,7 +151,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //redundancy level == Medium (missing root data chunks)
@@ -148,7 +174,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //redundancy level == Medium (missing 3 data chunks)
@@ -178,7 +205,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //redundancy level == Medium (missing 3 data chunks) && compact level == 65535
@@ -208,7 +236,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //redundancy level == Medium (missing 3 random cac chunks) && encrypted
@@ -237,7 +266,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
                 
                 //redundancy level == Medium (missing 3 random cac chunks) && compact level == 65535 && encrypted
@@ -266,7 +296,8 @@ namespace Etherna.BeeNet.Chunks
                     tests.Add(new(
                         chunkStore,
                         data,
-                        hashResult));
+                        hashResult,
+                        RedundancyStrategy.Data));
                 }
 
                 cases = tests.Select(t => new object[] { t });
@@ -286,7 +317,7 @@ namespace Etherna.BeeNet.Chunks
                 test.RootReference,
                 test.ChunkStore,
                 RedundancyLevel.Paranoid,
-                RedundancyStrategy.Data,
+                test.Strategy,
                 true);
             
             await chunkDataStream.CopyToAsync(memoryStream);

@@ -78,29 +78,6 @@ namespace Etherna.BeeNet.Chunks
             {
                 var tests = new List<CanFetchChunkWithStrategyTestElement>();
                 
-                // None strategy fails. (like Data)
-                {
-                    var chunkStore = new MemoryChunkStore();
-                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
-                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
-                    // chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data, missing
-                    chunkStore.AddAsync(chunksDictionary["88bcbf153353838a8e1189fae608880939deac7fef81c2ea3169e3afaafc50ac"]).Wait(); //parity
-                    chunkStore.AddAsync(chunksDictionary["eda7ecf100a309dd745988090af3cb26e6891118fb1e3ea99986cc5ffbd5dd30"]).Wait(); //parity
-                    chunkStore.AddAsync(chunksDictionary["b9c30db9d81835586397913e555569807575998569c67f7ab04fa312d66aafbc"]).Wait(); //parity
-                    
-                    tests.Add(new(chunkStore, RedundancyStrategy.None, false));
-                }
-                
-                // None strategy succeeds. (like Data)
-                {
-                    var chunkStore = new MemoryChunkStore();
-                    chunkStore.AddAsync(chunksDictionary["ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac"]).Wait(); //data
-                    chunkStore.AddAsync(chunksDictionary["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]).Wait(); //data
-                    chunkStore.AddAsync(chunksDictionary["6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9"]).Wait(); //data
-                    
-                    tests.Add(new(chunkStore, RedundancyStrategy.None, true));
-                }
-                
                 // Data strategy fails.
                 {
                     var chunkStore = new MemoryChunkStore();
@@ -180,7 +157,7 @@ namespace Etherna.BeeNet.Chunks
                     
                     // Chunk's data is null in buffer.
                     new("6e1839ea477eaf6b8a3f6f900cc3fef9ef638af38e351e16cc68151a4ffe8fe9",
-                        typeof(InvalidOperationException))
+                        typeof(KeyNotFoundException))
                 };
 
                 return tests.Select(t => new object[] { t });

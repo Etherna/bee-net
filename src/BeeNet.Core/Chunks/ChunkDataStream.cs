@@ -54,8 +54,9 @@ namespace Etherna.BeeNet.Chunks
             {
                 maxDataSegmentsInChunk = SwarmCac.DataSize / (uint)decodedRoot.Reference.Size;
 
-                // If root chunk has no redundancy, strategy is ignored and set to DATA without fallback.
-                this.redundancyStrategy = RedundancyStrategy.Data;
+                // If root chunk has no redundancy, strategy is kept to None or set to Data, and fallback is disabled.
+                this.redundancyStrategy = redundancyStrategy == RedundancyStrategy.None ?
+                    RedundancyStrategy.None : RedundancyStrategy.Data;
                 this.redundancyStrategyFallback = false;
             }
             else
@@ -63,7 +64,10 @@ namespace Etherna.BeeNet.Chunks
                 maxDataSegmentsInChunk = (uint)decodedRoot.RedundancyLevel.GetMaxDataShards(
                     decodedRoot.Reference.IsEncrypted);
                 
-                this.redundancyStrategy = redundancyStrategy;
+                // If root chunk has redundancy, and if strategy has fallback, upgrade strategy from None to Data or
+                // keep it unchanged. (fallback == true && Strategy == None) is not a valid configuration.
+                this.redundancyStrategy = redundancyStrategyFallback && redundancyStrategy == RedundancyStrategy.None ?
+                    RedundancyStrategy.Data : redundancyStrategy;
                 this.redundancyStrategyFallback = redundancyStrategyFallback;
             }
         }
@@ -300,11 +304,12 @@ namespace Etherna.BeeNet.Chunks
                     {
                         if (endDataReferencesToSkip > 0)
                             newLevelsCache[levelIndex].Add(decodedChunk.Reference, decodedChunk);
-                        
-                        referencesToCache = childReferences
-                            .TakeWhile(r => !r.IsParity)
-                            .Select(r => r.Reference)
-                            .TakeLast(endDataReferencesToSkip);
+
+                        referencesToCache = redundancyStrategy == RedundancyStrategy.None ? [] :
+                            childReferences
+                                .TakeWhile(r => !r.IsParity)
+                                .Select(r => r.Reference)
+                                .TakeLast(endDataReferencesToSkip);
                     }
                     
                     // If cache contains all required references, continue.
@@ -314,10 +319,19 @@ namespace Etherna.BeeNet.Chunks
                     
                     // Run fetch and recover with parity asynchronously.
                     var decoder = new ChunkParityDecoder(childReferences, chunkStore);
-                    fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(
-                        redundancyStrategy,
-                        redundancyStrategyFallback,
-                        cancellationToken: cancellationToken));
+                    if (redundancyStrategy == RedundancyStrategy.None)
+                    {
+                        fetchAndRecoverTasks.Add(decoder.FetchWithoutStrategyAsync(
+                            requiredChildReferences,
+                            cancellationToken: cancellationToken));
+                    }
+                    else
+                    {
+                        fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(
+                            redundancyStrategy,
+                            redundancyStrategyFallback,
+                            cancellationToken: cancellationToken));
+                    }
 
                     parityDecoders.Add(decoder);
                 }
@@ -342,9 +356,9 @@ namespace Etherna.BeeNet.Chunks
                 foreach (var decodedChunk in parityDecoders.SelectMany(
                              decoder => decoder.ShardReferences
                                  .TakeWhile(s => !s.IsParity)
-                                 .Select(s => decoder
-                                     .GetChunk(s.Reference.Hash)
-                                     .Decode(s.Reference, hasher))))
+                                 .Select(s => (s.Reference, Chunk: decoder.TryGetChunk(s.Reference.Hash)))
+                                 .Where(p => p.Chunk != null)
+                                 .Select(p => p.Chunk!.Decode(p.Reference, hasher))))
                     decodedChunksMap.Add(decodedChunk.Reference, decodedChunk);
                 
                 // Copy decoded chunks to new level cache.
