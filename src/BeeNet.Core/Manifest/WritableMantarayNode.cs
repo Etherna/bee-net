@@ -62,8 +62,8 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public void Add(string path, ManifestEntry entry)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(entry, nameof(entry));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(entry);
             if (path.Any(c => c >= byte.MaxValue))
                 throw new ArgumentException("path only support ASCII chars", nameof(path));
 
@@ -157,8 +157,8 @@ namespace Etherna.BeeNet.Manifest
             Hasher hasher,
             BuildHasherPipeline hasherPipelineBuilder)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
+            ArgumentNullException.ThrowIfNull(hasher);
+            ArgumentNullException.ThrowIfNull(hasherPipelineBuilder);
             
             if (_reference != null)
                 return;
