@@ -20,10 +20,28 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public abstract class MantarayManifestBase : IReadOnlyMantarayManifest
+    public abstract class MantarayManifestBase : IReadOnlyMantarayManifest, IAsyncDisposable, IDisposable
     {
         // Consts.
         public static readonly string RootPath = SwarmAddress.Separator.ToString();
+        
+        // Dispose.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) { }
+
+        protected virtual ValueTask DisposeAsyncCore() =>
+            ValueTask.CompletedTask;
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
 
         // Properties.
         public abstract IReadOnlyMantarayNode RootNode { get; }

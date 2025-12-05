@@ -36,8 +36,8 @@ namespace Etherna.BeeNet.Manifest
             string prefix,
             MantarayNodeBase node)
         {
-            ArgumentNullException.ThrowIfNull(node, nameof(node));
-            ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(prefix);
             if (prefix.Length > PrefixMaxSize)
                 throw new ArgumentOutOfRangeException(nameof(prefix));
             

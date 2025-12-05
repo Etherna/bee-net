@@ -15,7 +15,7 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -24,46 +24,63 @@ namespace Etherna.BeeNet.Manifest
     {
         // Fields.
         private readonly ReferencedMantarayNode rootNode;
+        
+        // Constructor.
+        private ReferencedMantarayManifest(ReferencedMantarayNode rootNode)
+        {
+            this.rootNode = rootNode;
+        }
 
-        // Constructors.
-        public ReferencedMantarayManifest(
-            IReadOnlyChunkStore chunkStore,
+        // Static builders.
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+        public static async Task<ReferencedMantarayManifest> BuildNewAsync(
             SwarmReference rootReference,
-            bool useChunkStoreCache = false)
-        {
-            rootNode = new ReferencedMantarayNode(chunkStore, rootReference, null, NodeType.Edge, useChunkStoreCache);
-        }
-
-        public ReferencedMantarayManifest(
             IReadOnlyChunkStore chunkStore,
-            SwarmCac rootChunk,
-            EncryptionKey256? encryptionKey = null,
-            bool useChunkStoreCache = false)
+            RedundancyLevel redundancyLevel,
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback)
         {
-            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
-            
-            rootNode = new ReferencedMantarayNode(
+            var node = await ReferencedMantarayNode.BuildNewAsync(
+                rootReference,
                 chunkStore,
-                rootChunk,
-                new SwarmReference(rootChunk.Hash, encryptionKey),
+                redundancyLevel,
+                redundancyStrategy,
+                redundancyStrategyFallback,
                 null,
-                NodeType.Edge,
-                useChunkStoreCache);
+                NodeType.Edge).ConfigureAwait(false);
+            return new ReferencedMantarayManifest(node);
         }
 
-        public ReferencedMantarayManifest(
-            IReadOnlyChunkStore chunkStore,
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+        public static ReferencedMantarayManifest BuildNew(
             SwarmCac rootChunk,
             SwarmReference rootChunkReference,
-            bool useChunkStoreCache = false)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback)
         {
-            rootNode = new ReferencedMantarayNode(
-                chunkStore,
+            var node = ReferencedMantarayNode.BuildNew(
                 rootChunk,
                 rootChunkReference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback,
                 null,
-                NodeType.Edge,
-                useChunkStoreCache);
+                NodeType.Edge);
+            return new ReferencedMantarayManifest(node);
+        }
+
+        // Dispose.
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+                rootNode.Dispose();
+        }
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            await base.DisposeAsyncCore();
+            await rootNode.DisposeAsync();
         }
 
         // Properties.
