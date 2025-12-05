@@ -94,18 +94,21 @@ namespace Etherna.BeeNet.Services
                 compactLevel,
                 null);
 
-            feedManifest.Add(
-                MantarayManifestBase.RootPath,
-                ManifestEntry.NewFile(
-                    SwarmReference.PlainZero,
-                    new Dictionary<string, string>
-                    {
-                        [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
-                        [FeedMetadataEntryTopic] = swarmFeed.Topic.ToString(),
-                        [FeedMetadataEntryType] = swarmFeed.Type.ToString()
-                    }));
+            await using (feedManifest.ConfigureAwait(false))
+            {
+                feedManifest.Add(
+                    MantarayManifestBase.RootPath,
+                    ManifestEntry.NewFile(
+                        SwarmReference.PlainZero,
+                        new Dictionary<string, string>
+                        {
+                            [FeedMetadataEntryOwner] = swarmFeed.Owner.ToByteArray().ToHex(),
+                            [FeedMetadataEntryTopic] = swarmFeed.Topic.ToString(),
+                            [FeedMetadataEntryType] = swarmFeed.Type.ToString()
+                        }));
 
-            return await feedManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
+                return await feedManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
+            }
         }
     }
 }

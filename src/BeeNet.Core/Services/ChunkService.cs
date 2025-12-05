@@ -132,62 +132,64 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-
-            // Iterate through the files.
-            foreach (var filePath in fileNames)
+            await using (dirManifest.ConfigureAwait(false))
             {
-                using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    redundancyLevel,
-                    encrypt,
-                    compactLevel,
-                    chunkCuncorrency);
-                
-                var fileContentType = FileContentTypeProvider.GetContentType(filePath);
-                var fileName = Path.GetFileName(filePath);
-                var fileStream = getFileStream(filePath);
-                await using (fileStream.ConfigureAwait(false))
+                // Iterate through the files.
+                foreach (var filePath in fileNames)
                 {
-                    var fileReference = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
-                    totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
-                
-                    // Add file entry to dir manifest.
-                    dirManifest.Add(
-                        filePath,
-                        ManifestEntry.NewFile(
-                            fileReference,
-                            new Dictionary<string, string>
-                            {
-                                [ManifestEntry.ContentTypeKey] = fileContentType,
-                                [ManifestEntry.FilenameKey] = fileName
-                            }));
+                    using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
+                        chunkStore,
+                        postageStamper,
+                        redundancyLevel,
+                        encrypt,
+                        compactLevel,
+                        chunkCuncorrency);
+                    
+                    var fileContentType = FileContentTypeProvider.GetContentType(filePath);
+                    var fileName = Path.GetFileName(filePath);
+                    var fileStream = getFileStream(filePath);
+                    await using (fileStream.ConfigureAwait(false))
+                    {
+                        var fileReference = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                        totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
+                    
+                        // Add file entry to dir manifest.
+                        dirManifest.Add(
+                            filePath,
+                            ManifestEntry.NewFile(
+                                fileReference,
+                                new Dictionary<string, string>
+                                {
+                                    [ManifestEntry.ContentTypeKey] = fileContentType,
+                                    [ManifestEntry.FilenameKey] = fileName
+                                }));
+                    }
                 }
-            }
-            
-            // Store website information.
-            if (!string.IsNullOrEmpty(indexFilename) ||
-                !string.IsNullOrEmpty(errorFilename))
-            {
-                var metadata = new Dictionary<string, string>();
                 
-                if (!string.IsNullOrEmpty(indexFilename))
-                    metadata[ManifestEntry.WebsiteIndexDocPathKey] = indexFilename;
-                if (!string.IsNullOrEmpty(errorFilename))
-                    metadata[ManifestEntry.WebsiteErrorDocPathKey] = errorFilename;
+                // Store website information.
+                if (!string.IsNullOrEmpty(indexFilename) ||
+                    !string.IsNullOrEmpty(errorFilename))
+                {
+                    var metadata = new Dictionary<string, string>();
+                    
+                    if (!string.IsNullOrEmpty(indexFilename))
+                        metadata[ManifestEntry.WebsiteIndexDocPathKey] = indexFilename;
+                    if (!string.IsNullOrEmpty(errorFilename))
+                        metadata[ManifestEntry.WebsiteErrorDocPathKey] = errorFilename;
 
-                var rootManifestEntry = ManifestEntry.NewDirectory(metadata);
-                dirManifest.Add(MantarayManifestBase.RootPath, rootManifestEntry);
+                    var rootManifestEntry = ManifestEntry.NewDirectory(metadata);
+                    dirManifest.Add(MantarayManifestBase.RootPath, rootManifestEntry);
+                }
+
+                // Get manifest hash.
+                var chunkHashingResult = await dirManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
+                
+                // Return result.
+                return new UploadEvaluationResult(
+                    chunkHashingResult,
+                    totalMissedOptimisticHashing,
+                    postageStamper.StampIssuer);
             }
-
-            // Get manifest hash.
-            var chunkHashingResult = await dirManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
-            
-            // Return result.
-            return new UploadEvaluationResult(
-                chunkHashingResult,
-                totalMissedOptimisticHashing,
-                postageStamper.StampIssuer);
         }
 
         public async Task<UploadEvaluationResult> UploadSingleFileAsync(
@@ -263,32 +265,34 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-
-            manifest.Add(
-                MantarayManifestBase.RootPath,
-                ManifestEntry.NewDirectory(
-                    new Dictionary<string, string>
-                    {
-                        [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
-                    }));
+            await using (manifest.ConfigureAwait(false))
+            {
+                manifest.Add(
+                    MantarayManifestBase.RootPath,
+                    ManifestEntry.NewDirectory(
+                        new Dictionary<string, string>
+                        {
+                            [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
+                        }));
             
-            manifest.Add(
-                fileName,
-                ManifestEntry.NewFile(
-                    fileReference,
-                    new Dictionary<string, string>
-                    {
-                        [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
-                    }));
+                manifest.Add(
+                    fileName,
+                    ManifestEntry.NewFile(
+                        fileReference,
+                        new Dictionary<string, string>
+                        {
+                            [ManifestEntry.ContentTypeKey] = fileContentType,
+                            [ManifestEntry.FilenameKey] = fileName
+                        }));
 
-            var chunkHashingResult = await manifest.GetReferenceAsync(hasher).ConfigureAwait(false);
+                var chunkHashingResult = await manifest.GetReferenceAsync(hasher).ConfigureAwait(false);
             
-            // Return result.
-            return new UploadEvaluationResult(
-                chunkHashingResult,
-                fileHasherPipeline.MissedOptimisticHashing,
-                postageStamper.StampIssuer);
+                // Return result.
+                return new UploadEvaluationResult(
+                    chunkHashingResult,
+                    fileHasherPipeline.MissedOptimisticHashing,
+                    postageStamper.StampIssuer);
+            }
         }
 
         public Task<SwarmReference> WriteDataChunksAsync(

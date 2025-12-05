@@ -66,10 +66,10 @@ namespace Etherna.BeeNet.Manifest
         {
             if (disposed) return;
 
-            await base.DisposeAsyncCore();
-            await chunkDataStream.DisposeAsync();
+            await base.DisposeAsyncCore().ConfigureAwait(false);
+            await chunkDataStream.DisposeAsync().ConfigureAwait(false);
             foreach (var fork in _forks.Values)
-                await fork.DisposeAsync();
+                await fork.DisposeAsync().ConfigureAwait(false);
 
             disposed = true;
         }
@@ -89,7 +89,7 @@ namespace Etherna.BeeNet.Manifest
                 chunkStore,
                 redundancyLevel,
                 redundancyStrategy,
-                redundancyStrategyFallback);
+                redundancyStrategyFallback).ConfigureAwait(false);
             
             return new ReferencedMantarayNode(
                 chunkDataStream,
@@ -142,7 +142,7 @@ namespace Etherna.BeeNet.Manifest
                 return;
             
             // Get chunk data.
-            var data = await chunkDataStream.ToByteArrayAsync();
+            var data = await chunkDataStream.ToByteArrayAsync().ConfigureAwait(false);
 
             // Get obfuscation key and de-obfuscate.
             var readIndex = 0;
@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Manifest
             if (versionHash.Span.SequenceEqual(Version02Hash))
                 await DecodeVersion02Async(
                     data.AsMemory()[readIndex..],
-                    redundancyLevel);
+                    redundancyLevel).ConfigureAwait(false);
             else
                 throw new InvalidOperationException("Manifest version not recognized");
 

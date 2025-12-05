@@ -62,9 +62,9 @@ namespace Etherna.BeeNet.Manifest
         }
         protected override async ValueTask DisposeAsyncCore()
         {
-            await base.DisposeAsyncCore();
+            await base.DisposeAsyncCore().ConfigureAwait(false);
             foreach (var fork in _forks.Values)
-                await fork.DisposeAsync();
+                await fork.DisposeAsync().ConfigureAwait(false);
         }
 
         // Properties.

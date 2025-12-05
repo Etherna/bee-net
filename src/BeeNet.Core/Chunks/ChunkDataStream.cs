@@ -193,7 +193,7 @@ namespace Etherna.BeeNet.Chunks
         {
             using var ms = new MemoryStream();
             Position = 0;
-            await CopyToAsync(ms);
+            await CopyToAsync(ms).ConfigureAwait(false);
             return ms.ToArray();
         }
 

@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.Manifest
 
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore();
+            await DisposeAsyncCore().ConfigureAwait(false);
             GC.SuppressFinalize(this);
         }
 

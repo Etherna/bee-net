@@ -86,8 +86,8 @@ namespace Etherna.BeeNet.Manifest
         }
         protected override async ValueTask DisposeAsyncCore()
         {
-            await base.DisposeAsyncCore();
-            await rootNode.DisposeAsync();
+            await base.DisposeAsyncCore().ConfigureAwait(false);
+            await rootNode.DisposeAsync().ConfigureAwait(false);
         }
 
         // Properties.
