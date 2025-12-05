@@ -188,6 +188,13 @@ namespace Etherna.BeeNet.Chunks
 
         public override void SetLength(long value) => throw new NotSupportedException();
 
+        public async Task<byte[]> ToByteArrayAsync()
+        {
+            using var ms = new MemoryStream();
+            await CopyToAsync(ms);
+            return ms.ToArray();
+        }
+
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         
         // Private helpers.
