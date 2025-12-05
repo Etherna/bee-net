@@ -28,13 +28,10 @@ namespace Etherna.BeeNet.Chunks
     public sealed class ChunkDataStream : Stream
     {
         // Fields.
-        private readonly IReadOnlyChunkStore chunkStore;
         private readonly SwarmDecodedCacBase decodedRoot;
         private readonly Hasher hasher = new();
         private List<Dictionary<SwarmReference, SwarmDecodedCacBase>> levelsCache = [];
         private readonly uint maxDataSegmentsInChunk;
-        private readonly RedundancyStrategy redundancyStrategy;
-        private readonly bool redundancyStrategyFallback;
         
         private long _position;
 
@@ -45,7 +42,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback)
         {
-            this.chunkStore = chunkStore;
+            ChunkStore = chunkStore;
             this.decodedRoot = decodedRoot;
             Position = 0;
 
@@ -55,9 +52,9 @@ namespace Etherna.BeeNet.Chunks
                 maxDataSegmentsInChunk = SwarmCac.DataSize / (uint)decodedRoot.Reference.Size;
 
                 // If root chunk has no redundancy, strategy is kept to None or set to Data, and fallback is disabled.
-                this.redundancyStrategy = redundancyStrategy == RedundancyStrategy.None ?
+                RedundancyStrategy = redundancyStrategy == RedundancyStrategy.None ?
                     RedundancyStrategy.None : RedundancyStrategy.Data;
-                this.redundancyStrategyFallback = false;
+                RedundancyStrategyFallback = false;
             }
             else
             {
@@ -66,14 +63,14 @@ namespace Etherna.BeeNet.Chunks
                 
                 // If root chunk has redundancy, and if strategy has fallback, upgrade strategy from None to Data or
                 // keep it unchanged. (fallback == true && Strategy == None) is not a valid configuration.
-                this.redundancyStrategy = redundancyStrategyFallback && redundancyStrategy == RedundancyStrategy.None ?
+                RedundancyStrategy = redundancyStrategyFallback && redundancyStrategy == RedundancyStrategy.None ?
                     RedundancyStrategy.Data : redundancyStrategy;
-                this.redundancyStrategyFallback = redundancyStrategyFallback;
+                RedundancyStrategyFallback = redundancyStrategyFallback;
             }
         }
 
         // Static builder.
-        public static async Task<Stream> BuildNewAsync(
+        public static async Task<ChunkDataStream> BuildNewAsync(
             SwarmReference reference,
             IReadOnlyChunkStore chunkStore,
             RedundancyLevel redundancyLevel,
@@ -100,7 +97,7 @@ namespace Etherna.BeeNet.Chunks
                 redundancyStrategyFallback);
         }
 
-        public static Stream BuildNew(
+        public static ChunkDataStream BuildNew(
             SwarmCac rootChunk,
             IReadOnlyChunkStore chunkStore,
             RedundancyStrategy redundancyStrategy, 
@@ -116,7 +113,7 @@ namespace Etherna.BeeNet.Chunks
                 redundancyStrategyFallback);
         }
         
-        public static Stream BuildNew(
+        public static ChunkDataStream BuildNew(
             SwarmCac rootChunk,
             SwarmReference reference,
             IReadOnlyChunkStore chunkStore,
@@ -135,6 +132,7 @@ namespace Etherna.BeeNet.Chunks
         public override bool CanRead => true;
         public override bool CanSeek => true;
         public override bool CanWrite => false;
+        public IReadOnlyChunkStore ChunkStore { get; }
         public override long Length => (long)decodedRoot.SpanLength;
         public override long Position
         {
@@ -149,6 +147,9 @@ namespace Etherna.BeeNet.Chunks
                 _position = value;
             }
         }
+        public RedundancyStrategy RedundancyStrategy { get; }
+        public bool RedundancyStrategyFallback { get; }
+        public SwarmReference Reference => decodedRoot.Reference;
 
         // Methods.
         public override void Flush() { }
@@ -191,6 +192,7 @@ namespace Etherna.BeeNet.Chunks
         public async Task<byte[]> ToByteArrayAsync()
         {
             using var ms = new MemoryStream();
+            Position = 0;
             await CopyToAsync(ms);
             return ms.ToArray();
         }
@@ -312,7 +314,7 @@ namespace Etherna.BeeNet.Chunks
                         if (endDataReferencesToSkip > 0)
                             newLevelsCache[levelIndex].Add(decodedChunk.Reference, decodedChunk);
 
-                        referencesToCache = redundancyStrategy == RedundancyStrategy.None ? [] :
+                        referencesToCache = RedundancyStrategy == RedundancyStrategy.None ? [] :
                             childReferences
                                 .TakeWhile(r => !r.IsParity)
                                 .Select(r => r.Reference)
@@ -325,8 +327,8 @@ namespace Etherna.BeeNet.Chunks
                         continue;
                     
                     // Run fetch and recover with parity asynchronously.
-                    var decoder = new ChunkParityDecoder(childReferences, chunkStore);
-                    if (redundancyStrategy == RedundancyStrategy.None)
+                    var decoder = new ChunkParityDecoder(childReferences, ChunkStore);
+                    if (RedundancyStrategy == RedundancyStrategy.None)
                     {
                         fetchAndRecoverTasks.Add(decoder.FetchWithoutStrategyAsync(
                             requiredChildReferences,
@@ -335,8 +337,8 @@ namespace Etherna.BeeNet.Chunks
                     else
                     {
                         fetchAndRecoverTasks.Add(decoder.FetchAndRecoverAsync(
-                            redundancyStrategy,
-                            redundancyStrategyFallback,
+                            RedundancyStrategy,
+                            RedundancyStrategyFallback,
                             cancellationToken: cancellationToken));
                     }
 
