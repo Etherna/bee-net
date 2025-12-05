@@ -21,13 +21,31 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public abstract class MantarayNodeBase : IReadOnlyMantarayNode
+    public abstract class MantarayNodeBase : IReadOnlyMantarayNode, IAsyncDisposable, IDisposable
     {
         // Consts.
         public const int ForksIndexSize = 32;
         public static readonly byte[] Version02Hash = new Hasher().ComputeHash("mantaray:0.2")
             .Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
+        
+        // Dispose.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) { }
+
+        protected virtual ValueTask DisposeAsyncCore() =>
+            ValueTask.CompletedTask;
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
 
         // Properties.
         public abstract SwarmReference? EntryReference { get; }
@@ -41,7 +59,7 @@ namespace Etherna.BeeNet.Manifest
         public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
             string path)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             // If the path is empty, return current node metadata
             if (path.Length == 0)
@@ -65,7 +83,7 @@ namespace Etherna.BeeNet.Manifest
         
         public async Task<MantarayResourceInfo> GetResourceInfoAsync(string path)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             // If the path is empty and entry is not null, return the entry
             if (path.Length == 0)
@@ -92,7 +110,7 @@ namespace Etherna.BeeNet.Manifest
         
         public async Task<bool> HasPathPrefixAsync(string path)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             if (path.Length == 0)
                 return true;

@@ -35,8 +35,8 @@ namespace Etherna.BeeNet.Manifest
             string path,
             ManifestPathResolver pathResolver)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(pathResolver);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await pathResolver.InvokeAsync(
@@ -50,8 +50,8 @@ namespace Etherna.BeeNet.Manifest
             string path,
             ManifestPathResolver pathResolver)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(pathResolver);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await pathResolver.InvokeAsync(
@@ -63,7 +63,7 @@ namespace Etherna.BeeNet.Manifest
 
         public async Task<bool> HasPathPrefixAsync(string path)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await RootNode.HasPathPrefixAsync(path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);
