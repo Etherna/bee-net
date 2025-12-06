@@ -26,21 +26,40 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public sealed class ReferencedMantarayNode(
-        SwarmCac chunk,
-        SwarmReference reference,
-        IReadOnlyChunkStore chunkStore,
-        RedundancyStrategy redundancyStrategy,
-        bool redundancyStrategyFallback,
-        Dictionary<string, string>? metadata,
-        NodeType nodeTypeFlags)
-        : MantarayNodeBase
+    public sealed class ReferencedMantarayNode : MantarayNodeBase
     {
         // Fields.
         private SwarmReference? _entryReference;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
-        private readonly Dictionary<string, string> _metadata = metadata ?? new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _metadata;
         private EncryptionKey256? _obfuscationKey;
+        private readonly IReadOnlyChunkStore chunkStore;
+        private readonly RedundancyStrategy redundancyStrategy;
+        private readonly bool redundancyStrategyFallback;
+
+        // Constructor.
+        public ReferencedMantarayNode(
+            SwarmCac chunk,
+            SwarmReference reference,
+            IReadOnlyChunkStore chunkStore,
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback,
+            Dictionary<string, string>? metadata,
+            NodeType nodeTypeFlags)
+        {
+            ArgumentNullException.ThrowIfNull(chunk);
+            
+            if (chunk.Hash != reference.Hash)
+                throw new ArgumentException($"Chunk's hash {chunk.Hash} does not match reference {reference}");
+
+            this.chunkStore = chunkStore;
+            this.redundancyStrategy = redundancyStrategy;
+            this.redundancyStrategyFallback = redundancyStrategyFallback;
+            _metadata = metadata ?? new Dictionary<string, string>();
+            Chunk = chunk;
+            NodeTypeFlags = nodeTypeFlags;
+            Reference = reference;
+        }
 
         // Static builders.
         public static async Task<ReferencedMantarayNode> BuildNewAsync(
@@ -75,7 +94,7 @@ namespace Etherna.BeeNet.Manifest
         }
 
         // Properties.
-        public SwarmCac Chunk { get; } = chunk;
+        public SwarmCac Chunk { get; }
         public override SwarmReference? EntryReference => IsDecoded
             ? _entryReference
             : throw new InvalidOperationException("Node is not decoded from chunk");
@@ -84,11 +103,11 @@ namespace Etherna.BeeNet.Manifest
             : throw new InvalidOperationException("Node is not decoded from chunk");
         public bool IsDecoded { get; private set; }
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
-        public override NodeType NodeTypeFlags { get; } = nodeTypeFlags;
+        public override NodeType NodeTypeFlags { get; }
         public override EncryptionKey256? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public override SwarmReference Reference { get; } = reference;
+        public override SwarmReference Reference { get; }
 
         // Methods.
         public async Task DecodeFromChunkAsync(
