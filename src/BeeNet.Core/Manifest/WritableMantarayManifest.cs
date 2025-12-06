@@ -74,21 +74,6 @@ namespace Etherna.BeeNet.Manifest
                     EncryptionKey256.Zero :
                     (EncryptionKey256?)null); //auto-generate on hash building
         }
-        
-        // Dispose.
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                rootNode.Dispose();
-            }
-        }
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            await base.DisposeAsyncCore().ConfigureAwait(false);
-            await rootNode.DisposeAsync().ConfigureAwait(false);
-        }
 
         // Properties.
         public override IReadOnlyMantarayNode RootNode => rootNode;

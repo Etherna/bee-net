@@ -49,23 +49,6 @@ namespace Etherna.BeeNet.Manifest
             this.encryptedReferences = encryptedReferences;
             _obfuscationKey = obfuscationKey;
         }
-        
-        // Dispose.
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                foreach (var fork in _forks.Values)
-                    fork.Dispose();
-            }
-        }
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            await base.DisposeAsyncCore().ConfigureAwait(false);
-            foreach (var fork in _forks.Values)
-                await fork.DisposeAsync().ConfigureAwait(false);
-        }
 
         // Properties.
         public override SwarmReference? EntryReference => _entryReference;

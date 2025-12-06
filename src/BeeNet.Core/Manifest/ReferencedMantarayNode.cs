@@ -12,7 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Chunks;
+using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using Newtonsoft.Json;
@@ -25,54 +26,21 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public sealed class ReferencedMantarayNode : MantarayNodeBase
+    public sealed class ReferencedMantarayNode(
+        SwarmCac chunk,
+        SwarmReference reference,
+        IReadOnlyChunkStore chunkStore,
+        RedundancyStrategy redundancyStrategy,
+        bool redundancyStrategyFallback,
+        Dictionary<string, string>? metadata,
+        NodeType nodeTypeFlags)
+        : MantarayNodeBase
     {
         // Fields.
-        private readonly ChunkDataStream chunkDataStream;
-        private bool disposed;
-        
         private SwarmReference? _entryReference;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
-        private readonly Dictionary<string, string> _metadata;
+        private readonly Dictionary<string, string> _metadata = metadata ?? new Dictionary<string, string>();
         private EncryptionKey256? _obfuscationKey;
-
-        // Constructor.
-        private ReferencedMantarayNode(
-            ChunkDataStream chunkDataStream,
-            Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags)
-        {
-            this.chunkDataStream = chunkDataStream;
-            _metadata = metadata ?? new Dictionary<string, string>();
-            NodeTypeFlags = nodeTypeFlags;
-        }
-        
-        // Dispose.
-        protected override void Dispose(bool disposing)
-        {
-            if (disposed) return;
-
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                chunkDataStream.Dispose();
-                foreach (var fork in _forks.Values)
-                    fork.Dispose();
-            }
-
-            disposed = true;
-        }
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            if (disposed) return;
-
-            await base.DisposeAsyncCore().ConfigureAwait(false);
-            await chunkDataStream.DisposeAsync().ConfigureAwait(false);
-            foreach (var fork in _forks.Values)
-                await fork.DisposeAsync().ConfigureAwait(false);
-
-            disposed = true;
-        }
 
         // Static builders.
         public static async Task<ReferencedMantarayNode> BuildNewAsync(
@@ -84,42 +52,30 @@ namespace Etherna.BeeNet.Manifest
             Dictionary<string, string>? metadata,
             NodeType nodeTypeFlags)
         {
-            var chunkDataStream = await ChunkDataStream.BuildNewAsync(
-                reference,
-                chunkStore,
-                redundancyLevel,
-                redundancyStrategy,
-                redundancyStrategyFallback).ConfigureAwait(false);
+            ArgumentNullException.ThrowIfNull(chunkStore);
+            
+            // Use chunk redundancy resolver if required.
+            var rootChunkStore = redundancyLevel == RedundancyLevel.None ?
+                chunkStore :
+                new ReplicaResolverChunkStore(chunkStore, redundancyLevel, new Hasher());
+            
+            // Resolve root chunk.
+            var rootChunk = await rootChunkStore.GetAsync(reference.Hash).ConfigureAwait(false);
+            if (rootChunk is not SwarmCac rootCac) //soc are not supported
+                throw new InvalidOperationException($"Chunk {reference} is not a Content Addressed Chunk.");
             
             return new ReferencedMantarayNode(
-                chunkDataStream,
-                metadata,
-                nodeTypeFlags);
-        }
-
-        public static ReferencedMantarayNode BuildNew(
-            SwarmCac chunk,
-            SwarmReference reference,
-            IReadOnlyChunkStore chunkStore,
-            RedundancyStrategy redundancyStrategy,
-            bool redundancyStrategyFallback,
-            Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags)
-        {
-            var chunkDataStream = ChunkDataStream.BuildNew(
-                chunk,
+                rootCac,
                 reference,
                 chunkStore,
                 redundancyStrategy,
-                redundancyStrategyFallback);
-            
-            return new ReferencedMantarayNode(
-                chunkDataStream,
+                redundancyStrategyFallback,
                 metadata,
                 nodeTypeFlags);
         }
 
         // Properties.
+        public SwarmCac Chunk { get; } = chunk;
         public override SwarmReference? EntryReference => IsDecoded
             ? _entryReference
             : throw new InvalidOperationException("Node is not decoded from chunk");
@@ -128,12 +84,12 @@ namespace Etherna.BeeNet.Manifest
             : throw new InvalidOperationException("Node is not decoded from chunk");
         public bool IsDecoded { get; private set; }
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
-        public override NodeType NodeTypeFlags { get; }
+        public override NodeType NodeTypeFlags { get; } = nodeTypeFlags;
         public override EncryptionKey256? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public override SwarmReference Reference => chunkDataStream.Reference;
-        
+        public override SwarmReference Reference { get; } = reference;
+
         // Methods.
         public async Task DecodeFromChunkAsync(
             RedundancyLevel redundancyLevel)
@@ -142,7 +98,8 @@ namespace Etherna.BeeNet.Manifest
                 return;
             
             // Get chunk data.
-            var data = await chunkDataStream.ToByteArrayAsync().ConfigureAwait(false);
+            var decodedChunk = (SwarmDecodedDataCac)Chunk.Decode(Reference, new Hasher());
+            var data = decodedChunk.Data.ToArray();
 
             // Get obfuscation key and de-obfuscate.
             var readIndex = 0;
@@ -238,10 +195,10 @@ namespace Etherna.BeeNet.Manifest
                 //add fork
                 var forkNode = await BuildNewAsync(
                     childNodeReference,
-                    chunkDataStream.ChunkStore,
+                    chunkStore,
                     redundancyLevel,
-                    chunkDataStream.RedundancyStrategy,
-                    chunkDataStream.RedundancyStrategyFallback,
+                    redundancyStrategy,
+                    redundancyStrategyFallback,
                     childNodeMetadata,
                     childNodeTypeFlags).ConfigureAwait(false);
                 _forks[key] = new MantarayNodeFork(prefix, forkNode);

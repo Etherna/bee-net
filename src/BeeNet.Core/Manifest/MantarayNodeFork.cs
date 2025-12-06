@@ -18,11 +18,10 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public sealed class MantarayNodeFork : IAsyncDisposable, IDisposable
+    public sealed class MantarayNodeFork
     {
         // Consts.
         public const int HeaderSize = TypeSize + PrefixSize;
@@ -44,13 +43,6 @@ namespace Etherna.BeeNet.Manifest
             Prefix = prefix;
             Node = node;
         }
-        
-        // Dispose.
-        public void Dispose() =>
-            Node.Dispose();
-
-        public ValueTask DisposeAsync() =>
-            Node.DisposeAsync();
 
         // Properties.
         public string Prefix { get; }

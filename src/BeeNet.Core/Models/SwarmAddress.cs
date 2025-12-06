@@ -80,11 +80,9 @@ namespace Etherna.BeeNet.Models
                 redundancyLevel,
                 redundancyStrategy,
                 redundancyStrategyFallback).ConfigureAwait(false);
-            await using (rootManifest.ConfigureAwait(false))
-            {
-                return await rootManifest.GetResourceInfoAsync(
-                    Path, manifestPathResolver).ConfigureAwait(false);
-            }
+            
+            return await rootManifest.GetResourceInfoAsync(
+                Path, manifestPathResolver).ConfigureAwait(false);
         }
         public override string ToString() => Reference + Path;
         public async Task<string?> TryGetFileNameAsync(

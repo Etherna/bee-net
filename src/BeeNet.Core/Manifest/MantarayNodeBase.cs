@@ -21,31 +21,13 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public abstract class MantarayNodeBase : IReadOnlyMantarayNode, IAsyncDisposable, IDisposable
+    public abstract class MantarayNodeBase : IReadOnlyMantarayNode
     {
         // Consts.
         public const int ForksIndexSize = 32;
         public static readonly byte[] Version02Hash = new Hasher().ComputeHash("mantaray:0.2")
             .Take(VersionHashSize).ToArray();
         public const int VersionHashSize = 31;
-        
-        // Dispose.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing) { }
-
-        protected virtual ValueTask DisposeAsyncCore() =>
-            ValueTask.CompletedTask;
-
-        public async ValueTask DisposeAsync()
-        {
-            await DisposeAsyncCore().ConfigureAwait(false);
-            GC.SuppressFinalize(this);
-        }
 
         // Properties.
         public abstract SwarmReference? EntryReference { get; }

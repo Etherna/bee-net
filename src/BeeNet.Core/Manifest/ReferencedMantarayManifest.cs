@@ -15,24 +15,14 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public sealed class ReferencedMantarayManifest : MantarayManifestBase
+    public sealed class ReferencedMantarayManifest(ReferencedMantarayNode rootNode)
+        : MantarayManifestBase
     {
-        // Fields.
-        private readonly ReferencedMantarayNode rootNode;
-        
-        // Constructor.
-        private ReferencedMantarayManifest(ReferencedMantarayNode rootNode)
-        {
-            this.rootNode = rootNode;
-        }
-
         // Static builders.
-        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public static async Task<ReferencedMantarayManifest> BuildNewAsync(
             SwarmReference rootReference,
             IReadOnlyChunkStore chunkStore,
@@ -51,7 +41,6 @@ namespace Etherna.BeeNet.Manifest
             return new ReferencedMantarayManifest(node);
         }
 
-        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public static ReferencedMantarayManifest BuildNew(
             SwarmCac rootChunk,
             SwarmReference rootChunkReference,
@@ -59,7 +48,7 @@ namespace Etherna.BeeNet.Manifest
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback)
         {
-            var node = ReferencedMantarayNode.BuildNew(
+            var node = new ReferencedMantarayNode(
                 rootChunk,
                 rootChunkReference,
                 chunkStore,
@@ -68,19 +57,6 @@ namespace Etherna.BeeNet.Manifest
                 null,
                 NodeType.Edge);
             return new ReferencedMantarayManifest(node);
-        }
-
-        // Dispose.
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-                rootNode.Dispose();
-        }
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            await base.DisposeAsyncCore().ConfigureAwait(false);
-            await rootNode.DisposeAsync().ConfigureAwait(false);
         }
 
         // Properties.
