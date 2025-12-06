@@ -22,6 +22,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -69,7 +70,8 @@ namespace Etherna.BeeNet.Manifest
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback,
             Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags)
+            NodeType nodeTypeFlags,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunkStore);
             
@@ -79,7 +81,9 @@ namespace Etherna.BeeNet.Manifest
                 new ReplicaResolverChunkStore(chunkStore, redundancyLevel, new Hasher());
             
             // Resolve root chunk.
-            var rootChunk = await rootChunkStore.GetAsync(reference.Hash).ConfigureAwait(false);
+            var rootChunk = await rootChunkStore.GetAsync(
+                reference.Hash,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
             if (rootChunk is not SwarmCac rootCac) //soc are not supported
                 throw new InvalidOperationException($"Chunk {reference} is not a Content Addressed Chunk.");
             
@@ -111,7 +115,8 @@ namespace Etherna.BeeNet.Manifest
 
         // Methods.
         public async Task DecodeFromChunkAsync(
-            RedundancyLevel redundancyLevel)
+            RedundancyLevel redundancyLevel,
+            CancellationToken cancellationToken = default)
         {
             if (IsDecoded)
                 return;
@@ -134,24 +139,26 @@ namespace Etherna.BeeNet.Manifest
             if (versionHash.Span.SequenceEqual(Version02Hash))
                 await DecodeVersion02Async(
                     data.AsMemory()[readIndex..],
-                    redundancyLevel).ConfigureAwait(false);
+                    redundancyLevel,
+                    cancellationToken).ConfigureAwait(false);
             else
                 throw new InvalidOperationException("Manifest version not recognized");
 
             IsDecoded = true;
         }
         
-        public override async Task OnVisitingAsync()
+        public override async Task OnVisitingAsync(CancellationToken cancellationToken = default)
         {
             if (!IsDecoded)
-                await DecodeFromChunkAsync(RedundancyLevel.Paranoid).ConfigureAwait(false);
+                await DecodeFromChunkAsync(RedundancyLevel.Paranoid, cancellationToken).ConfigureAwait(false);
         }
 
         // Helpers.
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         private async Task DecodeVersion02Async(
             ReadOnlyMemory<byte> data,
-            RedundancyLevel redundancyLevel)
+            RedundancyLevel redundancyLevel,
+            CancellationToken cancellationToken)
         {
             var readIndex = 0;
             
@@ -219,7 +226,8 @@ namespace Etherna.BeeNet.Manifest
                     redundancyStrategy,
                     redundancyStrategyFallback,
                     childNodeMetadata,
-                    childNodeTypeFlags).ConfigureAwait(false);
+                    childNodeTypeFlags,
+                    cancellationToken).ConfigureAwait(false);
                 _forks[key] = new MantarayNodeFork(prefix, forkNode);
             }
         }
