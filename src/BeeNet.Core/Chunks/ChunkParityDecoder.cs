@@ -93,6 +93,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
+            bool forceFetchAllChunks = false,
             bool forceRecoverParities = false,
             CancellationToken cancellationToken = default)
         {
@@ -105,6 +106,7 @@ namespace Etherna.BeeNet.Chunks
                 firstStrategy,
                 strategyFallback,
                 customStrategyTimeout,
+                forceFetchAllChunks,
                 cancellationToken).ConfigureAwait(false);
 
             // Run recovery.
@@ -122,6 +124,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
+            bool forceFetchAllChunks = false,
             CancellationToken cancellationToken = default)
         {
             // Verify if data chunks are already available.
@@ -141,6 +144,7 @@ namespace Etherna.BeeNet.Chunks
                     strategy,
                     fetchResults,
                     customStrategyTimeout,
+                    forceFetchAllChunks,
                     cancellationToken).ConfigureAwait(false);
                 if (!strategyFallback)
                     break;
@@ -269,6 +273,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
+            bool forceFetchAllChunks = false,
             bool forceRecoverParities = false,
             CancellationToken cancellationToken = default)
         {
@@ -278,6 +283,7 @@ namespace Etherna.BeeNet.Chunks
                     firstStrategy,
                     strategyFallback,
                     customStrategyTimeout,
+                    forceFetchAllChunks,
                     forceRecoverParities,
                     cancellationToken).ConfigureAwait(false);
                 return true;
@@ -300,6 +306,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy firstStrategy,
             bool strategyFallback,
             TimeSpan? customStrategyTimeout = null,
+            bool forceFetchAllChunks = false,
             CancellationToken cancellationToken = default)
         {
             try
@@ -308,6 +315,7 @@ namespace Etherna.BeeNet.Chunks
                     firstStrategy,
                     strategyFallback,
                     customStrategyTimeout,
+                    forceFetchAllChunks,
                     cancellationToken).ConfigureAwait(false);
                 return true;
             }
@@ -367,6 +375,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyStrategy strategy,
             bool?[] fetchResults,
             TimeSpan? customStrategyTimeout,
+            bool forceFetchAllChunks,
             CancellationToken cancellationToken)
         {
             // Define allowed errors and hashes to query, based on strategy.
@@ -417,7 +426,7 @@ namespace Etherna.BeeNet.Chunks
                 return succeededFetches >= dataShardsAmount;
             if (succeededFetches >= dataShardsAmount)
                 return true;
-            if (failedFetches > allowedErrors)
+            if (!forceFetchAllChunks && failedFetches > allowedErrors)
                 return false;
 
             // Run chunks query.
@@ -425,7 +434,7 @@ namespace Etherna.BeeNet.Chunks
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
             var results = await chunkStore.GetAsync(
                 hashesToQuery,
-                canReturnAfterFailed: allowedErrors + 1,
+                canReturnAfterFailed: forceFetchAllChunks ? null : allowedErrors + 1,
                 canReturnAfterSucceeded: dataShardsAmount - succeededFetches,
                 cancellationToken: linkedCts.Token).ConfigureAwait(false);
 
@@ -436,7 +445,7 @@ namespace Etherna.BeeNet.Chunks
                     continue;
 
                 var shardIndex = hashIndexMap[hash];
-                if (chunk != null)
+                if (chunk is SwarmCac) //validate chunk is not null or SOC
                 {
                     // Store found chunk. Pad data with zeros if it is smaller than SpanDataSize.
                     var spanData = new byte[SwarmCac.SpanDataSize];
