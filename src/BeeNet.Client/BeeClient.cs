@@ -1491,7 +1491,7 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            ArgumentNullException.ThrowIfNull(soc);
             if (!soc.Signature.HasValue)
                 throw new InvalidOperationException("SOC is not signed");
 

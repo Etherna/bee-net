@@ -110,7 +110,7 @@ namespace Etherna.BeeNet.Stores
             // Get replica chunk.
             var chunk = await sourceChunkStore.GetAsync(replicaHash, false, cancellationToken).ConfigureAwait(false);
             if (chunk is not SwarmSoc soc)
-                throw new InvalidOperationException("Chunk is not a SOC");
+                throw new SwarmChunkTypeException(chunk, "Chunk is not a SOC");
             return soc.InnerChunk;
         }
     }

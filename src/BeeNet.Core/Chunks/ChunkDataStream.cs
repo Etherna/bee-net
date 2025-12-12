@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
@@ -86,8 +87,8 @@ namespace Etherna.BeeNet.Chunks
             
             // Resolve root chunk.
             var rootChunk = await rootChunkStore.GetAsync(reference.Hash).ConfigureAwait(false);
-            if (rootChunk is not SwarmCac rootCac) //soc are not supported
-                throw new InvalidOperationException($"Chunk {reference} is not a Content Addressed Chunk.");
+            if (rootChunk is not SwarmCac rootCac) //soc is not supported
+                throw new SwarmChunkTypeException(rootChunk, $"Chunk {reference} is not a Content Addressed Chunk.");
             
             return BuildNew(
                 rootCac,

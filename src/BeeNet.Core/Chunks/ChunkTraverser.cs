@@ -245,7 +245,7 @@ namespace Etherna.BeeNet.Chunks
                 await onChunkNotFound(rootShardReference).ConfigureAwait(false);
                 return;
             }
-            if (rootChunk is not SwarmCac rootCac) //soc are not supported
+            if (rootChunk is not SwarmCac rootCac) //soc is not supported
             {
                 await onInvalidChunkFound(rootChunk, rootShardReference).ConfigureAwait(false);
                 return;
