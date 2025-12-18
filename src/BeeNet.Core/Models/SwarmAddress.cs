@@ -74,12 +74,16 @@ namespace Etherna.BeeNet.Models
             RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
             bool redundancyStrategyFallback = true)
         {
-            var rootManifest = await ReferencedMantarayManifest.BuildNewAsync(
+            var rootManifest = ReferencedMantarayManifest.BuildNew(
                 Reference,
                 chunkStore,
-                redundancyLevel,
                 redundancyStrategy,
-                redundancyStrategyFallback).ConfigureAwait(false);
+                redundancyStrategyFallback);
+
+            await ((ReferencedMantarayNode)rootManifest.RootNode).FetchChunkAsync(
+                redundancyLevel).ConfigureAwait(false);
+            
+            ((ReferencedMantarayNode)rootManifest.RootNode).DecodeFromChunk();
             
             return await rootManifest.GetResourceInfoAsync(
                 Path, manifestPathResolver).ConfigureAwait(false);

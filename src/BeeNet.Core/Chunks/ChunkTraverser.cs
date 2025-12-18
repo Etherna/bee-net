@@ -57,13 +57,15 @@ namespace Etherna.BeeNet.Chunks
             var isManifestChunk = false;
             try
             {
-                var manifest = await ReferencedMantarayManifest.BuildNewAsync(
+                var manifest = ReferencedMantarayManifest.BuildNew(
                     rootReference,
                     chunkStore,
-                    redundancyLevel,
                     redundancyStrategy,
-                    redundancyStrategyFallback).ConfigureAwait(false);
-                await manifest.RootNode.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
+                    redundancyStrategyFallback);
+                await ((ReferencedMantarayNode)manifest.RootNode).FetchChunkAsync(
+                    redundancyLevel,
+                    cancellationToken).ConfigureAwait(false);
+                ((ReferencedMantarayNode)manifest.RootNode).DecodeFromChunk();
                 isManifestChunk = true;
             }
             catch (InvalidOperationException) //in case it's not a manifest
@@ -152,14 +154,10 @@ namespace Etherna.BeeNet.Chunks
                 redundancyStrategy = RedundancyStrategy.Data;
 
             // Read as manifest.
-            var manifest = await ReferencedMantarayManifest.BuildNewAsync(
-                rootReference,
-                chunkStore,
-                redundancyLevel,
-                redundancyStrategy,
-                redundancyStrategyFallback).ConfigureAwait(false);
             await TraverseMantarayNodeHelperAsync(
-                (ReferencedMantarayNode)manifest.RootNode,
+                rootReference,
+                null,
+                NodeType.Edge,
                 [],
                 onChunkFound,
                 onInvalidChunkFound,
@@ -192,18 +190,10 @@ namespace Etherna.BeeNet.Chunks
                 redundancyStrategy = RedundancyStrategy.Data;
 
             // Read as manifest node.
-            var manifestNode = await ReferencedMantarayNode.BuildNewAsync(
+            await TraverseMantarayNodeHelperAsync(
                 nodeReference,
-                chunkStore,
-                redundancyLevel,
-                redundancyStrategy,
-                redundancyStrategyFallback,
                 null,
                 nodeTypeFlags,
-                cancellationToken).ConfigureAwait(false);
-            
-            await TraverseMantarayNodeHelperAsync(
-                manifestNode,
                 [],
                 onChunkFound,
                 onInvalidChunkFound,
@@ -300,7 +290,9 @@ namespace Etherna.BeeNet.Chunks
         }
         
         private async Task TraverseMantarayNodeHelperAsync(
-            ReferencedMantarayNode manifestNode,
+            SwarmReference reference,
+            IReadOnlyDictionary<string, string>? metadata,
+            NodeType nodeTypeFlags,
             HashSet<SwarmReference> visitedReferences,
             OnChunkFoundAsync onChunkFound,
             OnInvalidChunkFoundAsync onInvalidChunkFound,
@@ -311,22 +303,40 @@ namespace Etherna.BeeNet.Chunks
             bool includeParities,
             CancellationToken cancellationToken)
         {
-            visitedReferences.Add(manifestNode.Reference);
+            visitedReferences.Add(reference);
             
-            // Try decode manifest.
-            try
+            // Try build node from reference.
+            var nodeChunkStore = redundancyLevel == RedundancyLevel.None ?
+                chunkStore :
+                new ReplicaResolverChunkStore(chunkStore, redundancyLevel, new Hasher());
+            
+            // Resolve root chunk.
+            var nodeChunk = await nodeChunkStore.TryGetAsync(
+                reference.Hash,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+            var nodeShardReference = new SwarmShardReference(reference, false);
+            if (nodeChunk == null)
             {
-                await manifestNode.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
-            }
-            catch (KeyNotFoundException)
-            {
-                await onChunkNotFound(
-                    new SwarmShardReference(manifestNode.Reference.Hash, false)).ConfigureAwait(false);
+                await onChunkNotFound(nodeShardReference).ConfigureAwait(false);
                 return;
             }
-            await onChunkFound(
-                manifestNode.Chunk,
-                new SwarmShardReference(manifestNode.Reference, false)).ConfigureAwait(false);
+            if (nodeChunk is not SwarmCac nodeCac) //soc is not supported
+            {
+                await onInvalidChunkFound(nodeChunk, nodeShardReference).ConfigureAwait(false);
+                return;
+            }
+            await onChunkFound(nodeCac, nodeShardReference).ConfigureAwait(false);
+            
+            // Build and decode node.
+            var manifestNode = new ReferencedMantarayNode(
+                nodeCac,
+                reference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback,
+                metadata,
+                nodeTypeFlags);
+            manifestNode.DecodeFromChunk();
             
             // Traverse forks.
             foreach (var fork in manifestNode.Forks.Values)
@@ -336,7 +346,9 @@ namespace Etherna.BeeNet.Chunks
                     continue;
                 
                 await TraverseMantarayNodeHelperAsync(
-                    (ReferencedMantarayNode)fork.Node,
+                    fork.Node.Reference,
+                    fork.Node.Metadata,
+                    fork.Node.NodeTypeFlags,
                     visitedReferences,
                     onChunkFound,
                     onInvalidChunkFound,

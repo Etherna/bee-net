@@ -23,21 +23,19 @@ namespace Etherna.BeeNet.Manifest
         : MantarayManifestBase
     {
         // Static builders.
-        public static async Task<ReferencedMantarayManifest> BuildNewAsync(
+        public static ReferencedMantarayManifest BuildNew(
             SwarmReference rootReference,
             IReadOnlyChunkStore chunkStore,
-            RedundancyLevel redundancyLevel,
             RedundancyStrategy redundancyStrategy,
             bool redundancyStrategyFallback)
         {
-            var node = await ReferencedMantarayNode.BuildNewAsync(
+            var node = new ReferencedMantarayNode(
                 rootReference,
                 chunkStore,
-                redundancyLevel,
                 redundancyStrategy,
                 redundancyStrategyFallback,
                 null,
-                NodeType.Edge).ConfigureAwait(false);
+                NodeType.Edge);
             return new ReferencedMantarayManifest(node);
         }
 

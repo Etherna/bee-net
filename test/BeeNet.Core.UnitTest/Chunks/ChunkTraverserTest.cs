@@ -31,21 +31,21 @@ namespace Etherna.BeeNet.Chunks
         // Internal classes.
         public record TraverseFromDataChunkTestElement(
             IChunkStore ChunkStore,
-            SwarmHash RootHash,
-            IEnumerable<SwarmHash> ExpectedFoundHashes,
-            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
+            SwarmReference RootReference,
+            IEnumerable<SwarmReference> ExpectedFoundReferences,
+            IEnumerable<SwarmReference> ExpectedNotFoundReferences);
 
         public record TraverseFromMantarayManifestRootTestElement(
             IChunkStore ChunkStore,
-            SwarmHash RootHash,
-            IEnumerable<SwarmHash> ExpectedFoundHashes,
-            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
+            SwarmReference RootReference,
+            IEnumerable<SwarmReference> ExpectedFoundReferences,
+            IEnumerable<SwarmReference> ExpectedNotFoundReferences);
 
         public record TraverseFromMantarayNodeChunkTestElement(
             IChunkStore ChunkStore,
             SwarmReference RootReference,
-            IEnumerable<SwarmHash> ExpectedFoundHashes,
-            IEnumerable<SwarmHash> ExpectedNotFoundHashes);
+            IEnumerable<SwarmReference> ExpectedFoundReferences,
+            IEnumerable<SwarmReference> ExpectedNotFoundReferences);
         
         // Data.
         public static IEnumerable<object[]> TraverseFromDataChunkTests
@@ -54,9 +54,9 @@ namespace Etherna.BeeNet.Chunks
             {
                 var tests = new List<TraverseFromDataChunkTestElement>();
                 
-                //find all chunks
+                //find all chunks (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -72,9 +72,9 @@ namespace Etherna.BeeNet.Chunks
                         []));
                 }
                 
-                //missing traversing root
+                //missing traversing root (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -89,9 +89,9 @@ namespace Etherna.BeeNet.Chunks
                         ["3abeb3b5c9690c1d453c20a1d492664a1f5336c2cb359cce04a37df996f45466"]));
                 }
                 
-                //missing leaf data
+                //missing leaf data (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -109,6 +109,107 @@ namespace Etherna.BeeNet.Chunks
                         ],
                         ["4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb"]));
                 }
+                
+                //find all chunks (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    tests.Add(new TraverseFromDataChunkTestElement(
+                        chunkStore,
+                        "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                        [
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing traversing root (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove root
+                    var deleteTask = chunkStore.RemoveAsync("88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromDataChunkTestElement(
+                        chunkStore,
+                        "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                        [
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing leaf data (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileB" leaf data
+                    var deleteTask = chunkStore.RemoveAsync("4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromDataChunkTestElement(
+                        chunkStore,
+                        "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                        [
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing leaf data and parities (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileB" leaf data
+                    var deleteTask = Task.WhenAll(
+                        chunkStore.RemoveAsync("4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb"),
+                        chunkStore.RemoveAsync("3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849"),
+                        chunkStore.RemoveAsync("d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85"),
+                        chunkStore.RemoveAsync("e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"));
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromDataChunkTestElement(
+                        chunkStore,
+                        "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                        [
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c"
+                        ],
+                        [
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ]));
+                }
 
                 return tests.Select(t => new object[] { t });
             }
@@ -120,9 +221,9 @@ namespace Etherna.BeeNet.Chunks
             {
                 var tests = new List<TraverseFromMantarayManifestRootTestElement>();
                 
-                //find all chunks
+                //find all chunks (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -152,9 +253,9 @@ namespace Etherna.BeeNet.Chunks
                         []));
                 }
                 
-                //missing manifest root
+                //missing manifest root (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -169,9 +270,9 @@ namespace Etherna.BeeNet.Chunks
                         ["46be4f99d106518c74fe02262aa4d738117eee47f9bb6bceea523346762372cc"]));
                 }
                 
-                //missing manifest fork node
+                //missing manifest fork node (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -201,16 +302,16 @@ namespace Etherna.BeeNet.Chunks
                         [ "b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1" ]));
                 }
                 
-                //missing data intermediate
+                //missing data intermediate (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
                     //remove "fileA" intermediate data
                     var deleteTask = chunkStore.RemoveAsync("72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e");
                     deleteTask.Wait();
-
+                
                     tests.Add(new TraverseFromMantarayManifestRootTestElement(
                         chunkStore,
                         "46be4f99d106518c74fe02262aa4d738117eee47f9bb6bceea523346762372cc",
@@ -234,9 +335,9 @@ namespace Etherna.BeeNet.Chunks
                         ["72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e"]));
                 }
                 
-                //missing data leaf
+                //missing data leaf (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -268,6 +369,227 @@ namespace Etherna.BeeNet.Chunks
                         ],
                         ["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]));
                 }
+                
+                //find all chunks (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    tests.Add(new TraverseFromMantarayManifestRootTestElement(
+                        chunkStore,
+                        "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                        [
+                            "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96",
+                            "205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce",
+                            "e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c",
+                            "53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2",
+                            "4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185",
+                            "670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20",
+                            "caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420",
+                            "b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3",
+                            "956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e",
+                            "edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c",
+                            "9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d"
+                        ],
+                        []));
+                }
+                
+                //missing manifest root (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove root
+                    var deleteTask = chunkStore.RemoveAsync("910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64");
+                    deleteTask.Wait();
+                
+                    tests.Add(new TraverseFromMantarayManifestRootTestElement(
+                        chunkStore,
+                        "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                        [
+                            "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96",
+                            "205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce",
+                            "e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c",
+                            "53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2",
+                            "4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185",
+                            "670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20",
+                            "caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420",
+                            "b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3",
+                            "956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e",
+                            "edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c",
+                            "9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d"
+                        ],
+                        []));
+                }
+                
+                //missing manifest fork node (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "A" fork node
+                    var deleteTask = chunkStore.RemoveAsync("2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f");
+                    deleteTask.Wait();
+                
+                    tests.Add(new TraverseFromMantarayManifestRootTestElement(
+                        chunkStore,
+                        "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                        [
+                            "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96",
+                            "205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce",
+                            "e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c",
+                            "53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2",
+                            "4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185",
+                            "670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20",
+                            "caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420",
+                            "b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3",
+                            "956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e",
+                            "edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c",
+                            "9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d"
+                        ],
+                        []));
+                }
+                
+                //missing data intermediate (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileA" intermediate data
+                    var deleteTask = chunkStore.RemoveAsync("9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c");
+                    deleteTask.Wait();
+                
+                    tests.Add(new TraverseFromMantarayManifestRootTestElement(
+                        chunkStore,
+                        "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                        [
+                            "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96",
+                            "205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce",
+                            "e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c",
+                            "53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2",
+                            "4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185",
+                            "670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20",
+                            "caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420",
+                            "b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3",
+                            "956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e",
+                            "edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c",
+                            "9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d"
+                        ],
+                        []));
+                }
+                
+                //missing data leaf (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileA" leaf data
+                    var deleteTask = chunkStore.RemoveAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromMantarayManifestRootTestElement(
+                        chunkStore,
+                        "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                        [
+                            "910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64",
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96",
+                            "205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce",
+                            "e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c",
+                            "53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2",
+                            "4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185",
+                            "670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20",
+                            "caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420",
+                            "b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3",
+                            "956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e",
+                            "edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c",
+                            "9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d"
+                        ],
+                        []));
+                }
 
                 return tests.Select(t => new object[] { t });
             }
@@ -279,9 +601,9 @@ namespace Etherna.BeeNet.Chunks
             {
                 var tests = new List<TraverseFromMantarayNodeChunkTestElement>();
                 
-                //find all chunks
+                //find all chunks (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -303,9 +625,9 @@ namespace Etherna.BeeNet.Chunks
                         []));
                 }
                 
-                //missing traversing root
+                //missing traversing root (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -320,9 +642,9 @@ namespace Etherna.BeeNet.Chunks
                         ["df08922becf846a73648dd793d2b4e8c7d8e14d812ae953b169c3948cc7208db"]));
                 }
                 
-                //missing manifest internal node
+                //missing manifest internal node (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -344,9 +666,9 @@ namespace Etherna.BeeNet.Chunks
                         ["b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1"]));
                 }
                 
-                //missing data intermediate
+                //missing data intermediate (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -369,9 +691,9 @@ namespace Etherna.BeeNet.Chunks
                         ["72e71b431b78633506acd4198d023ac535f0612dbd9a0aaf6d8b1ba496f4637e"]));
                 }
                 
-                //missing data leaf
+                //missing data leaf (no redundancy)
                 {
-                    var chunkStoreInitTask = BuildChunkStoreAsync();
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.None);
                     chunkStoreInitTask.Wait();
                     var chunkStore = chunkStoreInitTask.Result;
                     
@@ -395,6 +717,172 @@ namespace Etherna.BeeNet.Chunks
                         ],
                         ["45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf"]));
                 }
+                
+                //find all chunks (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    tests.Add(new TraverseFromMantarayNodeChunkTestElement(
+                        chunkStore,
+                        "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                        [
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing traversing root (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove root
+                    var deleteTask = chunkStore.RemoveAsync("bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromMantarayNodeChunkTestElement(
+                        chunkStore,
+                        "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                        [
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing manifest internal node (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "A" fork node
+                    var deleteTask = chunkStore.RemoveAsync("2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromMantarayNodeChunkTestElement(
+                        chunkStore,
+                        "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                        [
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing data intermediate (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileA" intermediate data
+                    var deleteTask = chunkStore.RemoveAsync("9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromMantarayNodeChunkTestElement(
+                        chunkStore,
+                        "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                        [
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
+                
+                //missing data leaf (Medium redundancy)
+                {
+                    var chunkStoreInitTask = BuildChunkStoreAsync(RedundancyLevel.Medium);
+                    chunkStoreInitTask.Wait();
+                    var chunkStore = chunkStoreInitTask.Result;
+                    
+                    //remove "fileA" leaf data
+                    var deleteTask = chunkStore.RemoveAsync("45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf");
+                    deleteTask.Wait();
+                    
+                    tests.Add(new TraverseFromMantarayNodeChunkTestElement(
+                        chunkStore,
+                        "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                        [
+                            "bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8",
+                            "2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f",
+                            "9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c",
+                            "ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac",
+                            "45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf",
+                            "d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca",
+                            "5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4",
+                            "d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470",
+                            "7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4",
+                            "88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3",
+                            "185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651",
+                            "4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb",
+                            "405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c",
+                            "3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849",
+                            "d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85",
+                            "e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96"
+                        ],
+                        []));
+                }
 
                 return tests.Select(t => new object[] { t });
             }
@@ -405,62 +893,75 @@ namespace Etherna.BeeNet.Chunks
         public async Task TraverseFromDataChunk(TraverseFromDataChunkTestElement test)
         {
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
-            List<SwarmHash> foundChunkHashes = [];
-            List<SwarmHash> notFoundChunkHashes = [];
-            List<SwarmHash> invalidFoundChunkHashes = [];
+            List<SwarmReference> foundChunkReferences = [];
+            List<SwarmReference> invalidFoundChunkReferences = [];
+            List<SwarmReference> notFoundChunkReferences = [];
         
             await chunkTraverser.TraverseFromDataChunkAsync(
-                new SwarmReference(test.RootHash, null),
-                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                test.RootReference,
+                (_, r) => { foundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                (_, r) => { invalidFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                r => { notFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                RedundancyLevel.Paranoid,
+                RedundancyStrategy.Data,
+                true,
+                true);
         
-            Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
-            Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
-            Assert.Empty(invalidFoundChunkHashes);
+            Assert.Equal(test.ExpectedFoundReferences, foundChunkReferences);
+            Assert.Equal(test.ExpectedNotFoundReferences, notFoundChunkReferences);
+            Assert.Empty(invalidFoundChunkReferences);
         }
         
         [Theory, MemberData(nameof(TraverseFromMantarayManifestRootTests))]
         public async Task TraverseFromMantarayManifestRoot(TraverseFromMantarayManifestRootTestElement test)
         {
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
-            List<SwarmHash> foundChunkHashes = [];
-            List<SwarmHash> notFoundChunkHashes = [];
-            List<SwarmHash> invalidFoundChunkHashes = [];
+            List<SwarmReference> foundChunkReferences = [];
+            List<SwarmReference> invalidFoundChunkReferences = [];
+            List<SwarmReference> notFoundChunkReferences = [];
 
             await chunkTraverser.TraverseFromMantarayManifestRootAsync(
-                test.RootHash,
-                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                test.RootReference,
+                (_, r) => { foundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                (_, r) => { invalidFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                r => { notFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                RedundancyLevel.Paranoid,
+                RedundancyStrategy.Data,
+                true,
+                true);
 
-            Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
-            Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
-            Assert.Empty(invalidFoundChunkHashes);
+            Assert.Equal(test.ExpectedFoundReferences, foundChunkReferences);
+            Assert.Equal(test.ExpectedNotFoundReferences, notFoundChunkReferences);
+            Assert.Empty(invalidFoundChunkReferences);
         }
         
         [Theory, MemberData(nameof(TraverseFromMantarayNodeChunkTests))]
         public async Task TraverseFromMantarayNodeChunk(TraverseFromMantarayNodeChunkTestElement test)
         {
             var chunkTraverser = new ChunkTraverser(test.ChunkStore);
-            List<SwarmHash> foundChunkHashes = [];
-            List<SwarmHash> notFoundChunkHashes = [];
-            List<SwarmHash> invalidFoundChunkHashes = [];
+            List<SwarmReference> foundChunkReferences = [];
+            List<SwarmReference> invalidFoundChunkReferences = [];
+            List<SwarmReference> notFoundChunkReferences = [];
         
             await chunkTraverser.TraverseFromMantarayNodeChunkAsync(
                 test.RootReference,
                 NodeType.Edge,
-                c => { foundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                c => { invalidFoundChunkHashes.Add(c.Hash); return Task.CompletedTask; },
-                h => { notFoundChunkHashes.Add(h); return Task.CompletedTask; });
+                (_, r) => { foundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                (_, r) => { invalidFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                r => { notFoundChunkReferences.Add(r.Reference); return Task.CompletedTask; },
+                RedundancyLevel.Paranoid,
+                RedundancyStrategy.Data,
+                true,
+                true);
         
-            Assert.Equal(test.ExpectedFoundHashes, foundChunkHashes);
-            Assert.Equal(test.ExpectedNotFoundHashes, notFoundChunkHashes);
-            Assert.Empty(invalidFoundChunkHashes);
+            Assert.Equal(test.ExpectedFoundReferences, foundChunkReferences);
+            Assert.Equal(test.ExpectedNotFoundReferences, notFoundChunkReferences);
+            Assert.Empty(invalidFoundChunkReferences);
         }
         
         // Helpers.
-        private static async Task<IChunkStore> BuildChunkStoreAsync()
+        private static async Task<IChunkStore> BuildChunkStoreAsync(
+            RedundancyLevel redundancyLevel)
         {
             var chunkStore = new MemoryChunkStore();
             var postageStamper = new FakePostageStamper();
@@ -473,7 +974,7 @@ namespace Etherna.BeeNet.Chunks
              *     |-- fileA (8kB)
              *     |-- fileC (16kB)
              *
-             * Chunks:
+             * Chunks without redundancy:
              * 46be4f99d106518c74fe02262aa4d738117eee47f9bb6bceea523346762372cc (root)
              * |-- df08922becf846a73648dd793d2b4e8c7d8e14d812ae953b169c3948cc7208db ("file" fork)
              *     |-- b4dbbcabd06b975c982b1165526ca86d645957bdb4ad185c7762349bc3d05db1 ("A" fork)
@@ -496,6 +997,64 @@ namespace Etherna.BeeNet.Chunks
              *             |-- 670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20 (data leaf)
              *             |-- caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420 (data leaf)
              *             |-- b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3 (data leaf)
+             *
+             * Chunks with Medium redundancy:
+             * 910c2034a133ce27c2f84b77b28026ed4d0b848c713cb4f0485eae9e2f891b64 (root)
+             * |-- bd345335c1eaaf9281b6a9c5f114795d4423f727fa7a06fe52c6dbce2d67c6d8 ("file" fork)
+             *     |-- 2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f ("A" fork)
+             *         |-- 9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c (data intermediate)
+             *             |-- ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac (data leaf)
+             *             |-- 45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf (data leaf)
+             *             |-- d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca (parity)
+             *             |-- 5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4 (parity)
+             *             |-- d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470 (parity)
+             *         |-- 6a761b787d46e16083cb2cbe7e6e3eaffabf481b02efe9299771eab315c5b48a (soc root replica)
+             *         |-- 8aa01edc40a0f5b085eab79c658a66f57502276e0c3e1d0658f6c04afb25f97d (soc root replica)
+             *     |-- 280f32251893d054c48e7a883ab26b02f41ec5f85d5c53971e38504579891462 (soc root replica)
+             *     |-- f3833297c2cf487ec19b3b07179e95eb4404f8b44443dc57fff4e3c7b2f44f21 (soc root replica)
+             *     |-- 7c5de76a3f1b7904871d7dad114f6bc752bd9c51aa600859303725a5aa5c7ab4 ("B" fork)
+             *         |-- 88bdfd38ff0ab6d55068565d949cceebdd71e774fa71f6e86c4ddd3d34fe79f3 (data intermediate)
+             *             |-- 185ca0c92f3a1760c64206da9ce63f66c81094b467713701c5150c8115eb4651 (data leaf)
+             *             |-- 4a36ba2c1185612926e7f73e1eca905839263b3c4c0f21e6c6c8e731110ecdcb (data leaf)
+             *             |-- 405b276d2bdd8257a4864947a5d2bf8b3908bba72250a0d92a9127eb417f106c (data leaf)
+             *             |-- 3fc39bea2da534472cfa98cac2da77e89c0d73f5f330f600359759599e5ef849 (parity)
+             *             |-- d30f46b1425d3d5f73ebb0db968082ee830408d6707b2db8fec11287ebfafe85 (parity)
+             *             |-- e3d95dc11f5e76bfa6d04c8dc1964bac2035f0cb6899bed9ea1abda220da4a96 (parity)
+             *         |-- 56546c8a6f15184578680c753a35d940e5d7ed2d01e82cbee5dc7a2aad509424 (soc root replica)
+             *         |-- ddb8c57d9ff08a6f8ac41049105364a7764831304f8988af12a519cec578381a (soc root replica)
+             *     |-- 2ddf84e795af629b0d77d97fc75275ab2684d5721ab7c52bf68885d1a4e7a2f8 (soc root replica)
+             *     |-- 92f1d21e80ea4ea159d84d917cab3c5aa32950d9a6154d78b8cb5f5685f87a34 (soc root replica)
+             * |-- 77cd477e4e51da3cf9331c875931990384cc5a2a601dfc73021d90b089a6b199 (soc root replica)
+             * |-- df75e10186a52ab935b01bc57b2616272035394fcae67008f4165b98cde000d4 (soc root replica)
+             * |-- 205dc00928f90e89a8c3f364d1fd69c90430839e3f9d956f5b86cc89dc2e4fce ("myDir/file" fork)
+             *     |-- 2a1b9564d2d4f190b895d951d3bb422a091578eb26e4f872bae326cff126e53f ("A" fork)
+             *         |-- 9775f55d03f9237402e4b2359c5230f3eb9fd473436d032824e893a294ea888c (data intermediate)
+             *             |-- ddf10d58bc29ff8aa4596d0d6f1c7ad4dc96b422c1f8879f22fbd5cb62c63fac (data leaf)
+             *             |-- 45a2fb3301637e7cd235a7f4a26ae78da6a115d87d5f8eef840e35ec1d9833bf (data leaf)
+             *             |-- d0e0454d8708dfb36791f5633709ee6ebd34c5c5a8e8f9c292a2131846b903ca (parity)
+             *             |-- 5c2c287f169e2179acbb664e701d57df8da3e06c128b06ec5155e2520b30b7d4 (parity)
+             *             |-- d12b77a0803942032dd87b8635b6f969c4ddff6725406aa38396697e4c319470 (parity)
+             *         |-- 6a761b787d46e16083cb2cbe7e6e3eaffabf481b02efe9299771eab315c5b48a (soc root replica)
+             *         |-- 8aa01edc40a0f5b085eab79c658a66f57502276e0c3e1d0658f6c04afb25f97d (soc root replica)
+             *     |-- 280f32251893d054c48e7a883ab26b02f41ec5f85d5c53971e38504579891462 (soc root replica)
+             *     |-- f3833297c2cf487ec19b3b07179e95eb4404f8b44443dc57fff4e3c7b2f44f21 (soc root replica)
+             *     |-- e6aaf074e67db4c47e57f2f327a36dace092f02f043a1abb1132d1a949289e1c ("C" fork)
+             *         |-- 53e72e4edb645c7c8ba801cf60725a99eb84a53ed751c7e0adb4ef5609a39aa2 (data intermediate)
+             *             |-- 4890e9a8a9656096fdfc57ba7423778efc44c374f0a5812a7ef7cad395fe7185 (data leaf)
+             *             |-- 670371ff59c155195ac366e8f398b226fc97ee092edf1b57e0eea8fe7beafd20 (data leaf)
+             *             |-- caf0f6a6ba3b3cd0c242f046e6c41c59ac3e31ef7a2c4e74427b6c8a6929c420 (data leaf)
+             *             |-- b3881d42550e27238c5bb2f2ea63aa96a3a287a9f4cabd065df5f7bc432effb3 (data leaf)
+             *             |-- 956c91e0ead14d164523430e202b12cfc114c0f54e4dfc3f547d1fb9ab96e26e (parity)
+             *             |-- edb064acefbcd3a5bfade1882382bd600682635f5f731ba96924ec36162e5d7c (parity)
+             *             |-- 9fb3251a21778c9efc64e9243e1e08e65924dd2afe5547c90c4ae2775159a95d (parity)
+             *         |-- 057a1c4a4156e8556fa0262156342e44a685c805adf15adbbe841649c0fc92d9 (soc root replica)
+             *         |-- ccbde3fd2fb2d485fd6c09674d438a2f48db752680df208d79c837bfe2fc510e (soc root replica)
+             *     |-- ad6542cf666fb157f2741b90d5ee65292dcd3d26478ce18a2736c722aae78f53 (soc root replica)
+             *     |-- 086416767669cd2807f7de883edadb202b0c3ed682c32a6ff2ee81d29c70b3fb (soc root replica)
+             * |-- c0c935b81ce3927474d0193397b4b0957f01f336d01c2be44fb0fd223620a982 (soc root replica)
+             * |-- 649434a5da772405968625b0c22cef5ece59a66e5a08b0b342c5f113f9fe9a81 (soc root replica)
+             * ff647fabcd17ad4908f8d5cfb0d215d67ccab6639b62f612239566b42be4dc10 (soc root replica)
+             * 2b0824fe874962f44bf2c04cf0e83735e522ebc1ca7b1c9b10d07efd04b04f12 (soc root replica)
              */
             
             // Create files.
@@ -513,7 +1072,7 @@ namespace Etherna.BeeNet.Chunks
             var dirManifest = new WritableMantarayManifest(
                 chunkStore,
                 postageStamper,
-                RedundancyLevel.None,
+                redundancyLevel,
                 false,
                 0,
                 null);
@@ -521,7 +1080,7 @@ namespace Etherna.BeeNet.Chunks
             var fileAHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
                 postageStamper,
-                RedundancyLevel.None,
+                redundancyLevel,
                 false,
                 0,
                 null);
@@ -545,7 +1104,7 @@ namespace Etherna.BeeNet.Chunks
             var fileBHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
                 postageStamper,
-                RedundancyLevel.None,
+                redundancyLevel,
                 false,
                 0,
                 null);
@@ -564,7 +1123,7 @@ namespace Etherna.BeeNet.Chunks
             var fileCHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
                 postageStamper,
-                RedundancyLevel.None,
+                redundancyLevel,
                 false,
                 0,
                 null);
