@@ -12,7 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
@@ -33,13 +35,26 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             int? chunkConcurrency,
             bool readOnly = false)
         {
-            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
-            
-            if (redundancyLevel != RedundancyLevel.None)
-                throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(postageStamper);
 
             //build stages
             var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
+                new ChunkParityGenerator(
+                    redundancyLevel,
+                    isEncrypted || compactLevel > 0,
+                    new ChunkBmtPipelineStage(
+                        0, //parities don't have an encryption key, so don't support chunks compaction (sig...)
+                        false,
+                        new ChunkStoreWriterPipelineStage(
+                            chunkStore,
+                            postageStamper,
+                            null,
+                            readOnly))),
+                new ChunkReplicator(
+                    redundancyLevel,
+                    chunkStore,
+                    postageStamper,
+                    new PrivateKeySigner(SwarmSoc.ReplicasOwnerPrivateKey)),
                 new ChunkBmtPipelineStage(
                     compactLevel,
                     isEncrypted,
@@ -48,7 +63,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                         postageStamper,
                         null,
                         readOnly)),
-                isEncrypted || compactLevel > 0);
+                readOnly);
                 
             var storeWriterStage = new ChunkStoreWriterPipelineStage(
                 chunkStore,

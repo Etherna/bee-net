@@ -14,6 +14,7 @@
 
 using Etherna.BeeNet.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -28,9 +29,18 @@ namespace Etherna.BeeNet.Manifest
         EncryptionKey256? ObfuscationKey { get; }
         
         // Methods.
-        Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(string path);
-        Task<MantarayResourceInfo> GetResourceInfoAsync(string path);
-        Task<bool> HasPathPrefixAsync(string path);
-        Task OnVisitingAsync();
+        Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
+            string path,
+            CancellationToken cancellationToken = default);
+        
+        Task<MantarayResourceInfo> GetResourceInfoAsync(
+            string path,
+            CancellationToken cancellationToken = default);
+        
+        Task<bool> HasPathPrefixAsync(
+            string path,
+            CancellationToken cancellationToken = default);
+        
+        Task OnVisitingAsync(CancellationToken cancellationToken = default);
     }
 }

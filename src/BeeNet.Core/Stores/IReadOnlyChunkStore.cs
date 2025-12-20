@@ -26,9 +26,20 @@ namespace Etherna.BeeNet.Stores
             bool cacheChunk = false,
             CancellationToken cancellationToken = default);
 
-        Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
+        /// <summary>
+        /// Try to get multiple chunks
+        /// </summary>
+        /// <param name="hashes">Chunks' hashes to find</param>
+        /// <param name="cacheChunk"></param>
+        /// <param name="canReturnAfterFailed">If set, the function can return after has failed this number of chunks</param>
+        /// <param name="canReturnAfterSucceeded">If set, the function can return after has found this number of chunks</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>A dictionary listing searched chunks by their hashes. A value is null when the chunk is not found</returns>
+        Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> GetAsync(
             IEnumerable<SwarmHash> hashes,
             bool cacheChunk = false,
+            int? canReturnAfterFailed = null,
+            int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default);
         
         Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default);

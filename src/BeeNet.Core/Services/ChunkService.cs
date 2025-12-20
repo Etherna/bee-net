@@ -34,12 +34,20 @@ namespace Etherna.BeeNet.Services
         public async Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
             var chunkReference = (await address.ResolveToResourceInfoAsync(
                 chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.Reference;
 
-            return await ChunkDataStream.BuildNewAsync(chunkReference, chunkStore).ConfigureAwait(false);
+            return await ChunkDataStream.BuildNewAsync(
+                chunkReference,
+                chunkStore,
+                redundancyLevel,
+                redundancyStrategy,
+                redundancyStrategyFallback).ConfigureAwait(false);
         }
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
@@ -124,7 +132,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-
+            
             // Iterate through the files.
             foreach (var filePath in fileNames)
             {
@@ -255,7 +263,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-
+            
             manifest.Add(
                 MantarayManifestBase.RootPath,
                 ManifestEntry.NewDirectory(

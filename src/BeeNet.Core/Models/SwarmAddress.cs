@@ -69,9 +69,22 @@ namespace Etherna.BeeNet.Models
                                              Path.GetHashCode(StringComparison.InvariantCulture);
         public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveToResourceInfoAsync(
             IReadOnlyChunkStore chunkStore,
-            ManifestPathResolver manifestPathResolver)
+            ManifestPathResolver manifestPathResolver,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
-            var rootManifest = new ReferencedMantarayManifest(chunkStore, Reference);
+            var rootManifest = ReferencedMantarayManifest.BuildNew(
+                Reference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback);
+
+            await ((ReferencedMantarayNode)rootManifest.RootNode).FetchChunkAsync(
+                redundancyLevel).ConfigureAwait(false);
+            
+            ((ReferencedMantarayNode)rootManifest.RootNode).DecodeFromChunk();
+            
             return await rootManifest.GetResourceInfoAsync(
                 Path, manifestPathResolver).ConfigureAwait(false);
         }

@@ -13,20 +13,17 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Hashing.Pipeline
 {
-    public interface IChunkStore : IReadOnlyChunkStore
+    public class SwarmChunkHeader(
+        SwarmReference reference,
+        ReadOnlyMemory<byte> span,
+        bool isParityChunk)
     {
-        Task<bool> AddAsync(
-            SwarmChunk chunk,
-            bool cacheChunk = false,
-            CancellationToken cancellationToken = default);
-
-        Task<bool> RemoveAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default);
+        public SwarmReference Reference { get; } = reference;
+        public ReadOnlyMemory<byte> Span { get; } = span;
+        public bool IsParityChunk { get; } = isParityChunk;
     }
 }

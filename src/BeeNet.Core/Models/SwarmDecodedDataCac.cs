@@ -12,21 +12,28 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Models;
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-namespace Etherna.BeeNet.Stores
+namespace Etherna.BeeNet.Models
 {
-    public interface IChunkStore : IReadOnlyChunkStore
+    public sealed record SwarmDecodedDataCac : SwarmDecodedCacBase
     {
-        Task<bool> AddAsync(
-            SwarmChunk chunk,
-            bool cacheChunk = false,
-            CancellationToken cancellationToken = default);
+        // Constructor.
+        public SwarmDecodedDataCac(
+            SwarmReference Reference,
+            ulong SpanLength,
+            ReadOnlyMemory<byte> Data)
+            : base(Reference, RedundancyLevel.None, 0, SpanLength)
+        {
+            if (SpanLength > SwarmCac.DataSize)
+                throw new ArgumentOutOfRangeException(
+                    nameof(SpanLength), $"Span length of data chunks can't be greater than {SwarmCac.DataSize}");
 
-        Task<bool> RemoveAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default);
+            this.Data = Data;
+        }
+
+        // Properties.
+        public override bool IsDataChunk => true;
+        public ReadOnlyMemory<byte> Data { get; }
     }
 }

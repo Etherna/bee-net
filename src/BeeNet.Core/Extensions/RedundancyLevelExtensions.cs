@@ -13,76 +13,32 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using System;
 
 namespace Etherna.BeeNet.Extensions
 {
     public static class RedundancyLevelExtensions
     {
-        public static ErasureTable? TryGetEncryptedErasureTable(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => null,
-                RedundancyLevel.Medium => ErasureTable.EncMedium,
-                RedundancyLevel.Strong => ErasureTable.EncStrong,
-                RedundancyLevel.Insane => ErasureTable.EncInsane,
-                RedundancyLevel.Paranoid => ErasureTable.EncParanoid,
-                _ => throw new InvalidOperationException()
-            };
-        
-        public static ErasureTable? TryGetErasureTable(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => null,
-                RedundancyLevel.Medium => ErasureTable.Medium,
-                RedundancyLevel.Strong => ErasureTable.Strong,
-                RedundancyLevel.Insane => ErasureTable.Insane,
-                RedundancyLevel.Paranoid => ErasureTable.Paranoid,
-                _ => throw new InvalidOperationException()
-            };
-
-        public static int GetEncryptedParities(this RedundancyLevel level, int shards)
-        {
-            var erasureTable = level.TryGetEncryptedErasureTable();
-            return erasureTable?.GetOptimalParities(shards) ?? 0;
-        }
-        
-        public static int GetMaxEncryptedShards(this RedundancyLevel level)
-        {
-            var parities = level.GetEncryptedParities(SwarmChunkBmt.EncryptedSegmentsCount);
-            return (SwarmChunkBmt.SegmentsCount - parities) / 2;
-        }
-        
         /// <summary>
-        /// Returns the maximum number of effective data chunks
+        /// Returns the maximum number of effective data references
         /// </summary>
         /// <param name="level">Redundancy level</param>
-        /// <returns>Maximum number of effective data chunks</returns>
-        public static int GetMaxShards(this RedundancyLevel level)
+        /// <returns>Maximum number of effective data references</returns>
+        public static int GetMaxDataShards(this RedundancyLevel level, bool isEncrypted)
         {
-            var parities = level.GetParities(SwarmChunkBmt.SegmentsCount);
-            return SwarmChunkBmt.SegmentsCount - parities;
+            var parities = level.GetParitiesAmount(
+                isEncrypted,
+                isEncrypted ?
+                    SwarmChunkBmt.EncryptedSegmentsCount :
+                    SwarmChunkBmt.SegmentsCount);
+            return isEncrypted ?
+                (SwarmChunkBmt.SegmentsCount - parities) / 2 :
+                SwarmChunkBmt.SegmentsCount - parities;
         }
-
-        public static int GetParities(this RedundancyLevel level, int shards)
+        
+        public static int GetParitiesAmount(this RedundancyLevel level, bool isEncrypted, int shards)
         {
-            var erasureTable = level.TryGetErasureTable();
+            var erasureTable = ErasureTable.TryGetFromRedundancyLevel(level, isEncrypted);
             return erasureTable?.GetOptimalParities(shards) ?? 0;
         }
-
-        /// <summary>
-        /// Get the actual number of replicas needed to keep the error rate below 1/10^6.
-        /// For the five levels of redundancy are 0, 2, 4, 5, 19, we use an approximation as the successive powers of 2.
-        /// </summary>
-        public static int GetReplicaCount(this RedundancyLevel level) =>
-            level switch
-            {
-                RedundancyLevel.None => 0,
-                RedundancyLevel.Medium => 2,
-                RedundancyLevel.Strong => 4,
-                RedundancyLevel.Insane => 8,
-                RedundancyLevel.Paranoid => 16,
-                _ => throw new InvalidOperationException()
-            };
     }
 }

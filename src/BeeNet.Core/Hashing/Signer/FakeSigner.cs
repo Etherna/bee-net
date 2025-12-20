@@ -18,6 +18,11 @@ namespace Etherna.BeeNet.Hashing.Signer
 {
     public class FakeSigner : ISigner
     {
+        // Properties.
+        public EthAddress PublicAddress => EthAddress.Zero;
+        
+        // Methods.
+        public byte[] GetPublicKey() => [];
         public byte[] Sign(byte[] toSign) => new byte[SwarmSocSignature.SignatureSize];
     }
 }

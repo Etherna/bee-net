@@ -35,35 +35,35 @@ namespace Etherna.BeeNet.Manifest
             string path,
             ManifestPathResolver pathResolver)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(pathResolver);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await pathResolver.InvokeAsync(
                 path,
                 invokeAsync: RootNode.GetMetadataAsync,
                 hasPathPrefixAsync: RootNode.HasPathPrefixAsync,
-                getRootMetadataAsync: () => RootNode.GetMetadataAsync(RootPath)).ConfigureAwait(false);
+                getRootMetadataAsync: ct => RootNode.GetMetadataAsync(RootPath, ct)).ConfigureAwait(false);
         }
 
         public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> GetResourceInfoAsync(
             string path,
             ManifestPathResolver pathResolver)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(pathResolver, nameof(pathResolver));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(pathResolver);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await pathResolver.InvokeAsync(
                 path,
                 invokeAsync: RootNode.GetResourceInfoAsync,
                 hasPathPrefixAsync: RootNode.HasPathPrefixAsync,
-                getRootMetadataAsync: () => RootNode.GetMetadataAsync(RootPath)).ConfigureAwait(false);
+                getRootMetadataAsync: ct => RootNode.GetMetadataAsync(RootPath, ct)).ConfigureAwait(false);
         }
 
         public async Task<bool> HasPathPrefixAsync(string path)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
             
             await RootNode.OnVisitingAsync().ConfigureAwait(false);
             return await RootNode.HasPathPrefixAsync(path.TrimStart(SwarmAddress.Separator)).ConfigureAwait(false);

@@ -22,9 +22,6 @@ namespace Etherna.BeeNet.Stores
     public class FakeChunkStore : ChunkStoreBase
     {
         // Protected methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
-            Task.FromResult(false);
-
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             Task.FromResult(false);
 
@@ -33,7 +30,10 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken = default) =>
             throw new KeyNotFoundException("Chunk get on a fake chunk store");
 
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk) =>
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken) =>
+            Task.FromResult(false);
+
+        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken) =>
             Task.FromResult(true);
     }
 }

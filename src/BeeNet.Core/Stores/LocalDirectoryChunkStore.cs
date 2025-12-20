@@ -73,27 +73,6 @@ namespace Etherna.BeeNet.Stores
         }
 
         // Protected methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash)
-        {
-            // Try cac.
-            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
-            if (File.Exists(cacPath))
-            {
-                File.Delete(cacPath);
-                return Task.FromResult(true);
-            }
-            
-            // Try soc.
-            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
-            if (File.Exists(socPath))
-            {
-                File.Delete(socPath);
-                return Task.FromResult(true);
-            }
-            
-            return Task.FromResult(false);
-        }
-
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             Task.FromResult(File.Exists(Path.Combine(DirectoryPath, hash + CacFileExtension)) ||
                             File.Exists(Path.Combine(DirectoryPath, hash + SocFileExtension)));
@@ -128,8 +107,29 @@ namespace Etherna.BeeNet.Stores
 
             throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
         }
+        
+        protected override Task<bool> RemoveChunkAsync(SwarmHash hash, CancellationToken cancellationToken)
+        {
+            // Try cac.
+            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
+            if (File.Exists(cacPath))
+            {
+                File.Delete(cacPath);
+                return Task.FromResult(true);
+            }
+            
+            // Try soc.
+            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
+            if (File.Exists(socPath))
+            {
+                File.Delete(socPath);
+                return Task.FromResult(true);
+            }
+            
+            return Task.FromResult(false);
+        }
 
-        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
+        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
 
@@ -151,8 +151,8 @@ namespace Etherna.BeeNet.Stores
                 //write tmp file, and complete writing.
                 using (var fileStream = File.Create(tmpChunkPath))
                 {
-                    await fileStream.WriteAsync(chunk.GetFullPayload()).ConfigureAwait(false);
-                    await fileStream.FlushAsync().ConfigureAwait(false);
+                    await fileStream.WriteAsync(chunk.GetFullPayload(), cancellationToken).ConfigureAwait(false);
+                    await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
                 }
                 
                 //rename it. This method prevent concurrent reading/writing 

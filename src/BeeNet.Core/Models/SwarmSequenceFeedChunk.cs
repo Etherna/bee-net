@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Stores;
 using System;
 using System.Threading.Tasks;
@@ -100,7 +101,9 @@ namespace Etherna.BeeNet.Models
                 var chunk = await chunkStore!.GetAsync(hash).ConfigureAwait(false);
 #pragma warning restore CA1062
                 if (chunk is not SwarmCac cac)
-                    throw new InvalidOperationException($"Legacy referenced chunk {hash} is not a Content Addressed Chunk");
+                    throw new SwarmChunkTypeException(
+                        chunk,
+                        $"Legacy referenced chunk {hash} is not a Content Addressed Chunk");
                 return cac;
             }
 

@@ -20,6 +20,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -62,8 +63,8 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public void Add(string path, ManifestEntry entry)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(entry, nameof(entry));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(entry);
             if (path.Any(c => c >= byte.MaxValue))
                 throw new ArgumentException("path only support ASCII chars", nameof(path));
 
@@ -155,17 +156,21 @@ namespace Etherna.BeeNet.Manifest
 
         public async Task ComputeHashAsync(
             Hasher hasher,
-            BuildHasherPipeline hasherPipelineBuilder)
+            BuildHasherPipeline hasherPipelineBuilder,
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(hasherPipelineBuilder, nameof(hasherPipelineBuilder));
+            ArgumentNullException.ThrowIfNull(hasher);
+            ArgumentNullException.ThrowIfNull(hasherPipelineBuilder);
             
             if (_reference != null)
                 return;
 
             // Recursively compute hash for each fork nodes.
             foreach (var fork in _forks.Values)
-                await ((WritableMantarayNode)fork.Node).ComputeHashAsync(hasher, hasherPipelineBuilder).ConfigureAwait(false);
+                await ((WritableMantarayNode)fork.Node).ComputeHashAsync(
+                    hasher,
+                    hasherPipelineBuilder,
+                    cancellationToken).ConfigureAwait(false);
 
             // Marshal current node, and set its hash.
             if (ObfuscationCompactLevel == 0)
@@ -181,7 +186,7 @@ namespace Etherna.BeeNet.Manifest
             _forks.Clear();
         }
         
-        public override Task OnVisitingAsync() => Task.CompletedTask;
+        public override Task OnVisitingAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
         // Helpers.
         private byte[] ForksToByteArray()

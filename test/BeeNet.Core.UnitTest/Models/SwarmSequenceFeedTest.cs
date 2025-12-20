@@ -28,19 +28,12 @@ namespace Etherna.BeeNet.Models
     public class SwarmSequenceFeedTest
     {
         // Internal classes.
-        public class LookupSequenceFeedTestElement(
-            SwarmSequenceFeedIndex? knownNearIndex,
-            Action<Mock<IReadOnlyChunkStore>> setupChunkStore,
-            SwarmSequenceFeedChunk? expectedResult,
-            ulong[] expectedIndexLookups,
-            ulong[] expectedOptionalIndexLookups)
-        {
-            public SwarmSequenceFeedIndex? KnownNearIndex { get; } = knownNearIndex;
-            public Action<Mock<IReadOnlyChunkStore>> SetupChunkStore { get; } = setupChunkStore;
-            public ulong[] ExpectedIndexLookups { get; } = expectedIndexLookups;
-            public ulong[] ExpectedOptionalIndexLookups { get; } = expectedOptionalIndexLookups;
-            public SwarmSequenceFeedChunk? ExpectedResult { get; } = expectedResult;
-        }
+        public record LookupSequenceFeedTestElement(
+            SwarmSequenceFeedIndex? KnownNearIndex,
+            Action<Mock<IReadOnlyChunkStore>> SetupChunkStore,
+            SwarmSequenceFeedChunk? ExpectedResult,
+            ulong[] ExpectedIndexLookups,
+            ulong[] ExpectedOptionalIndexLookups);
         
         // Consts.
         private static readonly SwarmSequenceFeed SequenceFeed = new(
@@ -58,8 +51,8 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<LookupSequenceFeedTestElement>
                 {
                     // Simple lookup without known near index.
-                    new(knownNearIndex: null,
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: null,
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 10; i++)
                             {
@@ -71,13 +64,13 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [0, 1, 3, 7, 15, 8, 10, 14, 11, 13, 31, 63, 127, 255],
-                        expectedOptionalIndexLookups: [],
-                        expectedResult: BuildSequenceFeedChunk(10)),
+                        ExpectedIndexLookups: [0, 1, 3, 7, 15, 8, 10, 14, 11, 13, 31, 63, 127, 255],
+                        ExpectedOptionalIndexLookups: [],
+                        ExpectedResult: BuildSequenceFeedChunk(10)),
                     
                     // Simple lookup with known near index.
-                    new(knownNearIndex: new SwarmSequenceFeedIndex(5),
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: new SwarmSequenceFeedIndex(5),
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 10; i++)
                             {
@@ -89,13 +82,13 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [5, 6, 8, 12, 9, 11, 10, 20, 36, 68, 132, 260],
-                        expectedOptionalIndexLookups: [],
-                        expectedResult: BuildSequenceFeedChunk(10)),
+                        ExpectedIndexLookups: [5, 6, 8, 12, 9, 11, 10, 20, 36, 68, 132, 260],
+                        ExpectedOptionalIndexLookups: [],
+                        ExpectedResult: BuildSequenceFeedChunk(10)),
                     
                     // Simple lookup with known near index that points to last chunk.
-                    new(knownNearIndex: new SwarmSequenceFeedIndex(10),
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: new SwarmSequenceFeedIndex(10),
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 10; i++)
                             {
@@ -107,13 +100,13 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [10, 11, 13, 17, 25, 41, 73, 137, 265],
-                        expectedOptionalIndexLookups: [],
-                        expectedResult: BuildSequenceFeedChunk(10)),
+                        ExpectedIndexLookups: [10, 11, 13, 17, 25, 41, 73, 137, 265],
+                        ExpectedOptionalIndexLookups: [],
+                        ExpectedResult: BuildSequenceFeedChunk(10)),
                     
                     // Simple lookup with known near index that points to not existing chunk.
-                    new(knownNearIndex: new SwarmSequenceFeedIndex(15),
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: new SwarmSequenceFeedIndex(15),
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 10; i++)
                             {
@@ -125,13 +118,13 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [15],
-                        expectedOptionalIndexLookups: [],
-                        expectedResult: null),
+                        ExpectedIndexLookups: [15],
+                        ExpectedOptionalIndexLookups: [],
+                        ExpectedResult: null),
                     
                     // Lookup on a feed with a long sequence of chunks (> 255).
-                    new(knownNearIndex: null,
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: null,
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 300; i++)
                             {
@@ -143,13 +136,13 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [0, 1, 3, 7, 15, 31, 63, 127, 255, 256, 258, 262, 270, 286, 318, 287, 289, 293, 301, 294, 296, 300, 317, 382, 510],
-                        expectedOptionalIndexLookups: [],
-                        expectedResult: BuildSequenceFeedChunk(300)),
+                        ExpectedIndexLookups: [0, 1, 3, 7, 15, 31, 63, 127, 255, 256, 258, 262, 270, 286, 318, 287, 289, 293, 301, 294, 296, 300, 317, 382, 510],
+                        ExpectedOptionalIndexLookups: [],
+                        ExpectedResult: BuildSequenceFeedChunk(300)),
                     
                     // Lookup with a false negative chunk's get.
-                    new(knownNearIndex: null,
-                        setupChunkStore: chunkStoreMock =>
+                    new(KnownNearIndex: null,
+                        SetupChunkStore: chunkStoreMock =>
                         {
                             for (ulong i = 0; i <= 10; i++)
                             {
@@ -164,9 +157,9 @@ namespace Etherna.BeeNet.Models
                                     .ReturnsAsync(chunk);
                             }
                         },
-                        expectedIndexLookups: [0, 1, 3, 7, 15, 8, 10, 14, 11, 13, 31, 63, 127, 255],
-                        expectedOptionalIndexLookups: [2],
-                        expectedResult: BuildSequenceFeedChunk(10))
+                        ExpectedIndexLookups: [0, 1, 3, 7, 15, 8, 10, 14, 11, 13, 31, 63, 127, 255],
+                        ExpectedOptionalIndexLookups: [2],
+                        ExpectedResult: BuildSequenceFeedChunk(10))
                 };
 
                 return tests.Select(t => new object[] { t });

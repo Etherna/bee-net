@@ -15,55 +15,46 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using System;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
 {
-    public sealed class ReferencedMantarayManifest : MantarayManifestBase
+    public sealed class ReferencedMantarayManifest(ReferencedMantarayNode rootNode)
+        : MantarayManifestBase
     {
-        // Fields.
-        private readonly ReferencedMantarayNode rootNode;
-
-        // Constructors.
-        public ReferencedMantarayManifest(
-            IReadOnlyChunkStore chunkStore,
+        // Static builders.
+        public static ReferencedMantarayManifest BuildNew(
             SwarmReference rootReference,
-            bool useChunkStoreCache = false)
-        {
-            rootNode = new ReferencedMantarayNode(chunkStore, rootReference, null, NodeType.Edge, useChunkStoreCache);
-        }
-
-        public ReferencedMantarayManifest(
             IReadOnlyChunkStore chunkStore,
-            SwarmCac rootChunk,
-            EncryptionKey256? encryptionKey = null,
-            bool useChunkStoreCache = false)
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback)
         {
-            ArgumentNullException.ThrowIfNull(rootChunk, nameof(rootChunk));
-            
-            rootNode = new ReferencedMantarayNode(
+            var node = new ReferencedMantarayNode(
+                rootReference,
                 chunkStore,
-                rootChunk,
-                new SwarmReference(rootChunk.Hash, encryptionKey),
+                redundancyStrategy,
+                redundancyStrategyFallback,
                 null,
-                NodeType.Edge,
-                useChunkStoreCache);
+                NodeType.Edge);
+            return new ReferencedMantarayManifest(node);
         }
 
-        public ReferencedMantarayManifest(
-            IReadOnlyChunkStore chunkStore,
+        public static ReferencedMantarayManifest BuildNew(
             SwarmCac rootChunk,
             SwarmReference rootChunkReference,
-            bool useChunkStoreCache = false)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback)
         {
-            rootNode = new ReferencedMantarayNode(
-                chunkStore,
+            var node = new ReferencedMantarayNode(
                 rootChunk,
                 rootChunkReference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback,
                 null,
-                NodeType.Edge,
-                useChunkStoreCache);
+                NodeType.Edge);
+            return new ReferencedMantarayManifest(node);
         }
 
         // Properties.

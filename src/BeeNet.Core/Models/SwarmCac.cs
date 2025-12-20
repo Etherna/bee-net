@@ -72,13 +72,37 @@ namespace Etherna.BeeNet.Models
         public ReadOnlyMemory<byte> Span => SpanData[..SpanSize];
         public ReadOnlyMemory<byte> Data => SpanData[SpanSize..];
         public ReadOnlyMemory<byte> SpanData { get; }
-        
+
         // Methods.
         public override ReadOnlyMemory<byte> GetFullPayload() => SpanData;
         public override byte[] GetFullPayloadToByteArray() => SpanData.ToArray();
 
         // Static methods.
-        public static (int DataShards, int Parities) CountIntermediateReferences(
+        public static int CalculatePlainDataLength(
+            ulong spanLength,
+            RedundancyLevel redundancyLevel,
+            bool encryptedDataReferences)
+        {
+            // If is data chunk.
+            if (spanLength <= DataSize)
+                return (int)spanLength;
+            
+            // If is intermediate chunk.
+            var (dataShards, parities) = CountIntermediateReferences(spanLength, redundancyLevel, encryptedDataReferences);
+            return (encryptedDataReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) * dataShards +
+                   parities * SwarmHash.HashSize;
+        }
+
+        public static (int DataShards, int ParityShards) CountIntermediateReferences(
+            ReadOnlySpan<byte> span,
+            bool isEncrypted)
+        {
+            var spanLength = DecodedSpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
+            var redundancyLevel = SpanToRedundancyLevel(span);
+            return CountIntermediateReferences(spanLength, redundancyLevel, isEncrypted);
+        }
+        
+        public static (int DataShards, int ParityShards) CountIntermediateReferences(
             ulong spanLength,
             RedundancyLevel redundancyLevel,
             bool isEncrypted)
@@ -96,31 +120,141 @@ namespace Etherna.BeeNet.Models
              */
             
             //branching factor is how many data shard references can fit into one intermediate chunk
-            var branching = (ulong)(isEncrypted ?
-                redundancyLevel.GetMaxEncryptedShards():
-                redundancyLevel.GetMaxShards());
-            ulong branchSize = DataSize;
+            var branching = (ulong)redundancyLevel.GetMaxDataShards(isEncrypted);
             
             // Search for branch level big enough to include span.
             var branchLevel = 1;
+            ulong branchSize = DataSize;
             for (; branchSize < spanLength; branchLevel++)
-                branchSize *= branching;
+            {
+                var high = Math.BigMul(branchSize, branching, out branchSize);
+                if (high != 0) //overflow
+                    throw new OverflowException($"branchSize overflow with spanLength at {spanLength} bytes");
+            }
             
             // Span in one full reference. referenceSize = branching ^ (branchLevel - 1)
             ulong referenceSize = DataSize;
             for (var i = 1; i < branchLevel - 1; i++)
                 referenceSize *= branching;
 
-            var dataShardAddresses = 1;
-            var spanOffset = referenceSize;
-            for (; spanOffset < spanLength; dataShardAddresses++)
-                spanOffset += referenceSize;
+            var dataShards = (int)(spanLength / referenceSize);
+            if (spanLength % referenceSize != 0)
+                dataShards++;
 
-            var parityAddresses = isEncrypted
-                ? redundancyLevel.GetEncryptedParities(dataShardAddresses)
-                : redundancyLevel.GetParities(dataShardAddresses);
+            var parityShards = redundancyLevel.GetParitiesAmount(isEncrypted, dataShards);
 
-            return (dataShardAddresses, parityAddresses);
+            return (dataShards, parityShards);
+        }
+
+        public static ulong DecodedSpanToLength(ReadOnlySpan<byte> span) =>
+            BinaryPrimitives.ReadUInt64LittleEndian(span);
+        
+        /// <summary>
+        /// Remove redundancy level from span keeping the real byte count for the chunk
+        /// </summary>
+        /// <param name="span">Span to decode</param>
+        /// <returns>Decoded span</returns>
+        public static byte[] DecodeSpan(ReadOnlySpan<byte> span)
+        {
+            var decodedSpan = new byte[SpanSize];
+            span.CopyTo(decodedSpan);
+            DecodeSpan(decodedSpan);
+            return decodedSpan;
+        }
+        
+        /// <summary>
+        /// Remove redundancy level from span keeping the real byte count for the chunk
+        /// </summary>
+        /// <param name="span">Span to decode</param>
+        public static void DecodeSpan(Span<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+
+            // Remove redundancy level from the most significant byte.
+            span[SpanSize - 1] = 0;
+        }
+
+        /// <summary>
+        /// Encodes redundancy level into span
+        /// </summary>
+        /// <param name="span">Span to encode</param>
+        /// <param name="level">Redundancy level to encode into span</param>
+        /// <returns>Encoded span</returns>
+        public static byte[] EncodeSpan(ReadOnlySpan<byte> span, RedundancyLevel level)
+        {
+            var encodedSpan = new byte[SpanSize];
+            span.CopyTo(encodedSpan);
+            EncodeSpan(encodedSpan, level);
+            return encodedSpan;
+        }
+
+        /// <summary>
+        /// Encodes redundancy level into span
+        /// </summary>
+        /// <param name="span">Span to encode</param>
+        /// <param name="level">Redundancy level to encode into span</param>
+        public static void EncodeSpan(Span<byte> span, RedundancyLevel level)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+
+            // Set redundancy level in the most significant byte.
+            span[SpanSize - 1] = (byte)(level + 128);
+        }
+
+        public static SwarmShardReference[] GetIntermediateReferencesFromData(
+            ReadOnlySpan<byte> data,
+            int parityReferencesAmount,
+            bool encryptedDataReferences)
+        {
+            var parityRefLength = SwarmReference.PlainSize;
+            var parityRefsLength = parityReferencesAmount * parityRefLength;
+            if (data.Length < parityRefsLength)
+                throw new ArgumentException("Data can't be shorter than parity references length: " + parityRefsLength);
+            
+            var dataRefLength = encryptedDataReferences ? SwarmReference.EncryptedSize : SwarmReference.PlainSize;
+            var dataRefsLength = data.Length - parityRefsLength;
+            if (dataRefsLength % dataRefLength != 0)
+                throw new ArgumentException($"Data length must be multiple of {dataRefLength}");
+
+            var dataReferencesAmount = dataRefsLength / dataRefLength;
+            var references = new SwarmShardReference[dataReferencesAmount + parityReferencesAmount];
+            var cursor = 0;
+            for (int i = 0; i < references.Length; i++)
+            {
+                if (i < dataReferencesAmount) //data reference
+                {
+                    references[i] = new SwarmShardReference(data[cursor..(cursor + dataRefLength)].ToArray(), false);
+                    cursor += dataRefLength;
+                }
+                else //parity reference
+                {
+                    references[i] = new SwarmShardReference(data[cursor..(cursor + parityRefLength)].ToArray(), true);
+                    cursor += parityRefLength;
+                }
+            }
+
+            return references;
+        }
+
+        public static SwarmShardReference[] GetIntermediateReferencesFromSpanData(
+            ReadOnlySpan<byte> span,
+            ReadOnlySpan<byte> data,
+            bool encryptedDataReferences)
+        {
+            var spanLength = DecodedSpanToLength(IsSpanEncoded(span) ? DecodeSpan(span) : span);
+            var redundancyLevel = SpanToRedundancyLevel(span);
+            var (_, parities) = CountIntermediateReferences(spanLength, redundancyLevel, encryptedDataReferences);
+            return GetIntermediateReferencesFromData(data, parities, encryptedDataReferences);
+        }
+
+        public static bool IsSpanEncoded(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            return span[SpanSize - 1] > 128;
         }
         
         public static bool IsValid(SwarmHash hash, ReadOnlyMemory<byte> spanData, SwarmChunkBmt swarmChunkBmt)
@@ -140,7 +274,19 @@ namespace Etherna.BeeNet.Models
         }
 
         public static ulong SpanToLength(ReadOnlySpan<byte> span) =>
-            BinaryPrimitives.ReadUInt64LittleEndian(span);
+            DecodedSpanToLength(IsSpanEncoded(span) ?
+                DecodeSpan(span) :
+                span);
+        
+        public static RedundancyLevel SpanToRedundancyLevel(ReadOnlySpan<byte> span)
+        {
+            if (span.Length != SpanSize)
+                throw new ArgumentException("Span length must be " + SpanSize);
+            
+            if (!IsSpanEncoded(span))
+                return RedundancyLevel.None;
+            return (RedundancyLevel)(span[SpanSize - 1] & 127);
+        }
 
         public static void WriteSpan(ulong length, Span<byte> outputSpan) =>
             BinaryPrimitives.WriteUInt64LittleEndian(outputSpan, length);

@@ -22,13 +22,9 @@ namespace Etherna.BeeNet.Models
     public class SwarmUriTest
     {
         // Internal classes.
-        public class CombineSwarmUrisTestElement(
-            SwarmUri[] inputUris,
-            SwarmUri expectedUri)
-        {
-            public SwarmUri[] InputUris { get; } = inputUris;
-            public SwarmUri ExpectedUri { get; } = expectedUri;
-        }
+        public record CombineSwarmUrisTestElement(
+            SwarmUri[] InputUris,
+            SwarmUri ExpectedUri);
 
         public class HashAndPathToUriTestElement(
             SwarmReference? inputReference,
