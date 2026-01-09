@@ -96,7 +96,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Methods.
         public async Task<SwarmReference> HashDataAsync(byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             using var memoryStream = new MemoryStream(data);
             return await HashDataAsync(memoryStream).ConfigureAwait(false);
@@ -104,7 +104,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         
         public async Task<SwarmReference> HashDataAsync(Stream dataStream)
         {
-            ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
+            ArgumentNullException.ThrowIfNull(dataStream);
 
             if (!IsUsable)
                 throw new InvalidOperationException("Pipeline has already been used");

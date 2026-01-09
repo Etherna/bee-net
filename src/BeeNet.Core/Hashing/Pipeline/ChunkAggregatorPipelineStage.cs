@@ -177,7 +177,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                     .Select(c => SwarmCac.DecodedSpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
             if (levelChunks.Any(c => c.IsParityChunk))
-                SwarmCac.EncodeSpan(totalSpan, parityGenerator.RedundancyLevel);
+                SwarmCac.EncodeSpanInPlace(totalSpan, parityGenerator.RedundancyLevel);
             
             // Build total data from total span, and all the hashes in level.
             // If chunks are encrypted, append the encryption key after the chunk hash.
