@@ -21,21 +21,14 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public class BeeClientChunkStore(
-        IBeeClient beeClient,
-        IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-        : ReadOnlyChunkStoreBase(chunksCache)
+    public class BeeClientChunkStore(IBeeClient beeClient)
+        : ReadOnlyChunkStoreBase
     {
         // Fields.
         private readonly ConcurrentQueue<SwarmChunkBmt> swarmChunkBmtPool = new();
         
         // Methods.
-        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
-            beeClient.IsChunkExistingAsync(hash, cancellationToken: cancellationToken);
-
-        protected override async Task<SwarmChunk> LoadChunkAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default)
+        public override async Task<SwarmChunk> GetAsync(SwarmHash hash, CancellationToken cancellationToken = default)
         {
             // Get chunk trying to reuse bmts with concurrency.
             if (!swarmChunkBmtPool.TryDequeue(out var swarmChunkBmt))
@@ -58,5 +51,8 @@ namespace Etherna.BeeNet.Stores
                 swarmChunkBmtPool.Enqueue(swarmChunkBmt);
             }
         }
+
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            beeClient.IsChunkExistingAsync(hash, cancellationToken: cancellationToken);
     }
 }

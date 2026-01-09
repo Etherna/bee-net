@@ -42,38 +42,36 @@ namespace Etherna.BeeNet.Stores
         }
 
         // Methods.
+        public async Task<bool> AddAsync(
+            SwarmChunk chunk,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await firstChunkStore.AddAsync(chunk, cancellationToken).ConfigureAwait(false);
+            foreach (var chunkStore in mirroredChunkStores)
+                await chunkStore.AddAsync(chunk, cancellationToken).ConfigureAwait(false);
+            return result;
+        }
+        
         public Task<SwarmChunk> GetAsync(
             SwarmHash hash,
-            bool cacheChunk = false,
             CancellationToken cancellationToken = default) =>
-            firstChunkStore.GetAsync(hash, cacheChunk, cancellationToken);
+            firstChunkStore.GetAsync(hash, cancellationToken);
 
         public Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> GetAsync(
             IEnumerable<SwarmHash> hashes,
-            bool cacheChunk = false,
             int? canReturnAfterFailed = null,
             int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default) =>
             firstChunkStore.GetAsync(
-                hashes, cacheChunk, canReturnAfterFailed, canReturnAfterSucceeded, cancellationToken);
+                hashes, canReturnAfterFailed, canReturnAfterSucceeded, cancellationToken);
 
         public Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             firstChunkStore.HasChunkAsync(hash, cancellationToken);
 
         public Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
-            bool cacheChunk = false,
             CancellationToken cancellationToken = default) =>
-            firstChunkStore.TryGetAsync(hash, cacheChunk, cancellationToken);
-
-        public async Task<bool> AddAsync(SwarmChunk chunk, bool cacheChunk = false,
-            CancellationToken cancellationToken = default)
-        {
-            var result = await firstChunkStore.AddAsync(chunk, cacheChunk, cancellationToken).ConfigureAwait(false);
-            foreach (var chunkStore in mirroredChunkStores)
-                await chunkStore.AddAsync(chunk, cacheChunk, cancellationToken).ConfigureAwait(false);
-            return result;
-        }
+            firstChunkStore.TryGetAsync(hash, cancellationToken);
 
         public async Task<bool> RemoveAsync(SwarmHash hash, CancellationToken cancellationToken = default)
         {
