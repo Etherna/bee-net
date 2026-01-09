@@ -757,6 +757,7 @@ paths:
           description: Path to the file in the collection.
         - *a25
         - *a26
+        - *a13
         - *a27
       responses:
         "200":
