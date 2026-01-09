@@ -132,7 +132,7 @@ namespace Etherna.BeeNet.Stores
             List<SwarmHash[]> requestsBatches = [];
             
             var sourceChunkStoreMock = new Mock<IChunkStore>();
-            sourceChunkStoreMock.Setup(s => s.GetAsync(It.IsAny<SwarmHash>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            sourceChunkStoreMock.Setup(s => s.GetAsync(It.IsAny<SwarmHash>(), It.IsAny<CancellationToken>()))
                 .Returns<SwarmHash, bool, CancellationToken>(async (h, _, _) =>
                 {
                     await Task.Yield();

@@ -38,11 +38,11 @@ namespace Etherna.BeeNet.Stores
         private readonly TimeSpan levelDelay = customLevelDelay ?? TimeSpan.FromMilliseconds(300);
 
         // Methods.
-        protected override async Task<SwarmChunk> LoadChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        public override async Task<SwarmChunk> GetAsync(SwarmHash hash, CancellationToken cancellationToken = default)
         {
             // Without redundancy, simply bypass.
             if (level == RedundancyLevel.None)
-                return await sourceChunkStore.GetAsync(hash, false, cancellationToken).ConfigureAwait(false);
+                return await sourceChunkStore.GetAsync(hash, cancellationToken).ConfigureAwait(false);
             
             // Otherwise, try to resolve with replicas.
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -57,7 +57,7 @@ namespace Etherna.BeeNet.Stores
                 //   delay * 2: +2 replicas (tot 4)
                 //   delay * 3: +4 replicas (tot 8)
                 //   delay * 4: +8 replicas (tot 16)
-                List<Task<SwarmChunk>> getChunkTasks = [sourceChunkStore.GetAsync(hash, false, cts.Token)];
+                List<Task<SwarmChunk>> getChunkTasks = [sourceChunkStore.GetAsync(hash, cts.Token)];
                 foreach (var (replicaHeader, i) in replicaHeaders.Select((r, i) => (r, i)))
                 {
                     var delayMultiplier = 0;
@@ -108,7 +108,7 @@ namespace Etherna.BeeNet.Stores
             cancellationToken.ThrowIfCancellationRequested();
             
             // Get replica chunk.
-            var chunk = await sourceChunkStore.GetAsync(replicaHash, false, cancellationToken).ConfigureAwait(false);
+            var chunk = await sourceChunkStore.GetAsync(replicaHash, cancellationToken).ConfigureAwait(false);
             if (chunk is not SwarmSoc soc)
                 throw new SwarmChunkTypeException(chunk, "Chunk is not a SOC");
             return soc.InnerChunk;

@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Chunks
             foreach (var hash in hashes)
             {
                 var chunk = GetChunk(hash);
-                await destinationStore.AddAsync(chunk, false, cancellationToken).ConfigureAwait(false);
+                await destinationStore.AddAsync(chunk, cancellationToken).ConfigureAwait(false);
             }
         }
 
