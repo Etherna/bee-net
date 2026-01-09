@@ -1361,7 +1361,8 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+#pragma warning disable CA2025
+            ArgumentNullException.ThrowIfNull(chunk);
             using var memoryStream = new MemoryStream(chunk.GetFullPayloadToByteArray());
             return UploadChunkAsync(
                 memoryStream,
@@ -1372,6 +1373,7 @@ namespace Etherna.BeeNet
                 swarmAct,
                 swarmActHistoryAddress,
                 cancellationToken);
+#pragma warning restore CA2025
         }
 
         public async Task<SwarmReference> UploadChunkAsync(

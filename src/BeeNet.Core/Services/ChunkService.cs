@@ -300,6 +300,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null)
         {
+#pragma warning disable CA2025
             using var stream = new MemoryStream(data);
             return WriteDataChunksAsync(
                 chunkStore,
@@ -309,6 +310,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 redundancyLevel,
                 chunkCuncorrency);
+#pragma warning restore CA2025
         }
 
         public async Task<SwarmReference> WriteDataChunksAsync(

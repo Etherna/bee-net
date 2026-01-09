@@ -108,7 +108,7 @@ namespace Etherna.BeeNet.Models
             var dirs = Path.Split(SwarmAddress.Separator);
             var relativeToDirs = relativeTo.Path.TrimEnd(SwarmAddress.Separator).Split(SwarmAddress.Separator);
             if (dirs.Length < relativeToDirs.Length ||
-                !dirs[..relativeToDirs.Length].SequenceEqual(relativeToDirs))
+                !dirs.AsSpan(0, relativeToDirs.Length).SequenceEqual(relativeToDirs))
                 return false;
 
             output = new SwarmUri(null, string.Join(SwarmAddress.Separator, dirs[relativeToDirs.Length..]));

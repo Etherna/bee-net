@@ -158,7 +158,7 @@ namespace Etherna.BeeNet.Models
         {
             var decodedSpan = new byte[SpanSize];
             span.CopyTo(decodedSpan);
-            DecodeSpan(decodedSpan);
+            DecodeSpanInPlace(decodedSpan);
             return decodedSpan;
         }
         
@@ -166,7 +166,7 @@ namespace Etherna.BeeNet.Models
         /// Remove redundancy level from span keeping the real byte count for the chunk
         /// </summary>
         /// <param name="span">Span to decode</param>
-        public static void DecodeSpan(Span<byte> span)
+        public static void DecodeSpanInPlace(Span<byte> span)
         {
             if (span.Length != SpanSize)
                 throw new ArgumentException("Span length must be " + SpanSize);
@@ -185,7 +185,7 @@ namespace Etherna.BeeNet.Models
         {
             var encodedSpan = new byte[SpanSize];
             span.CopyTo(encodedSpan);
-            EncodeSpan(encodedSpan, level);
+            EncodeSpanInPlace(encodedSpan, level);
             return encodedSpan;
         }
 
@@ -194,7 +194,7 @@ namespace Etherna.BeeNet.Models
         /// </summary>
         /// <param name="span">Span to encode</param>
         /// <param name="level">Redundancy level to encode into span</param>
-        public static void EncodeSpan(Span<byte> span, RedundancyLevel level)
+        public static void EncodeSpanInPlace(Span<byte> span, RedundancyLevel level)
         {
             if (span.Length != SpanSize)
                 throw new ArgumentException("Span length must be " + SpanSize);
