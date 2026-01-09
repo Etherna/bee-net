@@ -523,10 +523,11 @@ namespace Etherna.BeeNet
                 var response = await generatedClient.BzzGetAsync(
                     reference: address.Reference.ToString(),
                     path: address.Path,
-                    (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
-                    swarmRedundancyFallbackMode,
-                    swarmChunkRetrievalTimeout,
-                    cancellationToken).ConfigureAwait(false);
+                    swarm_redundancy_level: (SwarmRedundancyLevel4?)swarmRedundancyLevel,
+                    swarm_redundancy_strategy: (SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                    swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                    swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
                 return new FileResponse(
                     response.ContentHeaders,
                     response.Headers,
