@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public class BeeClientChunkStore(IBeeClient beeClient)
+    public class SwarmClientChunkStore(ISwarmClient swarmClient)
         : ReadOnlyChunkStoreBase
     {
         // Fields.
@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Stores
 
             try
             {
-                return await beeClient.GetChunkAsync(
+                return await swarmClient.GetChunkAsync(
                     hash,
                     swarmChunkBmt,
                     cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -53,6 +53,6 @@ namespace Etherna.BeeNet.Stores
         }
 
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
-            beeClient.IsChunkExistingAsync(hash, cancellationToken: cancellationToken);
+            swarmClient.IsChunkExistingAsync(hash, cancellationToken: cancellationToken);
     }
 }

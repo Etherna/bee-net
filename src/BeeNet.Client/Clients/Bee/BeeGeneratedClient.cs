@@ -6,7 +6,7 @@
 
 #nullable enable
 
-using Etherna.BeeNet.Clients.Fixer;
+using Etherna.BeeNet.Clients.Bee.Fixer;
 using Etherna.BeeNet.Exceptions;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
@@ -25,7 +25,7 @@ using Etherna.BeeNet.Exceptions;
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace Etherna.BeeNet.Clients
+namespace Etherna.BeeNet.Clients.Bee
 {
     using System = global::System;
 
@@ -11918,7 +11918,7 @@ namespace Etherna.BeeNet.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response52 : Etherna.BeeNet.Clients.Fixer.PostageBatchDto
+    internal partial class Response52 : Etherna.BeeNet.Clients.Bee.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
@@ -17307,7 +17307,7 @@ namespace Etherna.BeeNet.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Stamps : Etherna.BeeNet.Clients.Fixer.PostageBatchDto
+    internal partial class Stamps : Etherna.BeeNet.Clients.Bee.Fixer.PostageBatchDto
     {
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;

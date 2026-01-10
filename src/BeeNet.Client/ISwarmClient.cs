@@ -25,10 +25,12 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet
 {
-    public interface IBeeClient
+    public interface ISwarmClient
     {
         // Properties.
-        Uri BeeUrl { get; }
+        public SwarmClients ApiCompatibility { get; }
+        public bool IsDryMode { get; }
+        public Uri NodeUrl { get; }
         
         // Methods.
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
