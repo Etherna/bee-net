@@ -30,9 +30,6 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             // Act 
             var result = await beeNodeClient.CashoutChequeForPeerAsync(peerId);
 
-            // Assert 
-            Assert.StartsWith("0x", result);
-
             // Wait for avoid interferences with next tests.
             await Task.Delay(180000);
         }
@@ -51,7 +48,6 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert 
-            Assert.StartsWith("0x", result);
             var actualChequebookBalance = await beeNodeClient.GetChequebookBalanceAsync();
             Assert.Equal(originalChequebookBalance.AvailableBalance + amount, actualChequebookBalance.AvailableBalance);
             Assert.Equal(originalChequebookBalance.TotalBalance + amount, actualChequebookBalance.TotalBalance);

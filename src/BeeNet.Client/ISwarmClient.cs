@@ -63,7 +63,7 @@ namespace Etherna.BeeNet
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> CashoutChequeForPeerAsync(
+        Task<EthTxHash> CashoutChequeForPeerAsync(
             string peerId,
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
@@ -82,7 +82,7 @@ namespace Etherna.BeeNet
         /// <param name="peerAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> ConnectToPeerAsync(
+        Task<SwarmOverlayAddress> ConnectToPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default);
 
@@ -127,7 +127,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> DeleteTransactionAsync(
+        Task<EthTxHash> DeleteTransactionAsync(
             EthTxHash txHash,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);
@@ -137,7 +137,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> DepositIntoChequebookAsync(
+        Task<EthTxHash> DepositIntoChequebookAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);

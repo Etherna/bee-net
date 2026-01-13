@@ -24,7 +24,7 @@ using Etherna.BeeNet.Exceptions;
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace Etherna.BeeNet.Clients
+namespace Etherna.BeeNet.Clients.Beehive
 {
     using System = global::System;
 
@@ -168,7 +168,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, long? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -178,7 +178,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, long? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -355,22 +355,22 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsDiluteAsync(string batchId, int depth, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsTopupAsync(string batchId, long amount, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -384,7 +384,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gas_Price">Ethereum tx gas price</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -398,7 +398,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gas_Price">Ethereum tx gas price</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -2818,7 +2818,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, long? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -3079,7 +3079,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, long? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -5756,7 +5756,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -5873,7 +5873,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsDiluteAsync(string batchId, int depth, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -5990,7 +5990,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -6117,7 +6117,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsTopupAsync(string batchId, long amount, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -6253,7 +6253,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gas_Price">Ethereum tx gas price</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -6378,7 +6378,7 @@ namespace Etherna.BeeNet.Clients
         /// <param name="gas_Price">Ethereum tx gas price</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, long? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> V1StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -6700,7 +6700,7 @@ namespace Etherna.BeeNet.Clients
         public long? Value { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("start")]
-        public long Start { get; set; } = default!;
+        public ulong Start { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("owner")]
         public string Owner { get; set; } = default!;
@@ -6816,7 +6816,7 @@ namespace Etherna.BeeNet.Clients
         public int BucketDepth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("blockNumber")]
-        public long BlockNumber { get; set; } = default!;
+        public ulong BlockNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
         public bool ImmutableFlag { get; set; } = default!;

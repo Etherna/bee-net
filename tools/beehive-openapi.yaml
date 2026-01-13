@@ -2307,7 +2307,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -2647,7 +2647,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -4862,7 +4862,7 @@
             "in": "header",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -4999,7 +4999,7 @@
             "in": "header",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -5141,7 +5141,7 @@
             "in": "header",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -5303,7 +5303,7 @@
             "in": "header",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -5479,7 +5479,7 @@
             "description": "Ethereum tx gas limit",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -5616,7 +5616,7 @@
             "description": "Ethereum tx gas limit",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "uint64"
             }
           },
           {
@@ -5849,7 +5849,7 @@
           },
           "start": {
             "type": "integer",
-            "format": "int64",
+            "format": "uint64",
             "readOnly": true
           },
           "owner": {
@@ -6003,7 +6003,7 @@
           },
           "blockNumber": {
             "type": "integer",
-            "format": "int64"
+            "format": "uint64"
           },
           "immutableFlag": {
             "type": "boolean"

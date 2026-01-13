@@ -12,29 +12,19 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Etherna.BeeNet.Models
 {
     public class EnvelopeResponse(
-        string issuer,
-        string index,
-        string timestamp,
-        string signature)
+        EthAddress issuer,
+        PostageBucketIndex index,
+        DateTimeOffset timestamp,
+        ReadOnlyMemory<byte> signature)
     {
-        public string Issuer { get; set; } = issuer;
-
-        /// <summary>
-        /// Hexadecimal string representation of 8 bytes
-        /// </summary>
-        public string Index { get; set; } = index;
-
-        /// <summary>
-        /// Hexadecimal string representation of 8 bytes
-        /// </summary>
-        public string Timestamp { get; set; } = timestamp;
-
-        /// <summary>
-        /// Hexadecimal string representation of cryptographic signature
-        /// </summary>
-        public string Signature { get; set; } = signature;
+        public EthAddress Issuer { get; } = issuer;
+        public PostageBucketIndex Index { get; } = index;
+        public DateTimeOffset Timestamp { get; } = timestamp;
+        public ReadOnlyMemory<byte> Signature { get; } = signature;
     }
 }
