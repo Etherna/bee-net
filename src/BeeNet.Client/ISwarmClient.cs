@@ -278,11 +278,10 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="reference">Swarm content reference</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmChunk> GetChunkAsync(
-            SwarmReference reference,
+            SwarmHash hash,
             SwarmChunkBmt swarmChunkBmt,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
@@ -291,11 +290,10 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="reference">Swarm content reference</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<Stream> GetChunkStreamAsync(
-            SwarmReference reference,
+            SwarmHash hash,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,

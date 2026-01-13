@@ -11358,10 +11358,10 @@ namespace Etherna.BeeNet.Clients.Bee
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chainTip")]
-        public int ChainTip { get; set; } = default!;
+        public ulong ChainTip { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("block")]
-        public long Block { get; set; } = default!;
+        public ulong Block { get; set; } = default!;
 
         /// <summary>
         /// Numeric string that represents integer which might exceed `Number.MAX_SAFE_INTEGER` limit (2^53-1)

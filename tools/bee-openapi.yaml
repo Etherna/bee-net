@@ -1910,9 +1910,10 @@ paths:
                 properties:
                   chainTip:
                     type: integer
+                    format: uint64
                   block:
                     type: integer
-                    format: int64
+                    format: uint64
                   totalAmount:
                     &a48
                     description: Numeric string that represents integer which might exceed

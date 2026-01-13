@@ -124,7 +124,15 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -296,7 +304,15 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -1546,7 +1562,15 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "binary/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -1684,7 +1708,15 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "binary/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -5758,13 +5790,13 @@
       "ChainStateDto": {
         "type": "object",
         "properties": {
-          "chainTip": {
-            "type": "integer",
-            "format": "int64"
-          },
           "block": {
             "type": "integer",
-            "format": "int64"
+            "format": "uint64"
+          },
+          "chainTip": {
+            "type": "integer",
+            "format": "uint64"
           },
           "totalAmount": {
             "type": "integer",
@@ -5928,7 +5960,7 @@
           },
           "collisions": {
             "type": "integer",
-            "format": "int32"
+            "format": "uint32"
           }
         },
         "additionalProperties": false
@@ -5946,7 +5978,7 @@
           },
           "bucketUpperBound": {
             "type": "integer",
-            "format": "int32",
+            "format": "uint32",
             "readOnly": true
           },
           "buckets": {
@@ -5974,7 +6006,7 @@
           },
           "utilization": {
             "type": "integer",
-            "format": "int32"
+            "format": "uint32"
           },
           "usable": {
             "type": "boolean"
