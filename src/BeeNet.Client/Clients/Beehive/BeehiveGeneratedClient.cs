@@ -81,7 +81,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task BzzGetAsync(string address, SwarmRedundancyLevel5? swarm_Redundancy_Level = null, SwarmRedundancyStrategy3? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, SwarmRedundancyLevel5? swarm_Redundancy_Level = null, SwarmRedundancyStrategy3? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -91,7 +91,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task V1BzzGetAsync(string address, SwarmRedundancyLevel7? swarm_Redundancy_Level = null, SwarmRedundancyStrategy4? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> V1BzzGetAsync(string address, SwarmRedundancyLevel7? swarm_Redundancy_Level = null, SwarmRedundancyStrategy4? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -291,7 +291,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy7? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy7? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -301,7 +301,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task V1SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy8? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> V1SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy8? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -1229,7 +1229,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task BzzGetAsync(string address, SwarmRedundancyLevel5? swarm_Redundancy_Level = null, SwarmRedundancyStrategy3? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, SwarmRedundancyLevel5? swarm_Redundancy_Level = null, SwarmRedundancyStrategy3? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -1250,6 +1250,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Redundancy_Fallback_Mode != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Redundancy-Fallback-Mode", ConvertToString(swarm_Redundancy_Fallback_Mode, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -1280,9 +1281,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -1419,7 +1423,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task V1BzzGetAsync(string address, SwarmRedundancyLevel7? swarm_Redundancy_Level = null, SwarmRedundancyStrategy4? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> V1BzzGetAsync(string address, SwarmRedundancyLevel7? swarm_Redundancy_Level = null, SwarmRedundancyStrategy4? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -1440,6 +1444,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Redundancy_Fallback_Mode != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Redundancy-Fallback-Mode", ConvertToString(swarm_Redundancy_Fallback_Mode, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -1470,9 +1475,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -4746,7 +4754,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy7? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy7? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4770,6 +4778,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Redundancy_Fallback_Mode != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Redundancy-Fallback-Mode", ConvertToString(swarm_Redundancy_Fallback_Mode, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -4802,9 +4811,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -4990,7 +5002,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task V1SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy8? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> V1SocGetAsync(string owner, string id, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy8? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -5014,6 +5026,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Redundancy_Fallback_Mode != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Redundancy-Fallback-Mode", ConvertToString(swarm_Redundancy_Fallback_Mode, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -5046,9 +5059,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -6814,7 +6830,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         public string BatchID { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("utilization")]
-        public int Utilization { get; set; } = default!;
+        public uint Utilization { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("usable")]
         public bool Usable { get; set; } = default!;
@@ -7351,6 +7367,8 @@ namespace Etherna.BeeNet.Clients.Beehive
         private System.IDisposable? _response;
 
         public int StatusCode { get; private set; }
+        
+        public System.Net.Http.Headers.HttpContentHeaders? ContentHeaders { get; private set; }
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
@@ -7361,9 +7379,10 @@ namespace Etherna.BeeNet.Clients.Beehive
             get { return StatusCode == 206; }
         }
 
-        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
+        public FileResponse(int statusCode, System.Net.Http.Headers.HttpContentHeaders? contentHeaders, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
         {
             StatusCode = statusCode;
+            ContentHeaders = contentHeaders;
             Headers = headers;
             Stream = stream;
             _client = client;

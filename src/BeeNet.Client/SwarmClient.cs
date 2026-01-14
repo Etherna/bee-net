@@ -909,9 +909,20 @@ namespace Etherna.BeeNet
 
         public async Task<BzzValue> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
-            CancellationToken cancellationToken = default) =>
-            BzzValue.FromPlurString(
-                (await beeGeneratedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false)).Balance);
+            CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return BzzValue.FromPlurString(
+                        (await beeGeneratedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false))
+                        .Balance);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<FileResponse> GetFileAsync(
             SwarmAddress address,
@@ -925,160 +936,325 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            if (!address.HasPath)
+            switch (ApiCompatibility)
             {
-                var response = await beeGeneratedClient.BzzGetAsync(
-                    reference: address.Reference.ToString(),
-                    swarm_cache: swarmCache,
-                    swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel3?)swarmRedundancyLevel,
-                    swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
-                    swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
-                    swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
-                    swarm_act_timestamp: swarmActTimestamp,
-                    swarm_act_publisher: swarmActPublisher,
-                    swarm_act_history_address: swarmActHistoryAddress,
-                    cancellationToken: cancellationToken).ConfigureAwait(false);
-                return new FileResponse(
-                    response.ContentHeaders,
-                    response.Headers,
-                    response.Stream);
-            }
-            else
-            {
-                var response = await beeGeneratedClient.BzzGetAsync(
-                    reference: address.Reference.ToString(),
-                    path: address.Path,
-                    swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
-                    swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
-                    swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
-                    swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
-                    cancellationToken: cancellationToken).ConfigureAwait(false);
-                return new FileResponse(
-                    response.ContentHeaders,
-                    response.Headers,
-                    response.Stream);
+                case SwarmClients.Bee:
+                {
+                    if (!address.HasPath)
+                    {
+                        var response = await beeGeneratedClient.BzzGetAsync(
+                            reference: address.Reference.ToString(),
+                            swarm_cache: swarmCache,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel3?)swarmRedundancyLevel,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
+                            swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                            swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                            swarm_act_timestamp: swarmActTimestamp,
+                            swarm_act_publisher: swarmActPublisher,
+                            swarm_act_history_address: swarmActHistoryAddress,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                        return new FileResponse(
+                            response.ContentHeaders,
+                            response.Headers,
+                            response.Stream);
+                    }
+                    else
+                    {
+                        var response = await beeGeneratedClient.BzzGetAsync(
+                            reference: address.Reference.ToString(),
+                            path: address.Path,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                            swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                            swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                        return new FileResponse(
+                            response.ContentHeaders,
+                            response.Headers,
+                            response.Stream);
+                    }
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.BzzGetAsync(
+                        address: address.ToString(),
+                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel5?)swarmRedundancyLevel,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    return new FileResponse(
+                        response.ContentHeaders,
+                        response.Headers,
+                        response.Stream);
+                }
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
         public async Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
-            return response.Batches.Select(batch => (
-                    new PostageBatch(
-                        id: batch.BatchID,
-                        amount: BzzValue.FromPlurString(batch.Value),
-                        blockNumber: batch.Start,
-                        depth: batch.Depth,
-                        exists: true,
-                        isImmutable: batch.Immutable,
-                        isUsable: true,
-                        label: null,
-                        ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
-                        utilization: 0),
-                    EthAddress.FromString(batch.Owner)))
-                .ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Batches.Select(batch => (
+                            new PostageBatch(
+                                id: batch.BatchID,
+                                amount: BzzValue.FromPlurString(batch.Value),
+                                blockNumber: batch.Start,
+                                depth: batch.Depth,
+                                exists: true,
+                                isImmutable: batch.Immutable,
+                                isUsable: true,
+                                label: null,
+                                ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                                utilization: 0),
+                            EthAddress.FromString(batch.Owner)))
+                        .ToArray();
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Batches.Select(batch => (
+                            new PostageBatch(
+                                id: batch.BatchID,
+                                amount: BzzValue.FromPlurLong(batch.Value!.Value),
+                                blockNumber: batch.Start,
+                                depth: batch.Depth,
+                                exists: true,
+                                isImmutable: batch.Immutable,
+                                isUsable: true,
+                                label: null,
+                                ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                                utilization: 0),
+                            EthAddress.FromString(batch.Owner)))
+                        .ToArray();
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.HealthAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                isStatusOk: response.Status switch
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
                 {
-                    Clients.Bee.Response20Status.Ok => true,
-                    Clients.Bee.Response20Status.Nok => false,
-                    _ => throw new InvalidOperationException()
-                },
-                version: response.Version,
-                apiVersion: response.ApiVersion);
+                    var response = await beeGeneratedClient.HealthAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        isStatusOk: response.Status switch
+                        {
+                            Clients.Bee.Response20Status.Ok => true,
+                            Clients.Bee.Response20Status.Nok => false,
+                            _ => throw new InvalidOperationException()
+                        },
+                        version: response.Version,
+                        apiVersion: response.ApiVersion);
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.HealthAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        isStatusOk: response.Status switch
+                        {
+                            "ok" => true,
+                            "nok" => false,
+                            _ => throw new InvalidOperationException()
+                        },
+                        version: response.Version,
+                        apiVersion: response.ApiVersion);
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<NeighborhoodStatus[]> GetNeighborhoodsStatus(
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StatusNeighborhoodsAsync(cancellationToken).ConfigureAwait(false);
-            return response.Neighborhoods.Select(s => new NeighborhoodStatus(
-                s.Neighborhood,
-                s.Proximity,
-                s.ReserveSizeWithinRadius)).ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.StatusNeighborhoodsAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Neighborhoods.Select(s => new NeighborhoodStatus(
+                        s.Neighborhood,
+                        s.Proximity,
+                        s.ReserveSizeWithinRadius)).ToArray();
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<SwarmNodeAddresses> GetNodeAddressesAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.AddressesAsync(cancellationToken).ConfigureAwait(false);
-            return new SwarmNodeAddresses(
-                underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
-                overlay: response.Overlay,
-                ethereum: response.Ethereum,
-                chainAddress: response.Chain_address,
-                publicKey: response.PublicKey,
-                pssPublicKey: response.PssPublicKey);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.AddressesAsync(cancellationToken).ConfigureAwait(false);
+                    return new SwarmNodeAddresses(
+                        underlay: response.Underlay.Where(i => !string.IsNullOrWhiteSpace(i)),
+                        overlay: response.Overlay,
+                        ethereum: response.Ethereum,
+                        chainAddress: response.Chain_address,
+                        publicKey: response.PublicKey,
+                        pssPublicKey: response.PssPublicKey);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<NodeInfo> GetNodeInfoAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.NodeAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                beeMode: response.BeeMode switch
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
                 {
-                    Clients.Bee.Response31BeeMode.Dev => InfoBeeMode.Dev,
-                    Clients.Bee.Response31BeeMode.Full => InfoBeeMode.Full,
-                    Clients.Bee.Response31BeeMode.Light => InfoBeeMode.Light,
-                    _ => throw new InvalidOperationException()
-                },
-                chequebookEnabled: response.ChequebookEnabled,
-                swapEnabled: response.SwapEnabled);
+                    var response = await beeGeneratedClient.NodeAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        beeMode: response.BeeMode switch
+                        {
+                            Clients.Bee.Response31BeeMode.Dev => InfoBeeMode.Dev,
+                            Clients.Bee.Response31BeeMode.Full => InfoBeeMode.Full,
+                            Clients.Bee.Response31BeeMode.Light => InfoBeeMode.Light,
+                            _ => throw new InvalidOperationException()
+                        },
+                        chequebookEnabled: response.ChequebookEnabled,
+                        swapEnabled: response.SwapEnabled);
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.NodeAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        beeMode: response.BeeMode switch
+                        {
+                            "dev" => InfoBeeMode.Dev,
+                            "full" => InfoBeeMode.Full,
+                            "light" => InfoBeeMode.Light,
+                            _ => throw new InvalidOperationException()
+                        },
+                        chequebookEnabled: response.ChequebookEnabled,
+                        swapEnabled: response.SwapEnabled);
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<PostageBatch[]> GetOwnedPostageBatchesAsync(
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
-            return response.Stamps.Select(b =>
-                new PostageBatch(
-                    amount: b.Amount != null ? BzzValue.FromPlurString(b.Amount) : null,
-                    depth: b.Depth,
-                    blockNumber: b.BlockNumber,
-                    exists: b.Exists,
-                    id: b.BatchID,
-                    isImmutable: b.ImmutableFlag,
-                    label: b.Label,
-                    ttl: TimeSpan.FromSeconds(Math.Min(b.BatchTTL, TimeSpanMaxSeconds)),
-                    isUsable: b.Usable,
-                    utilization: b.Utilization))
-                .ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Stamps.Select(b =>
+                            new PostageBatch(
+                                amount: b.Amount != null ? BzzValue.FromPlurString(b.Amount) : null,
+                                depth: b.Depth,
+                                blockNumber: b.BlockNumber,
+                                exists: b.Exists,
+                                id: b.BatchID,
+                                isImmutable: b.ImmutableFlag,
+                                label: b.Label,
+                                ttl: TimeSpan.FromSeconds(Math.Min(b.BatchTTL, TimeSpanMaxSeconds)),
+                                isUsable: b.Usable,
+                                utilization: b.Utilization))
+                        .ToArray();
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Stamps.Select(b =>
+                            new PostageBatch(
+                                amount: b.Amount != null ? BzzValue.FromPlurLong(b.Amount.Value) : null,
+                                depth: b.Depth,
+                                blockNumber: b.BlockNumber,
+                                exists: b.Exists,
+                                id: b.BatchID,
+                                isImmutable: b.ImmutableFlag,
+                                label: b.Label,
+                                ttl: TimeSpan.FromSeconds(Math.Min(b.BatchTTL, TimeSpanMaxSeconds)),
+                                isUsable: b.Usable,
+                                utilization: b.Utilization))
+                        .ToArray();
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<EthTx[]> GetPendingTransactionsAsync(
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
-            return response.PendingTransactions.Select(tx => new EthTx(
-                transactionHash: tx.TransactionHash,
-                to: tx.To,
-                nonce: tx.Nonce,
-                gasPrice: XDaiValue.FromWeiString(tx.GasPrice),
-                gasLimit: tx.GasLimit,
-                data: tx.Data,
-                created: tx.Created,
-                description: tx.Description,
-                value: XDaiValue.FromWeiString(tx.Value)))
-                .ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
+                    return response.PendingTransactions.Select(tx => new EthTx(
+                            transactionHash: tx.TransactionHash,
+                            to: tx.To,
+                            nonce: tx.Nonce,
+                            gasPrice: XDaiValue.FromWeiString(tx.GasPrice),
+                            gasLimit: tx.GasLimit,
+                            data: tx.Data,
+                            created: tx.Created,
+                            description: tx.Description,
+                            value: XDaiValue.FromWeiString(tx.Value)))
+                        .ToArray();
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<bool> GetPinStatusAsync(
             SwarmReference reference,
             CancellationToken cancellationToken = default)
         {
-            try
+            switch (ApiCompatibility)
             {
-                return (await beeGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
-                    .Reference == reference;
-            }
-            catch (BeeNetApiException e) when (e.StatusCode == 404)
-            {
-                return false;
+                case SwarmClients.Bee:
+                {
+                    try
+                    {
+                        return (await beeGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
+                            .Reference == reference;
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 404)
+                    {
+                        return false;
+                    }
+                }
+                case SwarmClients.Beehive:
+                {
+                    try
+                    {
+                        return (await beehiveGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
+                            .Reference == reference;
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 404)
+                    {
+                        return false;
+                    }
+                }
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
@@ -1086,133 +1262,231 @@ namespace Etherna.BeeNet
             PostageBatchId batchId,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StampsGetAsync(
-                batchId.ToString(),
-                cancellationToken).ConfigureAwait(false);
-            return new PostageBatch(
-                amount: response.Amount != null ? BzzValue.FromPlurString(response.Amount) : null,
-                depth: response.Depth,
-                blockNumber: response.BlockNumber,
-                exists: response.Exists,
-                id: response.BatchID,
-                isImmutable: response.ImmutableFlag,
-                label: response.Label,
-                ttl: TimeSpan.FromSeconds(Math.Min(response.BatchTTL, TimeSpanMaxSeconds)),
-                isUsable: response.Usable,
-                utilization: response.Utilization);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.StampsGetAsync(
+                        batchId.ToString(),
+                        cancellationToken).ConfigureAwait(false);
+                    return new PostageBatch(
+                        amount: response.Amount != null ? BzzValue.FromPlurString(response.Amount) : null,
+                        depth: response.Depth,
+                        blockNumber: response.BlockNumber,
+                        exists: response.Exists,
+                        id: response.BatchID,
+                        isImmutable: response.ImmutableFlag,
+                        label: response.Label,
+                        ttl: TimeSpan.FromSeconds(Math.Min(response.BatchTTL, TimeSpanMaxSeconds)),
+                        isUsable: response.Usable,
+                        utilization: response.Utilization);
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.StampsGetAsync(
+                        batchId.ToString(),
+                        cancellationToken).ConfigureAwait(false);
+                    return new PostageBatch(
+                        amount: response.Amount != null ? BzzValue.FromPlurLong(response.Amount.Value) : null,
+                        depth: response.Depth,
+                        blockNumber: response.BlockNumber,
+                        exists: response.Exists,
+                        id: response.BatchID,
+                        isImmutable: response.ImmutableFlag,
+                        label: response.Label,
+                        ttl: TimeSpan.FromSeconds(Math.Min(response.BatchTTL, TimeSpanMaxSeconds)),
+                        isUsable: response.Usable,
+                        utilization: response.Utilization);
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<PostageBucketsStatus> GetPostageBatchBucketsAsync(
             PostageBatchId batchId,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StampsBucketsAsync(
-                batchId.ToString(),
-                cancellationToken).ConfigureAwait(false);
-            return new(
-                bucketDepth: response.BucketDepth,
-                bucketUpperBound: (uint)response.BucketUpperBound,
-                collisions: response.Buckets.Select(b => (uint)b.Collisions),
-                depth: response.Depth);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.StampsBucketsAsync(
+                        batchId.ToString(),
+                        cancellationToken).ConfigureAwait(false);
+                    return new(
+                        bucketDepth: response.BucketDepth,
+                        bucketUpperBound: (uint)response.BucketUpperBound,
+                        collisions: response.Buckets.Select(b => (uint)b.Collisions),
+                        depth: response.Depth);
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.StampsBucketsAsync(
+                        batchId.ToString(),
+                        cancellationToken).ConfigureAwait(false);
+                    return new(
+                        bucketDepth: response.BucketDepth,
+                        bucketUpperBound: (uint)response.BucketUpperBound,
+                        collisions: response.Buckets.Select(b => (uint)b.Collisions),
+                        depth: response.Depth);
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<bool> GetReadinessAsync(CancellationToken cancellationToken = default)
         {
-            try
+            switch (ApiCompatibility)
             {
-                await beeGeneratedClient.ReadinessAsync(cancellationToken).ConfigureAwait(false);
-                return true;
-            }
-            catch (BeeNetApiException e) when (e.StatusCode == 400)
-            {
-                return false;
+                case SwarmClients.Bee:
+                {
+                    try
+                    {
+                        await beeGeneratedClient.ReadinessAsync(cancellationToken).ConfigureAwait(false);
+                        return true;
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 400)
+                    {
+                        return false;
+                    }
+                }
+                case SwarmClients.Beehive:
+                {
+                    try
+                    {
+                        await beehiveGeneratedClient.ReadinessAsync(cancellationToken).ConfigureAwait(false);
+                        return true;
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 400)
+                    {
+                        return false;
+                    }
+                }
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
         public async Task<ReserveCommitment> GetReserveCommitmentAsync(int depth, string anchor1, string anchor2,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.RchashAsync(depth, anchor1, anchor2, cancellationToken).ConfigureAwait(false);
-            return new(
-                duration: TimeSpan.FromSeconds(Math.Min(response.DurationSeconds, TimeSpanMaxSeconds)),
-                hash: response.Hash,
-                proof1: new ReserveCommitmentProof(
-                    chunkSpan: response.Proofs.Proof1.ChunkSpan,
-                    postageProof: new PostageProof(
-                        index: response.Proofs.Proof1.PostageProof.Index,
-                        postageId: response.Proofs.Proof1.PostageProof.PostageId,
-                        signature: response.Proofs.Proof1.PostageProof.Signature,
-                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
-                            long.Parse(response.Proofs.Proof1.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
-                    proofSegments: response.Proofs.Proof1.ProofSegments ?? Array.Empty<string>(),
-                    proofSegments2: response.Proofs.Proof1.ProofSegments2 ?? Array.Empty<string>(),
-                    proofSegments3: response.Proofs.Proof1.ProofSegments3 ?? Array.Empty<string>(),
-                    proveSegment: response.Proofs.Proof1.ProveSegment,
-                    proveSegment2: response.Proofs.Proof1.ProveSegment2,
-                    socProof: (response.Proofs.Proof1.SocProof ?? Array.Empty<Clients.Bee.SocProof>()).Select(
-                        p => new Models.SocProof(
-                            chunkHash: p.ChunkAddr,
-                            identifier: p.Identifier,
-                            signature: p.Signature,
-                            signer: p.Signer))),
-                proof2: new ReserveCommitmentProof(
-                    chunkSpan: response.Proofs.Proof2.ChunkSpan,
-                    postageProof: new PostageProof(
-                        index: response.Proofs.Proof2.PostageProof.Index,
-                        postageId: response.Proofs.Proof2.PostageProof.PostageId,
-                        signature: response.Proofs.Proof2.PostageProof.Signature,
-                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
-                            long.Parse(response.Proofs.Proof2.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
-                    proofSegments: response.Proofs.Proof2.ProofSegments ?? Array.Empty<string>(),
-                    proofSegments2: response.Proofs.Proof2.ProofSegments2 ?? Array.Empty<string>(),
-                    proofSegments3: response.Proofs.Proof2.ProofSegments3 ?? Array.Empty<string>(),
-                    proveSegment: response.Proofs.Proof2.ProveSegment,
-                    proveSegment2: response.Proofs.Proof2.ProveSegment2,
-                    socProof: (response.Proofs.Proof2.SocProof ?? Array.Empty<Clients.Bee.SocProof2>()).Select(
-                        p => new Models.SocProof(
-                            chunkHash: p.ChunkAddr,
-                            identifier: p.Identifier,
-                            signature: p.Signature,
-                            signer: p.Signer))),
-                proofLast: new ReserveCommitmentProof(
-                    chunkSpan: response.Proofs.ProofLast.ChunkSpan,
-                    postageProof: new PostageProof(
-                        index: response.Proofs.ProofLast.PostageProof.Index,
-                        postageId: response.Proofs.ProofLast.PostageProof.PostageId,
-                        signature: response.Proofs.ProofLast.PostageProof.Signature,
-                        timeStamp:  DateTimeOffset.FromUnixTimeSeconds(
-                            long.Parse(response.Proofs.ProofLast.PostageProof.TimeStamp, CultureInfo.InvariantCulture))),
-                    proofSegments: response.Proofs.ProofLast.ProofSegments ?? Array.Empty<string>(),
-                    proofSegments2: response.Proofs.ProofLast.ProofSegments2 ?? Array.Empty<string>(),
-                    proofSegments3: response.Proofs.ProofLast.ProofSegments3 ?? Array.Empty<string>(),
-                    proveSegment: response.Proofs.ProofLast.ProveSegment,
-                    proveSegment2: response.Proofs.ProofLast.ProveSegment2,
-                    socProof: (response.Proofs.ProofLast.SocProof ?? Array.Empty<Clients.Bee.SocProof3>()).Select(
-                        p => new Models.SocProof(
-                            chunkHash: p.ChunkAddr,
-                            identifier: p.Identifier,
-                            signature: p.Signature,
-                            signer: p.Signer))));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.RchashAsync(depth, anchor1, anchor2, cancellationToken)
+                        .ConfigureAwait(false);
+                    return new(
+                        duration: TimeSpan.FromSeconds(Math.Min(response.DurationSeconds, TimeSpanMaxSeconds)),
+                        hash: response.Hash,
+                        proof1: new ReserveCommitmentProof(
+                            chunkSpan: response.Proofs.Proof1.ChunkSpan,
+                            postageProof: new PostageProof(
+                                index: response.Proofs.Proof1.PostageProof.Index,
+                                postageId: response.Proofs.Proof1.PostageProof.PostageId,
+                                signature: response.Proofs.Proof1.PostageProof.Signature,
+                                timeStamp: DateTimeOffset.FromUnixTimeSeconds(
+                                    long.Parse(response.Proofs.Proof1.PostageProof.TimeStamp,
+                                        CultureInfo.InvariantCulture))),
+                            proofSegments: response.Proofs.Proof1.ProofSegments ?? Array.Empty<string>(),
+                            proofSegments2: response.Proofs.Proof1.ProofSegments2 ?? Array.Empty<string>(),
+                            proofSegments3: response.Proofs.Proof1.ProofSegments3 ?? Array.Empty<string>(),
+                            proveSegment: response.Proofs.Proof1.ProveSegment,
+                            proveSegment2: response.Proofs.Proof1.ProveSegment2,
+                            socProof: (response.Proofs.Proof1.SocProof ?? Array.Empty<Clients.Bee.SocProof>())
+                            .Select(p => new Models.SocProof(
+                                chunkHash: p.ChunkAddr,
+                                identifier: p.Identifier,
+                                signature: p.Signature,
+                                signer: p.Signer))),
+                        proof2: new ReserveCommitmentProof(
+                            chunkSpan: response.Proofs.Proof2.ChunkSpan,
+                            postageProof: new PostageProof(
+                                index: response.Proofs.Proof2.PostageProof.Index,
+                                postageId: response.Proofs.Proof2.PostageProof.PostageId,
+                                signature: response.Proofs.Proof2.PostageProof.Signature,
+                                timeStamp: DateTimeOffset.FromUnixTimeSeconds(
+                                    long.Parse(response.Proofs.Proof2.PostageProof.TimeStamp,
+                                        CultureInfo.InvariantCulture))),
+                            proofSegments: response.Proofs.Proof2.ProofSegments ?? Array.Empty<string>(),
+                            proofSegments2: response.Proofs.Proof2.ProofSegments2 ?? Array.Empty<string>(),
+                            proofSegments3: response.Proofs.Proof2.ProofSegments3 ?? Array.Empty<string>(),
+                            proveSegment: response.Proofs.Proof2.ProveSegment,
+                            proveSegment2: response.Proofs.Proof2.ProveSegment2,
+                            socProof: (response.Proofs.Proof2.SocProof ?? Array.Empty<Clients.Bee.SocProof2>())
+                            .Select(p => new Models.SocProof(
+                                chunkHash: p.ChunkAddr,
+                                identifier: p.Identifier,
+                                signature: p.Signature,
+                                signer: p.Signer))),
+                        proofLast: new ReserveCommitmentProof(
+                            chunkSpan: response.Proofs.ProofLast.ChunkSpan,
+                            postageProof: new PostageProof(
+                                index: response.Proofs.ProofLast.PostageProof.Index,
+                                postageId: response.Proofs.ProofLast.PostageProof.PostageId,
+                                signature: response.Proofs.ProofLast.PostageProof.Signature,
+                                timeStamp: DateTimeOffset.FromUnixTimeSeconds(
+                                    long.Parse(response.Proofs.ProofLast.PostageProof.TimeStamp,
+                                        CultureInfo.InvariantCulture))),
+                            proofSegments: response.Proofs.ProofLast.ProofSegments ?? Array.Empty<string>(),
+                            proofSegments2: response.Proofs.ProofLast.ProofSegments2 ?? Array.Empty<string>(),
+                            proofSegments3: response.Proofs.ProofLast.ProofSegments3 ?? Array.Empty<string>(),
+                            proveSegment: response.Proofs.ProofLast.ProveSegment,
+                            proveSegment2: response.Proofs.ProofLast.ProveSegment2,
+                            socProof: (response.Proofs.ProofLast.SocProof ?? Array.Empty<Clients.Bee.SocProof3>())
+                            .Select(p => new Models.SocProof(
+                                chunkHash: p.ChunkAddr,
+                                identifier: p.Identifier,
+                                signature: p.Signature,
+                                signer: p.Signer))));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<ReserveState> GetReserveStateAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.ReservestateAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                commitment: response.Commitment,
-                radius: response.Radius,
-                storageRadius: response.StorageRadius);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.ReservestateAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        commitment: response.Commitment,
+                        radius: response.Radius,
+                        storageRadius: response.StorageRadius);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<SettlementData> GetSettlementsWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
-            return new SettlementData(
-                peer: response.Peer,
-                received: BzzValue.FromPlurString(response.Received),
-                sent: BzzValue.FromPlurString(response.Sent));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.SettlementsGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
+                    return new SettlementData(
+                        peer: response.Peer,
+                        received: BzzValue.FromPlurString(response.Received),
+                        sent: BzzValue.FromPlurString(response.Sent));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<FileResponse> GetSocDataAsync(
@@ -1225,84 +1499,124 @@ namespace Etherna.BeeNet
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.SocGetAsync(
-                owner: owner.ToString(),
-                id: id,
-                swarm_only_root_chunk: swarmOnlyRootChunk,
-                swarm_cache: swarmCache,
-                swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
-                swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
-                swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
-            return new FileResponse(
-                response.ContentHeaders,
-                response.Headers,
-                response.Stream);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.SocGetAsync(
+                        owner: owner.ToString(),
+                        id: id,
+                        swarm_only_root_chunk: swarmOnlyRootChunk,
+                        swarm_cache: swarmCache,
+                        swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
+                        swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                        swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    return new FileResponse(
+                        response.ContentHeaders,
+                        response.Headers,
+                        response.Stream);
+                }
+                case SwarmClients.Beehive:
+                {
+                    var response = await beehiveGeneratedClient.SocGetAsync(
+                        owner: owner.ToString(),
+                        id: id,
+                        swarm_Only_Root_Chunk: swarmOnlyRootChunk,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy7?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    return new FileResponse(
+                        response.ContentHeaders,
+                        response.Headers,
+                        response.Stream);
+                }
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<Topology> GetSwarmTopologyAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.TopologyAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                baseAddr: response.BaseAddr,
-                bins: response.Bins.ToDictionary(
-                    i => i.Key,
-                    i => new PeersAggregate(
-                        population: i.Value.Population,
-                        connected: i.Value.Connected,
-                        disconnectedPeers: i.Value.DisconnectedPeers.Select(
-                            peer => new Peer(
-                                address: peer.Address,
-                                lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
-                                sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
-                                connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
-                                sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
-                                sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
-                                latencyEwma: peer.Metrics.LatencyEWMA)),
-                        connectedPeers: i.Value.ConnectedPeers.Select(
-                            peer => new Peer(
-                                address: peer.Address,
-                                lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
-                                sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
-                                connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
-                                sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
-                                sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
-                                latencyEwma: peer.Metrics.LatencyEWMA)))),
-                connected: response.Connected,
-                depth: response.Depth,
-                networkAvailability: response.NetworkAvailability switch
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
                 {
-                    Clients.Bee.Response38NetworkAvailability.Unknown => NetworkAvailability.Unknown,
-                    Clients.Bee.Response38NetworkAvailability.Available => NetworkAvailability.Available,
-                    Clients.Bee.Response38NetworkAvailability.Unavailable => NetworkAvailability.Unavailable,
-                    _ => throw new InvalidOperationException(),
-                },
-                nnLowWatermark: response.NnLowWatermark,
-                population: response.Population,
-                reachability: response.Reachability switch
-                {
-                    Clients.Bee.Response38Reachability.Unknown => Reachability.Unknown,
-                    Clients.Bee.Response38Reachability.Public => Reachability.Public,
-                    Clients.Bee.Response38Reachability.Private => Reachability.Private,
-                    _ => throw new InvalidOperationException(),
-                },
-                timestamp: DateTimeOffset.FromUnixTimeSeconds(
-                    long.Parse(response.Timestamp, CultureInfo.InvariantCulture)));
+                    var response = await beeGeneratedClient.TopologyAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        baseAddr: response.BaseAddr,
+                        bins: response.Bins.ToDictionary(
+                            i => i.Key,
+                            i => new PeersAggregate(
+                                population: i.Value.Population,
+                                connected: i.Value.Connected,
+                                disconnectedPeers: i.Value.DisconnectedPeers.Select(peer => new Peer(
+                                    address: peer.Address,
+                                    lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
+                                    sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
+                                    connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
+                                    sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
+                                    sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
+                                    latencyEwma: peer.Metrics.LatencyEWMA)),
+                                connectedPeers: i.Value.ConnectedPeers.Select(peer => new Peer(
+                                    address: peer.Address,
+                                    lastSeenTimestamp: peer.Metrics.LastSeenTimestamp,
+                                    sessionConnectionRetry: peer.Metrics.SessionConnectionRetry,
+                                    connectionTotalDuration: peer.Metrics.ConnectionTotalDuration,
+                                    sessionConnectionDuration: peer.Metrics.SessionConnectionDuration,
+                                    sessionConnectionDirection: peer.Metrics.SessionConnectionDirection,
+                                    latencyEwma: peer.Metrics.LatencyEWMA)))),
+                        connected: response.Connected,
+                        depth: response.Depth,
+                        networkAvailability: response.NetworkAvailability switch
+                        {
+                            Clients.Bee.Response38NetworkAvailability.Unknown => NetworkAvailability.Unknown,
+                            Clients.Bee.Response38NetworkAvailability.Available => NetworkAvailability.Available,
+                            Clients.Bee.Response38NetworkAvailability.Unavailable => NetworkAvailability.Unavailable,
+                            _ => throw new InvalidOperationException(),
+                        },
+                        nnLowWatermark: response.NnLowWatermark,
+                        population: response.Population,
+                        reachability: response.Reachability switch
+                        {
+                            Clients.Bee.Response38Reachability.Unknown => Reachability.Unknown,
+                            Clients.Bee.Response38Reachability.Public => Reachability.Public,
+                            Clients.Bee.Response38Reachability.Private => Reachability.Private,
+                            _ => throw new InvalidOperationException(),
+                        },
+                        timestamp: DateTimeOffset.FromUnixTimeSeconds(
+                            long.Parse(response.Timestamp, CultureInfo.InvariantCulture)));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<TagInfo> GetTagInfoAsync(
             TagId id,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.TagsGetAsync(id.Value, cancellationToken).ConfigureAwait(false);
-            return new TagInfo(
-                id: new TagId(response.Uid),
-                startedAt: response.StartedAt,
-                split: response.Split,
-                seen: response.Seen,
-                stored: response.Stored,
-                sent: response.Sent,
-                synced: response.Synced);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.TagsGetAsync(id.Value, cancellationToken).ConfigureAwait(false);
+                    return new TagInfo(
+                        id: new TagId(response.Uid),
+                        startedAt: response.StartedAt,
+                        split: response.Split,
+                        seen: response.Seen,
+                        stored: response.Stored,
+                        sent: response.Sent,
+                        synced: response.Synced);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<TagInfo[]> GetTagsListAsync(
@@ -1310,52 +1624,103 @@ namespace Etherna.BeeNet
             int? limit = null,
             CancellationToken cancellationToken = default)
         {
-            var tags =
-                (await beeGeneratedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
-                Array.Empty<Clients.Bee.Tags>();
-            return tags.Select(t => new TagInfo(
-                id: new TagId(t.Uid),
-                startedAt: t.StartedAt,
-                split: t.Split,
-                seen: t.Seen,
-                stored: t.Stored,
-                sent: t.Sent,
-                synced: t.Synced))
-                .ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var tags =
+                        (await beeGeneratedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
+                        Array.Empty<Clients.Bee.Tags>();
+                    return tags.Select(t => new TagInfo(
+                            id: new TagId(t.Uid),
+                            startedAt: t.StartedAt,
+                            split: t.Split,
+                            seen: t.Seen,
+                            stored: t.Stored,
+                            sent: t.Sent,
+                            synced: t.Synced))
+                        .ToArray();
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<EthTx> GetTransactionInfoAsync(
             EthTxHash txHash,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.TransactionsGetAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false);
-            return new EthTx(
-                transactionHash: response.TransactionHash,
-                to: response.To,
-                nonce: response.Nonce,
-                gasPrice: XDaiValue.FromWeiString(response.GasPrice),
-                gasLimit: response.GasLimit,
-                data: response.Data,
-                created: response.Created,
-                description: response.Description,
-                value: XDaiValue.FromWeiString(response.Value));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.TransactionsGetAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false);
+                    return new EthTx(
+                        transactionHash: response.TransactionHash,
+                        to: response.To,
+                        nonce: response.Nonce,
+                        gasPrice: XDaiValue.FromWeiString(response.GasPrice),
+                        gasLimit: response.GasLimit,
+                        data: response.Data,
+                        created: response.Created,
+                        description: response.Description,
+                        value: XDaiValue.FromWeiString(response.Value));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<WalletBalances> GetWalletBalance(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.WalletAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                bzzBalance: BzzValue.FromPlurString(response.BzzBalance),
-                xDaiBalance: XDaiValue.FromWeiString(response.NativeTokenBalance));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.WalletAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        bzzBalance: BzzValue.FromPlurString(response.BzzBalance),
+                        xDaiBalance: XDaiValue.FromWeiString(response.NativeTokenBalance));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
-        public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false)).WelcomeMessage;
+        public async Task<string> GetWelcomeMessageAsync(CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.WelcomeMessageGetAsync(cancellationToken).ConfigureAwait(false))
+                        .WelcomeMessage;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public Task<ICollection<string>> GranteeGetAsync(
             string reference,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.GranteeGetAsync(reference, cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.GranteeGetAsync(reference, cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<GranteeResponse> GranteePatchAsync(
             string reference,
@@ -1368,16 +1733,29 @@ namespace Etherna.BeeNet
             bool? swarmDeferredUpload = null,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.GranteePatchAsync(
-                reference,
-                swarmActHistoryAddress,
-                batchId.ToString(),
-                new Clients.Bee.Body2 { Add = addList, Revoke = revokeList },
-                tagId?.ToString(),
-                swarmPin,
-                swarmDeferredUpload,
-                cancellationToken).ConfigureAwait(false);
-            return new GranteeResponse(response.Ref, response.Historyref);
+            if (IsDryMode)
+                return new GranteeResponse(SwarmHash.Zero.ToString(), "");
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.GranteePatchAsync(
+                        reference,
+                        swarmActHistoryAddress,
+                        batchId.ToString(),
+                        new Clients.Bee.Body2 { Add = addList, Revoke = revokeList },
+                        tagId?.ToString(),
+                        swarmPin,
+                        swarmDeferredUpload,
+                        cancellationToken).ConfigureAwait(false);
+                    return new GranteeResponse(response.Ref, response.Historyref);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<GranteeResponse> GranteePostAsync(
@@ -1389,15 +1767,28 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.GranteePostAsync(
-                batchId.ToString(),
-                new Clients.Bee.Body { Grantees = grantees },
-                tagId?.ToString(),
-                swarmPin,
-                swarmDeferredUpload,
-                swarmActHistoryAddress,
-                cancellationToken).ConfigureAwait(false);
-            return new GranteeResponse(response.Ref, response.Historyref);
+            if (IsDryMode)
+                return new GranteeResponse(SwarmHash.Zero.ToString(), "");
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.GranteePostAsync(
+                        batchId.ToString(),
+                        new Clients.Bee.Body { Grantees = grantees },
+                        tagId?.ToString(),
+                        swarmPin,
+                        swarmDeferredUpload,
+                        swarmActHistoryAddress,
+                        cancellationToken).ConfigureAwait(false);
+                    return new GranteeResponse(response.Ref, response.Historyref);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<bool> IsChunkExistingAsync(
@@ -1407,56 +1798,125 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            try
+            switch (ApiCompatibility)
             {
-                await beeGeneratedClient.ChunksHeadAsync(
-                    hash.ToString(),
-                    swarmActTimestamp,
-                    swarmActPublisher,
-                    swarmActHistoryAddress,
-                    cancellationToken).ConfigureAwait(false);
-                return true;
-            }
-            catch (BeeNetApiException)
-            {
-                return false;
+                case SwarmClients.Bee:
+                {
+                    try
+                    {
+                        await beeGeneratedClient.ChunksHeadAsync(
+                            hash.ToString(),
+                            swarmActTimestamp,
+                            swarmActPublisher,
+                            swarmActHistoryAddress,
+                            cancellationToken).ConfigureAwait(false);
+                        return true;
+                    }
+                    catch (BeeNetApiException)
+                    {
+                        return false;
+                    }
+                }
+                case SwarmClients.Beehive:
+                {
+                    try
+                    {
+                        await beehiveGeneratedClient.ChunksHeadAsync(
+                            hash.ToString(),
+                            cancellationToken).ConfigureAwait(false);
+                        return true;
+                    }
+                    catch (BeeNetApiException)
+                    {
+                        return false;
+                    }
+                }
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
         public async Task<bool> IsContentRetrievableAsync(
             SwarmReference reference,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.StewardshipGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
-            .IsRetrievable;
+            CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    return (await beeGeneratedClient.StewardshipGetAsync(reference.ToString(), cancellationToken)
+                            .ConfigureAwait(false))
+                        .IsRetrievable;
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<LogData> LoggersGetAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                loggers: response.Loggers.Select(
-                    i => new Loggers(
-                        id: i.Id,
-                        logger: i.Logger,
-                        subsystem: i.Subsystem,
-                        verbosity: i.Verbosity)).ToList(),
-                tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.LoggersGetAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        loggers: response.Loggers.Select(
+                            i => new Loggers(
+                                id: i.Id,
+                                logger: i.Logger,
+                                subsystem: i.Subsystem,
+                                verbosity: i.Verbosity)).ToList(),
+                        tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<LogData> LoggersGetAsync(string exp, CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false);
-            return new(
-                loggers: response.Loggers.Select(
-                    i => new Loggers(
-                        id: i.Id,
-                        logger: i.Logger,
-                        subsystem: i.Subsystem,
-                        verbosity: i.Verbosity)).ToList(),
-                tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.LoggersGetAsync(exp, cancellationToken).ConfigureAwait(false);
+                    return new(
+                        loggers: response.Loggers.Select(
+                            i => new Loggers(
+                                id: i.Id,
+                                logger: i.Logger,
+                                subsystem: i.Subsystem,
+                                verbosity: i.Verbosity)).ToList(),
+                        tree: response.Tree.ToDictionary(i => i.Key, i => i.Value?.Plus.ToList() ?? new List<string>()));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
-        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default) =>
-            await beeGeneratedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
+        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    await beeGeneratedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
+                    break;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<WebSocket> OpenChunkUploadWebSocketConnectionAsync(
             string endpointPath,
@@ -1514,163 +1974,365 @@ namespace Etherna.BeeNet
 
         public async Task<string> RebroadcastTransactionAsync(
             EthTxHash txHash,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.TransactionsPostAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false)).TransactionHash;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return "";
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.TransactionsPostAsync(txHash.ToString(), cancellationToken)
+                        .ConfigureAwait(false)).TransactionHash;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<RedistributionState> RedistributionStateAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                isFrozen: response.IsFrozen,
-                isFullySynced: response.IsFullySynced,
-                isHealthy: response.IsHealthy,
-                round: response.Round,
-                lastWonRound: response.LastWonRound,
-                lastPlayedRound: response.LastPlayedRound,
-                lastFrozenRound: response.LastFrozenRound,
-                block: response.Block,
-                reward: BzzValue.FromPlurString(response.Reward),
-                fees: XDaiValue.FromWeiString(response.Fees));
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.RedistributionstateAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        isFrozen: response.IsFrozen,
+                        isFullySynced: response.IsFullySynced,
+                        isHealthy: response.IsHealthy,
+                        round: response.Round,
+                        lastWonRound: response.LastWonRound,
+                        lastPlayedRound: response.LastPlayedRound,
+                        lastFrozenRound: response.LastFrozenRound,
+                        block: response.Block,
+                        reward: BzzValue.FromPlurString(response.Reward),
+                        fees: XDaiValue.FromWeiString(response.Fees));
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public Task ReuploadContentAsync(
             SwarmReference reference,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.StewardshipPutAsync(reference.ToString(), cancellationToken: cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.StewardshipPutAsync(reference.ToString(), cancellationToken: cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public Task SendPssAsync(
             string topic,
             string targets,
             PostageBatchId batchId,
             string? recipient = null,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.PssSendAsync(topic, targets, batchId.ToString(), recipient, cancellationToken);
-        
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.PssSendAsync(topic, targets, batchId.ToString(), recipient, cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
         public Task SetWelcomeMessageAsync(
             string welcomeMessage,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.WelcomeMessagePostAsync(
-                new Clients.Bee.Body5 { WelcomeMessage = welcomeMessage },
-                cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.WelcomeMessagePostAsync(
+                        new Clients.Bee.Body5 { WelcomeMessage = welcomeMessage },
+                        cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task StakeDeleteAsync(
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
-            CancellationToken cancellationToken = default) =>
-            await beeGeneratedClient.StakeDeleteAsync(
-                gasPrice?.ToWeiLong(),
-                gasLimit,
-                cancellationToken).ConfigureAwait(false);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return;
 
-        public async Task StakeGetAsync(CancellationToken cancellationToken = default) =>
-            await beeGeneratedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    await beeGeneratedClient.StakeDeleteAsync(
+                        gasPrice?.ToWeiLong(),
+                        gasLimit,
+                        cancellationToken).ConfigureAwait(false);
+                    break;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public async Task StakeGetAsync(CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    await beeGeneratedClient.StakeGetAsync(cancellationToken).ConfigureAwait(false);
+                    break;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task StakePostAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
-            CancellationToken cancellationToken = default) =>
-            await beeGeneratedClient.StakePostAsync(
-                amount.ToPlurString(),
-                gasPrice?.ToWeiLong(),
-                gasLimit,
-                cancellationToken).ConfigureAwait(false);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    await beeGeneratedClient.StakePostAsync(
+                        amount.ToPlurString(),
+                        gasPrice?.ToWeiLong(),
+                        gasLimit,
+                        cancellationToken).ConfigureAwait(false);
+                    break;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public Task StakeWithdrawableDeleteAsync(
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.StakeWithdrawableDeleteAsync(gasPrice?.ToWeiLong(), gasLimit, cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
 
-        public Task StakeWithdrawableGetAsync(CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.StakeWithdrawableGetAsync(cancellationToken);
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.StakeWithdrawableDeleteAsync(gasPrice?.ToWeiLong(), gasLimit, cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public Task StakeWithdrawableGetAsync(CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.StakeWithdrawableGetAsync(cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<StatusNode> StatusNodeAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StatusAsync(cancellationToken).ConfigureAwait(false);
-            return new(
-                overlay: response.Overlay,
-                beeMode: response.BeeMode switch
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
                 {
-                    Clients.Bee.Response70BeeMode.Light => StatusBeeMode.Light,
-                    Clients.Bee.Response70BeeMode.Full => StatusBeeMode.Full,
-                    Clients.Bee.Response70BeeMode.UltraLight => StatusBeeMode.UltraLight,
-                    Clients.Bee.Response70BeeMode.Unknown => StatusBeeMode.Unknown,
-                    _ => throw new InvalidOperationException()
-                },
-                proximity: response.Proximity,
-                reserveSize: response.ReserveSize,
-                reserveSizeWithinRadius: response.ReserveSizeWithinRadius,
-                pullsyncRate: response.PullsyncRate,
-                storageRadius: response.StorageRadius,
-                connectedPeers: response.ConnectedPeers,
-                neighborhoodSize: response.NeighborhoodSize,
-                requestFailed: response.RequestFailed,
-                batchCommitment: response.BatchCommitment,
-                isReachable: response.IsReachable,
-                lastSyncedBlock: response.LastSyncedBlock,
-                committedDepth: response.CommittedDepth,
-                isWarmingUp: response.IsWarmingUp);
+                    var response = await beeGeneratedClient.StatusAsync(cancellationToken).ConfigureAwait(false);
+                    return new(
+                        overlay: response.Overlay,
+                        beeMode: response.BeeMode switch
+                        {
+                            Clients.Bee.Response70BeeMode.Light => StatusBeeMode.Light,
+                            Clients.Bee.Response70BeeMode.Full => StatusBeeMode.Full,
+                            Clients.Bee.Response70BeeMode.UltraLight => StatusBeeMode.UltraLight,
+                            Clients.Bee.Response70BeeMode.Unknown => StatusBeeMode.Unknown,
+                            _ => throw new InvalidOperationException()
+                        },
+                        proximity: response.Proximity,
+                        reserveSize: response.ReserveSize,
+                        reserveSizeWithinRadius: response.ReserveSizeWithinRadius,
+                        pullsyncRate: response.PullsyncRate,
+                        storageRadius: response.StorageRadius,
+                        connectedPeers: response.ConnectedPeers,
+                        neighborhoodSize: response.NeighborhoodSize,
+                        requestFailed: response.RequestFailed,
+                        batchCommitment: response.BatchCommitment,
+                        isReachable: response.IsReachable,
+                        lastSyncedBlock: response.LastSyncedBlock,
+                        committedDepth: response.CommittedDepth,
+                        isWarmingUp: response.IsWarmingUp);
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<StatusNode[]> StatusPeersAsync(CancellationToken cancellationToken = default)
         {
-            var response = await beeGeneratedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false);
-            return response.Snapshots.Select(
-                s => new StatusNode(
-                    beeMode: s.BeeMode switch
-                    {
-                        Clients.Bee.SnapshotsBeeMode.Light => StatusBeeMode.Light,
-                        Clients.Bee.SnapshotsBeeMode.Full => StatusBeeMode.Full,
-                        Clients.Bee.SnapshotsBeeMode.Dev => StatusBeeMode.Dev,
-                        Clients.Bee.SnapshotsBeeMode.UltraLight => StatusBeeMode.UltraLight,
-                        Clients.Bee.SnapshotsBeeMode.Unknown => StatusBeeMode.Unknown,
-                        _ => throw new InvalidOperationException()
-                    },
-                    batchCommitment: s.BatchCommitment,
-                    connectedPeers: s.ConnectedPeers,
-                    isReachable: s.IsReachable,
-                    lastSyncedBlock: s.LastSyncedBlock,
-                    neighborhoodSize: s.NeighborhoodSize,
-                    overlay: s.Overlay,
-                    proximity: s.Proximity,
-                    pullsyncRate: s.PullsyncRate,
-                    reserveSize: s.ReserveSize,
-                    reserveSizeWithinRadius: s.ReserveSizeWithinRadius,
-                    requestFailed: s.RequestFailed,
-                    storageRadius: s.StorageRadius,
-                    committedDepth: s.CommittedDepth,
-                    isWarmingUp: s.IsWarmingUp))
-                .ToArray();
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                {
+                    var response = await beeGeneratedClient.StatusPeersAsync(cancellationToken).ConfigureAwait(false);
+                    return response.Snapshots.Select(
+                            s => new StatusNode(
+                                beeMode: s.BeeMode switch
+                                {
+                                    Clients.Bee.SnapshotsBeeMode.Light => StatusBeeMode.Light,
+                                    Clients.Bee.SnapshotsBeeMode.Full => StatusBeeMode.Full,
+                                    Clients.Bee.SnapshotsBeeMode.Dev => StatusBeeMode.Dev,
+                                    Clients.Bee.SnapshotsBeeMode.UltraLight => StatusBeeMode.UltraLight,
+                                    Clients.Bee.SnapshotsBeeMode.Unknown => StatusBeeMode.Unknown,
+                                    _ => throw new InvalidOperationException()
+                                },
+                                batchCommitment: s.BatchCommitment,
+                                connectedPeers: s.ConnectedPeers,
+                                isReachable: s.IsReachable,
+                                lastSyncedBlock: s.LastSyncedBlock,
+                                neighborhoodSize: s.NeighborhoodSize,
+                                overlay: s.Overlay,
+                                proximity: s.Proximity,
+                                pullsyncRate: s.PullsyncRate,
+                                reserveSize: s.ReserveSize,
+                                reserveSizeWithinRadius: s.ReserveSizeWithinRadius,
+                                requestFailed: s.RequestFailed,
+                                storageRadius: s.StorageRadius,
+                                committedDepth: s.CommittedDepth,
+                                isWarmingUp: s.IsWarmingUp))
+                        .ToArray();
+                }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public Task SubscribeToGsocAsync(
             string reference,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.GsocSubscribeAsync(reference, cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.GsocSubscribeAsync(reference, cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public Task SubscribeToPssAsync(
             string topic,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.PssSubscribeAsync(topic, cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.PssSubscribeAsync(topic, cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<EthTxHash> TopUpPostageBatchAsync(
             PostageBatchId batchId,
             BzzValue amount,
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.StampsTopupAsync(
-                batchId.ToString(),
-                amount.ToPlurLong(),
-                gasPrice?.ToWeiLong(),
-                gasLimit,
-                cancellationToken).ConfigureAwait(false)).TxHash;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return EthTxHash.Zero;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.StampsTopupAsync(
+                        batch_id: batchId.ToString(),
+                        amount: amount.ToPlurLong(),
+                        gas_limit: gasLimit,
+                        gas_price: gasPrice?.ToWeiLong(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).TxHash;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.StampsTopupAsync(
+                        batchId: batchId.ToString(),
+                        amount: amount.ToPlurLong(),
+                        gas_Limit: gasLimit,
+                        gas_Price: gasPrice?.ToWeiLong(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).TxHash;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<string> TryConnectToPeerAsync(
             string peerId,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return "";
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.PingpongAsync(peerId, cancellationToken).ConfigureAwait(false)).Rtt;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<FileResponse?> TryGetFeedAsync(
             EthAddress owner,
