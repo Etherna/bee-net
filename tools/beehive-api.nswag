@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "./bee-openapi.yaml",
+      "url": "./beehive-openapi.yaml",
       "output": null,
       "newLineBehavior": "Auto"
     }
@@ -44,10 +44,9 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "BeeGeneratedClient",
+      "className": "BeehiveGeneratedClient",
       "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [
-        "Etherna.BeeNet.Clients.Bee.Fixer",
         "Etherna.BeeNet.Exceptions"
       ],
       "additionalContractNamespaceUsages": [],
@@ -62,7 +61,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "Etherna.BeeNet.Clients.Bee",
+      "namespace": "Etherna.BeeNet.Clients.Beehive",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -96,7 +95,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet.Client/Clients/Bee/BeeGeneratedClient.cs",
+      "output": "../src/BeeNet.Client/Clients/Beehive/BeehiveGeneratedClient.cs",
       "newLineBehavior": "Auto"
     }
   }

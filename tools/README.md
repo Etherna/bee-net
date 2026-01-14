@@ -5,10 +5,10 @@ NSwag doesn't support multiple OpenAPI configuration files. They needs to be mer
 We are using `speccy` tool (https://github.com/wework/speccy) with these command:
 
 ```shell
-speccy resolve -i ./openapi/Swarm.yaml -o GatewaySwarm.yaml
+speccy resolve -i ./bee-openapi/Swarm.yaml -o bee-openapi.yaml
 ```
 
-How to version openapi/*.yaml:  
+How to version bee-openapi/*.yaml:  
 - copy *.yaml from official https://github.com/ethersphere/bee/tree/master/openapi in tools/original-open-api  
 - merge tools/original-open-api in the new working branch
 - update definition as required
@@ -21,4 +21,5 @@ NSwag Cli:
 
 ```shell
 nswag run bee-api.nswag
+nswag run beehive-api.nswag
 ```

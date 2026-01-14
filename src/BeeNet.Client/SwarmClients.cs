@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,18 +12,11 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-namespace Etherna.BeeNet.Models
+namespace Etherna.BeeNet
 {
-    public sealed class ChainState(
-        ulong block,
-        ulong chainTip,
-        BzzValue currentPrice,
-        BzzValue totalAmount)
+    public enum SwarmClients
     {
-        // Properties.
-        public ulong Block { get; } = block;
-        public ulong ChainTip { get; } = chainTip;
-        public BzzValue CurrentPrice { get; } = currentPrice;
-        public BzzValue TotalAmount { get; } = totalAmount;
+        Bee,
+        Beehive
     }
 }

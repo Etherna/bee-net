@@ -43,10 +43,10 @@ namespace Etherna.BeeNet.Chunks
             OnChunkFoundAsync? onChunkFound,
             OnInvalidChunkFoundAsync? onInvalidChunkFound,
             OnChunkNotFoundAsync? onChunkNotFound,
-            RedundancyLevel redundancyLevel,
-            RedundancyStrategy redundancyStrategy, 
-            bool redundancyStrategyFallback,
-            bool includeParities,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Insane,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data, 
+            bool redundancyStrategyFallback = true,
+            bool includeParities = false,
             CancellationToken cancellationToken = default)
         {
             // Upgrade redundancy strategy from None to Data.

@@ -26,8 +26,8 @@ namespace Etherna.BeeNet.Manifest
         public static ReferencedMantarayManifest BuildNew(
             SwarmReference rootReference,
             IReadOnlyChunkStore chunkStore,
-            RedundancyStrategy redundancyStrategy,
-            bool redundancyStrategyFallback)
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
             var node = new ReferencedMantarayNode(
                 rootReference,
@@ -43,8 +43,8 @@ namespace Etherna.BeeNet.Manifest
             SwarmCac rootChunk,
             SwarmReference rootChunkReference,
             IReadOnlyChunkStore chunkStore,
-            RedundancyStrategy redundancyStrategy,
-            bool redundancyStrategyFallback)
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
             var node = new ReferencedMantarayNode(
                 rootChunk,

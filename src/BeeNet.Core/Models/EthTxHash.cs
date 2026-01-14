@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
         // Constructors.
         public EthTxHash(byte[] hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
+            ArgumentNullException.ThrowIfNull(hash);
             if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
 
@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
 
         public EthTxHash(string hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
+            ArgumentNullException.ThrowIfNull(hash);
             
             try
             {
@@ -56,6 +56,9 @@ namespace Etherna.BeeNet.Models
             if (!IsValidHash(byteHash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
         }
+        
+        // Static properties.
+        public static EthTxHash Zero { get; } = new byte[HashSize];
 
         // Methods.
         public bool Equals(EthTxHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
@@ -70,7 +73,7 @@ namespace Etherna.BeeNet.Models
         public static EthTxHash FromString(string value) => new(value);
         public static bool IsValidHash(byte[] value)
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             return value.Length == HashSize;
         }
         public static bool IsValidHash(string value)

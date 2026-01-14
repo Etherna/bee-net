@@ -57,9 +57,10 @@ components:
       properties:
         chainTip:
           type: integer
+          format: uint64
         block:
           type: integer
-          format: int64
+          format: uint64
         totalAmount:
           $ref: "#/components/schemas/BigInt"
         currentPrice:

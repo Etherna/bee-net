@@ -25,10 +25,12 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet
 {
-    public interface IBeeClient
+    public interface ISwarmClient
     {
         // Properties.
-        Uri BeeUrl { get; }
+        public SwarmClients ApiCompatibility { get; }
+        public bool IsDryMode { get; }
+        public Uri NodeUrl { get; }
         
         // Methods.
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -61,7 +63,7 @@ namespace Etherna.BeeNet
         /// <param name="gasLimit">Gas limit for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> CashoutChequeForPeerAsync(
+        Task<EthTxHash> CashoutChequeForPeerAsync(
             string peerId,
             XDaiValue? gasPrice = null,
             ulong? gasLimit = null,
@@ -76,11 +78,16 @@ namespace Etherna.BeeNet
             SwarmReference? reference,
             CancellationToken cancellationToken = default);
 
+        Task ChunksBulkUploadAsync(
+            SwarmChunk[] chunks,
+            PostageBatchId batchId,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Connect to address</summary>
         /// <param name="peerAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> ConnectToPeerAsync(
+        Task<SwarmOverlayAddress> ConnectToPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default);
 
@@ -125,7 +132,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> DeleteTransactionAsync(
+        Task<EthTxHash> DeleteTransactionAsync(
             EthTxHash txHash,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);
@@ -135,7 +142,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> DepositIntoChequebookAsync(
+        Task<EthTxHash> DepositIntoChequebookAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);
@@ -232,7 +239,7 @@ namespace Etherna.BeeNet
         /// <param name="reference">Swarm content reference</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task GetBytesHeadersAsync(
+        Task<HttpContentHeaders?> GetBytesHeadersAsync(
             SwarmReference reference,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -276,11 +283,10 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="reference">Swarm content reference</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<SwarmChunk> GetChunkAsync(
-            SwarmReference reference,
+            SwarmHash hash,
             SwarmChunkBmt swarmChunkBmt,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
@@ -289,11 +295,10 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default);
 
         /// <summary>Get Chunk</summary>
-        /// <param name="reference">Swarm content reference</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<Stream> GetChunkStreamAsync(
-            SwarmReference reference,
+            SwarmHash hash,
             bool? swarmCache = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -732,6 +737,7 @@ namespace Etherna.BeeNet
             SwarmFeedTopic topic,
             long? at = null,
             ulong? after = null,
+            int? afterLevel = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
@@ -750,7 +756,10 @@ namespace Etherna.BeeNet
             SwarmAddress address,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null, 
+            string? swarmActHistoryAddress = null,  
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null, 
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -763,7 +772,10 @@ namespace Etherna.BeeNet
             SwarmAddress address,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null, 
+            string? swarmActHistoryAddress = null,
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null,
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>
@@ -790,6 +802,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadBytesAsync(
             Stream body,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
@@ -805,7 +818,7 @@ namespace Etherna.BeeNet
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmReference> UploadChunkAsync(
+        Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -823,7 +836,7 @@ namespace Etherna.BeeNet
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmReference> UploadChunkAsync(
+        Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -851,6 +864,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadDirectoryAsync(
             string directoryPath,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
@@ -871,6 +885,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadFeedManifestAsync(
             SwarmFeedBase feed,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             bool swarmPin = false,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
@@ -895,6 +910,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadFileAsync(
             Stream content,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
@@ -918,6 +934,7 @@ namespace Etherna.BeeNet
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
+            bool? swarmPin = null,
             CancellationToken cancellationToken = default);
         
         /// <summary>
@@ -927,7 +944,7 @@ namespace Etherna.BeeNet
         /// <param name="address"></param>
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
-        Task<string> WalletBzzWithdrawAsync(
+        Task<EthTxHash> WalletBzzWithdrawAsync(
             BzzValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default);
@@ -939,7 +956,7 @@ namespace Etherna.BeeNet
         /// <param name="address"></param>
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
-        Task<string> WalletNativeCoinWithdrawAsync(
+        Task<EthTxHash> WalletNativeCoinWithdrawAsync(
             XDaiValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default);
@@ -949,7 +966,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> WithdrawFromChequebookAsync(
+        Task<EthTxHash> WithdrawFromChequebookAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);

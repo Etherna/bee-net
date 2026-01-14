@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-namespace Etherna.BeeNet.Clients.Fixer
+namespace Etherna.BeeNet.Clients.Bee.Fixer
 {
     public class PostageBatchDto
     {
