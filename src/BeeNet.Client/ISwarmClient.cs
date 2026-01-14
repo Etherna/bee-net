@@ -78,6 +78,11 @@ namespace Etherna.BeeNet
             SwarmReference? reference,
             CancellationToken cancellationToken = default);
 
+        Task ChunksBulkUploadAsync(
+            SwarmChunk[] chunks,
+            PostageBatchId batchId,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Connect to address</summary>
         /// <param name="peerAddress">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
@@ -732,6 +737,7 @@ namespace Etherna.BeeNet
             SwarmFeedTopic topic,
             long? at = null,
             ulong? after = null,
+            int? afterLevel = null,
             SwarmFeedType type = SwarmFeedType.Sequence,
             bool? swarmOnlyRootChunk = null,
             bool? swarmCache = null,
@@ -858,6 +864,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadDirectoryAsync(
             string directoryPath,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
@@ -878,6 +885,7 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadFeedManifestAsync(
             SwarmFeedBase feed,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             bool swarmPin = false,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
@@ -926,6 +934,7 @@ namespace Etherna.BeeNet
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
+            bool? swarmPin = null,
             CancellationToken cancellationToken = default);
         
         /// <summary>
