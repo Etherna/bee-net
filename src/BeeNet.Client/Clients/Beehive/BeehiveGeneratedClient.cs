@@ -168,7 +168,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -178,7 +178,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
@@ -656,7 +656,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -847,7 +847,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -1284,7 +1284,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -1478,7 +1478,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -2087,7 +2087,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -2269,7 +2269,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -2842,7 +2842,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy5? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -2869,6 +2869,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Feed_Legacy_Resolve != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Feed-Legacy-Resolve", ConvertToString(swarm_Feed_Legacy_Resolve, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -2919,9 +2920,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -3103,7 +3107,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> V1FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, int? afterLevel = null, bool? swarm_Only_Root_Chunk = null, SwarmRedundancyStrategy6? swarm_Redundancy_Strategy = null, bool? swarm_Redundancy_Fallback_Mode = null, bool? swarm_Feed_Legacy_Resolve = null, Type3? type = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -3130,6 +3134,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (swarm_Feed_Legacy_Resolve != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Feed-Legacy-Resolve", ConvertToString(swarm_Feed_Legacy_Resolve, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/octet-stream"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -3180,9 +3185,12 @@ namespace Etherna.BeeNet.Clients.Beehive
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 200 || status_ == 206)
                         {
-                            return;
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
                         }
                         else
                         if (status_ == 400)
@@ -4814,7 +4822,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -5062,7 +5070,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            var fileResponse_ = new FileResponse(status_, response_.Content?.Headers, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }

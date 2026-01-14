@@ -2347,28 +2347,56 @@ namespace Etherna.BeeNet
             string? swarmChunkRetrievalTimeout = null,
             CancellationToken cancellationToken = default)
         {
-            try
+            switch (ApiCompatibility)
             {
-                var response = await beeGeneratedClient.FeedsGetAsync(
-                    owner: owner.ToString(),
-                    topic: topic.ToString(),
-                    at: at,
-                    after: after,
-                    type: type.ToString(),
-                    swarm_only_root_chunk: swarmOnlyRootChunk,
-                    swarm_cache: swarmCache,
-                    swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
-                    swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
-                    swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
-                    cancellationToken: cancellationToken).ConfigureAwait(false);
-                return new FileResponse(
-                    response.ContentHeaders,
-                    response.Headers,
-                    response.Stream);
-            }
-            catch (BeeNetApiException e) when (e.StatusCode == 404)
-            {
-                return null;
+                case SwarmClients.Bee:
+                    try
+                    {
+                        var response = await beeGeneratedClient.FeedsGetAsync(
+                            owner: owner.ToString(),
+                            topic: topic.ToString(),
+                            at: at,
+                            after: after,
+                            type: type.ToString(),
+                            swarm_only_root_chunk: swarmOnlyRootChunk,
+                            swarm_cache: swarmCache,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
+                            swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                            swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                        return new FileResponse(
+                            response.ContentHeaders,
+                            response.Headers,
+                            response.Stream);
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 404)
+                    {
+                        return null;
+                    }
+                case SwarmClients.Beehive:
+                    try
+                    {
+                        var response = await beehiveGeneratedClient.FeedsGetAsync(
+                            owner: owner.ToString(),
+                            topic: topic.ToString(),
+                            at: at,
+                            after: after,
+                            type: (Etherna.BeeNet.Clients.Beehive.Type?)type,
+                            swarm_Only_Root_Chunk: swarmOnlyRootChunk,
+                            swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
+                            swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                        return new FileResponse(
+                            response.ContentHeaders,
+                            response.Headers,
+                            response.Stream);
+                    }
+                    catch (BeeNetApiException e) when (e.StatusCode == 404)
+                    {
+                        return null;
+                    }
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
