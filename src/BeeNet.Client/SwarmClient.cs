@@ -2469,34 +2469,66 @@ namespace Etherna.BeeNet
         public Task UpdateTagAsync(
             TagId id,
             SwarmHash? hash = null,
-            CancellationToken cancellationToken = default) =>
-            beeGeneratedClient.TagsPatchAsync(
-                uid: id.Value,
-                body: hash.HasValue ?
-                    new Clients.Bee.Body4 { Address = hash.Value.ToString() } :
-                    null,
-                cancellationToken: cancellationToken);
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return Task.CompletedTask;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return beeGeneratedClient.TagsPatchAsync(
+                        uid: id.Value,
+                        body: hash.HasValue ? new Clients.Bee.Body4 { Address = hash.Value.ToString() } : null,
+                        cancellationToken: cancellationToken);
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<SwarmReference> UploadBytesAsync(
             Stream body,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
             bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.BytesPostAsync(
-                swarm_postage_batch_id: batchId.ToString(),
-                swarm_tag: tagId?.Value,
-                swarm_pin: swarmPin,
-                swarm_deferred_upload: swarmDeferredUpload,
-                swarm_encrypt: swarmEncrypt,
-                swarm_redundancy_level: (int)swarmRedundancyLevel,
-                body: body,
-                cancellationToken).ConfigureAwait(false)).Reference;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return swarmEncrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
 
-        public Task<SwarmReference> UploadChunkAsync(
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.BytesPostAsync(
+                        swarm_postage_batch_id: batchId.ToString(),
+                        swarm_tag: tagId?.Value,
+                        swarm_pin: swarmPin,
+                        swarm_deferred_upload: swarmDeferredUpload,
+                        swarm_encrypt: swarmEncrypt,
+                        swarm_redundancy_level: (int)swarmRedundancyLevel,
+                        body: body,
+                        cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.BytesPostAsync(
+                        swarm_Postage_Batch_Id: batchId.ToString(),
+                        swarm_Pin: swarmPin,
+                        body: body,
+                        swarm_Compact_Level: compactLevel,
+                        swarm_Encrypt: swarmEncrypt,
+                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel3?)swarmRedundancyLevel,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -2506,8 +2538,9 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-#pragma warning disable CA2025
             ArgumentNullException.ThrowIfNull(chunk);
+            
+#pragma warning disable CA2025
             using var memoryStream = new MemoryStream(chunk.GetFullPayloadToByteArray());
             return UploadChunkAsync(
                 memoryStream,
@@ -2521,7 +2554,7 @@ namespace Etherna.BeeNet
 #pragma warning restore CA2025
         }
 
-        public async Task<SwarmReference> UploadChunkAsync(
+        public async Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -2529,15 +2562,32 @@ namespace Etherna.BeeNet
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.ChunksPostAsync(
-                swarm_tag: tagId?.Value,
-                swarm_postage_batch_id: batchId?.ToString(),
-                swarm_postage_stamp: presignedPostageStamp?.ToString(),
-                swarm_act: swarmAct,
-                swarm_act_history_address: swarmActHistoryAddress,
-                body: chunkData,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return SwarmHash.Zero;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.ChunksPostAsync(
+                        swarm_tag: tagId?.Value,
+                        swarm_postage_batch_id: batchId?.ToString(),
+                        swarm_postage_stamp: presignedPostageStamp?.ToString(),
+                        swarm_act: swarmAct,
+                        swarm_act_history_address: swarmActHistoryAddress,
+                        body: chunkData,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.ChunksPostAsync(
+                        swarm_Postage_Batch_Id: batchId?.ToString(),
+                        swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
+                        body: chunkData,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         public async Task<SwarmReference> UploadDirectoryAsync(
             string directoryPath,
@@ -2553,6 +2603,9 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
+            if (IsDryMode)
+                return swarmEncrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
+
             // Create tar file.
             using var memoryStream = new MemoryStream();
             await TarFile.CreateFromDirectoryAsync(directoryPath, memoryStream, false, cancellationToken).ConfigureAwait(false);
@@ -2564,20 +2617,37 @@ namespace Etherna.BeeNet
                 swarmIndexDocument = "index.html";
 
             // Upload directory.
-            return (await beeGeneratedClient.BzzPostAsync(
-                new Clients.Bee.FileParameter(memoryStream, null, "application/x-tar"),
-                swarm_tag: tagId?.Value,
-                swarm_pin: swarmPin,
-                swarm_encrypt: swarmEncrypt,
-                swarm_collection: true,
-                swarm_index_document: swarmIndexDocument,
-                swarm_error_document: swarmErrorDocument,
-                swarm_postage_batch_id: batchId.ToString(),
-                swarm_deferred_upload: swarmDeferredUpload,
-                swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
-                swarm_act: swarmAct,
-                swarm_act_history_address: swarmActHistoryAddress,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.BzzPostAsync(
+                        new Clients.Bee.FileParameter(memoryStream, null, "application/x-tar"),
+                        swarm_tag: tagId?.Value,
+                        swarm_pin: swarmPin,
+                        swarm_encrypt: swarmEncrypt,
+                        swarm_collection: true,
+                        swarm_index_document: swarmIndexDocument,
+                        swarm_error_document: swarmErrorDocument,
+                        swarm_postage_batch_id: batchId.ToString(),
+                        swarm_deferred_upload: swarmDeferredUpload,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
+                        swarm_act: swarmAct,
+                        swarm_act_history_address: swarmActHistoryAddress,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.BzzPostAsync(
+                        swarm_Postage_Batch_Id: batchId.ToString(),
+                        body: new Clients.Beehive.FileParameter(memoryStream, null, "application/x-tar"),
+                        swarm_Pin: swarmPin,
+                        swarm_Encrypt: swarmEncrypt,
+                        swarm_Collection: true,
+                        swarm_Index_Document: swarmIndexDocument,
+                        swarm_Error_Document: swarmErrorDocument,
+                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel9)swarmRedundancyLevel,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<SwarmHash> UploadFeedManifestAsync(
@@ -2588,22 +2658,40 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            ArgumentNullException.ThrowIfNull(feed);
             
-            return (await beeGeneratedClient.FeedsPostAsync(
-                owner: feed.Owner.ToString(),
-                topic: feed.Topic.ToString(),
-                type: feed.Type.ToString(),
-                swarm_pin: swarmPin,
-                swarm_postage_batch_id: batchId.ToString(),
-                swarm_act: swarmAct,
-                swarm_act_history_address: swarmActHistoryAddress,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+            if (IsDryMode)
+                return SwarmHash.Zero;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.FeedsPostAsync(
+                        owner: feed.Owner.ToString(),
+                        topic: feed.Topic.ToString(),
+                        type: feed.Type.ToString(),
+                        swarm_pin: swarmPin,
+                        swarm_postage_batch_id: batchId.ToString(),
+                        swarm_act: swarmAct,
+                        swarm_act_history_address: swarmActHistoryAddress,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.FeedsPostAsync(
+                        owner: feed.Owner.ToString(),
+                        topic: feed.Topic.ToString(),
+                        type: (Clients.Beehive.Type2?)feed.Type,
+                        swarm_Pin: swarmPin,
+                        swarm_Postage_Batch_Id: batchId.ToString(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<SwarmReference> UploadFileAsync(
             Stream content,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
@@ -2616,18 +2704,40 @@ namespace Etherna.BeeNet
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default)
         {
-            return (await beeGeneratedClient.BzzPostAsync(
-                new Clients.Bee.FileParameter(content, name, contentType),
-                swarm_tag: tagId?.Value,
-                swarm_pin: swarmPin,
-                swarm_encrypt: swarmEncrypt,
-                swarm_collection: isFileCollection,
-                swarm_index_document: swarmIndexDocument,
-                swarm_error_document: swarmErrorDocument,
-                swarm_postage_batch_id: batchId.ToString(),
-                swarm_deferred_upload: swarmDeferredUpload,
-                swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+            if (IsDryMode)
+                return swarmEncrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
+
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.BzzPostAsync(
+                        new Clients.Bee.FileParameter(content, name, contentType),
+                        swarm_tag: tagId?.Value,
+                        swarm_pin: swarmPin,
+                        swarm_encrypt: swarmEncrypt,
+                        swarm_collection: isFileCollection,
+                        swarm_index_document: swarmIndexDocument,
+                        swarm_error_document: swarmErrorDocument,
+                        swarm_postage_batch_id: batchId.ToString(),
+                        swarm_deferred_upload: swarmDeferredUpload,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.BzzPostAsync(
+                        swarm_Postage_Batch_Id: batchId.ToString(),
+                        body: new Clients.Beehive.FileParameter(content, name, contentType),
+                        name: name,
+                        swarm_Compact_Level: compactLevel,
+                        swarm_Encrypt: swarmEncrypt,
+                        swarm_Pin: swarmPin,
+                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel9)swarmRedundancyLevel,
+                        swarm_Collection: isFileCollection,
+                        swarm_Index_Document: swarmIndexDocument,
+                        swarm_Error_Document: swarmErrorDocument,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<SwarmHash> UploadSocAsync(
@@ -2641,47 +2751,105 @@ namespace Etherna.BeeNet
             ArgumentNullException.ThrowIfNull(soc);
             if (!soc.Signature.HasValue)
                 throw new InvalidOperationException("SOC is not signed");
+            
+            if (IsDryMode)
+                return SwarmHash.Zero;
 
             using var bodyMemoryStream = new MemoryStream(soc.InnerChunk.SpanData.ToArray());
-            return (await beeGeneratedClient.SocPostAsync(
-                owner: soc.Owner.ToString(false),
-                id: soc.Identifier.ToString(),
-                sig: soc.Signature.Value.ToString(),
-                swarm_postage_batch_id: batchId?.ToString(),
-                body: bodyMemoryStream,
-                swarm_postage_stamp: presignedPostageStamp?.ToString(),
-                swarm_act: swarmAct,
-                swarm_act_history_address: swarmActHistoryAddress,
-                cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.SocPostAsync(
+                        owner: soc.Owner.ToString(false),
+                        id: soc.Identifier.ToString(),
+                        sig: soc.Signature.Value.ToString(),
+                        swarm_postage_batch_id: batchId?.ToString(),
+                        body: bodyMemoryStream,
+                        swarm_postage_stamp: presignedPostageStamp?.ToString(),
+                        swarm_act: swarmAct,
+                        swarm_act_history_address: swarmActHistoryAddress,
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                case SwarmClients.Beehive:
+                    return (await beehiveGeneratedClient.SocPostAsync(
+                        owner: soc.Owner.ToString(false),
+                        id: soc.Identifier.ToString(),
+                        sig: soc.Signature.Value.ToString(),
+                        swarm_Postage_Batch_Id: batchId?.ToString(),
+                        body: bodyMemoryStream,
+                        swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
-        public async Task<string> WalletBzzWithdrawAsync(
+        public async Task<EthTxHash> WalletBzzWithdrawAsync(
             BzzValue amount,
             EthAddress address,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.WalletWithdrawAsync(
-                amount.ToPlurString(),
-                address.ToString(),
-                Clients.Bee.Coin.Bzz,
-                cancellationToken).ConfigureAwait(false)).TransactionHash;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return EthTxHash.Zero;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.WalletWithdrawAsync(
+                        amount.ToPlurString(),
+                        address.ToString(),
+                        Clients.Bee.Coin.Bzz,
+                        cancellationToken).ConfigureAwait(false)).TransactionHash;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
-        public async Task<string> WalletNativeCoinWithdrawAsync(
+        public async Task<EthTxHash> WalletNativeCoinWithdrawAsync(
             XDaiValue amount,
             EthAddress address,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.WalletWithdrawAsync(
-                amount.ToWeiString(),
-                address.ToString(),
-                Clients.Bee.Coin.Nativetoken,
-                cancellationToken).ConfigureAwait(false)).TransactionHash;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return EthTxHash.Zero;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.WalletWithdrawAsync(
+                        amount.ToWeiString(),
+                        address.ToString(),
+                        Clients.Bee.Coin.Nativetoken,
+                        cancellationToken).ConfigureAwait(false)).TransactionHash;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
-        public async Task<string> WithdrawFromChequebookAsync(
+        public async Task<EthTxHash> WithdrawFromChequebookAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
-            CancellationToken cancellationToken = default) =>
-            (await beeGeneratedClient.ChequebookWithdrawAsync(
-                amount.ToPlurLong(),
-                gasPrice?.ToWeiLong(),
-                cancellationToken).ConfigureAwait(false)).TransactionHash;
+            CancellationToken cancellationToken = default)
+        {
+            if (IsDryMode)
+                return EthTxHash.Zero;
+            
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return (await beeGeneratedClient.ChequebookWithdrawAsync(
+                        amount.ToPlurLong(),
+                        gasPrice?.ToWeiLong(),
+                        cancellationToken).ConfigureAwait(false)).TransactionHash;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
     }
 }

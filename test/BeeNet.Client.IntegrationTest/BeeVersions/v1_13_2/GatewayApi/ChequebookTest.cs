@@ -140,7 +140,6 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
 
 
             // Assert 
-            Assert.StartsWith("0x", result);
             var actualChequebookBalance = await beeNodeClient.GetChequebookBalanceAsync();
             Assert.Equal(originalChequebookBalance.AvailableBalance - amount, actualChequebookBalance.AvailableBalance);
             Assert.Equal(originalChequebookBalance.TotalBalance - amount, actualChequebookBalance.TotalBalance);

@@ -796,6 +796,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadBytesAsync(
             Stream body,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
@@ -811,7 +812,7 @@ namespace Etherna.BeeNet
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmReference> UploadChunkAsync(
+        Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -829,7 +830,7 @@ namespace Etherna.BeeNet
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<SwarmReference> UploadChunkAsync(
+        Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
             bool pinChunk = false,
@@ -901,6 +902,7 @@ namespace Etherna.BeeNet
         Task<SwarmReference> UploadFileAsync(
             Stream content,
             PostageBatchId batchId,
+            ushort? compactLevel = 0,
             string? name = null,
             string? contentType = null,
             bool isFileCollection = false,
@@ -933,7 +935,7 @@ namespace Etherna.BeeNet
         /// <param name="address"></param>
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
-        Task<string> WalletBzzWithdrawAsync(
+        Task<EthTxHash> WalletBzzWithdrawAsync(
             BzzValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default);
@@ -945,7 +947,7 @@ namespace Etherna.BeeNet
         /// <param name="address"></param>
         /// <param name="coin"></param>
         /// <returns>Tx hash</returns>
-        Task<string> WalletNativeCoinWithdrawAsync(
+        Task<EthTxHash> WalletNativeCoinWithdrawAsync(
             XDaiValue amount,
             EthAddress address,
             CancellationToken cancellationToken = default);
@@ -955,7 +957,7 @@ namespace Etherna.BeeNet
         /// <param name="gasPrice">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string> WithdrawFromChequebookAsync(
+        Task<EthTxHash> WithdrawFromChequebookAsync(
             BzzValue amount,
             XDaiValue? gasPrice = null,
             CancellationToken cancellationToken = default);
