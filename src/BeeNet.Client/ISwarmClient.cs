@@ -234,7 +234,7 @@ namespace Etherna.BeeNet
         /// <param name="reference">Swarm content reference</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task GetBytesHeadersAsync(
+        Task<HttpContentHeaders?> GetBytesHeadersAsync(
             SwarmReference reference,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -750,7 +750,10 @@ namespace Etherna.BeeNet
             SwarmAddress address,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null, 
+            string? swarmActHistoryAddress = null,  
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null, 
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -763,7 +766,10 @@ namespace Etherna.BeeNet
             SwarmAddress address,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
-            string? swarmActHistoryAddress = null, 
+            string? swarmActHistoryAddress = null,
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null,
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Update Total Count and swarm hash for a tag of an input stream of unknown size using Uid</summary>

@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Clients.Beehive;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
@@ -676,7 +677,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public Task GetBytesHeadersAsync(
+        public Task<HttpContentHeaders?> GetBytesHeadersAsync(
             SwarmReference reference,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
@@ -963,8 +964,8 @@ namespace Etherna.BeeNet
                         var response = await beeGeneratedClient.BzzGetAsync(
                             reference: address.Reference.ToString(),
                             path: address.Path,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
-                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel5?)swarmRedundancyLevel,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -1508,7 +1509,7 @@ namespace Etherna.BeeNet
                         id: id,
                         swarm_only_root_chunk: swarmOnlyRootChunk,
                         swarm_cache: swarmCache,
-                        swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
+                        swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy6?)swarmRedundancyStrategy,
                         swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                         swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -1523,7 +1524,7 @@ namespace Etherna.BeeNet
                         owner: owner.ToString(),
                         id: id,
                         swarm_Only_Root_Chunk: swarmOnlyRootChunk,
-                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy7?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy9?)swarmRedundancyStrategy,
                         swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                     return new FileResponse(
@@ -2360,7 +2361,7 @@ namespace Etherna.BeeNet
                             type: type.ToString(),
                             swarm_only_root_chunk: swarmOnlyRootChunk,
                             swarm_cache: swarmCache,
-                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy7?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -2383,7 +2384,7 @@ namespace Etherna.BeeNet
                             after: after,
                             type: (Etherna.BeeNet.Clients.Beehive.Type?)type,
                             swarm_Only_Root_Chunk: swarmOnlyRootChunk,
-                            swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy5?)swarmRedundancyStrategy,
+                            swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy7?)swarmRedundancyStrategy,
                             swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
                         return new FileResponse(
@@ -2405,20 +2406,42 @@ namespace Etherna.BeeNet
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null, 
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null, 
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default)
         {
-            return address.HasPath ?
-                await beeGeneratedClient.BzzHeadAsync(
-                    address.Reference.ToString(),
-                    address.Path,
-                    cancellationToken).ConfigureAwait(false) :
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    return address.HasPath ?
+                        await beeGeneratedClient.BzzHeadAsync(
+                            reference: address.Reference.ToString(),
+                            path: address.Path,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel6?)redundancyLevel,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)redundancyStrategy,
+                            swarm_redundancy_fallback_mode: redundancyStrategyFallback,
+                            cancellationToken: cancellationToken).ConfigureAwait(false) :
                 
-                await beeGeneratedClient.BzzHeadAsync(
-                    address.Reference.ToString(),
-                    swarmActTimestamp,
-                    swarmActPublisher,
-                    swarmActHistoryAddress,
-                    cancellationToken).ConfigureAwait(false);
+                        await beeGeneratedClient.BzzHeadAsync(
+                            reference: address.Reference.ToString(),
+                            swarm_act_timestamp: swarmActTimestamp,
+                            swarm_act_publisher: swarmActPublisher,
+                            swarm_act_history_address: swarmActHistoryAddress,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)redundancyLevel,
+                            swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy3?)redundancyStrategy,
+                            swarm_redundancy_fallback_mode: redundancyStrategyFallback,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                case SwarmClients.Beehive:
+                    return await beehiveGeneratedClient.BzzHeadAsync(
+                        address.ToString(),
+                        swarm_Redundancy_Level: (SwarmRedundancyLevel6?)redundancyLevel,
+                        swarm_Redundancy_Strategy: (SwarmRedundancyStrategy4?)redundancyStrategy,
+                        swarm_Redundancy_Fallback_Mode: redundancyStrategyFallback,
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task<long?> TryGetFileSizeAsync(
@@ -2426,14 +2449,20 @@ namespace Etherna.BeeNet
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null, 
+            RedundancyLevel? redundancyLevel = null,
+            RedundancyStrategy? redundancyStrategy = null, 
+            bool? redundancyStrategyFallback = null,
             CancellationToken cancellationToken = default)
         {
             var headers = await TryGetFileHeadersAsync(
-                address,
-                swarmActTimestamp,
-                swarmActPublisher,
-                swarmActHistoryAddress,
-                cancellationToken).ConfigureAwait(false);
+                address: address,
+                swarmActTimestamp: swarmActTimestamp,
+                swarmActPublisher: swarmActPublisher,
+                swarmActHistoryAddress: swarmActHistoryAddress,
+                redundancyLevel: redundancyLevel,
+                redundancyStrategy: redundancyStrategy,
+                redundancyStrategyFallback: redundancyStrategyFallback,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
             return headers?.ContentLength;
         }
 

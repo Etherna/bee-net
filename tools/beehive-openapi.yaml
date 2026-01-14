@@ -876,6 +876,26 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "name": "Swarm-Redundancy-Strategy",
+            "in": "header",
+            "schema": {
+              "enum": [
+                "None",
+                "Data",
+                "Prox",
+                "Race"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "Swarm-Redundancy-Fallback-Mode",
+            "in": "header",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -1067,6 +1087,26 @@
                 "Paranoid"
               ],
               "type": "string"
+            }
+          },
+          {
+            "name": "Swarm-Redundancy-Strategy",
+            "in": "header",
+            "schema": {
+              "enum": [
+                "None",
+                "Data",
+                "Prox",
+                "Race"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "Swarm-Redundancy-Fallback-Mode",
+            "in": "header",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],

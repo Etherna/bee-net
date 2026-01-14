@@ -731,6 +731,9 @@ paths:
         - *a15
         - *a16
         - *a4
+        - *a25
+        - *a26
+        - *a13
       responses:
         "200":
           description: Chunk exists
@@ -788,6 +791,9 @@ paths:
             type: string
           required: true
           description: Path to the file in the collection.
+        - *a25
+        - *a26
+        - *a13
       responses:
         "200":
           description: Chunk exists
