@@ -21,7 +21,11 @@ namespace Etherna.BeeNet.Models
         public const string GasLimitHeader  = "Gas-Limit";
         public const string GasPriceHeader  = "Gas-Price";
         public const string ImmutableHeader = "Immutable";
+        public const string SwarmActHeader = "Swarm-Act";
+        public const string SwarmActHistoryAddressHeader = "Swarm-Act-History-Address";
+        public const string SwarmChunkRetrievalTimeoutHeader = "Swarm-Chunk-Retrieval-Timeout";
         public const string SwarmCollectionHeader = "Swarm-Collection";
+        public const string SwarmEncryptHeader = "Swarm-Encrypt";
         public const string SwarmErrorDocumentHeader = "Swarm-Error-Document";
         public const string SwarmFeedIndexHeader = "Swarm-Feed-Index";
         public const string SwarmFeedIndexNextHeader = "Swarm-Feed-Index-Next";
@@ -31,6 +35,9 @@ namespace Etherna.BeeNet.Models
         public const string SwarmPinningHeader = "Swarm-Pin";
         public const string SwarmPostageBatchIdHeader = "Swarm-Postage-Batch-Id";
         public const string SwarmPostageStampHeader = "Swarm-Postage-Stamp";
+        public const string SwarmRedundancyFallbackModeHeader = "Swarm-Redundancy-Fallback-Mode";
+        public const string SwarmRedundancyLevelHeader = "Swarm-Redundancy-Level";
+        public const string SwarmRedundancyStrategyHeader = "Swarm-Redundancy-Strategy";
         public const string SwarmSocSignatureHeader = "Swarm-Soc-Signature";
         public const string SwarmTagHeader = "Swarm-Tag";
     }

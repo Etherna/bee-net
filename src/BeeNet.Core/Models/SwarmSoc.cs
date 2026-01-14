@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Hashing;
+using Etherna.BeeNet.Hashing.Signer;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using System;
@@ -23,8 +24,8 @@ namespace Etherna.BeeNet.Models
         SwarmSocIdentifier identifier,
         EthAddress owner,
         SwarmCac innerChunk,
-        SwarmHash? hash,
-        SwarmSocSignature? signature)
+        SwarmHash? hash = null,
+        SwarmSocSignature? signature = null)
         : SwarmChunk
     {
         // Consts.
@@ -75,10 +76,10 @@ namespace Etherna.BeeNet.Models
         
         // Static properties.
         /// <summary>
-        /// Ethereum Address for SOC owner of Dispersed Replicas
-        /// Generated from private key 0x0100000000000000000000000000000000000000000000000000000000000000
+        /// Replicas SOC owner
         /// </summary>
-        public static EthAddress ReplicasOwner { get; } = new("dc5b20847f43d67928f49cd4f85d696b5a7617b5");
+        public static EthAddress ReplicasOwner => ReplicasOwnerPrivateKey.GetPublicAddress(); //"0xdc5b20847f43d67928f49cd4f85d696b5a7617b5"
+        public static EthECKey ReplicasOwnerPrivateKey { get; } = new("0x0100000000000000000000000000000000000000000000000000000000000000");
         
         // Methods.
         public SwarmHash BuildHash(Hasher hasher)
@@ -109,6 +110,23 @@ namespace Etherna.BeeNet.Models
             return buffer;
         }
 
+        /// <summary>
+        /// Sign signs a SOC using the given signer.
+        /// It returns a signed SOC chunk ready for submission to the network.
+        /// </summary>
+        /// <param name="signer"></param>
+        /// <returns></returns>
+        public void Sign(ISigner signer, Hasher hasher)
+        {
+            ArgumentNullException.ThrowIfNull(signer, nameof(signer));
+            
+            if (Owner != signer.PublicAddress)
+                throw new ArgumentException("Invalid signer owner", nameof(signer));
+
+            var toSignBytes = ToSignDigest(hasher);
+            Signature = new SwarmSocSignature(signer.Sign(toSignBytes));
+        }
+
         public void SignWithPrivateKey(EthECKey privateKey, Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
@@ -134,9 +152,9 @@ namespace Etherna.BeeNet.Models
                 return false;
             
             // Disperse replica validation.
-            if (Owner == ReplicasOwner &&
-                !InnerChunk.Hash.ToReadOnlyMemory()[1..32].Span.SequenceEqual(Identifier.ToReadOnlyMemory()[1..32].Span))
-                return false;
+            if (Owner == ReplicasOwner)
+                return InnerChunk.Hash.ToReadOnlyMemory()[1..32].Span.SequenceEqual(
+                    Identifier.ToReadOnlyMemory()[1..32].Span);
             
             return true;
         }

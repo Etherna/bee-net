@@ -17,11 +17,12 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmOverlayAddressTypeConverter))]
-    public readonly struct SwarmOverlayAddress : IEquatable<SwarmOverlayAddress>
+    public readonly struct SwarmOverlayAddress : IEquatable<SwarmOverlayAddress>, IParsable<SwarmOverlayAddress>
     {
         // Consts.
         public const int AddressSize = 32;
@@ -80,6 +81,28 @@ namespace Etherna.BeeNet.Models
             {
                 return false;
             }
+        }
+        public static SwarmOverlayAddress Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmOverlayAddress result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
         }
         
         // Operator methods.

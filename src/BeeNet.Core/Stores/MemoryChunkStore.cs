@@ -21,28 +21,38 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public class MemoryChunkStore : ChunkStoreBase
+    public class MemoryChunkStore : ReadOnlyChunkStoreBase, IChunkStore
     {
         // Fields.
         private readonly ConcurrentDictionary<SwarmHash, SwarmChunk> chunks = new();
         
+        // Properties.
+        public IReadOnlyDictionary<SwarmHash, SwarmChunk> AllChunks => chunks;
+        
         // Methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
-            Task.FromResult(chunks.Remove(hash, out _));
+        public Task<bool> AddAsync(SwarmChunk chunk, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(chunk);
+            
+            return Task.FromResult(chunks.TryAdd(chunk.Hash, chunk));
+        }
+        
+        public override Task<SwarmChunk> GetAsync(SwarmHash hash, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return Task.FromResult(chunks[hash]);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Task.FromException<SwarmChunk>(ex);
+            }
+        }
 
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
             Task.FromResult(chunks.ContainsKey(hash));
 
-        protected override Task<SwarmChunk> LoadChunkAsync(
-            SwarmHash hash,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult(chunks[hash]);
-
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk)
-        {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            
-            return Task.FromResult(chunks.TryAdd(chunk.Hash, chunk));
-        }
+        public Task<bool> RemoveAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(chunks.Remove(hash, out _));
     }
 }

@@ -12,10 +12,17 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Models;
+
 namespace Etherna.BeeNet.Hashing.Signer
 {
     public interface ISigner
     {
+        // Properties.
+        EthAddress PublicAddress { get; }
+        
+        // Methods.
+        byte[] GetPublicKey();
         byte[] Sign(byte[] toSign);
     }
 }

@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -57,14 +58,15 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public async Task<ManifestPathResolutionResult<TResult>> InvokeAsync<TResult>(
             string path,
-            Func<string, Task<TResult>> invokeAsync,
-            Func<string, Task<bool>> hasPathPrefixAsync,
-            Func<Task<IReadOnlyDictionary<string, string>>> getRootMetadataAsync)
+            Func<string, CancellationToken, Task<TResult>> invokeAsync,
+            Func<string, CancellationToken, Task<bool>> hasPathPrefixAsync,
+            Func<CancellationToken, Task<IReadOnlyDictionary<string, string>>> getRootMetadataAsync,
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(invokeAsync, nameof(invokeAsync));
-            ArgumentNullException.ThrowIfNull(hasPathPrefixAsync, nameof(hasPathPrefixAsync));
-            ArgumentNullException.ThrowIfNull(getRootMetadataAsync, nameof(getRootMetadataAsync));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(invokeAsync);
+            ArgumentNullException.ThrowIfNull(hasPathPrefixAsync);
+            ArgumentNullException.ThrowIfNull(getRootMetadataAsync);
                 
             // Trim start separators.
             var newPath = path.All(c => c == SwarmAddress.Separator)
@@ -89,7 +91,7 @@ namespace Etherna.BeeNet.Manifest
                 // Invoke with resolutions.
                 try
                 {
-                    var result = await invokeAsync(path).ConfigureAwait(false);
+                    var result = await invokeAsync(path, cancellationToken).ConfigureAwait(false);
                     return new(result, false);
                 }
                 catch(KeyNotFoundException)
@@ -98,7 +100,7 @@ namespace Etherna.BeeNet.Manifest
                     if (RedirectToDirectory &&
                         !resolvedIndex &&
                         !path.EndsWith(SwarmAddress.Separator) &&
-                        await hasPathPrefixAsync(path + SwarmAddress.Separator).ConfigureAwait(false))
+                        await hasPathPrefixAsync(path + SwarmAddress.Separator, cancellationToken).ConfigureAwait(false))
                     {
                         path += SwarmAddress.Separator;
                         if (ExplicitRedirectToDirectory)
@@ -112,7 +114,7 @@ namespace Etherna.BeeNet.Manifest
                     if (ResolveMetadataDocuments)
                     {
                         if (rootMetadata == null)
-                            rootMetadata = await getRootMetadataAsync().ConfigureAwait(false);
+                            rootMetadata = await getRootMetadataAsync(cancellationToken).ConfigureAwait(false);
                         
                         // Check index suffix to path.
                         if (path.EndsWith(SwarmAddress.Separator) &&
@@ -133,7 +135,7 @@ namespace Etherna.BeeNet.Manifest
                             path != errorDocument)
                         {
                             //don't iterate on error, to avoid infinite execution vulnerability.  
-                            return new(await invokeAsync(errorDocument).ConfigureAwait(false), true);
+                            return new(await invokeAsync(errorDocument, cancellationToken).ConfigureAwait(false), true);
                         }
                     }
 

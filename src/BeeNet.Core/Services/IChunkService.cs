@@ -31,11 +31,17 @@ namespace Etherna.BeeNet.Services
         /// <param name="address">Resource address</param>
         /// <param name="manifestPathResolver"></param>
         /// <param name="chunkStore">The chunk store</param>
+        /// <param name="redundancyLevel">Redundancy level used to retrieve root replicas</param>
+        /// <param name="redundancyStrategy">Base strategy used to retrieve parity chunks</param>
+        /// <param name="redundancyStrategyFallback">Fallback to more aggressive redundancy strategy if required</param>
         /// <returns>Resource stream</returns>
         Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore);
+            IReadOnlyChunkStore chunkStore,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true);
     
         /// <summary>
         /// Evaluate the result uploading a directory
@@ -149,8 +155,8 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <returns>The data root hash</returns>
-        Task<SwarmHash> WriteDataChunksAsync(
+        /// <returns>The data root reference</returns>
+        Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             byte[] data,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -169,8 +175,8 @@ namespace Etherna.BeeNet.Services
         /// <param name="encrypt">True to encrypt</param>
         /// <param name="redundancyLevel">Choose the redundancy level</param>
         /// <param name="chunkCuncorrency">Amount of concurrent chunk hashing tasks. Null to default</param>
-        /// <returns>The data root hash</returns>
-        Task<SwarmHash> WriteDataChunksAsync(
+        /// <returns>The data root reference</returns>
+        Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             Stream stream,
             IPostageStampIssuer? postageStampIssuer = null,

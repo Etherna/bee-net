@@ -35,8 +35,8 @@ namespace Etherna.BeeNet.Manifest
             string prefix,
             MantarayNodeBase node)
         {
-            ArgumentNullException.ThrowIfNull(node, nameof(node));
-            ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(prefix);
             if (prefix.Length > PrefixMaxSize)
                 throw new ArgumentOutOfRangeException(nameof(prefix));
             
@@ -63,8 +63,8 @@ namespace Etherna.BeeNet.Manifest
             Encoding.UTF8.GetBytes(Prefix).CopyTo(prefixBytes.AsSpan());
             bytes.AddRange(prefixBytes);
 
-            // Node hash.
-            bytes.AddRange(Node.Hash.ToByteArray());
+            // Node reference.
+            bytes.AddRange(Node.Reference.ToByteArray());
 
             // Metadata.
             if (Node.NodeTypeFlags.HasFlag(NodeType.WithMetadata))
@@ -76,9 +76,9 @@ namespace Etherna.BeeNet.Manifest
                 var metadataTotalSize = metadataBytes.Count + MetadataBytesSize;
                 
                 // Pad bytes if necessary.
-                if (metadataTotalSize % XorEncryptKey.KeySize != 0)
+                if (metadataTotalSize % EncryptionKey256.KeySize != 0)
                 {
-                    var padding = new byte[XorEncryptKey.KeySize - metadataTotalSize % XorEncryptKey.KeySize];
+                    var padding = new byte[EncryptionKey256.KeySize - metadataTotalSize % EncryptionKey256.KeySize];
                     Array.Fill(padding, (byte)'\n');
                     metadataBytes.AddRange(padding);
                 }

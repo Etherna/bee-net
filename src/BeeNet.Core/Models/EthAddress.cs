@@ -17,11 +17,12 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(EthAddressTypeConverter))]
-    public readonly struct EthAddress : IEquatable<EthAddress>
+    public readonly struct EthAddress : IEquatable<EthAddress>, IParsable<EthAddress>
     {
         // Consts.
         public const int AddressSize = 20;
@@ -78,6 +79,28 @@ namespace Etherna.BeeNet.Models
             //accept as valid both with "0x..." or not
             value.IsHex() &&
             value.IsValidEthereumAddressLength();
+        public static EthAddress Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out EthAddress result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
         
         // Operator methods.
         public static bool operator ==(EthAddress left, EthAddress right) => left.Equals(right);

@@ -15,11 +15,11 @@
 namespace Etherna.BeeNet.Models
 {
     public sealed class ChequebookBalance(
-        BzzBalance availableBalance,
-        BzzBalance totalBalance)
+        BzzValue availableBalance,
+        BzzValue totalBalance)
     {
         // Properties.
-        public BzzBalance AvailableBalance { get; } = availableBalance;
-        public BzzBalance TotalBalance { get; } = totalBalance;
+        public BzzValue AvailableBalance { get; } = availableBalance;
+        public BzzValue TotalBalance { get; } = totalBalance;
     }
 }

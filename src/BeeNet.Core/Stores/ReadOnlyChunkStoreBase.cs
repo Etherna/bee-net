@@ -16,113 +16,86 @@ using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public abstract class ReadOnlyChunkStoreBase(
-        IDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-        : IReadOnlyChunkStore
+    public abstract class ReadOnlyChunkStoreBase : IReadOnlyChunkStore
     {
-        // Properties.
-        protected IDictionary<SwarmHash, SwarmChunk> ChunksCache { get; } =
-            chunksCache ?? new Dictionary<SwarmHash, SwarmChunk>();
-
         // Methods.
-        public async Task<SwarmChunk> GetAsync(
+        public abstract Task<SwarmChunk> GetAsync(
             SwarmHash hash,
-            bool cacheChunk = false,
-            CancellationToken cancellationToken = default)
-        {
-            if (ChunksCache.TryGetValue(hash, out var chunk))
-                return chunk;
+            CancellationToken cancellationToken = default);
 
-            chunk = await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
-
-            if (cacheChunk)
-                ChunksCache[hash] = chunk;
-
-            return chunk;
-        }
-
-        public async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> GetAsync(
+        public virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> GetAsync(
             IEnumerable<SwarmHash> hashes,
-            bool cacheChunk = false,
+            int? canReturnAfterFailed = null,
+            int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
+            ArgumentNullException.ThrowIfNull(hashes);
             
-            var results = new Dictionary<SwarmHash, SwarmChunk>();
-            var cacheMissedHashes = new List<SwarmHash>();
-            
-            // Try read chunks from cache.
-            foreach (var hash in hashes)
-                if (ChunksCache.TryGetValue(hash, out var chunk))
-                    results.Add(hash, chunk);
-                else
-                    cacheMissedHashes.Add(hash);
+            //cancel all pendent load tasks when returning before all of them are completed
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            // Get from store only missing chunks.
-            if (cacheMissedHashes.Count != 0)
+            var tasks = hashes.Select(async hash =>
             {
-                var storeResults = await LoadChunksAsync(cacheMissedHashes, cancellationToken).ConfigureAwait(false);
-                foreach (var result in storeResults)
-                    results.Add(result.Key, result.Value);
-            }
+                try { return await GetAsync(hash, cts.Token).ConfigureAwait(false); }
+                catch (KeyNotFoundException) { return null; }
+            }).ToList();
 
-            // Report chunks to cache, if required.
-            if (cacheChunk)
-                foreach (var result in results)
-                    ChunksCache.TryAdd(result.Key, result.Value);
-            
+            Dictionary<SwarmHash, SwarmChunk?> results = [];
+            var failedChunks = 0;
+            while (tasks.Count > 0)
+            {
+                var completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+                tasks.Remove(completedTask);
+                
+                var chunkResult = await completedTask.ConfigureAwait(false);
+                if (chunkResult != null)
+                    results.Add(chunkResult.Hash, chunkResult);
+                else
+                    failedChunks++;
+
+                if (canReturnAfterSucceeded <= results.Count ||
+                    canReturnAfterFailed <= failedChunks)
+                    break;
+            }
             return results;
         }
 
-        public abstract Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default);
-
-        public async Task<SwarmChunk?> TryGetAsync(
+        public virtual async Task<bool> HasChunkAsync(
             SwarmHash hash,
-            bool cacheChunk = false,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetAsync(hash, cacheChunk, cancellationToken).ConfigureAwait(false);
+                await GetAsync(hash, cancellationToken).ConfigureAwait(false);
+                return true;
             }
-            catch (BeeNetApiException)
+            catch (KeyNotFoundException)
             {
-                return null;
-            }
-            catch (OperationCanceledException)
-            {
-                return null;
+                return false;
             }
         }
 
-        // Protected methods.
-        protected abstract Task<SwarmChunk> LoadChunkAsync(
+        public async Task<SwarmChunk?> TryGetAsync(
             SwarmHash hash,
-            CancellationToken cancellationToken = default);
-
-        protected virtual async Task<IReadOnlyDictionary<SwarmHash, SwarmChunk>> LoadChunksAsync(
-            IEnumerable<SwarmHash> hashes,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(hashes, nameof(hashes));
-            
-            var results = new Dictionary<SwarmHash, SwarmChunk>();
-            foreach (var hash in hashes)
+            try
             {
-                try
-                {
-                    var chunk = await LoadChunkAsync(hash, cancellationToken).ConfigureAwait(false);
-                    results.Add(hash, chunk);
-                }
-                catch (KeyNotFoundException) { }
+                return await GetAsync(hash, cancellationToken).ConfigureAwait(false);
             }
-
-            return results;
+            catch (Exception e) when (e is BeeNetApiException
+                                          or InvalidOperationException
+                                          or KeyNotFoundException
+                                          or OperationCanceledException)
+            {
+                return null;
+            }
         }
     }
 }

@@ -16,12 +16,12 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class SettlementData(
         string peer,
-        BzzBalance received,
-        BzzBalance sent)
+        BzzValue received,
+        BzzValue sent)
     {
         // Properties.
         public string Peer { get; } = peer;
-        public BzzBalance Received { get; } = received;
-        public BzzBalance Sent { get; } = sent;
+        public BzzValue Received { get; } = received;
+        public BzzValue Sent { get; } = sent;
     }
 }

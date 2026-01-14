@@ -17,6 +17,7 @@ using Etherna.BeeNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -30,23 +31,19 @@ namespace Etherna.BeeNet.Manifest
         public const int VersionHashSize = 31;
 
         // Properties.
-        public XorEncryptKey? EntryEncryptionKey  =>
-            Metadata.TryGetValue(ManifestEntry.ChunkEncryptKeyKey, out var encryptKeyStr) ?
-                new XorEncryptKey(encryptKeyStr) : (XorEncryptKey?)null;
-        public abstract SwarmHash? EntryHash { get; }
-        public bool EntryUseRecursiveEncryption =>
-            Metadata.TryGetValue(ManifestEntry.UseRecursiveEncryptionKey, out var useRecursiveEncrypStr) && bool.Parse(useRecursiveEncrypStr);
+        public abstract SwarmReference? EntryReference { get; }
         public abstract IReadOnlyDictionary<char, MantarayNodeFork> Forks { get; }
-        public abstract SwarmHash Hash { get; }
         public abstract IReadOnlyDictionary<string, string> Metadata { get; }
         public abstract NodeType NodeTypeFlags { get; }
-        public abstract XorEncryptKey? ObfuscationKey { get; }
+        public abstract EncryptionKey256? ObfuscationKey { get; }
+        public abstract SwarmReference Reference { get; }
         
         // Methods.
         public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
-            string path)
+            string path,
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             // If the path is empty, return current node metadata
             if (path.Length == 0)
@@ -63,25 +60,24 @@ namespace Etherna.BeeNet.Manifest
                 return fork.Node.Metadata;
             
             // Else, proceed into it.
-            await fork.Node.OnVisitingAsync().ConfigureAwait(false);
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
 
-            return await fork.Node.GetMetadataAsync(childSubPath).ConfigureAwait(false);
+            return await fork.Node.GetMetadataAsync(childSubPath, cancellationToken).ConfigureAwait(false);
         }
         
-        public async Task<MantarayResourceInfo> GetResourceInfoAsync(string path)
+        public async Task<MantarayResourceInfo> GetResourceInfoAsync(
+            string path,
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             // If the path is empty and entry is not null, return the entry
             if (path.Length == 0)
             {
-                if (EntryHash.HasValue && EntryHash != SwarmHash.Zero)
+                if (EntryReference.HasValue && !SwarmReference.IsZero(EntryReference.Value))
                     return new()
                     {
-                        ChunkReference = new SwarmChunkReference(
-                            EntryHash.Value,
-                            EntryEncryptionKey,
-                            EntryUseRecursiveEncryption),
+                        Reference = EntryReference.Value,
                         Metadata = Metadata,
                     };
             
@@ -93,14 +89,18 @@ namespace Etherna.BeeNet.Manifest
                 !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
                 throw new KeyNotFoundException($"Final path {path} can't be found");
 
-            await fork.Node.OnVisitingAsync().ConfigureAwait(false);
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
 
-            return await fork.Node.GetResourceInfoAsync(path[fork.Prefix.Length..]).ConfigureAwait(false);
+            return await fork.Node.GetResourceInfoAsync(
+                path[fork.Prefix.Length..],
+                cancellationToken).ConfigureAwait(false);
         }
         
-        public async Task<bool> HasPathPrefixAsync(string path)
+        public async Task<bool> HasPathPrefixAsync(
+            string path,
+            CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             if (path.Length == 0)
                 return true;
@@ -113,12 +113,13 @@ namespace Etherna.BeeNet.Manifest
             if (!path.AsSpan()[..commonPathLength].SequenceEqual(fork.Prefix.AsSpan()[..commonPathLength]))
                 return false;
 
-            await fork.Node.OnVisitingAsync().ConfigureAwait(false);
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
 
             return await fork.Node.HasPathPrefixAsync(
-                path[commonPathLength..]).ConfigureAwait(false);
+                path[commonPathLength..],
+                cancellationToken).ConfigureAwait(false);
         }
         
-        public abstract Task OnVisitingAsync();
+        public abstract Task OnVisitingAsync(CancellationToken cancellationToken = default);
     }
 }

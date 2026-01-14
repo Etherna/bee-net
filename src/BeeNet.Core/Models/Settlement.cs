@@ -17,13 +17,13 @@ using System.Collections.Generic;
 namespace Etherna.BeeNet.Models
 {
     public sealed class Settlement(
-        BzzBalance totalReceived,
-        BzzBalance totalSent,
+        BzzValue totalReceived,
+        BzzValue totalSent,
         IEnumerable<SettlementData> settlements)
     {
         // Properties.
-        public BzzBalance TotalReceived { get; } = totalReceived;
-        public BzzBalance TotalSent { get; } = totalSent;
+        public BzzValue TotalReceived { get; } = totalReceived;
+        public BzzValue TotalSent { get; } = totalSent;
         public IEnumerable<SettlementData> Settlements { get; } = settlements;
     }
 }

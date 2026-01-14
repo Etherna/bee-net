@@ -12,6 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Exceptions;
+using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using Newtonsoft.Json;
@@ -19,6 +22,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Manifest
@@ -26,124 +30,142 @@ namespace Etherna.BeeNet.Manifest
     public sealed class ReferencedMantarayNode : MantarayNodeBase
     {
         // Fields.
-        private readonly IReadOnlyChunkStore chunkStore;
-        private readonly bool useChunkStoreCache;
-        
-        private SwarmHash? _entryHash;
+        private SwarmReference? _entryReference;
         private readonly Dictionary<char, MantarayNodeFork> _forks = new();
-        private readonly Dictionary<string, string> _metadata;
-        private XorEncryptKey? _obfuscationKey;
+        private readonly IReadOnlyDictionary<string, string> _metadata;
+        private EncryptionKey256? _obfuscationKey;
+        private readonly IReadOnlyChunkStore chunkStore;
+        private readonly RedundancyStrategy redundancyStrategy;
+        private readonly bool redundancyStrategyFallback;
 
-        // Constructor.
+        // Constructors.
         public ReferencedMantarayNode(
+            SwarmCac chunk,
+            SwarmReference reference,
             IReadOnlyChunkStore chunkStore,
-            SwarmHash chunkHash,
-            Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags,
-            bool useChunkStoreCache = false)
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback,
+            IReadOnlyDictionary<string, string>? metadata,
+            NodeType nodeTypeFlags)
         {
-            this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
-            this.useChunkStoreCache = useChunkStoreCache;
-            Hash = chunkHash;
+            ArgumentNullException.ThrowIfNull(chunk);
+            
+            if (chunk.Hash != reference.Hash)
+                throw new ArgumentException($"Chunk's hash {chunk.Hash} does not match reference {reference}");
+
+            this.chunkStore = chunkStore;
+            this.redundancyStrategy = redundancyStrategy;
+            this.redundancyStrategyFallback = redundancyStrategyFallback;
             _metadata = metadata ?? new Dictionary<string, string>();
+            Chunk = chunk;
             NodeTypeFlags = nodeTypeFlags;
+            Reference = reference;
         }
         
         public ReferencedMantarayNode(
+            SwarmReference reference,
             IReadOnlyChunkStore chunkStore,
-            SwarmCac chunk,
-            Dictionary<string, string>? metadata,
-            NodeType nodeTypeFlags,
-            bool useChunkStoreCache = false)
+            RedundancyStrategy redundancyStrategy,
+            bool redundancyStrategyFallback,
+            IReadOnlyDictionary<string, string>? metadata,
+            NodeType nodeTypeFlags)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-            
-            this.chunkStore = chunkStore ?? throw new ArgumentNullException(nameof(chunkStore));
-            this.useChunkStoreCache = useChunkStoreCache;
-            Hash = chunk.Hash;
+            this.chunkStore = chunkStore;
+            this.redundancyStrategy = redundancyStrategy;
+            this.redundancyStrategyFallback = redundancyStrategyFallback;
             _metadata = metadata ?? new Dictionary<string, string>();
             NodeTypeFlags = nodeTypeFlags;
-            
-            // Decode chunk.
-            DecodeCacHelper(chunk);
+            Reference = reference;
         }
 
         // Properties.
         public SwarmCac? Chunk { get; private set; }
-        public override SwarmHash? EntryHash => IsDecoded
-            ? _entryHash
+        public override SwarmReference? EntryReference => IsDecoded
+            ? _entryReference
             : throw new InvalidOperationException("Node is not decoded from chunk");
         public override IReadOnlyDictionary<char, MantarayNodeFork> Forks => IsDecoded
             ? _forks
             : throw new InvalidOperationException("Node is not decoded from chunk");
-        public override SwarmHash Hash { get; }
-        public bool IsDecoded => Chunk != null;
+        public bool IsDecoded { get; private set; }
         public override IReadOnlyDictionary<string, string> Metadata => _metadata;
         public override NodeType NodeTypeFlags { get; }
-        public override XorEncryptKey? ObfuscationKey => IsDecoded
+        public override EncryptionKey256? ObfuscationKey => IsDecoded
             ? _obfuscationKey
             : throw new InvalidOperationException("Node is not decoded from chunk");
+        public override SwarmReference Reference { get; }
 
         // Methods.
-        public async Task DecodeFromChunkAsync()
+        public void DecodeFromChunk()
         {
+            if (Chunk == null)
+                throw new InvalidOperationException("Chunk not fetched");
             if (IsDecoded)
                 return;
+            
+            // Get chunk data.
+            var decodedChunk = (SwarmDecodedDataCac)Chunk.Decode(Reference, new Hasher());
+            var data = decodedChunk.Data.ToArray();
 
-            var chunk = await chunkStore.GetAsync(
-                Hash,
-                useChunkStoreCache).ConfigureAwait(false);
-            if (chunk is not SwarmCac cac)
-                throw new InvalidOperationException("Chunk is not a Content Addressed Chunk");
-            
-            DecodeCacHelper(cac);
-        }
-
-        public override async Task OnVisitingAsync()
-        {
-            if (!IsDecoded)
-                await DecodeFromChunkAsync().ConfigureAwait(false);
-        }
-        
-        // Helpers.
-        private void DecodeCacHelper(SwarmCac chunk)
-        {
-            if (chunk.Hash != Hash)
-                throw new ArgumentException("Chunk hash not match");
-            
-            var data = chunk.Data.ToArray();
-            var readIndex = 0;
-            
             // Get obfuscation key and de-obfuscate.
-            _obfuscationKey = new XorEncryptKey(data.AsMemory()[..XorEncryptKey.KeySize]);
-            _obfuscationKey.Value.EncryptDecrypt(data.AsSpan()[XorEncryptKey.KeySize..]);
-            readIndex += XorEncryptKey.KeySize;
+            var readIndex = 0;
+            _obfuscationKey = new EncryptionKey256(data.AsMemory()[..EncryptionKey256.KeySize]);
+            _obfuscationKey.Value.XorEncryptDecrypt(data.AsSpan()[EncryptionKey256.KeySize..]);
+            readIndex += EncryptionKey256.KeySize;
             
             // Read header.
             var versionHash = data.AsMemory()[readIndex..(readIndex + VersionHashSize)];
             readIndex += VersionHashSize;
             
+            // Decode version.
             if (versionHash.Span.SequenceEqual(Version02Hash))
                 DecodeVersion02(data.AsMemory()[readIndex..]);
             else
                 throw new InvalidOperationException("Manifest version not recognized");
-            
-            // Set chunk.
-            Chunk = chunk;
+
+            IsDecoded = true;
         }
         
+        public async Task FetchChunkAsync(
+            RedundancyLevel redundancyLevel,
+            CancellationToken cancellationToken = default)
+        {
+            // Use chunk replica resolver if required.
+            var rootChunkStore = redundancyLevel == RedundancyLevel.None ?
+                chunkStore :
+                new ReplicaResolverChunkStore(chunkStore, redundancyLevel, new Hasher());
+            
+            // Resolve root chunk.
+            var rootChunk = await rootChunkStore.GetAsync(
+                Reference.Hash,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+            if (rootChunk is not SwarmCac rootCac) //soc is not supported
+                throw new SwarmChunkTypeException(rootChunk, $"Chunk {Reference} is not a Content Addressed Chunk.");
+
+            Chunk = rootCac;
+        }
+        
+        public override async Task OnVisitingAsync(CancellationToken cancellationToken = default)
+        {
+            if (Chunk is null)
+                await FetchChunkAsync(RedundancyLevel.Paranoid, cancellationToken).ConfigureAwait(false);
+            
+            if (!IsDecoded)
+                DecodeFromChunk();
+        }
+
+        // Helpers.
         private void DecodeVersion02(ReadOnlyMemory<byte> data)
         {
             var readIndex = 0;
             
             // Read last entry hash.
-            var entryHashSize = data.Span[readIndex];
+            var entryReferenceSize = data.Span[readIndex];
             readIndex++;
             
-            if (entryHashSize != 0)
+            if (entryReferenceSize != 0)
             {
-                _entryHash = new SwarmHash(data[readIndex..(readIndex + entryHashSize)]);
-                readIndex += entryHashSize;
+                _entryReference = new SwarmReference(data[readIndex..(readIndex + entryReferenceSize)]);
+                readIndex += entryReferenceSize;
             }
             
             // Read forks.
@@ -168,9 +190,9 @@ namespace Etherna.BeeNet.Manifest
                 var prefix = Encoding.UTF8.GetString(data.Span[readIndex..(readIndex + MantarayNodeFork.PrefixMaxSize)])[..prefixLength];
                 readIndex += MantarayNodeFork.PrefixMaxSize;
 
-                //read child node hash
-                var childNodeHash = new SwarmHash(data[readIndex..(readIndex + SwarmHash.HashSize)]);
-                readIndex += SwarmHash.HashSize;
+                //read child node reference
+                var childNodeReference = new SwarmReference(data[readIndex..(readIndex + entryReferenceSize)]);
+                readIndex += entryReferenceSize;
                 
                 //read metadata
                 Dictionary<string, string>? childNodeMetadata = null;
@@ -188,19 +210,19 @@ namespace Etherna.BeeNet.Manifest
                     
                     //skip padding
                     var metadataTotalSize = metadataBytes.Length + MantarayNodeFork.MetadataBytesSize;
-                    if (metadataTotalSize % XorEncryptKey.KeySize != 0)
-                        readIndex += XorEncryptKey.KeySize - metadataTotalSize % XorEncryptKey.KeySize;
+                    if (metadataTotalSize % EncryptionKey256.KeySize != 0)
+                        readIndex += EncryptionKey256.KeySize - metadataTotalSize % EncryptionKey256.KeySize;
                 }
                 
                 //add fork
-                _forks[key] = new MantarayNodeFork(
-                    prefix,
-                    new ReferencedMantarayNode(
-                        chunkStore,
-                        childNodeHash,
-                        childNodeMetadata,
-                        childNodeTypeFlags,
-                        useChunkStoreCache));
+                var forkNode = new ReferencedMantarayNode(
+                    childNodeReference,
+                    chunkStore,
+                    redundancyStrategy,
+                    redundancyStrategyFallback,
+                    childNodeMetadata,
+                    childNodeTypeFlags);
+                _forks[key] = new MantarayNodeFork(prefix, forkNode);
             }
         }
     }

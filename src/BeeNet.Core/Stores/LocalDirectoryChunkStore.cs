@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Models;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -29,7 +28,7 @@ namespace Etherna.BeeNet.Stores
     /// </summary>
     [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-    public class LocalDirectoryChunkStore : ChunkStoreBase
+    public class LocalDirectoryChunkStore : ReadOnlyChunkStoreBase, IChunkStore
     {
         // Consts.
         public const string CacFileExtension = ".cac";
@@ -38,9 +37,7 @@ namespace Etherna.BeeNet.Stores
         // Constructor.
         public LocalDirectoryChunkStore(
             string directoryPath,
-            bool createDirectory = false,
-            ConcurrentDictionary<SwarmHash, SwarmChunk>? chunksCache = null)
-            : base(chunksCache)
+            bool createDirectory = false)
         {
             if (!Directory.Exists(directoryPath))
             {
@@ -57,6 +54,44 @@ namespace Etherna.BeeNet.Stores
         public string DirectoryPath { get; }
 
         // Methods.
+        public async Task<bool> AddAsync(SwarmChunk chunk, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(chunk);
+
+            var chunkFileExtension = chunk switch
+            {
+                SwarmCac => CacFileExtension,
+                SwarmSoc => SocFileExtension,
+                _ => throw new InvalidOperationException(),
+            };
+            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + chunkFileExtension);
+            
+            if (File.Exists(chunkPath))
+                return false;
+            
+            var tmpChunkPath = Path.GetTempFileName();
+
+            try
+            {
+                //write tmp file, and complete writing.
+                using (var fileStream = File.Create(tmpChunkPath))
+                {
+                    await fileStream.WriteAsync(chunk.GetFullPayload(), cancellationToken).ConfigureAwait(false);
+                    await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                }
+                
+                //rename it. This method prevent concurrent reading/writing 
+                File.Move(tmpChunkPath, chunkPath, overwrite: true);
+            }
+            catch
+            {
+                //remove tmp chunk file in case of error
+                File.Delete(tmpChunkPath);
+            }
+            
+            return true;
+        }
+        
         public Task<IEnumerable<SwarmHash>> GetAllHashesAsync()
         {
             var cacFiles = Directory.GetFiles(DirectoryPath, '*' + CacFileExtension);
@@ -71,34 +106,8 @@ namespace Etherna.BeeNet.Stores
 
             return Task.FromResult<IEnumerable<SwarmHash>>(hashes);
         }
-
-        // Protected methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash)
-        {
-            // Try cac.
-            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
-            if (File.Exists(cacPath))
-            {
-                File.Delete(cacPath);
-                return Task.FromResult(true);
-            }
-            
-            // Try soc.
-            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
-            if (File.Exists(socPath))
-            {
-                File.Delete(socPath);
-                return Task.FromResult(true);
-            }
-            
-            return Task.FromResult(false);
-        }
-
-        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
-            Task.FromResult(File.Exists(Path.Combine(DirectoryPath, hash + CacFileExtension)) ||
-                            File.Exists(Path.Combine(DirectoryPath, hash + SocFileExtension)));
-
-        protected override async Task<SwarmChunk> LoadChunkAsync(
+        
+        public override async Task<SwarmChunk> GetAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default)
         {
@@ -129,42 +138,29 @@ namespace Etherna.BeeNet.Stores
             throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
         }
 
-        protected override async Task<bool> SaveChunkAsync(SwarmChunk chunk)
+        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(File.Exists(Path.Combine(DirectoryPath, hash + CacFileExtension)) ||
+                            File.Exists(Path.Combine(DirectoryPath, hash + SocFileExtension)));
+        
+        public Task<bool> RemoveAsync(SwarmHash hash, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
-
-            var chunkFileExtension = chunk switch
+            // Try cac.
+            var cacPath = Path.Combine(DirectoryPath, hash + CacFileExtension);
+            if (File.Exists(cacPath))
             {
-                SwarmCac => CacFileExtension,
-                SwarmSoc => SocFileExtension,
-                _ => throw new InvalidOperationException(),
-            };
-            var chunkPath = Path.Combine(DirectoryPath, chunk.Hash + chunkFileExtension);
-            
-            if (File.Exists(chunkPath))
-                return false;
-            
-            var tmpChunkPath = Path.GetTempFileName();
-
-            try
-            {
-                //write tmp file, and complete writing.
-                using (var fileStream = File.Create(tmpChunkPath))
-                {
-                    await fileStream.WriteAsync(chunk.GetFullPayload()).ConfigureAwait(false);
-                    await fileStream.FlushAsync().ConfigureAwait(false);
-                }
-                
-                //rename it. This method prevent concurrent reading/writing 
-                File.Move(tmpChunkPath, chunkPath, overwrite: true);
-            }
-            catch
-            {
-                //remove tmp chunk file in case of error
-                File.Delete(tmpChunkPath);
+                File.Delete(cacPath);
+                return Task.FromResult(true);
             }
             
-            return true;
+            // Try soc.
+            var socPath = Path.Combine(DirectoryPath, hash + SocFileExtension);
+            if (File.Exists(socPath))
+            {
+                File.Delete(socPath);
+                return Task.FromResult(true);
+            }
+            
+            return Task.FromResult(false);
         }
     }
 }

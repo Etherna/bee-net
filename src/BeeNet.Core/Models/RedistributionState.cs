@@ -23,8 +23,8 @@ namespace Etherna.BeeNet.Models
         int lastPlayedRound,
         int lastFrozenRound,
         int block,
-        BzzBalance reward,
-        XDaiBalance fees)
+        BzzValue reward,
+        XDaiValue fees)
     {
         // Properties.
         public bool IsFrozen { get; } = isFrozen;
@@ -35,7 +35,7 @@ namespace Etherna.BeeNet.Models
         public int LastPlayedRound { get; } = lastPlayedRound;
         public int LastFrozenRound { get; } = lastFrozenRound;
         public int Block { get; } = block;
-        public BzzBalance Reward { get; } = reward;
-        public XDaiBalance Fees { get; } = fees;
+        public BzzValue Reward { get; } = reward;
+        public XDaiValue Fees { get; } = fees;
     }
 }

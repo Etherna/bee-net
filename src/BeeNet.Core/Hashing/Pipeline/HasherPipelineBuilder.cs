@@ -12,7 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Hashing.Postage;
+using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
 using System;
@@ -33,37 +35,43 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             int? chunkConcurrency,
             bool readOnly = false)
         {
-            ArgumentNullException.ThrowIfNull(postageStamper, nameof(postageStamper));
-            
-            if (redundancyLevel != RedundancyLevel.None)
-                throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(postageStamper);
 
-            IHasherPipelineStage bmtStage;
-            if (isEncrypted)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                //build stages
-                var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
+            //build stages
+            var chunkAggregatorStage = new ChunkAggregatorPipelineStage(
+                new ChunkParityGenerator(
+                    redundancyLevel,
+                    isEncrypted || compactLevel > 0,
                     new ChunkBmtPipelineStage(
-                        compactLevel,
+                        0, //parities don't have an encryption key, so don't support chunks compaction (sig...)
+                        false,
                         new ChunkStoreWriterPipelineStage(
                             chunkStore,
                             postageStamper,
                             null,
-                            readOnly)),
-                    compactLevel > 0);
-                
-                var storeWriterStage = new ChunkStoreWriterPipelineStage(
+                            readOnly))),
+                new ChunkReplicator(
+                    redundancyLevel,
                     chunkStore,
                     postageStamper,
-                    chunkAggregatorStage,
-                    readOnly);
+                    new PrivateKeySigner(SwarmSoc.ReplicasOwnerPrivateKey)),
+                new ChunkBmtPipelineStage(
+                    compactLevel,
+                    isEncrypted,
+                    new ChunkStoreWriterPipelineStage(
+                        chunkStore,
+                        postageStamper,
+                        null,
+                        readOnly)),
+                readOnly);
                 
-                bmtStage = new ChunkBmtPipelineStage(compactLevel, storeWriterStage);
-            }
+            var storeWriterStage = new ChunkStoreWriterPipelineStage(
+                chunkStore,
+                postageStamper,
+                chunkAggregatorStage,
+                readOnly);
+                
+            var bmtStage = new ChunkBmtPipelineStage(compactLevel, isEncrypted, storeWriterStage);
             
             return new ChunkFeederPipelineStage(bmtStage, chunkConcurrency);
         }

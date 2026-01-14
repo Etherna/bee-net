@@ -17,11 +17,12 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(EthTxHashTypeConverter))]
-    public readonly struct EthTxHash : IEquatable<EthTxHash>
+    public readonly struct EthTxHash : IEquatable<EthTxHash>, IParsable<EthTxHash>
     {
         // Consts.
         public const int HashSize = 32;
@@ -32,7 +33,7 @@ namespace Etherna.BeeNet.Models
         // Constructors.
         public EthTxHash(byte[] hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
+            ArgumentNullException.ThrowIfNull(hash);
             if (!IsValidHash(hash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
 
@@ -41,7 +42,7 @@ namespace Etherna.BeeNet.Models
 
         public EthTxHash(string hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
+            ArgumentNullException.ThrowIfNull(hash);
             
             try
             {
@@ -55,6 +56,9 @@ namespace Etherna.BeeNet.Models
             if (!IsValidHash(byteHash))
                 throw new ArgumentOutOfRangeException(nameof(hash));
         }
+        
+        // Static properties.
+        public static EthTxHash Zero { get; } = new byte[HashSize];
 
         // Methods.
         public bool Equals(EthTxHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
@@ -69,7 +73,7 @@ namespace Etherna.BeeNet.Models
         public static EthTxHash FromString(string value) => new(value);
         public static bool IsValidHash(byte[] value)
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             return value.Length == HashSize;
         }
         public static bool IsValidHash(string value)
@@ -82,6 +86,28 @@ namespace Etherna.BeeNet.Models
             {
                 return false;
             }
+        }
+        public static EthTxHash Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out EthTxHash result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
         }
         
         // Operator methods.

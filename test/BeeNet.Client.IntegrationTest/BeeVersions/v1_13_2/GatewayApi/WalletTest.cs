@@ -28,8 +28,8 @@ namespace BeeNet.Client.IntegrationTest.BeeVersions.v1_13_2.GatewayApi
             var wallet = await beeNodeClient.GetWalletBalance();
 
             // Assert.
-            Assert.NotEqual(new BzzBalance(0), wallet.BzzBalance);
-            Assert.NotEqual(new XDaiBalance(0), wallet.XDaiBalance);
+            Assert.NotEqual(new BzzValue(0), wallet.BzzBalance);
+            Assert.NotEqual(new XDaiValue(0), wallet.XDaiBalance);
         }
 
     }

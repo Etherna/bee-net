@@ -29,9 +29,11 @@ namespace Etherna.BeeNet.Hashing.Postage
             PostageBuckets? buckets = null)
         {
             ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
+            if (!postageBatch.Depth.HasValue)
+                throw new ArgumentException("Batch depth can't be null");
 
             _buckets = buckets ?? new PostageBuckets();
-            BucketUpperBound = (uint)1 << (postageBatch.Depth - PostageBatch.BucketDepth);
+            BucketUpperBound = (uint)1 << (postageBatch.Depth.Value - PostageBatch.BucketDepth);
             PostageBatch = postageBatch;
             PostageBatchOwner = postageBatchOwner;
         }

@@ -21,23 +21,14 @@ namespace Etherna.BeeNet.Models
     public class SwarmAddressTest
     {
         // Internal classes.
-        public class AddressToStringTestElement(
-            SwarmAddress address,
-            string expectedString)
-        {
-            public SwarmAddress Address { get; } = address;
-            public string ExpectedString { get; } = expectedString;
-        }
+        public record AddressToStringTestElement(
+            SwarmAddress Address,
+            string ExpectedString);
 
-        public class StringToAddressTestElement(
-            string inputString,
-            SwarmHash expectedHash,
-            string expectedRelativePath)
-        {
-            public string InputString { get; } = inputString;
-            public SwarmHash ExpectedHash { get; } = expectedHash;
-            public string ExpectedRelativePath { get; } = expectedRelativePath;
-        }
+        public record StringToAddressTestElement(
+            string InputString,
+            SwarmReference ExpectedReference,
+            string ExpectedRelativePath);
 
         // Data.
         public static IEnumerable<object[]> AddressToStringTests
@@ -47,23 +38,23 @@ namespace Etherna.BeeNet.Models
                 var tests = new List<AddressToStringTestElement>
                 {
                     // Only hash.
-                    new(new SwarmAddress(SwarmHash.Zero),
+                    new(new SwarmAddress(SwarmReference.PlainZero),
                         "0000000000000000000000000000000000000000000000000000000000000000/"),
                     
                     // With path without root.
-                    new(new SwarmAddress(SwarmHash.Zero, "Im/a/relative/path"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/a/relative/path"),
                         "0000000000000000000000000000000000000000000000000000000000000000/Im/a/relative/path"),
                     
                     // With path with root.
-                    new(new SwarmAddress(SwarmHash.Zero, "/I/have/a/root"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "/I/have/a/root"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I/have/a/root"),
                     
                     // With path with root.
-                    new(new SwarmAddress(SwarmHash.Zero, "I/have/final/slash/"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "I/have/final/slash/"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/"),
                     
                     // With special chars.
-                    new(new SwarmAddress(SwarmHash.Zero, "I have a % of special\\chars!"),
+                    new(new SwarmAddress(SwarmReference.PlainZero, "I have a % of special\\chars!"),
                         "0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!")
                 };
 
@@ -79,42 +70,42 @@ namespace Etherna.BeeNet.Models
                 {
                     // Only hash without ending slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // Only hash with ending slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000/",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With initial root.
                     new("/0000000000000000000000000000000000000000000000000000000000000000",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With initial root and ending slash.
                     new("/0000000000000000000000000000000000000000000000000000000000000000/",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/"),
                     
                     // With path.
                     new("0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/Im/a/path"),
                     
                     // With initial root and path.
                     new("/0000000000000000000000000000000000000000000000000000000000000000/Im/a/path",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/Im/a/path"),
                     
                     // With final slash.
                     new("0000000000000000000000000000000000000000000000000000000000000000/I/have/final/slash/",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/I/have/final/slash/"),
                     
                     // With special chars.
                     new("0000000000000000000000000000000000000000000000000000000000000000/I have a % of special\\chars!",
-                        SwarmHash.Zero,
+                        SwarmReference.PlainZero,
                         "/I have a % of special\\chars!")
                 };
 
@@ -136,7 +127,7 @@ namespace Etherna.BeeNet.Models
         {
             var result = new SwarmAddress(test.InputString);
             
-            Assert.Equal(test.ExpectedHash, result.Hash);
+            Assert.Equal(test.ExpectedReference, result.Reference);
             Assert.Equal(test.ExpectedRelativePath, result.Path);
         }
     }

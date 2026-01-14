@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Chunks;
 using Etherna.BeeNet.Hashing.Postage;
 using Etherna.BeeNet.Models;
 using System;
@@ -23,30 +24,16 @@ using System.Threading.Tasks;
 namespace Etherna.BeeNet.Hashing.Pipeline
 {
     internal sealed class ChunkAggregatorPipelineStage(
+        ChunkParityGenerator parityGenerator,
+        ChunkReplicator chunkReplicator,
         ChunkBmtPipelineStage shortBmtPipelineStage,
-        bool useRecursiveEncryption)
+        bool readOnly)
         : IHasherPipelineStage
     {
-        // Private classes.
-        private sealed class ChunkHeader(
-            SwarmHash hash,
-            ReadOnlyMemory<byte> span,
-            XorEncryptKey? chunkKey,
-            bool isParityChunk)
-        {
-            public XorEncryptKey? ChunkKey { get; } = chunkKey;
-            public SwarmHash Hash { get; } = hash;
-            public ReadOnlyMemory<byte> Span { get; } = span;
-            public bool IsParityChunk { get; } = isParityChunk;
-        }
-        
         // Fields.
         private readonly SemaphoreSlim feedChunkMutex = new(1, 1);
         private readonly Dictionary<long, HasherPipelineFeedArgs> feedingBuffer = new();
-        private readonly List<List<ChunkHeader>> chunkLevels = []; //[level][chunk]
-        private readonly byte maxChildrenChunks = (byte)(useRecursiveEncryption
-            ? SwarmChunkBmt.SegmentsCount / 2 //write chunk key after chunk hash
-            : SwarmChunkBmt.SegmentsCount);
+        private readonly List<List<SwarmChunkHeader>> chunkLevels = []; //[level][chunk]
         
         private long feededChunkNumberId;
         
@@ -81,12 +68,17 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                 foreach (var processingChunk in chunksToProcess)
                 {
                     await AddChunkToLevelAsync(
-                        1,
-                        new ChunkHeader(
-                            processingChunk.Hash!.Value,
+                        0,
+                        new SwarmChunkHeader(
+                            processingChunk.Reference!.Value,
                             processingChunk.Span,
-                            processingChunk.ChunkKey,
                             false),
+                        args.SwarmChunkBmt).ConfigureAwait(false);
+                    
+                    await parityGenerator.AddChunkToLevelAsync(
+                        0,
+                        processingChunk.SpanData,
+                        AddChunkToLevelAsync,
                         args.SwarmChunkBmt).ConfigureAwait(false);
                 }
             }
@@ -96,9 +88,9 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             }
         }
 
-        public async Task<SwarmChunkReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
+        public async Task<SwarmReference> SumAsync(SwarmChunkBmt swarmChunkBmt)
         {
-            bool rootChunkFound = false;
+            var rootChunkFound = false;
             for (int i = 0; !rootChunkFound; i++)
             {
                 var levelChunks = GetLevelChunks(i);
@@ -118,37 +110,61 @@ namespace Etherna.BeeNet.Hashing.Pipeline
                             var nextLevelChunks = GetLevelChunks(i + 1);
                             nextLevelChunks.Add(levelChunks.Single());
                             levelChunks.Clear();
+                            
+                            await parityGenerator.ElevateCarrierChunkAsync(
+                                i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         }
                         break;
                     
                     default:
+                        await parityGenerator.EncodeErasureDataAsync(
+                            i, AddChunkToLevelAsync, swarmChunkBmt).ConfigureAwait(false);
                         await WrapFullLevelAsync(i, swarmChunkBmt).ConfigureAwait(false);
                         break;
                 }
             }
             
             var rootChunk = chunkLevels.Last()[0];
+            
+            // Create disperse replicas of root chunk. Don't add if is readOnly.
+            if (parityGenerator.RedundancyLevel != RedundancyLevel.None && !readOnly)
+            {
+                var rootSpanData = parityGenerator.GetRootSpanData();
+                await chunkReplicator.AddChunkReplicasAsync(
+                    new SwarmCac(rootChunk.Reference.Hash, rootSpanData),
+                    swarmChunkBmt.Hasher).ConfigureAwait(false);
+            }
 
-            return new(rootChunk.Hash, rootChunk.ChunkKey, useRecursiveEncryption);
+            return rootChunk.Reference;
         }
 
         // Helpers.
-        private async Task AddChunkToLevelAsync(int level, ChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt)
+        private async Task AddChunkToLevelAsync(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt)
         {
             ArgumentNullException.ThrowIfNull(chunkHeader, nameof(chunkHeader));
 
             var levelChunks = GetLevelChunks(level);
             levelChunks.Add(chunkHeader);
             
-            if (levelChunks.Count == maxChildrenChunks)
+            if (levelChunks.Count == parityGenerator.MaxChildrenChunks)
                 await WrapFullLevelAsync(level, swarmChunkBmt).ConfigureAwait(false);
         }
 
-        private List<ChunkHeader> GetLevelChunks(int level)
+        private List<SwarmChunkHeader> GetLevelChunks(int level)
         {
             while (chunkLevels.Count < level + 1)
                 chunkLevels.Add([]);
             return chunkLevels[level];
+        }
+        
+        private async Task<HasherPipelineFeedArgs> HashIntermediateChunkAsync(
+            ReadOnlyMemory<byte> span,
+            ReadOnlyMemory<byte> spanData,
+            SwarmChunkBmt swarmChunkBmt)
+        {
+            var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
+            await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
+            return args;
         }
         
         private async Task WrapFullLevelAsync(int level, SwarmChunkBmt swarmChunkBmt)
@@ -158,12 +174,18 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             // Calculate total span of all not parity chunks in level.
             var totalSpan = SwarmCac.LengthToSpan(
                 levelChunks.Where(c => !c.IsParityChunk) //don't add span of parity chunks to the common
-                    .Select(c => SwarmCac.SpanToLength(c.Span.Span))
+                    .Select(c => SwarmCac.DecodedSpanToLength(c.Span.Span))
                     .Aggregate((a,c) => a + c)); //sum of ulongs. Linq doesn't have it
+            if (levelChunks.Any(c => c.IsParityChunk))
+                SwarmCac.EncodeSpanInPlace(totalSpan, parityGenerator.RedundancyLevel);
             
             // Build total data from total span, and all the hashes in level.
-            // If chunks are compacted, append the encryption key after the chunk hash.
-            var totalDataLength = SwarmCac.SpanSize + levelChunks.Count * SwarmHash.HashSize * (useRecursiveEncryption ? 2 : 1);
+            // If chunks are encrypted, append the encryption key after the chunk hash.
+            var dataChunksInLevel = levelChunks.Count(c => !c.IsParityChunk);
+            var parityChunksInLevel = levelChunks.Count - dataChunksInLevel;
+            var totalDataLength = SwarmCac.SpanSize +
+                dataChunksInLevel * (parityGenerator.EncryptChunks ? SwarmReference.EncryptedSize : SwarmReference.PlainSize) +
+                parityChunksInLevel * SwarmReference.PlainSize; //parity references only have hashes
             var totalSpanData = new byte[totalDataLength];
             var totalDataIndex = 0;
             
@@ -171,38 +193,29 @@ namespace Etherna.BeeNet.Hashing.Pipeline
             totalDataIndex += SwarmCac.SpanSize;
             foreach (var chunk in levelChunks)
             {
-                chunk.Hash.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
-                totalDataIndex += SwarmHash.HashSize;
-                if (useRecursiveEncryption)
-                {
-                    chunk.ChunkKey!.Value.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
-                    totalDataIndex += XorEncryptKey.KeySize;
-                }
+                chunk.Reference.ToReadOnlyMemory().CopyTo(totalSpanData.AsMemory()[totalDataIndex..]);
+                totalDataIndex += chunk.Reference.Size;
             }
 
             // Run hashing on the new chunk, and add it to next level.
-            var hashingResult = await HashIntermediateChunkAsync(totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
+            var intermediateHashingArgs = await HashIntermediateChunkAsync(
+                totalSpan, totalSpanData, swarmChunkBmt).ConfigureAwait(false);
             await AddChunkToLevelAsync(
                 level + 1,
-                new ChunkHeader(
-                    hashingResult.Hash,
+                new SwarmChunkHeader(
+                    intermediateHashingArgs.Reference!.Value,
                     totalSpan,
-                    hashingResult.EncryptionKey,
                     false),
                 swarmChunkBmt).ConfigureAwait(false);
             
             levelChunks.Clear();
-        }
-        
-        // Helpers.
-        private async Task<SwarmChunkReference> HashIntermediateChunkAsync(
-            ReadOnlyMemory<byte> span,
-            ReadOnlyMemory<byte> spanData,
-            SwarmChunkBmt swarmChunkBmt)
-        {
-            var args = new HasherPipelineFeedArgs(swarmChunkBmt: swarmChunkBmt, span: span, spanData: spanData);
-            await shortBmtPipelineStage.FeedAsync(args).ConfigureAwait(false);
-            return new(args.Hash!.Value, args.ChunkKey, useRecursiveEncryption);
+
+            // Add chunk to redundancy generator.
+            await parityGenerator.AddChunkToLevelAsync(
+                level + 1,
+                intermediateHashingArgs.SpanData,
+                AddChunkToLevelAsync,
+                swarmChunkBmt).ConfigureAwait(false);
         }
     }
 }

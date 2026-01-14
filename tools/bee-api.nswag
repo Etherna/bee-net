@@ -1,9 +1,9 @@
 {
-  "runtime": "Net90",
+  "runtime": "Net100",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "./GatewaySwarm.yaml",
+      "url": "./bee-openapi.yaml",
       "output": null,
       "newLineBehavior": "Auto"
     }
@@ -47,7 +47,7 @@
       "className": "BeeGeneratedClient",
       "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [
-        "Etherna.BeeNet.Clients.Fixer",
+        "Etherna.BeeNet.Clients.Bee.Fixer",
         "Etherna.BeeNet.Exceptions"
       ],
       "additionalContractNamespaceUsages": [],
@@ -62,7 +62,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "Etherna.BeeNet.Clients",
+      "namespace": "Etherna.BeeNet.Clients.Bee",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -96,7 +96,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/BeeNet.Client/Clients/BeeGeneratedClient.cs",
+      "output": "../src/BeeNet.Client/Clients/Bee/BeeGeneratedClient.cs",
       "newLineBehavior": "Auto"
     }
   }

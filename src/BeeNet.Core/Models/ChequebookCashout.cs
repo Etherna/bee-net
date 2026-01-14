@@ -18,14 +18,14 @@ namespace Etherna.BeeNet.Models
         string peer,
         ChequePayment? lastCashedCheque,
         string transactionHash,
-        ResultChequebook result,
-        BzzBalance uncashedAmount)
+        ResultChequebook? result,
+        BzzValue uncashedAmount)
     {
         // Properties.
         public string Peer { get; } = peer;
         public ChequePayment? LastCashedCheque { get; } = lastCashedCheque;
         public string TransactionHash { get; } = transactionHash;
-        public ResultChequebook Result { get; } = result;
-        public BzzBalance UncashedAmount { get; } = uncashedAmount;
+        public ResultChequebook? Result { get; } = result;
+        public BzzValue UncashedAmount { get; } = uncashedAmount;
     }
 }

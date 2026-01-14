@@ -16,12 +16,12 @@ namespace Etherna.BeeNet.Models
 {
     public sealed class ResultChequebook(
         bool bounced,
-        BzzBalance lastPayout,
+        BzzValue lastPayout,
         string recipient)
     {
         // Properties.
         public bool Bounced { get; } = bounced;
-        public BzzBalance LastPayout { get; } = lastPayout;
+        public BzzValue LastPayout { get; } = lastPayout;
         public string Recipient { get; } = recipient;
     }
 }

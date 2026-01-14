@@ -18,12 +18,13 @@ using Etherna.BeeNet.TypeConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmAddressTypeConverter))]
-    public readonly struct SwarmAddress : IEquatable<SwarmAddress>
+    public readonly struct SwarmAddress : IEquatable<SwarmAddress>, IParsable<SwarmAddress>
     {
         // Consts.
         public const char Separator = '/';
@@ -32,9 +33,9 @@ namespace Etherna.BeeNet.Models
         private readonly string? _path;
         
         // Constructor.
-        public SwarmAddress(SwarmHash hash, string? path = null)
+        public SwarmAddress(SwarmReference reference, string? path = null)
         {
-            Hash = hash;
+            Reference = reference;
             _path = NormalizePath(path);
         }
         public SwarmAddress(string address)
@@ -44,37 +45,50 @@ namespace Etherna.BeeNet.Models
             // Trim initial slash.
             address = address.TrimStart(Separator);
 
-            // Extract hash root.
+            // Extract root reference.
             var slashIndex = address.IndexOf(Separator, StringComparison.InvariantCulture);
-            var hash = slashIndex > 0 ? address[..slashIndex] : address;
+            var reference = slashIndex > 0 ? address[..slashIndex] : address;
             var path = slashIndex > 0 ? address[slashIndex..] : Separator.ToString();
             
-            // Set hash and path.
-            Hash = new SwarmHash(hash);
+            // Set reference and path.
+            Reference = new SwarmReference(reference);
             _path = NormalizePath(path);
         }
         
         // Properties.
-        public SwarmHash Hash { get; }
+        public SwarmReference Reference { get; }
         public bool HasPath => Path != Separator.ToString();
         public string Path => _path ?? NormalizePath(null);
         
         // Methods.
         public bool Equals(SwarmAddress other) =>
-            Hash.Equals(other.Hash) &&
+            Reference.Equals(other.Reference) &&
             EqualityComparer<string>.Default.Equals(Path, other.Path);
         public override bool Equals(object? obj) => obj is SwarmAddress other && Equals(other);
-        public override int GetHashCode() => Hash.GetHashCode() ^
+        public override int GetHashCode() => Reference.GetHashCode() ^
                                              Path.GetHashCode(StringComparison.InvariantCulture);
         public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveToResourceInfoAsync(
             IReadOnlyChunkStore chunkStore,
-            ManifestPathResolver manifestPathResolver)
+            ManifestPathResolver manifestPathResolver,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
-            var rootManifest = new ReferencedMantarayManifest(chunkStore, Hash);
+            var rootManifest = ReferencedMantarayManifest.BuildNew(
+                Reference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback);
+
+            await ((ReferencedMantarayNode)rootManifest.RootNode).FetchChunkAsync(
+                redundancyLevel).ConfigureAwait(false);
+            
+            ((ReferencedMantarayNode)rootManifest.RootNode).DecodeFromChunk();
+            
             return await rootManifest.GetResourceInfoAsync(
                 Path, manifestPathResolver).ConfigureAwait(false);
         }
-        public override string ToString() => Hash + Path;
+        public override string ToString() => Reference + Path;
         public async Task<string?> TryGetFileNameAsync(
             IReadOnlyChunkStore chunkStore)
         {
@@ -87,6 +101,29 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static SwarmAddress FromString(string value) => new(value);
         public static SwarmAddress FromSwarmHash(SwarmHash value) => new(value);
+        public static SwarmAddress FromSwarmReference(SwarmReference value) => new(value);
+        public static SwarmAddress Parse(string s, IFormatProvider? provider) => FromString(s);
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out SwarmAddress result)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                result = default;
+                return false;
+            }
+
+#pragma warning disable CA1031
+            try
+            {
+                result = FromString(s);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+#pragma warning restore CA1031
+        }
         
         // Operator methods.
         public static bool operator ==(SwarmAddress left, SwarmAddress right) => left.Equals(right);
@@ -95,6 +132,7 @@ namespace Etherna.BeeNet.Models
         // Implicit conversion operator methods.
         public static implicit operator SwarmAddress(string value) => new(value);
         public static implicit operator SwarmAddress(SwarmHash value) => new(value);
+        public static implicit operator SwarmAddress(SwarmReference value) => new(value);
         
         // Explicit conversion operator methods.
         public static explicit operator string(SwarmAddress value) => value.ToString();

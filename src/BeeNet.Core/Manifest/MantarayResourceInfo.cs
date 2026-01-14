@@ -19,7 +19,7 @@ namespace Etherna.BeeNet.Manifest
 {
     public sealed class MantarayResourceInfo
     {
-        public required SwarmChunkReference ChunkReference { get; init; }
         public required IReadOnlyDictionary<string, string> Metadata { get; init; }
+        public required SwarmReference Reference { get; init; }
     }
 }

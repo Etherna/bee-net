@@ -94,17 +94,17 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         public IPostageStamper PostageStamper => nextStage.PostageStamper;
 
         // Methods.
-        public async Task<SwarmChunkReference> HashDataAsync(byte[] data)
+        public async Task<SwarmReference> HashDataAsync(byte[] data)
         {
-            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             using var memoryStream = new MemoryStream(data);
             return await HashDataAsync(memoryStream).ConfigureAwait(false);
         }
         
-        public async Task<SwarmChunkReference> HashDataAsync(Stream dataStream)
+        public async Task<SwarmReference> HashDataAsync(Stream dataStream)
         {
-            ArgumentNullException.ThrowIfNull(dataStream, nameof(dataStream));
+            ArgumentNullException.ThrowIfNull(dataStream);
 
             if (!IsUsable)
                 throw new InvalidOperationException("Pipeline has already been used");

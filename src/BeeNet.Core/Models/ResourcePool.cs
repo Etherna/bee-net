@@ -17,7 +17,7 @@ using System.Collections.Concurrent;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class ResourcePool<TResource>(Func<TResource> resourceBuilder)
+    internal sealed class ResourcePool<TResource>(Func<TResource> resourceBuilder)
     {
         // Fields.
         private readonly ConcurrentQueue<TResource> pool = new();

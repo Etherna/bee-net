@@ -23,7 +23,7 @@ namespace Etherna.BeeNet.Manifest
     public class ManifestPathResolverTest
     {
         // Internal classes.
-        public class InvokeResolvingPathTestElement
+        public record InvokeResolvingPathTestElement
         {
             public required string Path { get; init; }
             public required ManifestPathResolver Resolver { get; init; }
@@ -486,19 +486,19 @@ namespace Etherna.BeeNet.Manifest
             Task<ManifestPathResolutionResult<string>> InvokeFunc() =>
                 test.Resolver.InvokeAsync(
                     test.Path,
-                    invokeAsync: p =>
+                    invokeAsync: (p, _) =>
                     {
                         invokedOnPaths.Add(p);
                         if (invokeResults.TryGetValue(p, out var invokeResult))
                             return Task.FromResult(invokeResult);
                         throw new KeyNotFoundException();
                     },
-                    hasPathPrefixAsync: p =>
+                    hasPathPrefixAsync: (p, _) =>
                     {
                         prefixCheckedOnPaths.Add(p);
                         return Task.FromResult(invokeResults.Keys.Any(k => k.StartsWith(p)));
                     },
-                    getRootMetadataAsync: () =>
+                    getRootMetadataAsync: _ =>
                     {
                         getRootMetadataCounter++;
                         return Task.FromResult<IReadOnlyDictionary<string, string>>(test.RootMetadata);

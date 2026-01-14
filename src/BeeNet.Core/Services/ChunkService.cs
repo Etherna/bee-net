@@ -34,12 +34,20 @@ namespace Etherna.BeeNet.Services
         public async Task<Stream> GetFileStreamFromAddressAsync(
             SwarmAddress address,
             ManifestPathResolver manifestPathResolver,
-            IReadOnlyChunkStore chunkStore)
+            IReadOnlyChunkStore chunkStore,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true)
         {
             var chunkReference = (await address.ResolveToResourceInfoAsync(
-                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.ChunkReference;
+                chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.Reference;
 
-            return await ChunkDataStream.BuildNewAsync(chunkReference, chunkStore).ConfigureAwait(false);
+            return await ChunkDataStream.BuildNewAsync(
+                chunkReference,
+                chunkStore,
+                redundancyLevel,
+                redundancyStrategy,
+                redundancyStrategyFallback).ConfigureAwait(false);
         }
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
@@ -118,18 +126,15 @@ namespace Etherna.BeeNet.Services
             
             // Create manifest.
             var dirManifest = new WritableMantarayManifest(
-                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    redundancyLevel,
-                    encrypt,
-                    0,
-                    chunkCuncorrency,
-                    readOnlyPipeline),
-                compactLevel);
-
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                compactLevel,
+                chunkCuncorrency);
+            
             // Iterate through the files.
-            foreach (var file in fileNames)
+            foreach (var filePath in fileNames)
             {
                 using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                     chunkStore,
@@ -139,30 +144,24 @@ namespace Etherna.BeeNet.Services
                     compactLevel,
                     chunkCuncorrency);
                 
-                var fileContentType = FileContentTypeProvider.GetContentType(file);
-                var fileName = Path.GetFileName(file);
-                var fileStream = getFileStream(file);
+                var fileContentType = FileContentTypeProvider.GetContentType(filePath);
+                var fileName = Path.GetFileName(filePath);
+                var fileStream = getFileStream(filePath);
                 await using (fileStream.ConfigureAwait(false))
                 {
-                    var fileHashingResult = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
+                    var fileReference = await fileHasherPipeline.HashDataAsync(fileStream).ConfigureAwait(false);
                     totalMissedOptimisticHashing += fileHasherPipeline.MissedOptimisticHashing;
                 
                     // Add file entry to dir manifest.
-                    var fileEntryMetadata = new Dictionary<string, string>
-                    {
-                        [ManifestEntry.ContentTypeKey] = fileContentType,
-                        [ManifestEntry.FilenameKey] = fileName
-                    };
-                    if (fileHashingResult.EncryptionKey != null)
-                        fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
-                    if (fileHashingResult.UseRecursiveEncryption)
-                        fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
-                
                     dirManifest.Add(
-                        file,
+                        filePath,
                         ManifestEntry.NewFile(
-                            fileHashingResult.Hash,
-                            fileEntryMetadata));
+                            fileReference,
+                            new Dictionary<string, string>
+                            {
+                                [ManifestEntry.ContentTypeKey] = fileContentType,
+                                [ManifestEntry.FilenameKey] = fileName
+                            }));
                 }
             }
             
@@ -182,7 +181,7 @@ namespace Etherna.BeeNet.Services
             }
 
             // Get manifest hash.
-            var chunkHashingResult = await dirManifest.GetHashAsync(hasher).ConfigureAwait(false);
+            var chunkHashingResult = await dirManifest.GetReferenceAsync(hasher).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
@@ -250,24 +249,21 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
+            var fileReference = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
             
             // If file name is null or empty, use the file hash as name.
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = fileHashingResult.Hash.ToString();
+                fileName = fileReference.ToString();
             
             // Create manifest.
             var manifest = new WritableMantarayManifest(
-                readOnlyPipeline => HasherPipelineBuilder.BuildNewHasherPipeline(
-                    chunkStore,
-                    postageStamper,
-                    redundancyLevel,
-                    encrypt,
-                    0,
-                    chunkCuncorrency,
-                    readOnlyPipeline),
-                compactLevel);
-
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                compactLevel,
+                chunkCuncorrency);
+            
             manifest.Add(
                 MantarayManifestBase.RootPath,
                 ManifestEntry.NewDirectory(
@@ -275,24 +271,18 @@ namespace Etherna.BeeNet.Services
                     {
                         [ManifestEntry.WebsiteIndexDocPathKey] = fileName,
                     }));
-
-            var fileEntryMetadata = new Dictionary<string, string>
-            {
-                [ManifestEntry.ContentTypeKey] = fileContentType,
-                [ManifestEntry.FilenameKey] = fileName
-            };
-            if (fileHashingResult.EncryptionKey != null)
-                fileEntryMetadata.Add(ManifestEntry.ChunkEncryptKeyKey, fileHashingResult.EncryptionKey.Value.ToString());
-            if (fileHashingResult.UseRecursiveEncryption)
-                fileEntryMetadata.Add(ManifestEntry.UseRecursiveEncryptionKey, true.ToString());
             
             manifest.Add(
                 fileName,
                 ManifestEntry.NewFile(
-                    fileHashingResult.Hash,
-                    fileEntryMetadata));
+                    fileReference,
+                    new Dictionary<string, string>
+                    {
+                        [ManifestEntry.ContentTypeKey] = fileContentType,
+                        [ManifestEntry.FilenameKey] = fileName
+                    }));
 
-            var chunkHashingResult = await manifest.GetHashAsync(hasher).ConfigureAwait(false);
+            var chunkHashingResult = await manifest.GetReferenceAsync(hasher).ConfigureAwait(false);
             
             // Return result.
             return new UploadEvaluationResult(
@@ -301,7 +291,7 @@ namespace Etherna.BeeNet.Services
                 postageStamper.StampIssuer);
         }
 
-        public Task<SwarmHash> WriteDataChunksAsync(
+        public Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             byte[] data,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -310,6 +300,7 @@ namespace Etherna.BeeNet.Services
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             int? chunkCuncorrency = null)
         {
+#pragma warning disable CA2025
             using var stream = new MemoryStream(data);
             return WriteDataChunksAsync(
                 chunkStore,
@@ -319,9 +310,10 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 redundancyLevel,
                 chunkCuncorrency);
+#pragma warning restore CA2025
         }
 
-        public async Task<SwarmHash> WriteDataChunksAsync(
+        public async Task<SwarmReference> WriteDataChunksAsync(
             IChunkStore chunkStore,
             Stream stream,
             IPostageStampIssuer? postageStampIssuer = null,
@@ -336,7 +328,7 @@ namespace Etherna.BeeNet.Services
                 postageStampIssuer,
                 new MemoryStampStore());
             
-            // Create chunks and get file hash.
+            // Create chunks and get file reference.
             using var fileHasherPipeline = HasherPipelineBuilder.BuildNewHasherPipeline(
                 chunkStore,
                 postageStamper,
@@ -344,10 +336,7 @@ namespace Etherna.BeeNet.Services
                 encrypt,
                 compactLevel,
                 chunkCuncorrency);
-            var fileHashingResult = await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
-            
-            // Return file hash.
-            return fileHashingResult.Hash;
+            return await fileHasherPipeline.HashDataAsync(stream).ConfigureAwait(false);
         }
     }
 }

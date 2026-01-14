@@ -19,21 +19,27 @@ using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
 {
-    public class FakeChunkStore : ChunkStoreBase
+    public class FakeChunkStore : IChunkStore
     {
-        // Protected methods.
-        protected override Task<bool> DeleteChunkAsync(SwarmHash hash) =>
+        // Methods.
+        public Task<bool> AddAsync(SwarmChunk chunk, CancellationToken cancellationToken = default) =>
             Task.FromResult(false);
+        
+        public Task<SwarmChunk> GetAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            throw new KeyNotFoundException("Can't get chunks from fake chunk store");
 
-        public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
-            Task.FromResult(false);
-
-        protected override Task<SwarmChunk> LoadChunkAsync(
-            SwarmHash hash,
+        public Task<IReadOnlyDictionary<SwarmHash, SwarmChunk?>> GetAsync(
+            IEnumerable<SwarmHash> hashes, int? canReturnAfterFailed = null, int? canReturnAfterSucceeded = null,
             CancellationToken cancellationToken = default) =>
-            throw new KeyNotFoundException("Chunk get on a fake chunk store");
+            throw new KeyNotFoundException("Can't get chunks from fake chunk store");
 
-        protected override Task<bool> SaveChunkAsync(SwarmChunk chunk) =>
-            Task.FromResult(true);
+        public Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(false);
+
+        public Task<bool> RemoveAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+            Task.FromResult(false);
+
+        public Task<SwarmChunk?> TryGetAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>
+         Task.FromResult<SwarmChunk?>(null);
     }
 }

@@ -17,11 +17,11 @@ namespace Etherna.BeeNet.Models
     public sealed class ChequePayment(
         string beneficiary,
         string chequebook,
-        BzzBalance payout)
+        BzzValue payout)
     {
         // Properties.
         public string Beneficiary { get; } = beneficiary;
         public string Chequebook { get; } = chequebook;
-        public BzzBalance Payout { get; } = payout;
+        public BzzValue Payout { get; } = payout;
     }
 }

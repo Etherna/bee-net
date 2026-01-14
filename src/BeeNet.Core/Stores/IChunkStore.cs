@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Stores
@@ -21,9 +22,10 @@ namespace Etherna.BeeNet.Stores
     {
         Task<bool> AddAsync(
             SwarmChunk chunk,
-            bool cacheChunk = false);
+            CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteAsync(
-            SwarmHash hash);
+        Task<bool> RemoveAsync(
+            SwarmHash hash,
+            CancellationToken cancellationToken = default);
     }
 }
