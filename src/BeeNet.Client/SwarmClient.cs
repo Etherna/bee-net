@@ -236,36 +236,51 @@ namespace Etherna.BeeNet
             if (IsDryMode)
                 return;
             
-            // Build payload.
-            List<byte> payload = [];
-            foreach (var chunk in chunks)
-            {
-                var chunkBytes = chunk.GetFullPayload();
-                var chunkSizeByteArray = BitConverter.GetBytes((ushort)chunkBytes.Length);
-
-                //chunk size
-                payload.AddRange(chunkSizeByteArray);
-
-                //chunk data
-                payload.AddRange(chunkBytes.Span);
-                
-                //check hash
-                payload.AddRange(chunk.Hash.ToByteArray());
-            }
-            
-            var byteArrayPayload = payload.ToArray();
-            using var memoryStream = new MemoryStream(byteArrayPayload);
-            
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    throw new NotSupportedException();
+                {
+                    foreach (var chunk in chunks)
+                    {
+                        using var memoryStream = new MemoryStream(chunk.GetFullPayloadToByteArray());
+                    
+                        await UploadChunkAsync(
+                            memoryStream,
+                            batchId,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                    }
+                    break;
+                }
                 case SwarmClients.Beehive:
+                {
+                    // Build payload.
+                    List<byte> payload = [];
+                    foreach (var chunk in chunks)
+                    {
+                        var chunkBytes = chunk.GetFullPayload();
+                        var chunkSizeByteArray = BitConverter.GetBytes((ushort)chunkBytes.Length);
+
+                        //chunk size
+                        payload.AddRange(chunkSizeByteArray);
+
+                        //chunk data
+                        payload.AddRange(chunkBytes.Span);
+                
+                        //check hash
+                        payload.AddRange(chunk.Hash.ToByteArray());
+                    }
+            
+                    var byteArrayPayload = payload.ToArray();
+                    using var memoryStream = new MemoryStream(byteArrayPayload);
+                    
+                    // Upload stream.
                     await beehiveGeneratedClient.Ev1ChunksBulkUploadAsync(
                         swarm_Postage_Batch_Id: batchId.ToString(),
                         body: memoryStream,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
+                    
                     break;
+                }
                 default:
                     throw new InvalidOperationException();
             }
@@ -2578,7 +2593,6 @@ namespace Etherna.BeeNet
         public Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
@@ -2592,7 +2606,6 @@ namespace Etherna.BeeNet
             return UploadChunkAsync(
                 memoryStream,
                 batchId,
-                pinChunk,
                 tagId,
                 presignedPostageStamp,
                 swarmAct,
@@ -2604,7 +2617,6 @@ namespace Etherna.BeeNet
         public async Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
