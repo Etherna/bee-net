@@ -2684,7 +2684,10 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BzzPostAsync(
-                        new Clients.Bee.FileParameter(memoryStream, null, "application/x-tar"),
+                        file: new Clients.Bee.FileParameter(
+                            data: memoryStream,
+                            fileName: null,
+                            contentType: "application/x-tar"),
                         swarm_tag: tagId?.Value,
                         swarm_pin: swarmPin,
                         swarm_encrypt: swarmEncrypt,
@@ -2699,9 +2702,11 @@ namespace Etherna.BeeNet
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BzzPostAsync(
+                        file: new Clients.Beehive.FileParameter(
+                            data: memoryStream,
+                            fileName: null,
+                            contentType: "application/x-tar"),
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: new Clients.Beehive.FileParameter(memoryStream, null, "application/x-tar"),
-                        name: null,
                         swarm_Compact_Level: compactLevel,
                         swarm_Encrypt: swarmEncrypt,
                         swarm_Pin: swarmPin,
@@ -2778,7 +2783,10 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BzzPostAsync(
-                        new Clients.Bee.FileParameter(content, name, contentType),
+                        file: new Clients.Bee.FileParameter(
+                            data: content,
+                            fileName: name,
+                            contentType: contentType),
                         swarm_tag: tagId?.Value,
                         swarm_pin: swarmPin,
                         swarm_encrypt: swarmEncrypt,
@@ -2791,9 +2799,11 @@ namespace Etherna.BeeNet
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BzzPostAsync(
+                        file: new Clients.Beehive.FileParameter(
+                            data: content,
+                            fileName: name,
+                            contentType: contentType),
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: new Clients.Beehive.FileParameter(content, name, contentType),
-                        name: name,
                         swarm_Compact_Level: compactLevel,
                         swarm_Encrypt: swarmEncrypt,
                         swarm_Pin: swarmPin,

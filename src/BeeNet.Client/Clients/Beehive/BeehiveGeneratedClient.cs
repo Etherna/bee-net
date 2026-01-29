@@ -65,7 +65,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ChunkReferenceDto> BzzPostAsync(string swarm_Postage_Batch_Id, FileParameter body, string? name = null, int? swarm_Compact_Level = null, bool? swarm_Encrypt = null, bool? swarm_Pin = null, RedundancyLevel? swarm_Redundancy_Level = null, bool? swarm_Collection = null, string? swarm_Index_Document = null, string? swarm_Error_Document = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChunkReferenceDto> BzzPostAsync(string swarm_Postage_Batch_Id, FileParameter file, int? swarm_Compact_Level = null, bool? swarm_Encrypt = null, bool? swarm_Pin = null, RedundancyLevel? swarm_Redundancy_Level = null, bool? swarm_Collection = null, string? swarm_Index_Document = null, string? swarm_Error_Document = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -639,7 +639,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bzz/{address}"
                     urlBuilder_.Append("bzz/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(address.TrimStart('/'));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -732,7 +732,7 @@ namespace Etherna.BeeNet.Clients.Beehive
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bzz/{address}"
                     urlBuilder_.Append("bzz/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(address.TrimStart('/'));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -796,10 +796,10 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ChunkReferenceDto> BzzPostAsync(string swarm_Postage_Batch_Id, FileParameter body, string? name = null, int? swarm_Compact_Level = null, bool? swarm_Encrypt = null, bool? swarm_Pin = null, RedundancyLevel? swarm_Redundancy_Level = null, bool? swarm_Collection = null, string? swarm_Index_Document = null, string? swarm_Error_Document = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChunkReferenceDto> BzzPostAsync(string swarm_Postage_Batch_Id, FileParameter file, int? swarm_Compact_Level = null, bool? swarm_Encrypt = null, bool? swarm_Pin = null, RedundancyLevel? swarm_Redundancy_Level = null, bool? swarm_Collection = null, string? swarm_Index_Document = null, string? swarm_Error_Document = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
+            if (file == null)
+                throw new System.ArgumentNullException("file");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -832,9 +832,8 @@ namespace Etherna.BeeNet.Clients.Beehive
 
                     if (swarm_Error_Document != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Error-Document", ConvertToString(swarm_Error_Document, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
+                    var content_ = new System.Net.Http.StreamContent(file.Data);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.ContentType ?? "application/octet-stream");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
@@ -844,9 +843,9 @@ namespace Etherna.BeeNet.Clients.Beehive
                     // Operation Path: "bzz"
                     urlBuilder_.Append("bzz");
                     urlBuilder_.Append('?');
-                    if (name != null)
+                    if (file.FileName != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(file.FileName, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
