@@ -75,10 +75,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -101,10 +115,24 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -183,13 +211,34 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -245,10 +294,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -295,10 +358,24 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -421,13 +498,34 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -478,10 +576,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -504,10 +616,24 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -555,13 +681,34 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -597,13 +744,34 @@
             "description": "Created"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         },
         "deprecated": true
@@ -639,13 +807,34 @@
             "description": "Created"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -761,10 +950,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -839,16 +1042,44 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -991,10 +1222,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -1020,10 +1265,24 @@
             "description": "Created"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -1046,10 +1305,24 @@
             "description": "OK"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1081,10 +1354,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -1187,10 +1474,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -1268,16 +1569,44 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1328,10 +1657,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1363,10 +1706,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1430,13 +1787,34 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "429": {
-            "description": "Too Many Requests"
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1495,16 +1873,44 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "402": {
-            "description": "Payment Required"
+            "description": "Payment Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "429": {
-            "description": "Too Many Requests"
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1583,10 +1989,24 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           },
           "429": {
-            "description": "Too Many Requests"
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1594,6 +2014,29 @@
   },
   "components": {
     "schemas": {
+      "BeeErrorDto": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "BeehivePinDto": {
         "required": [
           "reference",
@@ -1634,6 +2077,78 @@
           }
         }
       },
+      "BeeNodeDto": {
+        "required": [
+          "id",
+          "connectionString",
+          "errors",
+          "ethereumAddress",
+          "heartbeatTimeStamp",
+          "isAlive",
+          "isBatchCreationEnabled",
+          "overlayAddress",
+          "pssPublicKey",
+          "publicKey"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "connectionString": {
+            "type": "string",
+            "format": "uri"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ethereumAddress": {
+            "$ref": "#/components/schemas/EthAddress"
+          },
+          "heartbeatTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAlive": {
+            "type": "boolean"
+          },
+          "isBatchCreationEnabled": {
+            "type": "boolean"
+          },
+          "overlayAddress": {
+            "$ref": "#/components/schemas/SwarmOverlayAddress"
+          },
+          "pssPublicKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "publicKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "BeeNodeInput": {
+        "required": [
+          "connectionString"
+        ],
+        "type": "object",
+        "properties": {
+          "connectionString": {
+            "type": "string"
+          },
+          "enableBatchCreation": {
+            "type": "boolean"
+          }
+        }
+      },
       "BeePinsDto": {
         "required": [
           "references"
@@ -1641,7 +2156,10 @@
         "type": "object",
         "properties": {
           "references": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SwarmReference"
+            }
           }
         }
       },
@@ -2048,6 +2566,12 @@
         ]
       },
       "SwarmHash": {
+        "maxLength": 64,
+        "minLength": 64,
+        "pattern": "^[a-fA-F0-9]{64}$",
+        "type": "string"
+      },
+      "SwarmOverlayAddress": {
         "maxLength": 64,
         "minLength": 64,
         "pattern": "^[a-fA-F0-9]{64}$",
