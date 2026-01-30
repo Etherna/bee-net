@@ -813,7 +813,6 @@ namespace Etherna.BeeNet
         /// <summary>Upload Chunk</summary>
         /// <param name="chunkData"></param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <param name="tagId">Associate upload with an existing Tag UID</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
@@ -821,7 +820,6 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
@@ -831,7 +829,6 @@ namespace Etherna.BeeNet
         /// <summary>Upload Chunk</summary>
         /// <param name="chunk"></param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
-        /// <param name="pinChunk">Represents if the uploaded data should be also locally pinned on the node.</param>
         /// <param name="tagId">Associate upload with an existing Tag UID</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Content reference</returns>
@@ -839,7 +836,6 @@ namespace Etherna.BeeNet
         Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,

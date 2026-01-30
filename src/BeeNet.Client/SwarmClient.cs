@@ -36,6 +36,9 @@ using System.Threading.Tasks;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
 using Loggers = Etherna.BeeNet.Models.Loggers;
 using PostageProof = Etherna.BeeNet.Models.PostageProof;
+using RedundancyLevel = Etherna.BeeNet.Models.RedundancyLevel;
+using RedundancyStrategy = Etherna.BeeNet.Models.RedundancyStrategy;
+using SwarmFeedType = Etherna.BeeNet.Models.SwarmFeedType;
 
 namespace Etherna.BeeNet
 {
@@ -236,36 +239,51 @@ namespace Etherna.BeeNet
             if (IsDryMode)
                 return;
             
-            // Build payload.
-            List<byte> payload = [];
-            foreach (var chunk in chunks)
-            {
-                var chunkBytes = chunk.GetFullPayload();
-                var chunkSizeByteArray = BitConverter.GetBytes((ushort)chunkBytes.Length);
-
-                //chunk size
-                payload.AddRange(chunkSizeByteArray);
-
-                //chunk data
-                payload.AddRange(chunkBytes.Span);
-                
-                //check hash
-                payload.AddRange(chunk.Hash.ToByteArray());
-            }
-            
-            var byteArrayPayload = payload.ToArray();
-            using var memoryStream = new MemoryStream(byteArrayPayload);
-            
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    throw new NotSupportedException();
+                {
+                    foreach (var chunk in chunks)
+                    {
+                        using var memoryStream = new MemoryStream(chunk.GetFullPayloadToByteArray());
+                    
+                        await UploadChunkAsync(
+                            memoryStream,
+                            batchId,
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
+                    }
+                    break;
+                }
                 case SwarmClients.Beehive:
+                {
+                    // Build payload.
+                    List<byte> payload = [];
+                    foreach (var chunk in chunks)
+                    {
+                        var chunkBytes = chunk.GetFullPayload();
+                        var chunkSizeByteArray = BitConverter.GetBytes((ushort)chunkBytes.Length);
+
+                        //chunk size
+                        payload.AddRange(chunkSizeByteArray);
+
+                        //chunk data
+                        payload.AddRange(chunkBytes.Span);
+                
+                        //check hash
+                        payload.AddRange(chunk.Hash.ToByteArray());
+                    }
+            
+                    var byteArrayPayload = payload.ToArray();
+                    using var memoryStream = new MemoryStream(byteArrayPayload);
+                    
+                    // Upload stream.
                     await beehiveGeneratedClient.Ev1ChunksBulkUploadAsync(
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: memoryStream,
+                        new FileParameter(memoryStream),
                         cancellationToken: cancellationToken).ConfigureAwait(false);
+                    
                     break;
+                }
                 default:
                     throw new InvalidOperationException();
             }
@@ -713,8 +731,8 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BytesGetAsync(
                         reference: reference.ToString(),
-                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel?)swarmRedundancyLevel,
-                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)swarmRedundancyLevel,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.RedundancyStrategy?)swarmRedundancyStrategy,
                         swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Stream;
                 default:
@@ -1024,8 +1042,8 @@ namespace Etherna.BeeNet
                 {
                     var response = await beehiveGeneratedClient.BzzGetAsync(
                         address: address.ToString(),
-                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel5?)swarmRedundancyLevel,
-                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy3?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)swarmRedundancyLevel,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.RedundancyStrategy?)swarmRedundancyStrategy,
                         swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                     return new FileResponse(
@@ -1064,10 +1082,10 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                 {
                     var response = await beehiveGeneratedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
-                    return response.Batches.Select(batch => (
+                    return (response.Batches ?? []).Select(batch => (
                             new PostageBatch(
                                 id: batch.BatchID,
-                                amount: BzzValue.FromPlurLong(batch.Value!.Value),
+                                amount: BzzValue.FromPlurLong(batch.Value),
                                 blockNumber: batch.Start,
                                 depth: batch.Depth,
                                 exists: true,
@@ -1076,7 +1094,7 @@ namespace Etherna.BeeNet
                                 label: null,
                                 ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
                                 utilization: 0),
-                            EthAddress.FromString(batch.Owner)))
+                            batch.Owner == null ? EthAddress.Zero : EthAddress.FromString(batch.Owner)))
                         .ToArray();
                 }
                 default:
@@ -1223,9 +1241,9 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                 {
                     var response = await beehiveGeneratedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
-                    return response.Stamps.Select(b =>
+                    return (response.Stamps ?? []).Select(b =>
                             new PostageBatch(
-                                amount: b.Amount != null ? BzzValue.FromPlurLong(b.Amount.Value) : null,
+                                amount: BzzValue.FromPlurLong(b.Amount),
                                 depth: b.Depth,
                                 blockNumber: b.BlockNumber,
                                 exists: b.Exists,
@@ -1333,7 +1351,7 @@ namespace Etherna.BeeNet
                         batchId.ToString(),
                         cancellationToken).ConfigureAwait(false);
                     return new PostageBatch(
-                        amount: response.Amount != null ? BzzValue.FromPlurLong(response.Amount.Value) : null,
+                        amount: BzzValue.FromPlurLong(response.Amount),
                         depth: response.Depth,
                         blockNumber: response.BlockNumber,
                         exists: response.Exists,
@@ -1569,7 +1587,7 @@ namespace Etherna.BeeNet
                         owner: owner.ToString(),
                         id: id,
                         swarm_Only_Root_Chunk: swarmOnlyRootChunk,
-                        swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy9?)swarmRedundancyStrategy,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.RedundancyStrategy?)swarmRedundancyStrategy,
                         swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                     return new FileResponse(
@@ -2430,9 +2448,9 @@ namespace Etherna.BeeNet
                             after: after,
                             afterLevel: afterLevel,
                             swarm_Only_Root_Chunk: swarmOnlyRootChunk,
-                            swarm_Redundancy_Strategy: (Clients.Beehive.SwarmRedundancyStrategy7?)swarmRedundancyStrategy,
+                            swarm_Redundancy_Strategy: (Clients.Beehive.RedundancyStrategy?)swarmRedundancyStrategy,
                             swarm_Redundancy_Fallback_Mode: swarmRedundancyFallbackMode,
-                            type: (Etherna.BeeNet.Clients.Beehive.Type?)type,
+                            type: (Etherna.BeeNet.Clients.Beehive.SwarmFeedType?)type,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
                         return new FileResponse(
                             response.ContentHeaders,
@@ -2482,8 +2500,8 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                     return await beehiveGeneratedClient.BzzHeadAsync(
                         address.ToString(),
-                        swarm_Redundancy_Level: (SwarmRedundancyLevel6?)redundancyLevel,
-                        swarm_Redundancy_Strategy: (SwarmRedundancyStrategy4?)redundancyStrategy,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)redundancyLevel,
+                        swarm_Redundancy_Strategy: (Clients.Beehive.RedundancyStrategy?)redundancyStrategy,
                         swarm_Redundancy_Fallback_Mode: redundancyStrategyFallback,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                 default:
@@ -2564,11 +2582,11 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BytesPostAsync(
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: body,
+                        body: new FileParameter(body),
                         swarm_Compact_Level: compactLevel,
                         swarm_Encrypt: swarmEncrypt,
                         swarm_Pin: swarmPin,
-                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel3?)swarmRedundancyLevel,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)swarmRedundancyLevel,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 default:
                     throw new InvalidOperationException();
@@ -2578,7 +2596,6 @@ namespace Etherna.BeeNet
         public Task<SwarmHash> UploadChunkAsync(
             SwarmCac chunk,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
@@ -2592,7 +2609,6 @@ namespace Etherna.BeeNet
             return UploadChunkAsync(
                 memoryStream,
                 batchId,
-                pinChunk,
                 tagId,
                 presignedPostageStamp,
                 swarmAct,
@@ -2604,7 +2620,6 @@ namespace Etherna.BeeNet
         public async Task<SwarmHash> UploadChunkAsync(
             Stream chunkData,
             PostageBatchId? batchId,
-            bool pinChunk = false,
             TagId? tagId = null,
             PostageStamp? presignedPostageStamp = null,
             bool? swarmAct = null,
@@ -2627,7 +2642,7 @@ namespace Etherna.BeeNet
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.ChunksPostAsync(
-                        body: chunkData,
+                        body: new FileParameter(chunkData),
                         swarm_Postage_Batch_Id: batchId?.ToString(),
                         swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
@@ -2669,7 +2684,10 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BzzPostAsync(
-                        new Clients.Bee.FileParameter(memoryStream, null, "application/x-tar"),
+                        file: new Clients.Bee.FileParameter(
+                            data: memoryStream,
+                            fileName: null,
+                            contentType: "application/x-tar"),
                         swarm_tag: tagId?.Value,
                         swarm_pin: swarmPin,
                         swarm_encrypt: swarmEncrypt,
@@ -2684,13 +2702,15 @@ namespace Etherna.BeeNet
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BzzPostAsync(
+                        file: new Clients.Beehive.FileParameter(
+                            data: memoryStream,
+                            fileName: null,
+                            contentType: "application/x-tar"),
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: new Clients.Beehive.FileParameter(memoryStream, null, "application/x-tar"),
-                        name: null,
                         swarm_Compact_Level: compactLevel,
                         swarm_Encrypt: swarmEncrypt,
                         swarm_Pin: swarmPin,
-                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel9)swarmRedundancyLevel,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)swarmRedundancyLevel,
                         swarm_Collection: true,
                         swarm_Index_Document: swarmIndexDocument,
                         swarm_Error_Document: swarmErrorDocument,
@@ -2733,7 +2753,7 @@ namespace Etherna.BeeNet
                         swarm_Postage_Batch_Id: batchId.ToString(),
                         swarm_Compact_Level: compactLevel,
                         swarm_Pin: swarmPin,
-                        type: (Clients.Beehive.Type2?)feed.Type,
+                        type: (Clients.Beehive.SwarmFeedType?)feed.Type,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 default:
                     throw new InvalidOperationException();
@@ -2763,7 +2783,10 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BzzPostAsync(
-                        new Clients.Bee.FileParameter(content, name, contentType),
+                        file: new Clients.Bee.FileParameter(
+                            data: content,
+                            fileName: name,
+                            contentType: contentType),
                         swarm_tag: tagId?.Value,
                         swarm_pin: swarmPin,
                         swarm_encrypt: swarmEncrypt,
@@ -2776,13 +2799,15 @@ namespace Etherna.BeeNet
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BzzPostAsync(
+                        file: new Clients.Beehive.FileParameter(
+                            data: content,
+                            fileName: name,
+                            contentType: contentType),
                         swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: new Clients.Beehive.FileParameter(content, name, contentType),
-                        name: name,
                         swarm_Compact_Level: compactLevel,
                         swarm_Encrypt: swarmEncrypt,
                         swarm_Pin: swarmPin,
-                        swarm_Redundancy_Level: (Clients.Beehive.SwarmRedundancyLevel9)swarmRedundancyLevel,
+                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)swarmRedundancyLevel,
                         swarm_Collection: isFileCollection,
                         swarm_Index_Document: swarmIndexDocument,
                         swarm_Error_Document: swarmErrorDocument,
@@ -2828,7 +2853,7 @@ namespace Etherna.BeeNet
                         owner: soc.Owner.ToString(false),
                         id: soc.Identifier.ToString(),
                         sig: soc.Signature.Value.ToString(),
-                        body: bodyMemoryStream,
+                        body: new FileParameter(bodyMemoryStream),
                         swarm_Postage_Batch_Id: batchId?.ToString(),
                         swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
                         swarm_Pin: swarmPin,
