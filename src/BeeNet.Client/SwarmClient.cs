@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Clients.Beehive;
+using Etherna.BeeNet.Clients.Bee;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
@@ -33,6 +33,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FileParameter = Etherna.BeeNet.Clients.Beehive.FileParameter;
 using FileResponse = Etherna.BeeNet.Models.FileResponse;
 using Loggers = Etherna.BeeNet.Models.Loggers;
 using PostageProof = Etherna.BeeNet.Models.PostageProof;
@@ -360,7 +361,6 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                 {
                     var response = await beeGeneratedClient.TagsPostAsync(
-                        new Clients.Bee.Body3 { Address = hash.ToString() },
                         cancellationToken).ConfigureAwait(false);
                     return new TagInfo(
                         id: new TagId(response.Uid),
@@ -720,7 +720,7 @@ namespace Etherna.BeeNet
                     return (await beeGeneratedClient.BytesGetAsync(
                         reference: reference.ToString(),
                         swarm_cache: swarmCache,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel?)swarmRedundancyLevel,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2?)swarmRedundancyLevel,
                         swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy?)swarmRedundancyStrategy,
                         swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                         swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
@@ -1009,7 +1009,7 @@ namespace Etherna.BeeNet
                         var response = await beeGeneratedClient.BzzGetAsync(
                             reference: address.Reference.ToString(),
                             swarm_cache: swarmCache,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel3?)swarmRedundancyLevel,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
@@ -1027,7 +1027,7 @@ namespace Etherna.BeeNet
                         var response = await beeGeneratedClient.BzzGetAsync(
                             reference: address.Reference.ToString(),
                             path: address.Path,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel5?)swarmRedundancyLevel,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel6?)swarmRedundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
@@ -1523,6 +1523,7 @@ namespace Etherna.BeeNet
                     return new(
                         commitment: response.Commitment,
                         radius: response.Radius,
+                        reserveCapacityDoubling: response.ReserveCapacityDoubling,
                         storageRadius: response.StorageRadius);
                 }
                 case SwarmClients.Beehive:
@@ -2131,7 +2132,7 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return beeGeneratedClient.WelcomeMessagePostAsync(
-                        new Clients.Bee.Body5 { WelcomeMessage = welcomeMessage },
+                        new Clients.Bee.Body4 { WelcomeMessage = welcomeMessage },
                         cancellationToken);
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -2483,7 +2484,7 @@ namespace Etherna.BeeNet
                         await beeGeneratedClient.BzzHeadAsync(
                             reference: address.Reference.ToString(),
                             path: address.Path,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel6?)redundancyLevel,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel7?)redundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)redundancyStrategy,
                             swarm_redundancy_fallback_mode: redundancyStrategyFallback,
                             cancellationToken: cancellationToken).ConfigureAwait(false) :
@@ -2493,7 +2494,7 @@ namespace Etherna.BeeNet
                             swarm_act_timestamp: swarmActTimestamp,
                             swarm_act_publisher: swarmActPublisher,
                             swarm_act_history_address: swarmActHistoryAddress,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)redundancyLevel,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel5?)redundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy3?)redundancyStrategy,
                             swarm_redundancy_fallback_mode: redundancyStrategyFallback,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -2544,7 +2545,7 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                     return beeGeneratedClient.TagsPatchAsync(
                         uid: id.Value,
-                        body: hash.HasValue ? new Clients.Bee.Body4 { Address = hash.Value.ToString() } : null,
+                        body: hash.HasValue ? new Clients.Bee.Body3 { Address = hash.Value.ToString() } : null,
                         cancellationToken: cancellationToken);
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -2576,7 +2577,7 @@ namespace Etherna.BeeNet
                         swarm_pin: swarmPin,
                         swarm_deferred_upload: swarmDeferredUpload,
                         swarm_encrypt: swarmEncrypt,
-                        swarm_redundancy_level: (int)swarmRedundancyLevel,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)swarmRedundancyLevel,
                         body: body,
                         cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
@@ -2696,7 +2697,7 @@ namespace Etherna.BeeNet
                         swarm_error_document: swarmErrorDocument,
                         swarm_postage_batch_id: batchId.ToString(),
                         swarm_deferred_upload: swarmDeferredUpload,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel3)swarmRedundancyLevel,
                         swarm_act: swarmAct,
                         swarm_act_history_address: swarmActHistoryAddress,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
@@ -2795,7 +2796,7 @@ namespace Etherna.BeeNet
                         swarm_error_document: swarmErrorDocument,
                         swarm_postage_batch_id: batchId.ToString(),
                         swarm_deferred_upload: swarmDeferredUpload,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2)swarmRedundancyLevel,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel3)swarmRedundancyLevel,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BzzPostAsync(
