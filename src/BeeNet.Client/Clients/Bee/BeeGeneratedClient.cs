@@ -66,9 +66,15 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Upload data
         /// </summary>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="swarm_tag">Associate upload with an existing Tag UID</param>
+        /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="swarm_encrypt">Represents the encrypting state of the file</param>
+        /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response3> BytesPostAsync(object swarm_postage_batch_id, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_encrypt = null, object? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response3> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -85,7 +91,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -159,7 +165,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -176,7 +182,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -191,7 +197,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -205,7 +211,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -218,7 +224,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -239,7 +245,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response7> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -267,7 +273,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -656,7 +662,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1382,9 +1388,15 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Upload data
         /// </summary>
+        /// <param name="swarm_postage_batch_id">ID of Postage Batch that is used to upload data with</param>
+        /// <param name="swarm_tag">Associate upload with an existing Tag UID</param>
+        /// <param name="swarm_pin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="swarm_deferred_upload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
+        /// <param name="swarm_encrypt">Represents the encrypting state of the file</param>
+        /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response3> BytesPostAsync(object swarm_postage_batch_id, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_encrypt = null, object? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response3> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1393,9 +1405,8 @@ namespace Etherna.BeeNet.Clients.Bee
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
 
-                    if (swarm_postage_batch_id == null)
-                        throw new System.ArgumentNullException("swarm_postage_batch_id");
-                    request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
+                    if (swarm_postage_batch_id != null)
+                        request_.Headers.TryAddWithoutValidation("swarm-postage-batch-id", ConvertToString(swarm_postage_batch_id, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_tag != null)
                         request_.Headers.TryAddWithoutValidation("swarm-tag", ConvertToString(swarm_tag, System.Globalization.CultureInfo.InvariantCulture));
@@ -1519,7 +1530,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -1978,7 +1989,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2133,7 +2144,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -2271,7 +2282,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -2388,7 +2399,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string reference, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -2516,7 +2527,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -2721,21 +2732,15 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(Body3 body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -3026,7 +3031,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong uid, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (uid == null)
                 throw new System.ArgumentNullException("uid");
@@ -6921,7 +6926,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body5? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response40> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10439,20 +10444,6 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
     internal enum SwarmRedundancyLevel
     {
 
@@ -10469,7 +10460,37 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum SwarmRedundancyStrategy
+    {
+
+        _0 = 0,
+
+        _1 = 1,
+
+        _2 = 2,
+
+        _3 = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
     internal enum SwarmRedundancyLevel2
+    {
+
+        _0 = 0,
+
+        _1 = 1,
+
+        _2 = 2,
+
+        _3 = 3,
+
+        _4 = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum SwarmRedundancyLevel3
     {
 
         _0 = 0,
@@ -10499,7 +10520,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel3
+    internal enum SwarmRedundancyLevel4
     {
 
         _0 = 0,
@@ -10529,7 +10550,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel4
+    internal enum SwarmRedundancyLevel5
     {
 
         _0 = 0,
@@ -10559,7 +10580,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel5
+    internal enum SwarmRedundancyLevel6
     {
 
         _0 = 0,
@@ -10589,7 +10610,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel6
+    internal enum SwarmRedundancyLevel7
     {
 
         _0 = 0,
@@ -10606,25 +10627,6 @@ namespace Etherna.BeeNet.Clients.Bee
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
     internal partial class Body3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body4
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -10671,7 +10673,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body5
+    internal partial class Body4
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
@@ -11421,6 +11423,9 @@ namespace Etherna.BeeNet.Clients.Bee
 
         [System.Text.Json.Serialization.JsonPropertyName("commitment")]
         public long Commitment { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reserveCapacityDoubling")]
+        public int ReserveCapacityDoubling { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 

@@ -17,11 +17,13 @@ namespace Etherna.BeeNet.Models
     public sealed class ReserveState(
         long commitment,
         int radius,
+        int reserveCapacityDoubling,
         int storageRadius)
     {
         // Properties.
         public long Commitment { get; } = commitment;
         public int Radius { get; } = radius;
+        public int ReserveCapacityDoubling { get; } = reserveCapacityDoubling;
         public int StorageRadius { get; } = storageRadius;
     }
 }
