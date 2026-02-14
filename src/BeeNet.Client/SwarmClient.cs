@@ -165,12 +165,12 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                 {
                     var result = await beehiveGeneratedClient.StampsPostAsync(
-                        amount: amount.ToPlurLong(),
+                        amount: amount.ToPlurString(),
                         depth: depth,
                         label: label,
                         immutable: immutable,
                         gas_Limit: gasLimit,
-                        gas_Price: gasPrice?.ToWeiLong(),
+                        gas_Price: gasPrice?.ToWeiString(),
                         cancellationToken: cancellationToken).ConfigureAwait(false);
                     return (result.BatchID, result.TxHash);
                 }
@@ -502,7 +502,7 @@ namespace Etherna.BeeNet
                         batchId: batchId.ToString(),
                         depth: depth,
                         gas_Limit: gasLimit,
-                        gas_Price: gasPrice?.ToWeiLong(),
+                        gas_Price: gasPrice?.ToWeiString(),
                         cancellationToken: cancellationToken).ConfigureAwait(false)).TxHash;
                 default:
                     throw new InvalidOperationException();
@@ -798,8 +798,8 @@ namespace Etherna.BeeNet
                     return new ChainState(
                         block: response.Block,
                         chainTip: response.ChainTip,
-                        currentPrice: BzzValue.FromPlurLong(Math.Max(response.CurrentPrice, 1)), //force price >= 1
-                        totalAmount: BzzValue.FromPlurLong(response.TotalAmount));
+                        currentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
+                        totalAmount: BzzValue.FromPlurString(response.TotalAmount));
                 }
                 default:
                     throw new InvalidOperationException();
@@ -1085,7 +1085,7 @@ namespace Etherna.BeeNet
                     return (response.Batches ?? []).Select(batch => (
                             new PostageBatch(
                                 id: batch.BatchID,
-                                amount: BzzValue.FromPlurLong(batch.Value),
+                                amount: BzzValue.FromPlurString(batch.Value),
                                 blockNumber: batch.Start,
                                 depth: batch.Depth,
                                 exists: true,
@@ -1243,7 +1243,7 @@ namespace Etherna.BeeNet
                     var response = await beehiveGeneratedClient.StampsGetAsync(cancellationToken).ConfigureAwait(false);
                     return (response.Stamps ?? []).Select(b =>
                             new PostageBatch(
-                                amount: BzzValue.FromPlurLong(b.Amount),
+                                amount: BzzValue.FromPlurString(b.Amount),
                                 depth: b.Depth,
                                 blockNumber: b.BlockNumber,
                                 exists: b.Exists,
@@ -1351,7 +1351,7 @@ namespace Etherna.BeeNet
                         batchId.ToString(),
                         cancellationToken).ConfigureAwait(false);
                     return new PostageBatch(
-                        amount: BzzValue.FromPlurLong(response.Amount),
+                        amount: BzzValue.FromPlurString(response.Amount),
                         depth: response.Depth,
                         blockNumber: response.BlockNumber,
                         exists: response.Exists,
@@ -2371,9 +2371,9 @@ namespace Etherna.BeeNet
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.StampsTopupAsync(
                         batchId: batchId.ToString(),
-                        amount: amount.ToPlurLong(),
+                        amount: amount.ToPlurString(),
                         gas_Limit: gasLimit,
-                        gas_Price: gasPrice?.ToWeiLong(),
+                        gas_Price: gasPrice?.ToWeiString(),
                         cancellationToken: cancellationToken).ConfigureAwait(false)).TxHash;
                 default:
                     throw new InvalidOperationException();
