@@ -189,17 +189,17 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, string amount, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -3155,7 +3155,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsDiluteAsync(string batchId, int depth, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -3272,7 +3272,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, long amount, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsTopupAsync(string batchId, string amount, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batchId == null)
                 throw new System.ArgumentNullException("batchId");
@@ -3399,7 +3399,7 @@ namespace Etherna.BeeNet.Clients.Beehive
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(long amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, long? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchIdWithTxHashDto> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, ulong? gas_Limit = null, string? gas_Price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -3803,21 +3803,23 @@ namespace Etherna.BeeNet.Clients.Beehive
     internal partial class ChainStateDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("block")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^-?(?:0|[1-9]\d*)$")]
-        public ulong Block { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("chainTip")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^-?(?:0|[1-9]\d*)$")]
         public ulong ChainTip { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("block")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^-?(?:0|[1-9]\d*)$")]
+        public ulong Block { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("totalAmount")]
-        public long TotalAmount { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TotalAmount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("currentPrice")]
-        public long CurrentPrice { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CurrentPrice { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("timeStamp")]
         public long TimeStamp { get; set; } = default!;
@@ -3865,7 +3867,8 @@ namespace Etherna.BeeNet.Clients.Beehive
         public string BatchID { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public long Value { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Value { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("start")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^-?(?:0|[1-9]\d*)$")]
@@ -4055,7 +4058,8 @@ namespace Etherna.BeeNet.Clients.Beehive
         public int? Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("amount")]
-        public long Amount { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Amount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]

@@ -22,7 +22,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace Etherna.BeeNet.Models
 {
     [TypeConverter(typeof(SwarmOverlayAddressTypeConverter))]
-    public readonly struct SwarmOverlayAddress : IEquatable<SwarmOverlayAddress>, IParsable<SwarmOverlayAddress>
+    public readonly struct SwarmOverlayAddress :
+        IComparable<SwarmOverlayAddress>,
+        IEquatable<SwarmOverlayAddress>,
+        IParsable<SwarmOverlayAddress>
     {
         // Consts.
         public const int AddressSize = 32;
@@ -60,6 +63,7 @@ namespace Etherna.BeeNet.Models
         public static SwarmOverlayAddress Zero { get; } = new byte[AddressSize];
 
         // Methods.
+        public int CompareTo(SwarmOverlayAddress other) => byteAddress.Span.SequenceCompareTo(other.byteAddress.Span);
         public bool Equals(SwarmOverlayAddress other) => byteAddress.Span.SequenceEqual(other.byteAddress.Span);
         public override bool Equals(object? obj) => obj is SwarmOverlayAddress other && Equals(other);
         public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress.ToArray());
@@ -108,6 +112,10 @@ namespace Etherna.BeeNet.Models
         // Operator methods.
         public static bool operator ==(SwarmOverlayAddress left, SwarmOverlayAddress right) => left.Equals(right);
         public static bool operator !=(SwarmOverlayAddress left, SwarmOverlayAddress right) => !(left == right);
+        public static bool operator <(SwarmOverlayAddress left, SwarmOverlayAddress right) => left.CompareTo(right) < 0;
+        public static bool operator <=(SwarmOverlayAddress left, SwarmOverlayAddress right) => left.CompareTo(right) <= 0;
+        public static bool operator >(SwarmOverlayAddress left, SwarmOverlayAddress right) => left.CompareTo(right) > 0;
+        public static bool operator >=(SwarmOverlayAddress left, SwarmOverlayAddress right) => left.CompareTo(right) >= 0;
         
         // Implicit conversion operator methods.
         public static implicit operator SwarmOverlayAddress(string value) => new(value);

@@ -2164,20 +2164,19 @@
         }
       },
       "BzzValue": {
-        "type": "integer",
-        "format": "int64"
+        "type": "string"
       },
       "ChainStateDto": {
         "required": [
-          "block",
           "chainTip",
+          "block",
           "totalAmount",
           "currentPrice",
           "timeStamp"
         ],
         "type": "object",
         "properties": {
-          "block": {
+          "chainTip": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -2185,7 +2184,7 @@
             ],
             "format": "uint64"
           },
-          "chainTip": {
+          "block": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -2231,6 +2230,7 @@
       "GlobalPostageBatchDto": {
         "required": [
           "batchID",
+          "value",
           "depth",
           "bucketDepth"
         ],
@@ -2590,8 +2590,7 @@
         "type": "string"
       },
       "XDaiValue": {
-        "type": "integer",
-        "format": "int64"
+        "type": "string"
       }
     }
   }
