@@ -1351,7 +1351,7 @@ namespace Etherna.BeeNet
                         batchId.ToString(),
                         cancellationToken).ConfigureAwait(false);
                     return new PostageBatch(
-                        amount: BzzValue.FromPlurString(response.Amount),
+                        amount: response.Amount != null ? BzzValue.FromPlurString(response.Amount) : null,
                         depth: response.Depth,
                         blockNumber: response.BlockNumber,
                         exists: response.Exists,
