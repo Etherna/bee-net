@@ -1287,7 +1287,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<bool> GetPinStatusAsync(
+        public async Task<PinStatus> GetPinStatusAsync(
             SwarmReference reference,
             CancellationToken cancellationToken = default)
         {
@@ -1297,24 +1297,48 @@ namespace Etherna.BeeNet
                 {
                     try
                     {
-                        return (await beeGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
-                            .Reference == reference;
+                        var beePinStatus = await beeGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false);
+                        return new PinStatus(
+                            reference,
+                            creationTime: null,
+                            missingChunks: [],
+                            processed: beePinStatus.Reference == reference ? true : null,
+                            succeeded: beePinStatus.Reference == reference,
+                            pinnedChunks: null);
                     }
                     catch (BeeNetApiException e) when (e.StatusCode == 404)
                     {
-                        return false;
+                        return new PinStatus(
+                            reference,
+                            creationTime: null,
+                            missingChunks: null,
+                            processed: null,
+                            succeeded: false,
+                            pinnedChunks: null);
                     }
                 }
                 case SwarmClients.Beehive:
                 {
                     try
                     {
-                        return (await beehiveGeneratedClient.PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false))
-                            .Reference == reference;
+                        var beehivePinStatus = await beehiveGeneratedClient.Ev1PinsGetAsync(reference.ToString(), cancellationToken).ConfigureAwait(false);
+                        return new PinStatus(
+                            reference,
+                            creationTime: DateTimeOffset.FromUnixTimeSeconds(beehivePinStatus.CreationTime),
+                            missingChunks: beehivePinStatus.MissingChunks.Select(SwarmHash.FromString),
+                            processed: beehivePinStatus.Processed,
+                            succeeded: beehivePinStatus.Succeeded,
+                            pinnedChunks: beehivePinStatus.PinnedChunks);
                     }
                     catch (BeeNetApiException e) when (e.StatusCode == 404)
                     {
-                        return false;
+                        return new PinStatus(
+                            reference,
+                            creationTime: null,
+                            missingChunks: null,
+                            processed: null,
+                            succeeded: false,
+                            pinnedChunks: null);
                     }
                 }
                 default:
