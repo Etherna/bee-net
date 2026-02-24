@@ -81,8 +81,8 @@ namespace Etherna.BeeNet.Manifest
         // Methods.
         public void Add(string path, ManifestEntry entry)
         {
-            ArgumentNullException.ThrowIfNull(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(entry, nameof(entry));
+            ArgumentNullException.ThrowIfNull(path);
+            ArgumentNullException.ThrowIfNull(entry);
 
             rootNode.Add(path, entry);
         }

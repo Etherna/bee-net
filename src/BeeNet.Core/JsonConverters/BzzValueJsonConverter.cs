@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, BzzValue value, JsonSerializerOptions options)
         {
-            ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+            ArgumentNullException.ThrowIfNull(writer);
             if (writeAsString)
                 writer.WriteStringValue(value.ToPlurString());
             else

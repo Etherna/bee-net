@@ -141,7 +141,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Helpers.
         private async Task AddChunkToLevelAsync(int level, SwarmChunkHeader chunkHeader, SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(chunkHeader, nameof(chunkHeader));
+            ArgumentNullException.ThrowIfNull(chunkHeader);
 
             var levelChunks = GetLevelChunks(level);
             levelChunks.Add(chunkHeader);

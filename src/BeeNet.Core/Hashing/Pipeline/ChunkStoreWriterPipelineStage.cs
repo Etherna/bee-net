@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Hashing.Pipeline
         // Methods.
         public async Task FeedAsync(HasherPipelineFeedArgs args)
         {
-            ArgumentNullException.ThrowIfNull(args, nameof(args));
+            ArgumentNullException.ThrowIfNull(args);
             if (args.Reference is null) throw new InvalidOperationException();
 
             if (!readOnly)

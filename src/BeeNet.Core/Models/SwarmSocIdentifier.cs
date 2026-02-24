@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmSocIdentifier(string identifier)
         {
-            ArgumentNullException.ThrowIfNull(identifier, nameof(identifier));
+            ArgumentNullException.ThrowIfNull(identifier);
             
             try
             {

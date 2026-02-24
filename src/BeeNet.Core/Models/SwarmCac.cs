@@ -259,7 +259,7 @@ namespace Etherna.BeeNet.Models
         
         public static bool IsValid(SwarmHash hash, ReadOnlyMemory<byte> spanData, SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
 
             if (spanData.Length is < SpanSize or > SpanDataSize)
                 return false;

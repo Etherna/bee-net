@@ -32,7 +32,7 @@ namespace Etherna.BeeNet.Models
 
         public void ReturnResource(TResource resource)
         {
-            ArgumentNullException.ThrowIfNull(resource, nameof(resource));
+            ArgumentNullException.ThrowIfNull(resource);
             pool.Enqueue(resource);
         }
     }

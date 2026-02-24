@@ -28,7 +28,7 @@ namespace Etherna.BeeNet.Hashing.Postage
             EthAddress? postageBatchOwner = null,
             PostageBuckets? buckets = null)
         {
-            ArgumentNullException.ThrowIfNull(postageBatch, nameof(postageBatch));
+            ArgumentNullException.ThrowIfNull(postageBatch);
             if (!postageBatch.Depth.HasValue)
                 throw new ArgumentException("Batch depth can't be null");
 

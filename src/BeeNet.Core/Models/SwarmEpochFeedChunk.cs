@@ -43,7 +43,7 @@ namespace Etherna.BeeNet.Models
         // Static builders.
         public static SwarmFeedChunkBase BuildFromSoc(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic)
         {
-            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            ArgumentNullException.ThrowIfNull(soc);
             return new SwarmEpochFeedChunk(soc, index, topic);
         }
 
@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Models
             SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
-            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            ArgumentNullException.ThrowIfNull(feed);
             return BuildNew(feed.Topic, index, feed.Owner, data, swarmChunkBmt, timestamp);
         }
 
@@ -66,7 +66,7 @@ namespace Etherna.BeeNet.Models
             SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
 
             return new SwarmEpochFeedChunk(
                 topic,
@@ -91,7 +91,7 @@ namespace Etherna.BeeNet.Models
         public SwarmCac UnwrapDataChunk(
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
             
             var dataChunkHash = swarmChunkBmt.Hash(SpanData);
             return new SwarmCac(dataChunkHash, SpanData);
@@ -103,7 +103,7 @@ namespace Etherna.BeeNet.Models
             DateTimeOffset? timestamp,
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
             if (data.Length > MaxDataSize)
                 throw new ArgumentOutOfRangeException(
                     nameof(data),

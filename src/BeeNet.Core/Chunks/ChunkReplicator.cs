@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Chunks
             SwarmCac chunk,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
             
             if (redundancyLevel == RedundancyLevel.None)
                 return;
@@ -85,7 +85,7 @@ namespace Etherna.BeeNet.Chunks
             RedundancyLevel redundancyLevel,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(hasher);
 
             if (redundancyLevel == RedundancyLevel.None)
                 yield break;

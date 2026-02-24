@@ -64,7 +64,7 @@ namespace Etherna.BeeNet.Tools
             SwarmChunk chunk,
             CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
             return SendChunkAsync(chunk.GetFullPayload(), cancellationToken);
         }
 
@@ -73,7 +73,7 @@ namespace Etherna.BeeNet.Tools
             bool isLastBatch,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(chunkBatch, nameof(chunkBatch));
+            ArgumentNullException.ThrowIfNull(chunkBatch);
             
             foreach (var chunk in chunkBatch)
                 await SendChunkAsync(chunk, cancellationToken).ConfigureAwait(false);

@@ -184,8 +184,8 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> itemHash,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(proof, nameof(proof));
+            ArgumentNullException.ThrowIfNull(hasher);
+            ArgumentNullException.ThrowIfNull(proof);
             
             var hash = itemHash;
             foreach (var proofHash in proof)

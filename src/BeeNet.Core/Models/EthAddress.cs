@@ -33,7 +33,7 @@ namespace Etherna.BeeNet.Models
         // Constructors.
         public EthAddress(byte[] address)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(address);
             if (!IsValidAddress(address))
                 throw new ArgumentOutOfRangeException(nameof(address));
 
@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
 
         public EthAddress(string address)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(address);
             if (!IsValidAddress(address))
                 throw new ArgumentOutOfRangeException(nameof(address));
 
@@ -72,7 +72,7 @@ namespace Etherna.BeeNet.Models
         public static EthAddress FromString(string value) => new(value);
         public static bool IsValidAddress(byte[] value)
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             return value.Length == AddressSize;
         }
         public static bool IsValidAddress(string value) =>

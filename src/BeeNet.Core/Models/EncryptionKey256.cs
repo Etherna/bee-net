@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
         
         public EncryptionKey256(string key)
         {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
             
             try
             {

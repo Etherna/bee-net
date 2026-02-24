@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Models
         }
         public SwarmAddress(string address)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(address);
             
             // Trim initial slash.
             address = address.TrimStart(Separator);

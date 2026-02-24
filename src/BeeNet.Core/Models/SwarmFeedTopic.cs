@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmFeedTopic(string topic)
         {
-            ArgumentNullException.ThrowIfNull(topic, nameof(topic));
+            ArgumentNullException.ThrowIfNull(topic);
             
             try
             {

@@ -65,8 +65,8 @@ namespace Etherna.BeeNet.Models
             Hasher hasher,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(chunkStore, nameof(chunkStore));
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(chunkStore);
+            ArgumentNullException.ThrowIfNull(hasher);
 
             var hash = BuildHash(index, hasher);
 

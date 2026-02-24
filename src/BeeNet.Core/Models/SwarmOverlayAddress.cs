@@ -44,7 +44,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmOverlayAddress(string address)
         {
-            ArgumentNullException.ThrowIfNull(address, nameof(address));
+            ArgumentNullException.ThrowIfNull(address);
             
             try
             {

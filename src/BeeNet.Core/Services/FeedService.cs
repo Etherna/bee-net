@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Services
         public async Task<SwarmFeedBase?> TryDecodeFeedManifestAsync(
             ReferencedMantarayManifest manifest)
         {
-            ArgumentNullException.ThrowIfNull(manifest, nameof(manifest));
+            ArgumentNullException.ThrowIfNull(manifest);
             
             var metadata = (await manifest.GetMetadataAsync(
                 MantarayManifestBase.RootPath,
@@ -76,7 +76,7 @@ namespace Etherna.BeeNet.Services
             IPostageStamper? postageStamper = null,
             IChunkStore? chunkStore = null)
         {
-            ArgumentNullException.ThrowIfNull(swarmFeed, nameof(swarmFeed));
+            ArgumentNullException.ThrowIfNull(swarmFeed);
             
             // Init.
             chunkStore ??= new FakeChunkStore();

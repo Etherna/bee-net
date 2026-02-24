@@ -88,8 +88,8 @@ namespace Etherna.BeeNet.Models
             DateTimeOffset timeStamp,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(bucketIndex, nameof(bucketIndex));
+            ArgumentNullException.ThrowIfNull(hasher);
+            ArgumentNullException.ThrowIfNull(bucketIndex);
 
             return hasher.ComputeHash(
             [

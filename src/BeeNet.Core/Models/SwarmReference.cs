@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmReference(string reference)
         {
-            ArgumentNullException.ThrowIfNull(reference, nameof(reference));
+            ArgumentNullException.ThrowIfNull(reference);
             
             try
             {

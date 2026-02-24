@@ -40,7 +40,7 @@ namespace Etherna.BeeNet.Chunks
             Span<byte> decryptedData,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
 
             return DecryptChunk(
                 chunk.Span.Span,
@@ -64,7 +64,7 @@ namespace Etherna.BeeNet.Chunks
             Hasher hasher,
             out ReadOnlyMemory<byte> decryptedSpanData)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
 
             var decryptedSpanDataArray = new byte[SwarmCac.SpanDataSize];
             var dataLength = DecryptChunk(
@@ -157,7 +157,7 @@ namespace Etherna.BeeNet.Chunks
             Hasher hasher,
             ReadOnlyMemory<byte>? paddingBytes = null)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
 
             return EncryptChunk(
                 chunk.Span.Span,
@@ -185,7 +185,7 @@ namespace Etherna.BeeNet.Chunks
             out byte[] encryptedSpanData,
             ReadOnlyMemory<byte>? paddingBytes = null)
         {
-            ArgumentNullException.ThrowIfNull(chunk, nameof(chunk));
+            ArgumentNullException.ThrowIfNull(chunk);
 
             encryptedSpanData = new byte[SwarmCac.SpanDataSize];
             return EncryptChunk(

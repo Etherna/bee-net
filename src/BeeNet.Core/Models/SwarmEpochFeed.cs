@@ -54,7 +54,7 @@ namespace Etherna.BeeNet.Models
             SwarmChunkBmt swarmChunkBmt,
             DateTimeOffset? timestamp = null)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
             
             var at = DateTimeOffset.UtcNow;
 
@@ -105,7 +105,7 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(hasher);
             
             if (at < DateTimeOffset.FromUnixTimeSeconds((long)SwarmEpochFeedIndex.MinUnixTimeStamp) ||
                 at > DateTimeOffset.FromUnixTimeSeconds((long)SwarmEpochFeedIndex.MaxUnixTimeStamp))

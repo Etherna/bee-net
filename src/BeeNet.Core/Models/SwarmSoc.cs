@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> data,
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
             
             if (data.Length < MinSocSize)
                 throw new ArgumentOutOfRangeException(nameof(data), $"Data can't be less than {MinSocSize} bytes.");
@@ -84,7 +84,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public SwarmHash BuildHash(Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(hasher);
             
             hash = BuildHash(Identifier, Owner, hasher);
             return hash.Value;
@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Models
         /// <returns></returns>
         public void Sign(ISigner signer, Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(signer, nameof(signer));
+            ArgumentNullException.ThrowIfNull(signer);
             
             if (Owner != signer.PublicAddress)
                 throw new ArgumentException("Invalid signer owner", nameof(signer));
@@ -129,8 +129,8 @@ namespace Etherna.BeeNet.Models
 
         public void SignWithPrivateKey(EthECKey privateKey, Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(privateKey);
+            ArgumentNullException.ThrowIfNull(hasher);
             
             if (Owner != privateKey.GetPublicAddress())
                 throw new ArgumentException("Invalid owner from private key", nameof(privateKey));
@@ -165,7 +165,7 @@ namespace Etherna.BeeNet.Models
             EthAddress owner,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(hasher);
             
             return hasher.ComputeHash([identifier.ToReadOnlyMemory(), owner.ToReadOnlyMemory()]);
         }
@@ -175,7 +175,7 @@ namespace Etherna.BeeNet.Models
             SwarmHash innerChunkHash,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
+            ArgumentNullException.ThrowIfNull(hasher);
             
             return hasher.ComputeHash(
             [

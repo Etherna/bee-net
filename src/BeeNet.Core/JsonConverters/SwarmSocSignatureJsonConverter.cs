@@ -31,7 +31,7 @@ namespace Etherna.BeeNet.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, SwarmSocSignature value, JsonSerializerOptions options)
         {
-            ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+            ArgumentNullException.ThrowIfNull(writer);
             
             writer.WriteStringValue(value.ToString());
         }

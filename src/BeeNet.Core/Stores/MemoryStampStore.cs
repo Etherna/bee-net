@@ -36,7 +36,7 @@ namespace Etherna.BeeNet.Stores
 
         public void Put(StampStoreItem item)
         {
-            ArgumentNullException.ThrowIfNull(item, nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
             storeDictionary.TryAdd(item.Id, item);
         }
         

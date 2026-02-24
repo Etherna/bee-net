@@ -52,8 +52,8 @@ namespace Etherna.BeeNet.Models
             SwarmFeedIndexBase index,
             Hasher hasher)
         {
-            ArgumentNullException.ThrowIfNull(hasher, nameof(hasher));
-            ArgumentNullException.ThrowIfNull(index, nameof(index));
+            ArgumentNullException.ThrowIfNull(hasher);
+            ArgumentNullException.ThrowIfNull(index);
 
             return hasher.ComputeHash([topic.ToReadOnlyMemory(), index.MarshalBinary()]);
         }

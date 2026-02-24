@@ -39,7 +39,7 @@ namespace Etherna.BeeNet.Models
         }
         public SwarmUri(string uri, UriKind uriKind)
         {
-            ArgumentNullException.ThrowIfNull(uri, nameof(uri));
+            ArgumentNullException.ThrowIfNull(uri);
             
             // Determine uri kind.
             if (uriKind == UriKind.RelativeOrAbsolute)
@@ -118,7 +118,7 @@ namespace Etherna.BeeNet.Models
         // Static methods.
         public static SwarmUri Combine(params SwarmUri[] uris)
         {
-            ArgumentNullException.ThrowIfNull(uris, nameof(uris));
+            ArgumentNullException.ThrowIfNull(uris);
             if (uris.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(uris), "Empty uri list");
 

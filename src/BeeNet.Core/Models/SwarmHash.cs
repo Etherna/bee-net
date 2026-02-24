@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmHash(string hash)
         {
-            ArgumentNullException.ThrowIfNull(hash, nameof(hash));
+            ArgumentNullException.ThrowIfNull(hash);
             
             try
             {

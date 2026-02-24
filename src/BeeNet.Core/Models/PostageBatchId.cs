@@ -41,7 +41,7 @@ namespace Etherna.BeeNet.Models
         
         public PostageBatchId(string batchId)
         {
-            ArgumentNullException.ThrowIfNull(batchId, nameof(batchId));
+            ArgumentNullException.ThrowIfNull(batchId);
             
             byteId = batchId.HexToByteArray();
             

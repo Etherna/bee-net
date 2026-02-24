@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
         // Static builders.
         public static SwarmFeedChunkBase BuildFromSoc(SwarmSoc soc, SwarmFeedIndexBase index, SwarmFeedTopic topic)
         {
-            ArgumentNullException.ThrowIfNull(soc, nameof(soc));
+            ArgumentNullException.ThrowIfNull(soc);
             return new SwarmSequenceFeedChunk(soc, index, topic);
         }
 
@@ -52,7 +52,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> data,
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(feed, nameof(feed));
+            ArgumentNullException.ThrowIfNull(feed);
             return BuildNew(feed.Topic, index, feed.Owner, data, swarmChunkBmt);
         }
 
@@ -63,7 +63,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> data,
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
 
             return new SwarmSequenceFeedChunk(
                 topic,
@@ -115,7 +115,7 @@ namespace Etherna.BeeNet.Models
             ReadOnlyMemory<byte> spanData,
             SwarmChunkBmt swarmChunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(swarmChunkBmt, nameof(swarmChunkBmt));
+            ArgumentNullException.ThrowIfNull(swarmChunkBmt);
             
             var innerChunkHash = swarmChunkBmt.Hash(spanData);
             var innerChunk = new SwarmCac(innerChunkHash, spanData);

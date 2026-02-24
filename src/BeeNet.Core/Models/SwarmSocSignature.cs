@@ -42,7 +42,7 @@ namespace Etherna.BeeNet.Models
 
         public SwarmSocSignature(string signature)
         {
-            ArgumentNullException.ThrowIfNull(signature, nameof(signature));
+            ArgumentNullException.ThrowIfNull(signature);
             
             try
             {

@@ -94,8 +94,8 @@ namespace Etherna.BeeNet.Services
             IChunkStore? chunkStore = null)
         {
             // Checks.
-            ArgumentNullException.ThrowIfNull(fileNames, nameof(fileNames));
-            ArgumentNullException.ThrowIfNull(getFileStream, nameof(getFileStream));
+            ArgumentNullException.ThrowIfNull(fileNames);
+            ArgumentNullException.ThrowIfNull(getFileStream);
             
             if (fileNames.Length == 0)
                 throw new ArgumentException("No files in directory", nameof(fileNames));

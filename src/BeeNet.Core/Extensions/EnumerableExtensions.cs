@@ -53,8 +53,8 @@ namespace Etherna.BeeNet.Extensions
         
         public static string FindCommonPrefix(this string x, string y)
         {
-            ArgumentNullException.ThrowIfNull(x, nameof(x));
-            ArgumentNullException.ThrowIfNull(y, nameof(y));
+            ArgumentNullException.ThrowIfNull(x);
+            ArgumentNullException.ThrowIfNull(y);
             return new(FindCommonPrefix(x.ToCharArray(), y.ToCharArray()));
         }
 

@@ -50,7 +50,7 @@ namespace Etherna.BeeNet.Hashing
         }
         public void ComputeHash(ReadOnlyMemory<byte>[] dataArray, Span<byte> output)
         {
-            ArgumentNullException.ThrowIfNull(dataArray, nameof(dataArray));
+            ArgumentNullException.ThrowIfNull(dataArray);
             ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, SwarmHash.HashSize);
             
             foreach (var data in dataArray)

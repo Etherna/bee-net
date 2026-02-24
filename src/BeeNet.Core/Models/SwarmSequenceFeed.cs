@@ -64,7 +64,7 @@ namespace Etherna.BeeNet.Models
             IReadOnlyChunkStore chunkStore,
             SwarmChunkBmt chunkBmt)
         {
-            ArgumentNullException.ThrowIfNull(chunkBmt, nameof(chunkBmt));
+            ArgumentNullException.ThrowIfNull(chunkBmt);
             
             // Find last published chunk.
             var lastFeedChunk = await TryFindLastFeedChunkAsync(knownNearIndex, chunkStore).ConfigureAwait(false);

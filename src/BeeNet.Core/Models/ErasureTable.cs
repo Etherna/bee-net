@@ -26,8 +26,8 @@ namespace Etherna.BeeNet.Models
         // Constructor.
         private ErasureTable(int[] shards, int[] parities)
         {
-            ArgumentNullException.ThrowIfNull(shards, nameof(shards));
-            ArgumentNullException.ThrowIfNull(parities, nameof(parities));
+            ArgumentNullException.ThrowIfNull(shards);
+            ArgumentNullException.ThrowIfNull(parities);
 
             if (shards.Length != parities.Length)
                 throw new InvalidOperationException("Shards and parities arrays must be of equal size");
