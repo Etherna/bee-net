@@ -14,7 +14,7 @@
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public enum NumericWriteFormat
+    public enum NumericFormat
     {
         AsString,
         AsInteger,

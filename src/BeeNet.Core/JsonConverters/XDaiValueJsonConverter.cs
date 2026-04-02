@@ -19,15 +19,15 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class XDaiValueJsonConverter(NumericWriteFormat valueFormat)
+    public sealed class XDaiValueJsonConverter(NumericFormat valueFormat)
         : JsonConverter<XDaiValue>
     {
         public override XDaiValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {
-                JsonTokenType.Number when valueFormat == NumericWriteFormat.AsFloat =>
+                JsonTokenType.Number when valueFormat == NumericFormat.AsFloat =>
                     XDaiValue.FromDouble(reader.GetDouble()),
-                JsonTokenType.Number when valueFormat == NumericWriteFormat.AsInteger =>
+                JsonTokenType.Number when valueFormat == NumericFormat.AsInteger =>
                     XDaiValue.FromWeiLong(reader.GetInt64()),
                 JsonTokenType.String => XDaiValue.FromWeiString(reader.GetString()!),
                 _ => throw new JsonException()
@@ -38,13 +38,13 @@ namespace Etherna.BeeNet.JsonConverters
             ArgumentNullException.ThrowIfNull(writer);
             switch (valueFormat)
             {
-                case NumericWriteFormat.AsFloat:
+                case NumericFormat.AsFloat:
                     writer.WriteNumberValue(value.ToDouble());
                     break;
-                case NumericWriteFormat.AsInteger:
+                case NumericFormat.AsInteger:
                     writer.WriteNumberValue(value.ToWeiLong());
                     break;
-                case NumericWriteFormat.AsString:
+                case NumericFormat.AsString:
                     writer.WriteStringValue(value.ToWeiString());
                     break;
                 default:
