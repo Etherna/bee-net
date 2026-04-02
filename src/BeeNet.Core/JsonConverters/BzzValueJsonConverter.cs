@@ -19,13 +19,16 @@ using System.Text.Json.Serialization;
 
 namespace Etherna.BeeNet.JsonConverters
 {
-    public sealed class BzzValueJsonConverter(bool writeAsString)
+    public sealed class BzzValueJsonConverter(NumericWriteFormat valueFormat)
         : JsonConverter<BzzValue>
     {
         public override BzzValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {
-                JsonTokenType.Number => BzzValue.FromPlurLong(reader.GetInt64()),
+                JsonTokenType.Number when valueFormat == NumericWriteFormat.AsFloat =>
+                    BzzValue.FromDouble(reader.GetDouble()),
+                JsonTokenType.Number when valueFormat == NumericWriteFormat.AsInteger =>
+                    BzzValue.FromPlurLong(reader.GetInt64()),
                 JsonTokenType.String => BzzValue.FromPlurString(reader.GetString()!),
                 _ => throw new JsonException()
             };
@@ -33,10 +36,20 @@ namespace Etherna.BeeNet.JsonConverters
         public override void Write(Utf8JsonWriter writer, BzzValue value, JsonSerializerOptions options)
         {
             ArgumentNullException.ThrowIfNull(writer);
-            if (writeAsString)
-                writer.WriteStringValue(value.ToPlurString());
-            else
-                writer.WriteNumberValue(value.ToPlurLong());
+            switch (valueFormat)
+            {
+                case NumericWriteFormat.AsFloat:
+                    writer.WriteNumberValue(value.ToDouble());
+                    break;
+                case NumericWriteFormat.AsInteger:
+                    writer.WriteNumberValue(value.ToPlurLong());
+                    break;
+                case NumericWriteFormat.AsString:
+                    writer.WriteStringValue(value.ToPlurString());
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unsupported format: {valueFormat}");
+            }
         }
     }
 }

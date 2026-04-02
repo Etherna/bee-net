@@ -48,6 +48,7 @@ namespace Etherna.BeeNet.Models
         public bool Equals(XDaiValue other) => value == other.value;
         public override int GetHashCode() => value.GetHashCode();
         public decimal ToDecimal() => value;
+        public double ToDouble() => (double)value;
         public override string ToString() => value.ToString(CultureInfo.InvariantCulture);
         public long ToWeiLong()=> (long)decimal.Multiply(value, WeisInXDai);
         public string ToWeiString() => decimal.Multiply(value, WeisInXDai).ToString("F0", CultureInfo.InvariantCulture);

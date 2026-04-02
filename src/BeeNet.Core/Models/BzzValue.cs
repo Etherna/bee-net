@@ -48,6 +48,7 @@ namespace Etherna.BeeNet.Models
         public bool Equals(BzzValue other) => value == other.value;
         public override int GetHashCode() => value.GetHashCode();
         public decimal ToDecimal() => value;
+        public double ToDouble() => (double)value;
         public long ToPlurLong() => (long)decimal.Multiply(value, PlursInBzz);
         public string ToPlurString() => decimal.Multiply(value, PlursInBzz).ToString("F0", CultureInfo.InvariantCulture);
         public override string ToString() => value.ToString(CultureInfo.InvariantCulture);
