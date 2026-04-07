@@ -379,7 +379,7 @@ namespace Etherna.BeeNet
         /// <summary>Get list of pending transactions</summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<EthTx[]> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
+        Task<GnosisChainTx[]> GetPendingTransactionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get pinning status of the root hash with the given reference</summary>
         /// <param name="reference">Swarm content reference</param>
@@ -469,7 +469,7 @@ namespace Etherna.BeeNet
         /// <param name="txHash">Hash of the transaction</param>
         /// <returns>Get info about transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<EthTx> GetTransactionInfoAsync(
+        Task<GnosisChainTx> GetTransactionInfoAsync(
             EthTxHash txHash,
             CancellationToken cancellationToken = default);
 

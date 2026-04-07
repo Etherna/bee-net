@@ -16,7 +16,7 @@ using System;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class EthTx(
+    public sealed class GnosisChainTx(
         EthTxHash transactionHash,
         EthAddress to,
         int nonce,

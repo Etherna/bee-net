@@ -1260,7 +1260,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<EthTx[]> GetPendingTransactionsAsync(
+        public async Task<GnosisChainTx[]> GetPendingTransactionsAsync(
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
@@ -1268,7 +1268,7 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                 {
                     var response = await beeGeneratedClient.TransactionsGetAsync(cancellationToken).ConfigureAwait(false);
-                    return response.PendingTransactions.Select(tx => new EthTx(
+                    return response.PendingTransactions.Select(tx => new GnosisChainTx(
                             transactionHash: tx.TransactionHash,
                             to: tx.To,
                             nonce: tx.Nonce,
@@ -1737,7 +1737,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<EthTx> GetTransactionInfoAsync(
+        public async Task<GnosisChainTx> GetTransactionInfoAsync(
             EthTxHash txHash,
             CancellationToken cancellationToken = default)
         {
@@ -1746,7 +1746,7 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                 {
                     var response = await beeGeneratedClient.TransactionsGetAsync(txHash.ToString(), cancellationToken).ConfigureAwait(false);
-                    return new EthTx(
+                    return new GnosisChainTx(
                         transactionHash: response.TransactionHash,
                         to: response.To,
                         nonce: response.Nonce,
