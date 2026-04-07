@@ -36,6 +36,7 @@ namespace Etherna.BeeNet.Models
         public static XDaiValue FromDouble(double value) => new((decimal)value);
         public static XDaiValue FromInt32(int value) => new(value);
         public static XDaiValue FromInt64(long value) => new(value);
+        public static XDaiValue FromString(string value) => new(decimal.Parse(value, CultureInfo.InvariantCulture));
         public static XDaiValue FromWeiLong(long weiValue) => decimal.Divide(weiValue, WeisInXDai);
         public static XDaiValue FromWeiString(string weiValue) =>
             FromWeiLong(long.Parse(weiValue, CultureInfo.InvariantCulture));

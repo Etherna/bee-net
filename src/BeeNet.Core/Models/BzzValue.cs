@@ -39,6 +39,7 @@ namespace Etherna.BeeNet.Models
         public static BzzValue FromPlurLong(long plurValue) => decimal.Divide(plurValue, PlursInBzz);
         public static BzzValue FromPlurString(string plurValue) =>
             FromPlurLong(long.Parse(plurValue, CultureInfo.InvariantCulture));
+        public static BzzValue FromString(string value) => new(decimal.Parse(value, CultureInfo.InvariantCulture));
 
         // Methods.
         public int CompareTo(BzzValue other) => value.CompareTo(other.value);
