@@ -804,7 +804,7 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return beeGeneratedClient.BytesHeadAsync(
-                        reference: reference.ToString(),
+                        address: reference.ToString(),
                         swarm_act_timestamp: swarmActTimestamp,
                         swarm_act_publisher: swarmActPublisher,
                         swarm_act_history_address: swarmActHistoryAddress,
@@ -2633,7 +2633,7 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                     return address.HasPath ?
                         await beeGeneratedClient.BzzHeadAsync(
-                            reference: address.Reference.ToString(),
+                            address: address.Reference.ToString(),
                             path: address.Path,
                             swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel7?)redundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy5?)redundancyStrategy,
@@ -2641,7 +2641,7 @@ namespace Etherna.BeeNet
                             cancellationToken: cancellationToken).ConfigureAwait(false) :
                 
                         await beeGeneratedClient.BzzHeadAsync(
-                            reference: address.Reference.ToString(),
+                            address: address.Reference.ToString(),
                             swarm_act_timestamp: swarmActTimestamp,
                             swarm_act_publisher: swarmActPublisher,
                             swarm_act_history_address: swarmActHistoryAddress,
