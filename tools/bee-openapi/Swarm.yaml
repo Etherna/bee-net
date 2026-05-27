@@ -235,7 +235,7 @@ paths:
         - Bytes
       parameters:
         - in: path
-          name: reference
+          name: address
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
@@ -458,7 +458,7 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: reference
+          name: address
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
@@ -530,7 +530,7 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: reference
+          name: address
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true
@@ -1354,7 +1354,7 @@ paths:
         - Chunk
       parameters:
         - in: path
-          name: address
+          name: reference
           schema:
             $ref: "SwarmCommon.yaml#/components/schemas/SwarmReference"
           required: true

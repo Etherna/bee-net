@@ -467,7 +467,7 @@ paths:
         - Bytes
       parameters:
         - in: path
-          name: reference
+          name: address
           schema: *a14
           required: true
           description: Swarm address reference to content
@@ -735,7 +735,7 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: reference
+          name: address
           schema: *a14
           required: true
           description: Swarm address of content
@@ -797,7 +797,7 @@ paths:
         - BZZ
       parameters:
         - in: path
-          name: reference
+          name: address
           schema: *a14
           required: true
           description: Swarm address of content
@@ -1809,7 +1809,7 @@ paths:
         - Chunk
       parameters:
         - in: path
-          name: address
+          name: reference
           schema: *a14
           required: true
           description: Swarm address of chunk
