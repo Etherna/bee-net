@@ -104,6 +104,8 @@ namespace Etherna.BeeNet
         Task<TagInfo> CreateTagAsync(
             SwarmHash hash,
             CancellationToken cancellationToken = default);
+        
+        Task<DebugChunkStore> DebugChunkStoreAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Remove peer</summary>
         /// <param name="peerAddress">Swarm address of peer</param>
@@ -166,13 +168,14 @@ namespace Etherna.BeeNet
         /// <returns>Ok</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task<EnvelopeResponse> EnvelopeAsync(
+            string address,
             PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <summary>Get the balances with all known peers including prepaid services</summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IDictionary<string, BzzValue>> GetAllBalancesAsync(CancellationToken cancellationToken = default);
+        Task<PeerBalance[]> GetAllBalancesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get last cheques for all peers</summary>
         /// <returns>Last cheques</returns>
@@ -182,12 +185,12 @@ namespace Etherna.BeeNet
         /// <summary>Get the past due consumption balances with all known peers</summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<IDictionary<string, BzzValue>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<PeerBalance>> GetAllConsumedBalancesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get a list of peers</summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default);
+        Task<(string Address, bool FullNode)[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get the list of pinned root hash references</summary>
         /// <returns>List of pinned references</returns>
@@ -208,7 +211,7 @@ namespace Etherna.BeeNet
         /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<BzzValue> GetBalanceWithPeerAsync(
+        Task<PeerBalance> GetBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default);
 
@@ -228,6 +231,7 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            int? swarmLookaheadBufferSize = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null, 
@@ -249,7 +253,7 @@ namespace Etherna.BeeNet
         /// <summary>Get a list of blocklisted peers</summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<string[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default);
+        Task<BlockedPeer[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>Get chain state</summary>
         /// <returns>Chain State</returns>
@@ -305,6 +309,12 @@ namespace Etherna.BeeNet
             string? swarmActHistoryAddress = null,
             CancellationToken cancellationToken = default);
 
+        Task GetChunksStreamWebSocketAsync(
+            ulong? swarmTagHeader = null,
+            ulong? swarmTagQuery = null,
+            PostageBatchId? batchId = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Upload stream of chunks</summary>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with</param>
         /// <param name="swarmTag">Associate upload with an existing Tag UID</param>
@@ -319,7 +329,7 @@ namespace Etherna.BeeNet
         /// <param name="peerAddress">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<BzzValue> GetConsumedBalanceWithPeerAsync(
+        Task<PeerBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default);
 
@@ -338,6 +348,7 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            int? swarmLookaheadBufferSize = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null,
@@ -349,7 +360,9 @@ namespace Etherna.BeeNet
         /// <returns></returns>
         /// <returns>Returns a dictionary with owner as keys, and enumerable of currently valid owned postage batches as values.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(CancellationToken cancellationToken = default);
+        Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(
+            PostageBatchId? batchId = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Get health of node</summary>
         /// <returns>Health State of node</returns>
@@ -559,7 +572,7 @@ namespace Etherna.BeeNet
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>The verbosity was changed successfully.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default);
+        Task LoggersPutAsync(string exp, Verbosity verbosity, CancellationToken cancellationToken = default);
 
         Task<WebSocket> OpenChunkUploadWebSocketConnectionAsync(
             string endpointPath,
@@ -592,6 +605,7 @@ namespace Etherna.BeeNet
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
         Task ReuploadContentAsync(
             SwarmReference reference,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default);
 
         /// <summary>Send to recipient or target with Postal Service for Swarm</summary>
@@ -805,6 +819,8 @@ namespace Etherna.BeeNet
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default);
@@ -927,6 +943,8 @@ namespace Etherna.BeeNet
             SwarmSoc soc,
             PostageBatchId? batchId,
             PostageStamp? presignedPostageStamp = null,
+            TagId? tagId = null,
+            bool deferredUpload = false,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             bool? swarmPin = null,

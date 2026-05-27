@@ -14,22 +14,15 @@
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class Account(
-        BzzValue balance,
-        BzzValue thresholdReceived,
-        BzzValue thresholdGiven,
-        BzzValue surplusBalance,
-        BzzValue reservedBalance,
-        BzzValue shadowReservedBalance,
-        BzzValue ghostBalance)
-    {
-        // Properties.
-        public BzzValue Balance { get; } = balance;
-        public BzzValue ThresholdReceived { get; } = thresholdReceived;
-        public BzzValue ThresholdGiven { get; } = thresholdGiven;
-        public BzzValue SurplusBalance { get; } = surplusBalance;
-        public BzzValue ReservedBalance { get; } = reservedBalance;
-        public BzzValue ShadowReservedBalance { get; } = shadowReservedBalance;
-        public BzzValue GhostBalance { get; } = ghostBalance;
-    }
+    public sealed record Account(
+        BzzValue Balance,
+        BzzValue ConsumedBalance,
+        BzzValue CurrentThresholdGiven,
+        BzzValue CurrentThresholdReceived,
+        BzzValue ThresholdReceived,
+        BzzValue ThresholdGiven,
+        BzzValue SurplusBalance,
+        BzzValue ReservedBalance,
+        BzzValue ShadowReservedBalance,
+        BzzValue GhostBalance);
 }

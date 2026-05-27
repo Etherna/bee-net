@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.BeeNet.Clients.Bee;
 using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
@@ -40,6 +39,7 @@ using PostageProof = Etherna.BeeNet.Models.PostageProof;
 using RedundancyLevel = Etherna.BeeNet.Models.RedundancyLevel;
 using RedundancyStrategy = Etherna.BeeNet.Models.RedundancyStrategy;
 using SwarmFeedType = Etherna.BeeNet.Models.SwarmFeedType;
+using Verbosity = Etherna.BeeNet.Models.Verbosity;
 
 namespace Etherna.BeeNet
 {
@@ -123,13 +123,16 @@ namespace Etherna.BeeNet
                         .ToDictionary(
                             i => i.Key,
                             i => new Account(
-                                balance: BzzValue.FromPlurString(i.Value.Balance),
-                                thresholdReceived: BzzValue.FromPlurString(i.Value.ThresholdReceived),
-                                thresholdGiven: BzzValue.FromPlurString(i.Value.ThresholdGiven),
-                                surplusBalance: BzzValue.FromPlurString(i.Value.SurplusBalance),
-                                reservedBalance: BzzValue.FromPlurString(i.Value.ReservedBalance),
-                                shadowReservedBalance: BzzValue.FromPlurString(i.Value.ShadowReservedBalance),
-                                ghostBalance: BzzValue.FromPlurString(i.Value.GhostBalance)));
+                                Balance: BzzValue.FromPlurString(i.Value.Balance),
+                                ConsumedBalance: BzzValue.FromPlurString(i.Value.ConsumedBalance),
+                                CurrentThresholdReceived: BzzValue.FromPlurString(i.Value.CurrentThresholdReceived),
+                                CurrentThresholdGiven: BzzValue.FromPlurString(i.Value.CurrentThresholdGiven),
+                                ThresholdGiven: BzzValue.FromPlurString(i.Value.ThresholdGiven),
+                                ThresholdReceived: BzzValue.FromPlurString(i.Value.ThresholdReceived),
+                                SurplusBalance: BzzValue.FromPlurString(i.Value.SurplusBalance),
+                                ReservedBalance: BzzValue.FromPlurString(i.Value.ReservedBalance),
+                                ShadowReservedBalance: BzzValue.FromPlurString(i.Value.ShadowReservedBalance),
+                                GhostBalance: BzzValue.FromPlurString(i.Value.GhostBalance)));
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -354,7 +357,7 @@ namespace Etherna.BeeNet
             CancellationToken cancellationToken = default)
         {
             if (IsDryMode)
-                return new TagInfo(new TagId(0), DateTimeOffset.UtcNow, 0, 0, 0, 0, 0);
+                return new TagInfo(new TagId(0), "", DateTimeOffset.UtcNow, 0, 0, 0, 0, 0);
             
             switch (ApiCompatibility)
             {
@@ -363,14 +366,50 @@ namespace Etherna.BeeNet
                     var response = await beeGeneratedClient.TagsPostAsync(
                         cancellationToken).ConfigureAwait(false);
                     return new TagInfo(
-                        id: new TagId(response.Uid),
-                        startedAt: response.StartedAt,
-                        split: response.Split,
-                        seen: response.Seen,
-                        stored: response.Stored,
-                        sent: response.Sent,
-                        synced: response.Synced);
+                        Id: new TagId(response.Uid),
+                        Address: response.Address,
+                        StartedAt: response.StartedAt,
+                        Split: response.Split,
+                        Seen: response.Seen,
+                        Stored: response.Stored,
+                        Sent: response.Sent,
+                        Synced: response.Synced);
                 }
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public async Task<DebugChunkStore> DebugChunkStoreAsync(CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    var response = await beeGeneratedClient.DebugstoreAsync(
+                        cancellationToken).ConfigureAwait(false);
+                    return new DebugChunkStore(
+                        new DebugChunkStoreUpload(
+                            TotalUploaded: response.Upload.TotalUploaded,
+                            TotalSynced: response.Upload.TotalSynced,
+                            PendingUpload: response.Upload.PendingUpload),
+                        new DebugChunkStorePinning(
+                            TotalCollections: response.Pinning.TotalCollections,
+                            TotalChunks: response.Pinning.TotalChunks),
+                        new DebugChunkStoreCache(
+                            Size: response.Cache.Size,
+                            Capacity: response.Cache.Capacity),
+                        new DebugChunkStoreReserve(
+                            SizeWithinRadius: response.Reserve.SizeWithinRadius,
+                            TotalSize: response.Reserve.TotalSize,
+                            Capacity: response.Reserve.Capacity,
+                            LastBinIDs: response.Reserve.LastBinIDs,
+                            Epoch: response.Reserve.Epoch),
+                        new DebugChunkStoreChunkStore(
+                            TotalChunks: response.ChunkStore.TotalChunks,
+                            SharedSlots: response.ChunkStore.SharedSlots,
+                            ReferenceCount: response.ChunkStore.ReferenceCount));
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -425,7 +464,7 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return beeGeneratedClient.TagsDeleteAsync(
-                        uid: id.Value,
+                        id: id.Value,
                         cancellationToken: cancellationToken);
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -510,6 +549,7 @@ namespace Etherna.BeeNet
         }
 
         public async Task<EnvelopeResponse> EnvelopeAsync(
+            string address,
             PostageBatchId batchId,
             CancellationToken cancellationToken = default)
         {
@@ -524,7 +564,10 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                 {
-                    var response = await beeGeneratedClient.EnvelopeAsync(batchId.ToString(), cancellationToken).ConfigureAwait(false);
+                    var response = await beeGeneratedClient.EnvelopeAsync(
+                        address: address,
+                        swarm_postage_batch_id: batchId.ToString(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
                     return new(
                         response.Issuer,
                         PostageBucketIndex.BuildFromByteArray(response.Index.HexToByteArray()),
@@ -538,7 +581,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<IDictionary<string, BzzValue>> GetAllBalancesAsync(
+        public async Task<PeerBalance[]> GetAllBalancesAsync(
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
@@ -546,9 +589,11 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                 {
                     var response = await beeGeneratedClient.BalancesGetAsync(cancellationToken).ConfigureAwait(false);
-                    return response.Balances.ToDictionary(
-                        b => b.Peer,
-                        b => BzzValue.FromPlurString(b.Balance));
+                    return response.Balances.Select(b => new PeerBalance(
+                        Peer: b.Peer,
+                        Balance: BzzValue.FromPlurString(b.Balance),
+                        ThresholdGiven: BzzValue.FromPlurString(b.Thresholdgiven),
+                        ThresholdReceived: BzzValue.FromPlurString(b.Thresholdreceived))).ToArray();
                 }
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -585,7 +630,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<IDictionary<string, BzzValue>> GetAllConsumedBalancesAsync(
+        public async Task<IEnumerable<PeerBalance>> GetAllConsumedBalancesAsync(
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
@@ -593,9 +638,12 @@ namespace Etherna.BeeNet
                 case SwarmClients.Bee:
                 {
                     var response = await beeGeneratedClient.ConsumedGetAsync(cancellationToken).ConfigureAwait(false);
-                    return response.Balances.ToDictionary(
-                        b => b.Peer,
-                        b => BzzValue.FromPlurString(b.Balance));
+                    return response.Balances.Select(b => new PeerBalance(
+                        Peer: b.Peer,
+                        Balance: BzzValue.FromPlurString(b.Balance),
+                        ThresholdReceived: BzzValue.FromPlurString(b.Thresholdreceived),
+                        ThresholdGiven: BzzValue.FromPlurString(b.Thresholdgiven)
+                    ));
                 }
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -604,14 +652,14 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<string[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default)
+        public async Task<(string Address, bool FullNode)[]> GetAllPeerAddressesAsync(CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
                 {
                     return (await beeGeneratedClient.PeersGetAsync(cancellationToken).ConfigureAwait(false)).Peers
-                        .Select(i => i.Address).ToArray();
+                        .Select(i => (i.Address, i.FullNode)).ToArray();
                 }
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -685,16 +733,19 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<BzzValue> GetBalanceWithPeerAsync(
+        public async Task<PeerBalance> GetBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    return BzzValue.FromPlurString(
-                        (await beeGeneratedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false))
-                        .Balance);
+                    var response = await beeGeneratedClient.BalancesGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
+                    return new PeerBalance(
+                        Peer: response.Peer,
+                        Balance: BzzValue.FromPlurString(response.Balance),
+                        ThresholdReceived: BzzValue.FromPlurString(response.Thresholdreceived),
+                        ThresholdGiven: BzzValue.FromPlurString(response.Thresholdgiven));
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -709,6 +760,7 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            int? swarmLookaheadBufferSize = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null, 
@@ -718,12 +770,13 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BytesGetAsync(
-                        reference: reference.ToString(),
+                        address: reference.ToString(),
                         swarm_cache: swarmCache,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2?)swarmRedundancyLevel,
                         swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy?)swarmRedundancyStrategy,
                         swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel2?)swarmRedundancyLevel,
                         swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                        swarm_lookahead_buffer_size: swarmLookaheadBufferSize,
                         swarm_act_timestamp: swarmActTimestamp,
                         swarm_act_publisher: swarmActPublisher,
                         swarm_act_history_address: swarmActHistoryAddress,
@@ -765,13 +818,17 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task<string[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default)
+        public async Task<BlockedPeer[]> GetBlocklistedPeerAddressesAsync(CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
                     return (await beeGeneratedClient.BlocklistAsync(cancellationToken).ConfigureAwait(false))
-                        .Select(i => i.Address.Address1).ToArray();
+                        .Peers.Select(i => new BlockedPeer(
+                            Address: i.Address,
+                            FullNode: i.FullNode,
+                            Reason: i.Reason,
+                            Duration: i.Duration)).ToArray();
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -787,19 +844,21 @@ namespace Etherna.BeeNet
                 {
                     var response = await beeGeneratedClient.ChainstateAsync(cancellationToken).ConfigureAwait(false);
                     return new ChainState(
-                        block: response.Block,
-                        chainTip: response.ChainTip,
-                        currentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
-                        totalAmount: BzzValue.FromPlurString(response.TotalAmount));
+                        Block: response.Block,
+                        ChainTip: response.ChainTip,
+                        CurrentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
+                        TotalAmount: BzzValue.FromPlurString(response.TotalAmount),
+                        MinimumValidityBlocks: response.MinimumValidityBlocks);
                 }
                 case SwarmClients.Beehive:
                 {
                     var response = await beehiveGeneratedClient.ChainstateAsync(cancellationToken).ConfigureAwait(false);
                     return new ChainState(
-                        block: response.Block,
-                        chainTip: response.ChainTip,
-                        currentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
-                        totalAmount: BzzValue.FromPlurString(response.TotalAmount));
+                        Block: response.Block,
+                        ChainTip: response.ChainTip,
+                        CurrentPrice: BzzValue.FromPlurLong(Math.Max(long.Parse(response.CurrentPrice, CultureInfo.InvariantCulture), 1)), //force price >= 1
+                        TotalAmount: BzzValue.FromPlurString(response.TotalAmount),
+                        MinimumValidityBlocks: 0);
                 }
                 default:
                     throw new InvalidOperationException();
@@ -953,6 +1012,28 @@ namespace Etherna.BeeNet
             }
         }
 
+        public async Task GetChunksStreamWebSocketAsync(
+            ulong? swarmTagHeader = null,
+            ulong? swarmTagQuery = null,
+            PostageBatchId? batchId = null,
+            CancellationToken cancellationToken = default)
+        {
+            switch (ApiCompatibility)
+            {
+                case SwarmClients.Bee:
+                    await beeGeneratedClient.ChunksStreamAsync(
+                        swarm_tagHeader: swarmTagHeader,
+                        swarm_tagQuery: swarmTagQuery,
+                        swarm_postage_batch_id: batchId?.ToString(),
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    return;
+                case SwarmClients.Beehive:
+                    throw new NotSupportedException();
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
         public async Task<IChunkWebSocketUploader> GetChunkUploaderWebSocketAsync(
             PostageBatchId batchId,
@@ -971,16 +1052,19 @@ namespace Etherna.BeeNet
             return new ChunkWebSocketUploader(webSocket);
         }
 
-        public async Task<BzzValue> GetConsumedBalanceWithPeerAsync(
+        public async Task<PeerBalance> GetConsumedBalanceWithPeerAsync(
             string peerAddress,
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    return BzzValue.FromPlurString(
-                        (await beeGeneratedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false))
-                        .Balance);
+                    var response = await beeGeneratedClient.ConsumedGetAsync(peerAddress, cancellationToken).ConfigureAwait(false);
+                    return new PeerBalance(
+                        Peer: response.Peer,
+                        Balance: BzzValue.FromPlurString(response.Balance),
+                        ThresholdReceived: BzzValue.FromPlurString(response.Thresholdreceived),
+                        ThresholdGiven: BzzValue.FromPlurString(response.Thresholdgiven));
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -995,6 +1079,7 @@ namespace Etherna.BeeNet
             RedundancyStrategy? swarmRedundancyStrategy = null,
             bool? swarmRedundancyFallbackMode = null,
             string? swarmChunkRetrievalTimeout = null,
+            int? swarmLookaheadBufferSize = null,
             long? swarmActTimestamp = null,
             string? swarmActPublisher = null,
             string? swarmActHistoryAddress = null,
@@ -1007,12 +1092,13 @@ namespace Etherna.BeeNet
                     if (!address.HasPath)
                     {
                         var response = await beeGeneratedClient.BzzGetAsync(
-                            reference: address.Reference.ToString(),
+                            address: address.Reference.ToString(),
                             swarm_cache: swarmCache,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy2?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel4?)swarmRedundancyLevel,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                            swarm_lookahead_buffer_size: swarmLookaheadBufferSize,
                             swarm_act_timestamp: swarmActTimestamp,
                             swarm_act_publisher: swarmActPublisher,
                             swarm_act_history_address: swarmActHistoryAddress,
@@ -1025,12 +1111,14 @@ namespace Etherna.BeeNet
                     else
                     {
                         var response = await beeGeneratedClient.BzzGetAsync(
-                            reference: address.Reference.ToString(),
+                            address: address.Reference.ToString(),
                             path: address.Path,
-                            swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel6?)swarmRedundancyLevel,
                             swarm_redundancy_strategy: (Clients.Bee.SwarmRedundancyStrategy4?)swarmRedundancyStrategy,
                             swarm_redundancy_fallback_mode: swarmRedundancyFallbackMode,
+                            swarm_redundancy_levelHeader: (Clients.Bee.SwarmRedundancyLevel6?)swarmRedundancyLevel,
                             swarm_chunk_retrieval_timeout: swarmChunkRetrievalTimeout,
+                            swarm_cache: swarmCache,
+                            swarm_lookahead_buffer_size: swarmLookaheadBufferSize,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
                         return new FileResponse(
                             response.ContentHeaders,
@@ -1057,27 +1145,50 @@ namespace Etherna.BeeNet
         }
 
         public async Task<(PostageBatch PostageBatch, EthAddress Owner)[]> GetGlobalValidPostageBatchesAsync(
+            PostageBatchId? batchId = null,
             CancellationToken cancellationToken = default)
         {
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
                 {
-                    var response = await beeGeneratedClient.BatchesAsync(cancellationToken).ConfigureAwait(false);
-                    return response.Batches.Select(batch => (
+                    if (batchId.HasValue)
+                    {
+                        var response = await beeGeneratedClient.BatchesGetAsync(
+                            batch_id: batchId.Value.ToString(),
+                            cancellationToken).ConfigureAwait(false);
+                        return [(
                             new PostageBatch(
-                                id: batch.BatchID,
-                                amount: BzzValue.FromPlurString(batch.Value),
-                                blockNumber: batch.Start,
-                                depth: batch.Depth,
+                                id: response.BatchID,
+                                amount: BzzValue.FromPlurString(response.Value),
+                                blockNumber: response.Start,
+                                depth: response.Depth,
                                 exists: true,
-                                isImmutable: batch.Immutable,
+                                isImmutable: response.Immutable,
                                 isUsable: true,
                                 label: null,
-                                ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                                ttl: TimeSpan.FromSeconds(Math.Min(response.BatchTTL, TimeSpanMaxSeconds)),
                                 utilization: 0),
-                            EthAddress.FromString(batch.Owner)))
-                        .ToArray();
+                            EthAddress.FromString(response.Owner))];
+                    }
+                    else
+                    {
+                        var response = await beeGeneratedClient.BatchesGetAsync(cancellationToken).ConfigureAwait(false);
+                        return response.Batches.Select(batch => (
+                                new PostageBatch(
+                                    id: batch.BatchID,
+                                    amount: BzzValue.FromPlurString(batch.Value),
+                                    blockNumber: batch.Start,
+                                    depth: batch.Depth,
+                                    exists: true,
+                                    isImmutable: batch.Immutable,
+                                    isUsable: true,
+                                    label: null,
+                                    ttl: TimeSpan.FromSeconds(Math.Min(batch.BatchTTL, TimeSpanMaxSeconds)),
+                                    utilization: 0),
+                                EthAddress.FromString(batch.Owner)))
+                            .ToArray();
+                    }
                 }
                 case SwarmClients.Beehive:
                 {
@@ -1189,9 +1300,8 @@ namespace Etherna.BeeNet
                     return new(
                         beeMode: response.BeeMode switch
                         {
-                            Clients.Bee.Response31BeeMode.Dev => InfoBeeMode.Dev,
-                            Clients.Bee.Response31BeeMode.Full => InfoBeeMode.Full,
-                            Clients.Bee.Response31BeeMode.Light => InfoBeeMode.Light,
+                            Clients.Bee.Response33BeeMode.Full => InfoBeeMode.Full,
+                            Clients.Bee.Response33BeeMode.Light => InfoBeeMode.Light,
                             _ => throw new InvalidOperationException()
                         },
                         chequebookEnabled: response.ChequebookEnabled,
@@ -1659,18 +1769,18 @@ namespace Etherna.BeeNet
                         depth: response.Depth,
                         networkAvailability: response.NetworkAvailability switch
                         {
-                            Clients.Bee.Response38NetworkAvailability.Unknown => NetworkAvailability.Unknown,
-                            Clients.Bee.Response38NetworkAvailability.Available => NetworkAvailability.Available,
-                            Clients.Bee.Response38NetworkAvailability.Unavailable => NetworkAvailability.Unavailable,
+                            Clients.Bee.Response40NetworkAvailability.Unknown => NetworkAvailability.Unknown,
+                            Clients.Bee.Response40NetworkAvailability.Available => NetworkAvailability.Available,
+                            Clients.Bee.Response40NetworkAvailability.Unavailable => NetworkAvailability.Unavailable,
                             _ => throw new InvalidOperationException(),
                         },
                         nnLowWatermark: response.NnLowWatermark,
                         population: response.Population,
                         reachability: response.Reachability switch
                         {
-                            Clients.Bee.Response38Reachability.Unknown => Reachability.Unknown,
-                            Clients.Bee.Response38Reachability.Public => Reachability.Public,
-                            Clients.Bee.Response38Reachability.Private => Reachability.Private,
+                            Clients.Bee.Response40Reachability.Unknown => Reachability.Unknown,
+                            Clients.Bee.Response40Reachability.Public => Reachability.Public,
+                            Clients.Bee.Response40Reachability.Private => Reachability.Private,
                             _ => throw new InvalidOperationException(),
                         },
                         timestamp: DateTimeOffset.FromUnixTimeSeconds(
@@ -1693,13 +1803,14 @@ namespace Etherna.BeeNet
                 {
                     var response = await beeGeneratedClient.TagsGetAsync(id.Value, cancellationToken).ConfigureAwait(false);
                     return new TagInfo(
-                        id: new TagId(response.Uid),
-                        startedAt: response.StartedAt,
-                        split: response.Split,
-                        seen: response.Seen,
-                        stored: response.Stored,
-                        sent: response.Sent,
-                        synced: response.Synced);
+                        Id: new TagId(response.Uid),
+                        Address: response.Address,
+                        StartedAt: response.StartedAt,
+                        Split: response.Split,
+                        Seen: response.Seen,
+                        Stored: response.Stored,
+                        Sent: response.Sent,
+                        Synced: response.Synced);
                 }
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -1721,13 +1832,14 @@ namespace Etherna.BeeNet
                         (await beeGeneratedClient.TagsGetAsync(offset, limit, cancellationToken).ConfigureAwait(false)).Tags ??
                         Array.Empty<Clients.Bee.Tags>();
                     return tags.Select(t => new TagInfo(
-                            id: new TagId(t.Uid),
-                            startedAt: t.StartedAt,
-                            split: t.Split,
-                            seen: t.Seen,
-                            stored: t.Stored,
-                            sent: t.Sent,
-                            synced: t.Synced))
+                            Id: new TagId(t.Uid),
+                            Address: t.Address,
+                            StartedAt: t.StartedAt,
+                            Split: t.Split,
+                            Seen: t.Seen,
+                            Stored: t.Stored,
+                            Sent: t.Sent,
+                            Synced: t.Synced))
                         .ToArray();
                 }
                 case SwarmClients.Beehive:
@@ -1990,7 +2102,7 @@ namespace Etherna.BeeNet
             }
         }
 
-        public async Task LoggersPutAsync(string exp, CancellationToken cancellationToken = default)
+        public async Task LoggersPutAsync(string exp, Verbosity verbosity, CancellationToken cancellationToken = default)
         {
             if (IsDryMode)
                 return;
@@ -1998,7 +2110,19 @@ namespace Etherna.BeeNet
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    await beeGeneratedClient.LoggersPutAsync(exp, cancellationToken).ConfigureAwait(false);
+                    await beeGeneratedClient.LoggersPutAsync(
+                        exp,
+                        verbosity switch
+                        {
+                            Verbosity.None => Etherna.BeeNet.Clients.Bee.Verbosity.None,
+                            Verbosity.Error => Etherna.BeeNet.Clients.Bee.Verbosity.Error,
+                            Verbosity.Warning => Etherna.BeeNet.Clients.Bee.Verbosity.Warning,
+                            Verbosity.Info => Etherna.BeeNet.Clients.Bee.Verbosity.Info,
+                            Verbosity.Debug => Etherna.BeeNet.Clients.Bee.Verbosity.Debug,
+                            Verbosity.All => Etherna.BeeNet.Clients.Bee.Verbosity.All,
+                            _ => throw new ArgumentOutOfRangeException(nameof(verbosity), verbosity, null)
+                        },
+                        cancellationToken).ConfigureAwait(false);
                     break;
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
@@ -2108,6 +2232,7 @@ namespace Etherna.BeeNet
 
         public Task ReuploadContentAsync(
             SwarmReference reference,
+            PostageBatchId batchId,
             CancellationToken cancellationToken = default)
         {
             if (IsDryMode)
@@ -2116,7 +2241,10 @@ namespace Etherna.BeeNet
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
-                    return beeGeneratedClient.StewardshipPutAsync(reference.ToString(), cancellationToken: cancellationToken);
+                    return beeGeneratedClient.StewardshipPutAsync(
+                        address: reference.ToString(),
+                        swarm_postage_batch_id: batchId.ToString(),
+                        cancellationToken: cancellationToken);
                 case SwarmClients.Beehive:
                     throw new NotSupportedException();
                 default:
@@ -2270,10 +2398,10 @@ namespace Etherna.BeeNet
                         overlay: response.Overlay,
                         beeMode: response.BeeMode switch
                         {
-                            Clients.Bee.Response70BeeMode.Light => StatusBeeMode.Light,
-                            Clients.Bee.Response70BeeMode.Full => StatusBeeMode.Full,
-                            Clients.Bee.Response70BeeMode.UltraLight => StatusBeeMode.UltraLight,
-                            Clients.Bee.Response70BeeMode.Unknown => StatusBeeMode.Unknown,
+                            Clients.Bee.Response73BeeMode.Light => StatusBeeMode.Light,
+                            Clients.Bee.Response73BeeMode.Full => StatusBeeMode.Full,
+                            Clients.Bee.Response73BeeMode.UltraLight => StatusBeeMode.UltraLight,
+                            Clients.Bee.Response73BeeMode.Unknown => StatusBeeMode.Unknown,
                             _ => throw new InvalidOperationException()
                         },
                         proximity: response.Proximity,
@@ -2310,7 +2438,6 @@ namespace Etherna.BeeNet
                                 {
                                     Clients.Bee.SnapshotsBeeMode.Light => StatusBeeMode.Light,
                                     Clients.Bee.SnapshotsBeeMode.Full => StatusBeeMode.Full,
-                                    Clients.Bee.SnapshotsBeeMode.Dev => StatusBeeMode.Dev,
                                     Clients.Bee.SnapshotsBeeMode.UltraLight => StatusBeeMode.UltraLight,
                                     Clients.Bee.SnapshotsBeeMode.Unknown => StatusBeeMode.Unknown,
                                     _ => throw new InvalidOperationException()
@@ -2568,7 +2695,7 @@ namespace Etherna.BeeNet
             {
                 case SwarmClients.Bee:
                     return beeGeneratedClient.TagsPatchAsync(
-                        uid: id.Value,
+                        id: id.Value,
                         body: hash.HasValue ? new Clients.Bee.Body3 { Address = hash.Value.ToString() } : null,
                         cancellationToken: cancellationToken);
                 case SwarmClients.Beehive:
@@ -2585,6 +2712,8 @@ namespace Etherna.BeeNet
             TagId? tagId = null,
             bool? swarmPin = null,
             bool? swarmEncrypt = null,
+            bool? swarmAct = null,
+            string? swarmActHistoryAddress = null,
             bool? swarmDeferredUpload = null,
             RedundancyLevel swarmRedundancyLevel = RedundancyLevel.None,
             CancellationToken cancellationToken = default)
@@ -2602,8 +2731,10 @@ namespace Etherna.BeeNet
                         swarm_deferred_upload: swarmDeferredUpload,
                         swarm_encrypt: swarmEncrypt,
                         swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)swarmRedundancyLevel,
+                        swarm_act: swarmAct,
+                        swarm_act_history_address: swarmActHistoryAddress,
                         body: body,
-                        cancellationToken).ConfigureAwait(false)).Reference;
+                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.BytesPostAsync(
                         swarm_Postage_Batch_Id: batchId.ToString(),
@@ -2846,6 +2977,8 @@ namespace Etherna.BeeNet
             SwarmSoc soc,
             PostageBatchId? batchId,
             PostageStamp? presignedPostageStamp = null,
+            TagId? tagId = null,
+            bool deferredUpload = false,
             bool? swarmAct = null,
             string? swarmActHistoryAddress = null,
             bool? swarmPin = null,
@@ -2867,9 +3000,12 @@ namespace Etherna.BeeNet
                         owner: soc.Owner.ToString(false),
                         id: soc.Identifier.ToString(),
                         sig: soc.Signature.Value.ToString(),
-                        swarm_postage_batch_id: batchId?.ToString(),
                         body: bodyMemoryStream,
+                        swarm_postage_batch_id: batchId?.ToString(),
                         swarm_postage_stamp: presignedPostageStamp?.ToString(),
+                        swarm_tag: tagId?.Value,
+                        swarm_pin: swarmPin,
+                        swarm_deferred_upload: deferredUpload,
                         swarm_act: swarmAct,
                         swarm_act_history_address: swarmActHistoryAddress,
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;

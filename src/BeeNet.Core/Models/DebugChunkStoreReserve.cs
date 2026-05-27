@@ -1,4 +1,4 @@
-﻿// Copyright 2021-present Etherna SA
+// Copyright 2021-present Etherna SA
 // This file is part of Bee.Net.
 // 
 // Bee.Net is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,17 +12,14 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using System;
+using System.Collections.Generic;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed record TagInfo(
-        TagId Id,
-        string Address,
-        DateTimeOffset StartedAt,
-        int Split,
-        int Seen,
-        int Stored,
-        int Sent,
-        int Synced);
+    public record DebugChunkStoreReserve(
+        int SizeWithinRadius,
+        int TotalSize,
+        int Capacity,
+        IEnumerable<int> LastBinIDs,
+        int Epoch);
 }
