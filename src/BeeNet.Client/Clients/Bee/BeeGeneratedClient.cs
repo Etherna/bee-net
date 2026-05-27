@@ -100,13 +100,13 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address reference to content</param>
+        /// <param name="address">Swarm address reference to content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>The chunk exists.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BytesHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BytesHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -187,7 +187,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve headers with content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
@@ -196,7 +196,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -218,14 +218,14 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Get the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieval strategy for redundant data. Values represent: NONE (0), DATA (1), PROX (2), RACE (3). NONE: no prefetching. DATA: prefetch only data chunks. PROX: prefetch chunks near this node. RACE: prefetch all chunks and use the first n to arrive. Multiple strategies can be cascaded if fallback mode is enabled. Default: NONE &gt; DATA &gt; PROX &gt; RACE</param>
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -538,14 +538,14 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve a chunk
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address of chunk</param>
         /// <param name="swarm_cache">Indicates whether downloaded data should be cached on the node. Default: cached (true)</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string address, bool? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, bool? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1680,16 +1680,16 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address reference to content</param>
+        /// <param name="address">Swarm address reference to content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>The chunk exists.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BytesHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BytesHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (reference == null)
-                throw new System.ArgumentNullException("reference");
+            if (address == null)
+                throw new System.ArgumentNullException("address");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1712,7 +1712,7 @@ namespace Etherna.BeeNet.Clients.Bee
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bytes/{address}"
                     urlBuilder_.Append("bytes/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2320,7 +2320,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve headers with content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
@@ -2329,10 +2329,10 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (reference == null)
-                throw new System.ArgumentNullException("reference");
+            if (address == null)
+                throw new System.ArgumentNullException("address");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2364,7 +2364,7 @@ namespace Etherna.BeeNet.Clients.Bee
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bzz/{address}/"
                     urlBuilder_.Append("bzz/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -2575,17 +2575,17 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Get the headers containing the content type and length for the reference
         /// </summary>
-        /// <param name="reference">Swarm address of content</param>
+        /// <param name="address">Swarm address of content</param>
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieval strategy for redundant data. Values represent: NONE (0), DATA (1), PROX (2), RACE (3). NONE: no prefetching. DATA: prefetch only data chunks. PROX: prefetch chunks near this node. RACE: prefetch all chunks and use the first n to arrive. Multiple strategies can be cascaded if fallback mode is enabled. Default: NONE &gt; DATA &gt; PROX &gt; RACE</param>
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string reference, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (reference == null)
-                throw new System.ArgumentNullException("reference");
+            if (address == null)
+                throw new System.ArgumentNullException("address");
 
             if (path == null)
                 throw new System.ArgumentNullException("path");
@@ -2611,7 +2611,7 @@ namespace Etherna.BeeNet.Clients.Bee
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "bzz/{address}/{path}"
                     urlBuilder_.Append("bzz/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(path.TrimStart('/'));
 
@@ -5643,17 +5643,17 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <summary>
         /// Retrieve a chunk
         /// </summary>
-        /// <param name="address">Swarm address of chunk</param>
+        /// <param name="reference">Swarm address of chunk</param>
         /// <param name="swarm_cache">Indicates whether downloaded data should be cached on the node. Default: cached (true)</param>
         /// <param name="swarm_act_timestamp">ACT history Unix timestamp</param>
         /// <param name="swarm_act_publisher">ACT content publisher's public key</param>
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved chunk content</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string address, bool? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> ChunksGetAsync(string reference, bool? swarm_cache = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (address == null)
-                throw new System.ArgumentNullException("address");
+            if (reference == null)
+                throw new System.ArgumentNullException("reference");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5678,9 +5678,9 @@ namespace Etherna.BeeNet.Clients.Bee
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "chunks/{address}"
+                    // Operation Path: "chunks/{reference}"
                     urlBuilder_.Append("chunks/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(reference, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
