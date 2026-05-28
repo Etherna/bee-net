@@ -13,11 +13,11 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace Etherna.BeeNet.Manifest
 {
@@ -72,7 +72,8 @@ namespace Etherna.BeeNet.Manifest
                 var metadataBytes = new List<byte>();
                 
                 // Using Json encoding for metadata.
-                metadataBytes.AddRange(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Node.Metadata)));
+                metadataBytes.AddRange(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(
+                    Node.Metadata, ManifestJsonSerializerContext.Default.IReadOnlyDictionaryStringString)));
                 var metadataTotalSize = metadataBytes.Count + MetadataBytesSize;
                 
                 // Pad bytes if necessary.

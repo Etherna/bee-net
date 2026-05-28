@@ -17,11 +17,11 @@ using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Stores;
-using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -205,8 +205,9 @@ namespace Etherna.BeeNet.Manifest
                     var metadataBytes = data[readIndex..(readIndex + metadataBytesLength)];
                     readIndex += metadataBytesLength;
 
-                    childNodeMetadata = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                        Encoding.UTF8.GetString(metadataBytes.Span));
+                    childNodeMetadata = JsonSerializer.Deserialize(
+                        Encoding.UTF8.GetString(metadataBytes.Span),
+                        ManifestJsonSerializerContext.Default.DictionaryStringString);
                     
                     //skip padding
                     var metadataTotalSize = metadataBytes.Length + MantarayNodeFork.MetadataBytesSize;
