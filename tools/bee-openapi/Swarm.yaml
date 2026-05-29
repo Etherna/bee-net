@@ -36,27 +36,28 @@ paths:
       parameters:
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           name: swarm-postage-batch-id
           required: true
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmTagParameter"
+            $ref: "SwarmCommon.yaml#/components/schemas/Uid"
           name: swarm-tag
           required: false
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPinParameter"
+            type: boolean
           name: swarm-pin
           required: false
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmDeferredUpload"
+            type: boolean
+            default: "true"
           name: swarm-deferred-upload
           required: false
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmActHistoryAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/ActHistoryAddress"
           name: swarm-act-history-address
           required: false
       requestBody:
@@ -116,27 +117,28 @@ paths:
           description: Grantee list reference
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmActHistoryAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/ActHistoryAddress"
           name: swarm-act-history-address
           required: true
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           name: swarm-postage-batch-id
           required: true
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmTagParameter"
+            $ref: "SwarmCommon.yaml#/components/schemas/Uid"
           name: swarm-tag
           required: false
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPinParameter"
+            type: boolean
           name: swarm-pin
           required: false
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmDeferredUpload"
+            type: boolean
+            default: "true"
           name: swarm-deferred-upload
           required: false
       requestBody:
@@ -279,7 +281,7 @@ paths:
         - in: header
           name: swarm-postage-batch-id
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           required: false
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageStamp"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmAct"
@@ -321,7 +323,12 @@ paths:
       tags:
         - Chunk
       parameters:
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmTagParameter"
+        - in: header
+          name: swarm-tag
+          schema:
+            $ref: "SwarmCommon.yaml#/components/schemas/Uid"
+          required: false
+          description: "Associate upload with an existing Tag UID"
         - in: query
           name: swarm-tag
           schema:
@@ -333,7 +340,7 @@ paths:
           description: "ID of Postage Batch that is used to upload data with. Optional when chunks include pre-signed postage stamps."
           required: false
           schema:
-            $ref: "SwarmCommon.yaml#/components/schemas/SwarmAddress"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
       responses:
         "200":
           description: "Connection established"
@@ -369,19 +376,7 @@ paths:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmActHistoryAddress"
       requestBody:
         content:
-#          multipart/form-data:
-#            schema:
-#              properties:
-#                file:
-#                  type: array
-#                  items:
-#                    type: string
-#                    format: binary
           application/octet-stream:
-            schema:
-              type: string
-              format: binary
-          application/x-tar:
             schema:
               type: string
               format: binary
@@ -501,7 +496,6 @@ paths:
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmRedundancyFallbackModeParameter"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmRedundancyLevelParameter"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmChunkRetrievalTimeoutParameter"
-        - $ref: "SwarmCommon.yaml#/components/parameters/SwarmRedundancyLevelParameter"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmCache"
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmLookaheadBufferSizeParameter"
       responses:
@@ -907,7 +901,7 @@ paths:
         - in: header
           name: swarm-postage-batch-id
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           required: false
           description: ID of the postage batch to use. Either this or `swarm-postage-stamp` must be supplied.
         - $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageStamp"
@@ -1147,7 +1141,7 @@ paths:
           description: "Re-uploads content for specified root hash (can be of any type: collection, file, chunk, etc.)"
         - in: header
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           name: swarm-postage-batch-id
           required: true
           description: Postage batch to use for re-upload. The chunks are re-stamped with this batch.
@@ -1418,7 +1412,7 @@ paths:
         - in: header
           name: swarm-postage-batch-id
           schema:
-            $ref: "SwarmCommon.yaml#/components/parameters/SwarmPostageBatchId"
+            $ref: "SwarmCommon.yaml#/components/schemas/PostageBatchId"
           required: true
       responses:
         "201":

@@ -47,7 +47,6 @@
       "className": "BeeGeneratedClient",
       "operationGenerationMode": "SingleClientFromPathSegments",
       "additionalNamespaceUsages": [
-        "Etherna.BeeNet.Clients.Bee.Fixer",
         "Etherna.BeeNet.Exceptions"
       ],
       "additionalContractNamespaceUsages": [],

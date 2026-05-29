@@ -6,7 +6,6 @@
 
 #nullable enable
 
-using Etherna.BeeNet.Clients.Bee.Fixer;
 using Etherna.BeeNet.Exceptions;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
@@ -39,7 +38,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> GranteePostAsync(object swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ActGranteesOperationResponse> GranteePostAsync(string swarm_postage_batch_id, ActGranteesCreateRequest body, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -60,7 +59,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Grantee list reference</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response2> GranteePatchAsync(string address, object swarm_act_history_address, object swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ActGranteesOperationResponse> GranteePatchAsync(string address, string swarm_act_history_address, string swarm_postage_batch_id, ActGranteesPatchRequest body, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -76,7 +75,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response3> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReferenceResponse> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -94,7 +93,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -125,7 +124,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Chunk binary data containing at least 8 bytes.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReferenceResponse> ChunksPostAsync(ulong? swarm_tag = null, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -163,7 +162,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReferenceResponse> BzzPostAsync(string? name = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -181,7 +180,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -196,7 +195,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -206,13 +205,13 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieval strategy for redundant data. Values represent: NONE (0), DATA (1), PROX (2), RACE (3). NONE: no prefetching. DATA: prefetch only data chunks. PROX: prefetch chunks near this node. RACE: prefetch all chunks and use the first n to arrive. Multiple strategies can be cascaded if fallback mode is enabled. Default: NONE &gt; DATA &gt; PROX &gt; RACE</param>
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
-        /// <param name="swarm_redundancy_levelHeader">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <param name="swarm_cache">Indicates whether downloaded data should be cached on the node. Default: cached (true)</param>
         /// <param name="swarm_lookahead_buffer_size">Override the lookahead buffer size used during retrieval, in bytes. When unset the node picks 8x or 16x the io.Copy default buffer (32 kB) depending on file size.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_levelHeader = null, string? swarm_chunk_retrieval_timeout = null, bool? swarm_cache = null, int? swarm_lookahead_buffer_size = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, string path, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, bool? swarm_cache = null, int? swarm_lookahead_buffer_size = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -225,7 +224,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -235,7 +234,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response6> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TagsList> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -246,7 +245,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response7> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<NewTagResponse> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -255,7 +254,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="id">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response8> TagsGetAsync(ulong id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<NewTagResponse> TagsGetAsync(ulong id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -274,7 +273,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong id, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> TagsPatchAsync(ulong id, Address? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -283,7 +282,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Pin already exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response10> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -292,7 +291,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Root hash has been unpinned</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response12> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -301,7 +300,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>The pinned root hash reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response13> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<SwarmOnlyReferenceResponse> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -309,7 +308,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response14> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<SwarmOnlyReferencesList> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -323,7 +322,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="ref">Optional reference to check; if not provided, all pinned references are checked</param>
         /// <returns>NDJSON stream of integrity results, one object per line</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response15> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PinCheckResponse> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -378,7 +377,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReferenceResponse> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -393,7 +392,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Related Single Owner Chunk data</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy6? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -408,7 +407,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response17> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReferenceResponse> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -426,7 +425,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy7? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -435,7 +434,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response18> StewardshipGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<IsRetrievableResponse> StewardshipGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -445,7 +444,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_postage_batch_id">Postage batch to use for re-upload. The chunks are re-stamped with this batch.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task StewardshipPutAsync(string address, object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task StewardshipPutAsync(string address, string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -453,7 +452,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own node underlay and overlay addresses</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response19> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Addresses> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -466,7 +465,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>Health Status of node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response20> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<HealthStatus> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -482,7 +481,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response21> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Balances> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -491,7 +490,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response22> BalancesGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Balance> BalancesGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -499,7 +498,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response23> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BlockListedPeers> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -507,7 +506,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response24> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Balances> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -516,7 +515,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response25> ConsumedGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Balance> ConsumedGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -524,7 +523,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Ethereum address of chequebook contract</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response26> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChequebookAddress> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -532,7 +531,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Balance of the chequebook</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response27> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChequebookBalance> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -566,7 +565,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of the chunk to stamp</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response28> EnvelopeAsync(string address, object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostEnvelopeResponse> EnvelopeAsync(string address, string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -575,7 +574,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="multi_address">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response29> ConnectAsync(string multi_address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Address> ConnectAsync(string multi_address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -583,7 +582,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Reserve State</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response30> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ReserveState> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -591,7 +590,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Chain State</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response31> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChainState> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -599,7 +598,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Local storage debug info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response32> DebugstoreAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response2> DebugstoreAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -607,7 +606,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Information about the node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response33> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Node> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -615,7 +614,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response34> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Peers> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -624,7 +623,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Peer has been disconnected</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response35> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -633,7 +632,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Returns round trip time for given peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response36> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<RttMs> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -642,7 +641,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Settlement amounts sent and received with the peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response37> SettlementsGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Settlement> SettlementsGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -650,7 +649,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response38> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Settlements> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -658,7 +657,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response39> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Settlements> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -666,7 +665,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Swarm topology of the bee node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response40> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BzzTopology> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -674,7 +673,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Welcome message</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response41> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<WelcomeMessage> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -682,7 +681,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response42> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<HealthStatus> WelcomeMessagePostAsync(WelcomeMessage? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -691,7 +690,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response43> ChequebookCashoutGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<SwapCashoutStatus> ChequebookCashoutGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -702,7 +701,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Cheque has been cashed out</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response44> ChequebookCashoutPostAsync(string peer, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionResponse> ChequebookCashoutPostAsync(string peer, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -711,7 +710,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>The last cheques for the peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response45> ChequebookChequeGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChequePeerResponse> ChequebookChequeGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -719,7 +718,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>The last cheques for all peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response46> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ChequeAllPeersResponse> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -729,7 +728,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response47> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionResponse> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -739,7 +738,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response48> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionResponse> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -747,7 +746,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response49> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PendingTransactionsResponse> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -756,7 +755,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="hash">Hash of the transaction</param>
         /// <returns>Transaction information</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response50> TransactionsGetAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionInfo> TransactionsGetAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -765,7 +764,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="hash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response51> TransactionsPostAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionResponse> TransactionsPostAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -775,7 +774,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response52> TransactionsDeleteAsync(string hash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<TransactionResponse> TransactionsDeleteAsync(string hash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -783,7 +782,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>An array of postage stamps</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response53> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DebugPostageBatchesResponse> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -792,7 +791,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response54> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatch> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -801,7 +800,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns extended bucket data of the provided batch ID</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response55> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageStampBuckets> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -817,7 +816,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response56> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BatchIDResponse> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -832,7 +831,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response57> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BatchIDResponse> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -847,7 +846,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was diluted.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response58> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BatchIDResponse> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -855,7 +854,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>An array of all available and valid postage batches</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response59> BatchesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DebugPostageAllBatchesResponse> BatchesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -864,7 +863,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">ID of the postage batch</param>
         /// <returns>The postage batch state</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response60> BatchesGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PostageBatchShort> BatchesGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -875,7 +874,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="anchor2">The second anchor.</param>
         /// <returns>Reserve sample response</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response61> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ApiRCHashResponse> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -883,7 +882,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own accounting associated values with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response62> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PeerAccountingData> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -891,7 +890,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Redistribution status info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response63> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<RedistributionStatusResponse> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -899,7 +898,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Wallet balance info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response64> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<WalletResponse> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -907,7 +906,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response65> WalletWithdrawAsync(string amount, string address, Coin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<WalletTxResponse> WalletWithdrawAsync(string amount, string address, WithdrawCoin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -918,7 +917,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response66> StakeWithdrawableGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetWithdrawableResponse> StakeWithdrawableGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -931,7 +930,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response67> StakeWithdrawableDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StakeTransactionResponse> StakeWithdrawableDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -945,7 +944,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response68> StakePostAsync(string amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StakeTransactionResponse> StakePostAsync(string amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -956,7 +955,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response69> StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetStakeResponse> StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -969,7 +968,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response70> StakeDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StakeTransactionResponse> StakeDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -977,7 +976,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response71> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LoggerResponse> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -986,7 +985,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response72> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LoggerResponse> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1004,7 +1003,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the current node status snapshot.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response73> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StatusSnapshotResponse> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1012,7 +1011,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the status snapshot of this node connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response74> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StatusPeersResponse> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1020,7 +1019,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the neighborhoods status of this node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response75> StatusNeighborhoodsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<StatusNeighborhoodsResponse> StatusNeighborhoodsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -1078,7 +1077,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> GranteePostAsync(object swarm_postage_batch_id, Body body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, object? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ActGranteesOperationResponse> GranteePostAsync(string swarm_postage_batch_id, ActGranteesCreateRequest body, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -1142,7 +1141,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ActGranteesOperationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1152,22 +1151,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response76>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response76>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response77>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response77>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1251,22 +1250,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response78>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response78>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response79>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response79>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1298,7 +1297,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Grantee list reference</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response2> GranteePatchAsync(string address, object swarm_act_history_address, object swarm_postage_batch_id, Body2 body, object? swarm_tag = null, object? swarm_pin = null, object? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ActGranteesOperationResponse> GranteePatchAsync(string address, string swarm_act_history_address, string swarm_postage_batch_id, ActGranteesPatchRequest body, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -1367,7 +1366,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response2>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ActGranteesOperationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1377,22 +1376,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response80>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response80>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response81>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response81>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1428,7 +1427,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response3> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceResponse> BytesPostAsync(string? swarm_postage_batch_id = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_encrypt = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1496,7 +1495,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response3>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1506,32 +1505,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response82>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response82>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response83>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response83>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response84>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response84>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1569,7 +1568,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Retrieved content specified by reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel2? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BytesGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -1649,12 +1648,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response85>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response85>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1744,22 +1743,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response86>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response86>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response87>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response87>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1798,7 +1797,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Chunk binary data containing at least 8 bytes.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response4> ChunksPostAsync(ulong? swarm_tag = null, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceResponse> ChunksPostAsync(ulong? swarm_tag = null, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1857,7 +1856,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response4>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1867,32 +1866,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response88>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response88>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response89>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response89>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response90>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response90>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1983,12 +1982,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response91>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response91>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2032,7 +2031,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response5> BzzPostAsync(FileParameter file, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel3? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceResponse> BzzPostAsync(string? name = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_encrypt = null, string? content_Type = null, bool? swarm_collection = null, string? swarm_index_document = null, string? swarm_error_document = null, string? swarm_postage_batch_id = null, bool? swarm_deferred_upload = null, SwarmRedundancyLevel? swarm_redundancy_level = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.IO.Stream body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2073,8 +2072,8 @@ namespace Etherna.BeeNet.Clients.Bee
 
                     if (swarm_act_history_address != null)
                         request_.Headers.TryAddWithoutValidation("swarm-act-history-address", ConvertToString(swarm_act_history_address, System.Globalization.CultureInfo.InvariantCulture));
-                    var content_ = new System.Net.Http.StreamContent(file.Data);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(file.ContentType ?? "application/octet-stream");
+                    var content_ = new System.Net.Http.StreamContent(body);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(content_Type ?? "application/octet-stream");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
@@ -2084,9 +2083,9 @@ namespace Etherna.BeeNet.Clients.Bee
                     // Operation Path: "bzz"
                     urlBuilder_.Append("bzz");
                     urlBuilder_.Append('?');
-                    if (file.FileName != null)
+                    if (name != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(file.FileName, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -2115,7 +2114,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response5>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2125,32 +2124,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response92>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response92>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response93>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response93>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response94>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response94>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2188,7 +2187,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy2? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel4? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, int? swarm_lookahead_buffer_size = null, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -2269,32 +2268,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response95>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response95>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response96>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response96>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response97>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response97>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2329,7 +2328,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy3? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel5? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, long? swarm_act_timestamp = null, string? swarm_act_publisher = null, string? swarm_act_history_address = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -2397,22 +2396,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response98>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response98>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response99>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response99>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2442,13 +2441,13 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="path">Path to the file in the collection.</param>
         /// <param name="swarm_redundancy_strategy">Specify the retrieval strategy for redundant data. Values represent: NONE (0), DATA (1), PROX (2), RACE (3). NONE: no prefetching. DATA: prefetch only data chunks. PROX: prefetch chunks near this node. RACE: prefetch all chunks and use the first n to arrive. Multiple strategies can be cascaded if fallback mode is enabled. Default: NONE &gt; DATA &gt; PROX &gt; RACE</param>
         /// <param name="swarm_redundancy_fallback_mode">Specify if the retrieve strategies (chunk prefetching on redundant data) are used in a fallback cascade. The default is true.</param>
-        /// <param name="swarm_redundancy_levelHeader">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <param name="swarm_cache">Indicates whether downloaded data should be cached on the node. Default: cached (true)</param>
         /// <param name="swarm_lookahead_buffer_size">Override the lookahead buffer size used during retrieval, in bytes. When unset the node picks 8x or 16x the io.Copy default buffer (32 kB) depending on file size.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, string path, SwarmRedundancyStrategy4? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel6? swarm_redundancy_levelHeader = null, string? swarm_chunk_retrieval_timeout = null, bool? swarm_cache = null, int? swarm_lookahead_buffer_size = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> BzzGetAsync(string address, string path, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, string? swarm_chunk_retrieval_timeout = null, bool? swarm_cache = null, int? swarm_lookahead_buffer_size = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -2469,8 +2468,8 @@ namespace Etherna.BeeNet.Clients.Bee
                     if (swarm_redundancy_fallback_mode != null)
                         request_.Headers.TryAddWithoutValidation("swarm-redundancy-fallback-mode", ConvertToString(swarm_redundancy_fallback_mode, System.Globalization.CultureInfo.InvariantCulture));
 
-                    if (swarm_redundancy_levelHeader != null)
-                        request_.Headers.TryAddWithoutValidation("swarm-redundancy-level", ConvertToString(swarm_redundancy_levelHeader, System.Globalization.CultureInfo.InvariantCulture));
+                    if (swarm_redundancy_level != null)
+                        request_.Headers.TryAddWithoutValidation("swarm-redundancy-level", ConvertToString(swarm_redundancy_level, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (swarm_chunk_retrieval_timeout != null)
                         request_.Headers.TryAddWithoutValidation("swarm-chunk-retrieval-timeout", ConvertToString(swarm_chunk_retrieval_timeout, System.Globalization.CultureInfo.InvariantCulture));
@@ -2524,32 +2523,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response100>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response100>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response101>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response101>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response102>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response102>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2582,7 +2581,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_redundancy_level">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <returns>Chunk exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy5? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel7? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Net.Http.Headers.HttpContentHeaders?> BzzHeadAsync(string address, string path, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, SwarmRedundancyLevel? swarm_redundancy_level = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -2645,22 +2644,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response103>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response103>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response104>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response104>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2690,7 +2689,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="limit">The numbers of items to return.</param>
         /// <returns>List of tags</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response6> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TagsList> TagsGetAsync(long? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2741,7 +2740,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response6>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TagsList>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2751,12 +2750,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response105>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response105>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2787,7 +2786,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>New Tag Info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response7> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<NewTagResponse> TagsPostAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2829,7 +2828,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response7>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<NewTagResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2839,12 +2838,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response106>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response106>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2873,7 +2872,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="id">Uid</param>
         /// <returns>Tag info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response8> TagsGetAsync(ulong id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<NewTagResponse> TagsGetAsync(ulong id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2918,7 +2917,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response8>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<NewTagResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2928,32 +2927,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response107>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response107>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response108>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response108>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response109>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response109>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3031,32 +3030,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response110>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response110>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response111>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response111>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response112>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response112>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3086,7 +3085,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="body">Can contain swarm hash to use for the tag</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response9> TagsPatchAsync(ulong id, Body3? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> TagsPatchAsync(ulong id, Address? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -3135,7 +3134,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response9>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3145,22 +3144,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response113>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response113>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response114>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response114>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3189,7 +3188,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Pin already exists</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response10> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> PinsPostAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -3235,7 +3234,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200 || status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response10>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3245,32 +3244,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response115>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response115>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response116>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response116>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response117>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response117>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3299,7 +3298,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>Root hash has been unpinned</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response12> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> PinsDeleteAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -3344,7 +3343,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response12>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3354,22 +3353,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response118>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response118>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response119>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response119>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3398,7 +3397,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="reference">Swarm reference of the root hash</param>
         /// <returns>The pinned root hash reference</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response13> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<SwarmOnlyReferenceResponse> PinsGetAsync(string reference, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (reference == null)
                 throw new System.ArgumentNullException("reference");
@@ -3443,7 +3442,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response13>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SwarmOnlyReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3453,32 +3452,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response120>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response120>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response121>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response121>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response122>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response122>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3506,7 +3505,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>List of pinned root hash references</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response14> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<SwarmOnlyReferencesList> PinsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3547,7 +3546,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response14>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SwarmOnlyReferencesList>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3557,12 +3556,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response123>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response123>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3596,7 +3595,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="ref">Optional reference to check; if not provided, all pinned references are checked</param>
         /// <returns>NDJSON stream of integrity results, one object per line</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response15> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PinCheckResponse> PinsCheckAsync(string? @ref = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3643,7 +3642,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response15>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PinCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3653,12 +3652,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response124>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response124>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3754,32 +3753,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response125>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response125>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response126>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response126>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response127>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response127>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3857,12 +3856,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response128>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response128>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3940,12 +3939,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response129>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response129>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3990,7 +3989,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response16> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, object? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceResponse> SocPostAsync(string owner, string id, string sig, System.IO.Stream body, string? swarm_postage_batch_id = null, string? swarm_postage_stamp = null, ulong? swarm_tag = null, bool? swarm_pin = null, bool? swarm_deferred_upload = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4073,7 +4072,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response16>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4083,52 +4082,52 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response130>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response130>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response131>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response131>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response132>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response132>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response133>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response133>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response134>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response134>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4163,7 +4162,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Related Single Owner Chunk data</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy6? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> SocGetAsync(string owner, string id, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4236,32 +4235,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response135>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response135>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response136>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response136>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response137>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response137>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4296,7 +4295,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_act_history_address">ACT history reference address</param>
         /// <returns>Created</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response17> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceResponse> FeedsPostAsync(string owner, string topic, string? type = null, bool? swarm_pin = null, string? swarm_postage_batch_id = null, bool? swarm_act = null, string? swarm_act_history_address = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4365,7 +4364,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response17>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4375,42 +4374,42 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response138>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response138>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response139>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response139>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response140>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response140>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response141>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response141>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4448,7 +4447,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_chunk_retrieval_timeout">Specify the timeout for chunk retrieval. The default is 30 seconds.</param>
         /// <returns>Latest feed update</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy7? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> FeedsGetAsync(string owner, string topic, long? at = null, ulong? after = null, string? type = null, bool? swarm_only_root_chunk = null, bool? swarm_cache = null, SwarmRedundancyStrategy? swarm_redundancy_strategy = null, bool? swarm_redundancy_fallback_mode = null, string? swarm_chunk_retrieval_timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (owner == null)
                 throw new System.ArgumentNullException("owner");
@@ -4535,32 +4534,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response142>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response142>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response143>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response143>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response144>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response144>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4589,7 +4588,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Root hash of content (can be of any type: collection, file, chunk)</param>
         /// <returns>Returns if the content is retrievable</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response18> StewardshipGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<IsRetrievableResponse> StewardshipGetAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -4634,7 +4633,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response18>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<IsRetrievableResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4644,22 +4643,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response145>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response145>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response146>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response146>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4689,7 +4688,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="swarm_postage_batch_id">Postage batch to use for re-upload. The chunks are re-stamped with this batch.</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task StewardshipPutAsync(string address, object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task StewardshipPutAsync(string address, string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -4743,32 +4742,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response147>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response147>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response148>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response148>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response149>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response149>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4796,7 +4795,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own node underlay and overlay addresses</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response19> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Addresses> AddressesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -4837,7 +4836,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response19>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Addresses>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4847,12 +4846,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response150>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response150>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -4885,7 +4884,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>Health Status of node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response20> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<HealthStatus> HealthAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -4926,7 +4925,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response20>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthStatus>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5004,12 +5003,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response151>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response151>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5037,7 +5036,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response21> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Balances> BalancesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5078,7 +5077,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response21>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Balances>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5088,12 +5087,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response152>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response152>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5122,7 +5121,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response22> BalancesGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Balance> BalancesGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -5167,7 +5166,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response22>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Balance>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5177,22 +5176,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response153>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response153>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response154>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response154>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5220,7 +5219,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns overlay addresses of blocklisted peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response23> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BlockListedPeers> BlocklistAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5261,7 +5260,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response23>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BlockListedPeers>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5271,12 +5270,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response155>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response155>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5304,7 +5303,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own past due consumption balances with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response24> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Balances> ConsumedGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5345,7 +5344,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response24>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Balances>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5355,12 +5354,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response156>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response156>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5389,7 +5388,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Past-due consumption balance with the specific peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response25> ConsumedGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Balance> ConsumedGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -5434,7 +5433,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response25>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Balance>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5444,22 +5443,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response157>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response157>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response158>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response158>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5487,7 +5486,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Ethereum address of chequebook contract</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response26> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChequebookAddress> ChequebookAddressAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5528,7 +5527,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response26>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ChequebookAddress>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5561,7 +5560,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Balance of the chequebook</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response27> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChequebookBalance> ChequebookBalanceAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5602,7 +5601,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response27>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ChequebookBalance>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5612,12 +5611,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response159>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response159>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5715,32 +5714,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response160>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response160>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response161>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response161>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response162>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response162>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5830,22 +5829,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response163>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response163>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response164>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response164>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5874,7 +5873,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of the chunk to stamp</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response28> EnvelopeAsync(string address, object swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostEnvelopeResponse> EnvelopeAsync(string address, string swarm_postage_batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -5924,7 +5923,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response28>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PostEnvelopeResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5934,32 +5933,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response165>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response165>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response166>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response166>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response167>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response167>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5988,7 +5987,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="multi_address">Underlay address of peer</param>
         /// <returns>Returns overlay address of connected peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response29> ConnectAsync(string multi_address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Address> ConnectAsync(string multi_address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (multi_address == null)
                 throw new System.ArgumentNullException("multi_address");
@@ -6034,7 +6033,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response29>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Address>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6044,22 +6043,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response168>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response168>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response169>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response169>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6087,7 +6086,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Reserve State</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response30> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReserveState> ReservestateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6128,7 +6127,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response30>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReserveState>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6161,7 +6160,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Chain State</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response31> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChainState> ChainstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6202,7 +6201,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response31>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ChainState>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6235,7 +6234,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Local storage debug info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response32> DebugstoreAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response2> DebugstoreAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6276,7 +6275,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response32>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Response2>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6286,12 +6285,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response170>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response170>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6319,7 +6318,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Information about the node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response33> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Node> NodeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6360,7 +6359,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response33>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Node>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6393,7 +6392,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns overlay addresses of connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response34> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Peers> PeersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6434,7 +6433,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response34>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Peers>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6468,7 +6467,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Peer has been disconnected</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response35> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> PeersDeleteAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -6513,7 +6512,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response35>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6523,22 +6522,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response171>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response171>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response172>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response172>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6567,7 +6566,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="address">Swarm address of peer</param>
         /// <returns>Returns round trip time for given peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response36> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<RttMs> PingpongAsync(string address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (address == null)
                 throw new System.ArgumentNullException("address");
@@ -6613,7 +6612,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response36>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<RttMs>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6623,32 +6622,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response173>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response173>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response174>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response174>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response175>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response175>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6677,7 +6676,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Settlement amounts sent and received with the peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response37> SettlementsGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Settlement> SettlementsGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -6722,7 +6721,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response37>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Settlement>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6732,22 +6731,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response176>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response176>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response177>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response177>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6775,7 +6774,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response38> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Settlements> SettlementsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6816,7 +6815,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response38>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Settlements>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6826,12 +6825,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response178>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response178>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6859,7 +6858,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Time based settlements with all known peers and total amount sent or received</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response39> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Settlements> TimesettlementsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6900,7 +6899,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response39>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Settlements>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6910,12 +6909,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response179>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response179>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6943,7 +6942,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Swarm topology of the bee node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response40> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BzzTopology> TopologyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6984,7 +6983,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response40>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BzzTopology>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7017,7 +7016,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Welcome message</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response41> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<WelcomeMessage> WelcomeMessageGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7058,7 +7057,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response41>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<WelcomeMessage>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7068,12 +7067,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response180>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response180>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7101,7 +7100,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response42> WelcomeMessagePostAsync(Body4? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<HealthStatus> WelcomeMessagePostAsync(WelcomeMessage? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7146,7 +7145,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response42>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthStatus>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7156,22 +7155,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response181>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response181>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response182>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response182>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7200,7 +7199,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>Cashout status</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response43> ChequebookCashoutGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<SwapCashoutStatus> ChequebookCashoutGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -7245,7 +7244,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response43>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SwapCashoutStatus>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7255,22 +7254,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response183>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response183>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response184>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response184>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7301,7 +7300,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Cheque has been cashed out</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response44> ChequebookCashoutPostAsync(string peer, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionResponse> ChequebookCashoutPostAsync(string peer, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -7353,7 +7352,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response44>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7363,32 +7362,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response185>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response185>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response186>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response186>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response187>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response187>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7417,7 +7416,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="peer">Swarm address of peer</param>
         /// <returns>The last cheques for the peer</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response45> ChequebookChequeGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChequePeerResponse> ChequebookChequeGetAsync(string peer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (peer == null)
                 throw new System.ArgumentNullException("peer");
@@ -7462,7 +7461,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response45>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ChequePeerResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7472,22 +7471,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response188>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response188>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response189>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response189>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7515,7 +7514,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>The last cheques for all peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response46> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ChequeAllPeersResponse> ChequebookChequeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7556,7 +7555,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response46>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ChequeAllPeersResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7566,22 +7565,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response190>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response190>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response191>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response191>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7611,7 +7610,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the deposit transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response47> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionResponse> ChequebookDepositAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -7662,7 +7661,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response47>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7672,22 +7671,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response192>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response192>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response193>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response193>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7717,7 +7716,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Transaction hash of the withdraw transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response48> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionResponse> ChequebookWithdrawAsync(long amount, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -7768,7 +7767,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response48>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7778,22 +7777,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response194>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response194>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response195>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response195>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7821,7 +7820,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>List of pending transactions</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response49> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PendingTransactionsResponse> TransactionsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7862,7 +7861,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response49>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PendingTransactionsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7872,12 +7871,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response196>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response196>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -7906,7 +7905,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="hash">Hash of the transaction</param>
         /// <returns>Transaction information</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response50> TransactionsGetAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionInfo> TransactionsGetAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (hash == null)
                 throw new System.ArgumentNullException("hash");
@@ -7951,7 +7950,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response50>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -7961,22 +7960,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response197>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response197>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response198>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response198>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8005,7 +8004,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="hash">Hash of the transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response51> TransactionsPostAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionResponse> TransactionsPostAsync(string hash, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (hash == null)
                 throw new System.ArgumentNullException("hash");
@@ -8051,7 +8050,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response51>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8061,22 +8060,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response199>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response199>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response200>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response200>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8106,7 +8105,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_price">Gas price for transaction</param>
         /// <returns>Hash of the transaction</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response52> TransactionsDeleteAsync(string hash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<TransactionResponse> TransactionsDeleteAsync(string hash, long? gas_price = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (hash == null)
                 throw new System.ArgumentNullException("hash");
@@ -8154,7 +8153,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response52>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8164,22 +8163,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response201>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response201>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response202>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response202>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8207,7 +8206,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>An array of postage stamps</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response53> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DebugPostageBatchesResponse> StampsGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -8248,7 +8247,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response53>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<DebugPostageBatchesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8258,12 +8257,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response203>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response203>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8292,7 +8291,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns an individual postage batch state</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response54> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatch> StampsGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
                 throw new System.ArgumentNullException("batch_id");
@@ -8337,7 +8336,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response54>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PostageBatch>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8347,31 +8346,31 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response204>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             if (objectResponse_.Object.Message == "batch not usable")
                             {
-                                return new Response54()
+                                return new PostageBatch()
                                 {
                                     BatchID = batch_id,
                                     Exists = true,
                                     Usable = false
                                 };
                             }
-                            throw new BeeNetApiException<Response204>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response205>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response205>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8400,7 +8399,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">Swarm address of the stamp</param>
         /// <returns>Returns extended bucket data of the provided batch ID</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response55> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageStampBuckets> StampsBucketsAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
                 throw new System.ArgumentNullException("batch_id");
@@ -8446,7 +8445,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response55>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PostageStampBuckets>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8456,22 +8455,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response206>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response206>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response207>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response207>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8507,7 +8506,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the newly created postage batch ID</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response56> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BatchIDResponse> StampsPostAsync(string amount, int depth, string? label = null, bool? immutable = null, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -8573,7 +8572,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response56>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BatchIDResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8583,32 +8582,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response208>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response208>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response209>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response209>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response210>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response210>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8643,7 +8642,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was topped up</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response57> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BatchIDResponse> StampsTopupAsync(string batch_id, long amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
                 throw new System.ArgumentNullException("batch_id");
@@ -8700,7 +8699,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 202)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response57>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BatchIDResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8710,42 +8709,42 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response211>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response211>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 402)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response212>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response212>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Payment Required", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response213>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response213>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response214>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response214>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8780,7 +8779,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>Returns the postage batch ID that was diluted.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response58> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BatchIDResponse> StampsDiluteAsync(string batch_id, int depth, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
                 throw new System.ArgumentNullException("batch_id");
@@ -8837,7 +8836,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 202)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response58>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BatchIDResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8847,32 +8846,32 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response215>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response215>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 429)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response216>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response216>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Too many requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response217>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response217>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -8900,7 +8899,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>An array of all available and valid postage batches</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response59> BatchesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DebugPostageAllBatchesResponse> BatchesGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -8941,7 +8940,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response59>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<DebugPostageAllBatchesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8975,7 +8974,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="batch_id">ID of the postage batch</param>
         /// <returns>The postage batch state</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response60> BatchesGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PostageBatchShort> BatchesGetAsync(string batch_id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (batch_id == null)
                 throw new System.ArgumentNullException("batch_id");
@@ -9020,7 +9019,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response60>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PostageBatchShort>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9030,22 +9029,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response218>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response218>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response219>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response219>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9076,7 +9075,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="anchor2">The second anchor.</param>
         /// <returns>Reserve sample response</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response61> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ApiRCHashResponse> RchashAsync(int depth, string anchor1, string anchor2, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (depth == null)
                 throw new System.ArgumentNullException("depth");
@@ -9131,7 +9130,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response61>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ApiRCHashResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9141,12 +9140,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response220>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response220>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9174,7 +9173,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Own accounting associated values with all known peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response62> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PeerAccountingData> AccountingAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9215,7 +9214,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response62>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<PeerAccountingData>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9225,12 +9224,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response221>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response221>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9258,7 +9257,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Redistribution status info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response63> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<RedistributionStatusResponse> RedistributionstateAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9299,7 +9298,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response63>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<RedistributionStatusResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9309,22 +9308,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response222>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response222>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response223>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response223>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9352,7 +9351,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Wallet balance info</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response64> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<WalletResponse> WalletAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9393,7 +9392,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response64>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<WalletResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9403,12 +9402,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response224>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response224>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9436,7 +9435,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response65> WalletWithdrawAsync(string amount, string address, Coin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<WalletTxResponse> WalletWithdrawAsync(string amount, string address, WithdrawCoin coin, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (coin == null)
                 throw new System.ArgumentNullException("coin");
@@ -9492,7 +9491,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response65>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<WalletTxResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9502,22 +9501,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response225>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response225>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response226>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response226>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9548,7 +9547,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response66> StakeWithdrawableGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GetWithdrawableResponse> StakeWithdrawableGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9589,7 +9588,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response66>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetWithdrawableResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9599,12 +9598,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response227>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response227>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9637,7 +9636,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response67> StakeWithdrawableDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StakeTransactionResponse> StakeWithdrawableDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9684,7 +9683,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response67>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StakeTransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9694,22 +9693,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response228>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response228>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response229>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response229>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9743,7 +9742,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response68> StakePostAsync(string amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StakeTransactionResponse> StakePostAsync(string amount, long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (amount == null)
                 throw new System.ArgumentNullException("amount");
@@ -9795,7 +9794,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response68>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StakeTransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9805,22 +9804,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response230>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response230>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response231>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response231>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9851,7 +9850,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response69> StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GetStakeResponse> StakeGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9892,7 +9891,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response69>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetStakeResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9902,12 +9901,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response232>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response232>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -9940,7 +9939,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="gas_limit">Gas limit for transaction</param>
         /// <returns>OK</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response70> StakeDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StakeTransactionResponse> StakeDeleteAsync(long? gas_price = null, ulong? gas_limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9987,7 +9986,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response70>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StakeTransactionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9997,22 +9996,22 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response233>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response233>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response234>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response234>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10040,7 +10039,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns an array of all available loggers, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response71> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LoggerResponse> LoggersGetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10081,7 +10080,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response71>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<LoggerResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -10091,12 +10090,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response235>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response235>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10125,7 +10124,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <param name="exp">Regular expression or a subsystem that matches the logger(s).</param>
         /// <returns>Returns an array of all available loggers that matches given expression, also represented in short form in a tree.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response72> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LoggerResponse> LoggersGetAsync(string exp, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (exp == null)
                 throw new System.ArgumentNullException("exp");
@@ -10170,7 +10169,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response72>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<LoggerResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -10180,12 +10179,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response236>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response236>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10270,12 +10269,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response237>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response237>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10303,7 +10302,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the current node status snapshot.</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response73> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StatusSnapshotResponse> StatusAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10344,7 +10343,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response73>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StatusSnapshotResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -10354,12 +10353,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response238>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response238>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10387,7 +10386,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the status snapshot of this node connected peers</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response74> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StatusPeersResponse> StatusPeersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10428,7 +10427,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response74>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StatusPeersResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -10438,12 +10437,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response239>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response239>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10471,7 +10470,7 @@ namespace Etherna.BeeNet.Clients.Bee
         /// </summary>
         /// <returns>Returns the neighborhoods status of this node</returns>
         /// <exception cref="BeeNetApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response75> StatusNeighborhoodsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<StatusNeighborhoodsResponse> StatusNeighborhoodsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10512,7 +10511,7 @@ namespace Etherna.BeeNet.Clients.Bee
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response75>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StatusNeighborhoodsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -10522,12 +10521,12 @@ namespace Etherna.BeeNet.Clients.Bee
                         else
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Response240>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BeeNetApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BeeNetApiException<Response240>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BeeNetApiException<ProblemDetails>("Bad request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -10679,7 +10678,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body
+    internal partial class ActGranteesCreateRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("grantees")]
@@ -10697,7 +10696,57 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body2
+    internal partial class ActGranteesOperationResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ref")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
+        public string Ref { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("historyref")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
+        public string Historyref { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ProblemDetails
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string Message { get; set; } = default!;
+
+        /// <summary>
+        /// List of reasons for the error message.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
+        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ActGranteesPatchRequest
     {
 
         /// <summary>
@@ -10724,240 +10773,84 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel
+    internal partial class SwarmReference
     {
 
-        _0 = 0,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy
+    internal partial class ReferenceResponse
     {
 
-        _0 = 0,
+        [System.Text.Json.Serialization.JsonPropertyName("reference")]
+        public string Reference { get; set; } = default!;
 
-        _1 = 1,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        _2 = 2,
-
-        _3 = 3,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel2
+    internal partial class NewTagResponse
     {
 
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel3
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy2
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel4
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy3
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel5
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy4
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel6
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy5
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyLevel7
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-        _4 = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body3
-    {
-
+        [System.Text.Json.Serialization.JsonPropertyName("uid")]
+        public ulong Uid { get; set; } = default!;
+
+        /// <summary>
+        /// Root reference associated with the tag once the upload is finalized; zero value before that.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("address")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Address { get; set; } = default!;
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+        [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
+        public System.DateTimeOffset StartedAt { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        /// <summary>
+        /// Number of chunks created by the splitter.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("split")]
+        public int Split { get; set; } = default!;
 
-    }
+        /// <summary>
+        /// Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("seen")]
+        public int Seen { get; set; } = default!;
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy6
-    {
+        /// <summary>
+        /// Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("stored")]
+        public int Stored { get; set; } = default!;
 
-        _0 = 0,
+        /// <summary>
+        /// Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sent")]
+        public int Sent { get; set; } = default!;
 
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SwarmRedundancyStrategy7
-    {
-
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
-
-        _3 = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Body4
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
-        public string WelcomeMessage { get; set; } = default!;
+        /// <summary>
+        /// Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("synced")]
+        public int Synced { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -10971,38 +10864,39 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Coin
+    internal partial class TagsList
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"bzz")]
-        Bzz = 0,
+        [System.Text.Json.Serialization.JsonPropertyName("tags")]
+        public System.Collections.Generic.ICollection<NewTagResponse>? Tags { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"nativetoken")]
-        Nativetoken = 1,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Verbosity
+    internal partial class Address
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"none")]
-        None = 0,
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
+        public string Address1 { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"error")]
-        Error = 1,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"warning")]
-        Warning = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"info")]
-        Info = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"debug")]
-        Debug = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"all")]
-        All = 5,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -11010,234 +10904,6 @@ namespace Etherna.BeeNet.Clients.Bee
     internal partial class Response
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("ref")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
-        public string Ref { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("historyref")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
-        public string Historyref { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ref")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
-        public string Ref { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("historyref")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{128}$")]
-        public string Historyref { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public string Reference { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response4
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public string Reference { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response5
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public string Reference { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response6
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("tags")]
-        public System.Collections.Generic.ICollection<Tags>? Tags { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response7
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("uid")]
-        public ulong Uid { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
-        public System.DateTimeOffset StartedAt { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks created by the splitter.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("split")]
-        public int Split { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("seen")]
-        public int Seen { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("stored")]
-        public int Stored { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public int Sent { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("synced")]
-        public int Synced { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response8
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("uid")]
-        public ulong Uid { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
-        public System.DateTimeOffset StartedAt { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks created by the splitter.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("split")]
-        public int Split { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("seen")]
-        public int Seen { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("stored")]
-        public int Stored { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public int Sent { get; set; } = default!;
-
-        /// <summary>
-        /// Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("synced")]
-        public int Synced { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response9
-    {
-
         [System.Text.Json.Serialization.JsonPropertyName("message")]
         public string Message { get; set; } = default!;
 
@@ -11256,70 +10922,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response10
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response11
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response12
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response13
+    internal partial class SwarmOnlyReferenceResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -11337,7 +10940,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response14
+    internal partial class SwarmOnlyReferencesList
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("references")]
@@ -11355,7 +10958,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response15
+    internal partial class PinCheckResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reference")]
@@ -11382,43 +10985,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response16
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public string Reference { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response17
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("reference")]
-        public string Reference { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response18
+    internal partial class IsRetrievableResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("isRetrievable")]
@@ -11436,7 +11003,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response19
+    internal partial class Addresses
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("overlay")]
@@ -11474,7 +11041,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response20
+    internal partial class HealthStatus
     {
 
         /// <summary>
@@ -11482,8 +11049,8 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <br/>
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response20Status>))]
-        public Response20Status Status { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<HealthStatusStatus>))]
+        public HealthStatusStatus Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("version")]
         public string Version { get; set; } = default!;
@@ -11506,46 +11073,19 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response21
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("balances")]
-        public System.Collections.Generic.ICollection<Balances> Balances { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response22
+    internal partial class Balance
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Peer { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("balance")]
-        public string Balance { get; set; } = default!;
+        public string Balance1 { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("thresholdreceived")]
         public string Thresholdreceived { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("thresholdgiven")]
         public string Thresholdgiven { get; set; } = default!;
 
@@ -11561,11 +11101,29 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response23
+    internal partial class Balances
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("balances")]
+        public System.Collections.Generic.ICollection<Balance> Balances1 { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class BlockListedPeers
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peers")]
-        public System.Collections.Generic.ICollection<Peers> Peers { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Peers2> Peers { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11579,67 +11137,12 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response24
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("balances")]
-        public System.Collections.Generic.ICollection<Balances2> Balances { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response25
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("balance")]
-        public string Balance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdreceived")]
-        public string Thresholdreceived { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdgiven")]
-        public string Thresholdgiven { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response26
+    internal partial class ChequebookAddress
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chequebookAddress")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string ChequebookAddress { get; set; } = default!;
+        public string ChequebookAddress1 { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11653,18 +11156,12 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response27
+    internal partial class ChequebookBalance
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("totalBalance")]
         public string TotalBalance { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("availableBalance")]
         public string AvailableBalance { get; set; } = default!;
 
@@ -11680,30 +11177,21 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response28
+    internal partial class PostEnvelopeResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("issuer")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
         public string Issuer { get; set; } = default!;
 
-        /// <summary>
-        /// Hexadecimal string representation of 8 bytes
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("index")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^([0-9a-fA-F]{16})$")]
         public string Index { get; set; } = default!;
 
-        /// <summary>
-        /// Hexadecimal string representation of 8 bytes
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("timestamp")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^([0-9a-fA-F]{16})$")]
         public string Timestamp { get; set; } = default!;
 
-        /// <summary>
-        /// Hexadecimal string representation of cryptographic signature
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("signature")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^([0-9a-fA-F]{130})$")]
         public string Signature { get; set; } = default!;
@@ -11720,26 +11208,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response29
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response30
+    internal partial class ReserveState
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("radius")]
@@ -11766,7 +11235,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response31
+    internal partial class ChainState
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("chainTip")]
@@ -11775,15 +11244,9 @@ namespace Etherna.BeeNet.Clients.Bee
         [System.Text.Json.Serialization.JsonPropertyName("block")]
         public ulong Block { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("totalAmount")]
         public string TotalAmount { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("currentPrice")]
         public string CurrentPrice { get; set; } = default!;
 
@@ -11802,37 +11265,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response32
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Upload")]
-        public Upload Upload { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Pinning")]
-        public Pinning Pinning { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Cache")]
-        public Cache Cache { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Reserve")]
-        public Reserve Reserve { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChunkStore")]
-        public ChunkStore ChunkStore { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response33
+    internal partial class Node
     {
 
         /// <summary>
@@ -11840,8 +11273,8 @@ namespace Etherna.BeeNet.Clients.Bee
         /// <br/>
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("beeMode")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response33BeeMode>))]
-        public Response33BeeMode BeeMode { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<NodeBeeMode>))]
+        public NodeBeeMode BeeMode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("chequebookEnabled")]
         public bool ChequebookEnabled { get; set; } = default!;
@@ -11861,11 +11294,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response34
+    internal partial class Peers
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peers")]
-        public System.Collections.Generic.ICollection<Peers2> Peers { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Peers3> Peers1 { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11879,33 +11312,9 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response35
+    internal partial class RttMs
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response36
-    {
-
-        /// <summary>
-        /// Time duration in Go time.Duration format (e.g., 5.0018ms)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("rtt")]
         public string Rtt { get; set; } = default!;
 
@@ -11921,22 +11330,16 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response37
+    internal partial class Settlement
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string Peer { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("received")]
         public string Received { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("sent")]
         public string Sent { get; set; } = default!;
 
@@ -11952,23 +11355,17 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response38
+    internal partial class Settlements
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
         public string TotalReceived { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("totalSent")]
         public string TotalSent { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("settlements")]
-        public System.Collections.Generic.ICollection<Settlements> Settlements { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Settlement> Settlements1 { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -11982,23 +11379,32 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response39
+    internal partial class PeerMetricsView
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("totalReceived")]
-        public string TotalReceived { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("lastSeenTimestamp")]
+        public int LastSeenTimestamp { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("totalSent")]
-        public string TotalSent { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionRetry")]
+        public int SessionConnectionRetry { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("settlements")]
-        public System.Collections.Generic.ICollection<Settlements2> Settlements { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("connectionTotalDuration")]
+        public double ConnectionTotalDuration { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDuration")]
+        public double SessionConnectionDuration { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDirection")]
+        public string SessionConnectionDirection { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("latencyEWMA")]
+        public int LatencyEWMA { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reachability")]
+        public string Reachability { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("healthy")]
+        public bool Healthy { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12012,7 +11418,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response40
+    internal partial class BzzTopology
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("baseAddr")]
@@ -12035,12 +11441,12 @@ namespace Etherna.BeeNet.Clients.Bee
         public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("reachability")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response40Reachability>))]
-        public Response40Reachability Reachability { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<BzzTopologyReachability>))]
+        public BzzTopologyReachability Reachability { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("networkAvailability")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response40NetworkAvailability>))]
-        public Response40NetworkAvailability NetworkAvailability { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<BzzTopologyNetworkAvailability>))]
+        public BzzTopologyNetworkAvailability NetworkAvailability { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("bins")]
         public System.Collections.Generic.IDictionary<string, Anonymous> Bins { get; set; } = default!;
@@ -12057,11 +11463,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response41
+    internal partial class WelcomeMessage
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("welcomeMessage")]
-        public string WelcomeMessage { get; set; } = default!;
+        public string WelcomeMessage1 { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12075,25 +11481,19 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response42
+    internal partial class Cheque
     {
 
-        /// <summary>
-        /// Indicates health state of node * `ok` - node is healthy * `nok` - node is not healthy * `unknown` - health status is unknown
-        /// <br/>
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response42Status>))]
-        public Response42Status Status { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Beneficiary { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("version")]
-        public string Version { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Chequebook { get; set; } = default!;
 
-        /// <summary>
-        /// The default value is set in case the bee binary was not build correctly.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("apiVersion")]
-        public string ApiVersion { get; set; } = "0.0.0";
+        [System.Text.Json.Serialization.JsonPropertyName("payout")]
+        public string Payout { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12107,7 +11507,32 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response43
+    internal partial class SwapCashoutResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("recipient")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
+        public string Recipient { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastPayout")]
+        public string LastPayout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bounced")]
+        public bool Bounced { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class SwapCashoutStatus
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -12115,18 +11540,15 @@ namespace Etherna.BeeNet.Clients.Bee
         public string Peer { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastCashedCheque")]
-        public LastCashedCheque? LastCashedCheque { get; set; } = default!;
+        public Cheque? LastCashedCheque { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
         public string TransactionHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("result")]
-        public Result? Result { get; set; } = default!;
+        public SwapCashoutResult? Result { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("uncashedAmount")]
         public string UncashedAmount { get; set; } = default!;
 
@@ -12142,7 +11564,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response44
+    internal partial class TransactionResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -12161,7 +11583,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response45
+    internal partial class ChequePeerResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peer")]
@@ -12169,10 +11591,10 @@ namespace Etherna.BeeNet.Clients.Bee
         public string Peer { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastreceived")]
-        public Lastreceived? Lastreceived { get; set; } = default!;
+        public Cheque? Lastreceived { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastsent")]
-        public Lastsent? Lastsent { get; set; } = default!;
+        public Cheque? Lastsent { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12186,11 +11608,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response46
+    internal partial class ChequeAllPeersResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("lastcheques")]
-        public System.Collections.Generic.ICollection<Lastcheques> Lastcheques { get; set; } = default!;
+        public System.Collections.Generic.ICollection<ChequePeerResponse> Lastcheques { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12204,63 +11626,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response47
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response48
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response49
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("pendingTransactions")]
-        public System.Collections.Generic.ICollection<PendingTransactions> PendingTransactions { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response50
+    internal partial class TransactionInfo
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -12274,27 +11640,18 @@ namespace Etherna.BeeNet.Clients.Bee
         [System.Text.Json.Serialization.JsonPropertyName("nonce")]
         public int Nonce { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("gasPrice")]
         public string GasPrice { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("gasLimit")]
         public int GasLimit { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("gasTipCap")]
         public string GasTipCap { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("gasTipBoost")]
         public int GasTipBoost { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("gasFeeCap")]
         public string GasFeeCap { get; set; } = default!;
 
@@ -12307,9 +11664,6 @@ namespace Etherna.BeeNet.Clients.Bee
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public string Value { get; set; } = default!;
 
@@ -12325,12 +11679,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response51
+    internal partial class PendingTransactionsResponse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("pendingTransactions")]
+        public System.Collections.Generic.ICollection<TransactionInfo> PendingTransactions { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12344,12 +11697,57 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response52
+    internal partial class PostageBatch
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
+        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
+        public string BatchID { get; set; } = default!;
+
+        /// <summary>
+        /// Raw batch fullness indicator: the highest write count among the `2^bucketDepth` collision buckets of the batch. This is **not** a percentage; one unit corresponds to one chunk written into the fullest bucket. Total batch capacity is `2^depth` chunks, while the fullest bucket caps at `2^(depth - bucketDepth)` chunks, so the fractional usage of the batch is `utilization / 2^(depth - bucketDepth)` (also exposed directly as `utilizationRatio`). When the value reaches `2^(depth - bucketDepth)` the batch is effectively full and any further write to the fullest bucket would overflow it.
+        /// <br/>
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("utilization")]
+        public int Utilization { get; set; } = default!;
+
+        /// <summary>
+        /// Fractional batch fullness in the range `[0, 1]`, computed as `utilization / 2^(depth - bucketDepth)`. A value of `1` means the fullest bucket has reached its capacity and the batch can no longer accept writes that would land in that bucket.
+        /// <br/>
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("utilizationRatio")]
+        [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
+        public double UtilizationRatio { get; set; } = default!;
+
+        /// <summary>
+        /// Indicates whether the batch was discovered by the Bee node and has received sufficient on-chain confirmations
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("usable")]
+        public bool Usable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("label")]
+        public string Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public string Amount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
+        public int BucketDepth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockNumber")]
+        public ulong BlockNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("immutableFlag")]
+        public bool ImmutableFlag { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("exists")]
+        public bool Exists { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
+        public long BatchTTL { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12363,11 +11761,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response53
+    internal partial class DebugPostageBatchesResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("stamps")]
-        public System.Collections.Generic.ICollection<Stamps> Stamps { get; set; } = default!;
+        public System.Collections.Generic.ICollection<PostageBatch> Stamps { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12381,9 +11779,15 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response54 : Etherna.BeeNet.Clients.Bee.Fixer.PostageBatchDto
+    internal partial class StampBucketData
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("bucketID")]
+        public int BucketID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("collisions")]
+        public int Collisions { get; set; } = default!;
+
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [System.Text.Json.Serialization.JsonExtensionData]
@@ -12396,7 +11800,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response55
+    internal partial class PostageStampBuckets
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
@@ -12409,7 +11813,7 @@ namespace Etherna.BeeNet.Clients.Bee
         public int BucketUpperBound { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("buckets")]
-        public System.Collections.Generic.ICollection<Buckets> Buckets { get; set; } = default!;
+        public System.Collections.Generic.ICollection<StampBucketData> Buckets { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12423,7 +11827,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response56
+    internal partial class BatchIDResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
@@ -12446,80 +11850,13 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response57
+    internal partial class PostageBatchShort
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("batchID")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
         public string BatchID { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("txHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TxHash { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response58
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string BatchID { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("txHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TxHash { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response59
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("batches")]
-        public System.Collections.Generic.ICollection<Batches> Batches { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response60
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string BatchID { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public string Value { get; set; } = default!;
 
@@ -12554,12 +11891,145 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response61
+    internal partial class DebugPostageAllBatchesResponse
     {
 
-        /// <summary>
-        /// Time duration in seconds (Go time.Duration format)
-        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("batches")]
+        public System.Collections.Generic.ICollection<PostageBatchShort> Batches { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ApiPostageProof
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("index")]
+        public string Index { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("postageId")]
+        public string PostageId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("signature")]
+        public string Signature { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeStamp")]
+        public string TimeStamp { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ApiSOCProof
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
+        public string ChunkAddr { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public string Identifier { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("signature")]
+        public string Signature { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("signer")]
+        public string Signer { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ApiChunkInclusionProof
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
+        [System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
+        public int ChunkSpan { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("postageProof")]
+        public ApiPostageProof PostageProof { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proofSegments")]
+        public System.Collections.Generic.ICollection<string>? ProofSegments { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proofSegments2")]
+        public System.Collections.Generic.ICollection<string>? ProofSegments2 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proofSegments3")]
+        public System.Collections.Generic.ICollection<string>? ProofSegments3 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proveSegment")]
+        public string ProveSegment { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proveSegment2")]
+        public string ProveSegment2 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("socProof")]
+        public System.Collections.Generic.ICollection<ApiSOCProof>? SocProof { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ApiChunkInclusionProofs
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("proof1")]
+        public ApiChunkInclusionProof Proof1 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proof2")]
+        public ApiChunkInclusionProof Proof2 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proofLast")]
+        public ApiChunkInclusionProof ProofLast { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class ApiRCHashResponse
+    {
+
         [System.Text.Json.Serialization.JsonPropertyName("durationSeconds")]
         public double DurationSeconds { get; set; } = default!;
 
@@ -12568,7 +12038,7 @@ namespace Etherna.BeeNet.Clients.Bee
         public string Hash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("proofs")]
-        public Proofs Proofs { get; set; } = default!;
+        public ApiChunkInclusionProofs Proofs { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12582,11 +12052,56 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response62
+    internal partial class AccountingInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("balance")]
+        public string Balance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("consumedBalance")]
+        public string ConsumedBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("thresholdReceived")]
+        public string ThresholdReceived { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("thresholdGiven")]
+        public string ThresholdGiven { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currentThresholdReceived")]
+        public string CurrentThresholdReceived { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currentThresholdGiven")]
+        public string CurrentThresholdGiven { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("surplusBalance")]
+        public string SurplusBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reservedBalance")]
+        public string ReservedBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("shadowReservedBalance")]
+        public string ShadowReservedBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ghostBalance")]
+        public string GhostBalance { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class PeerAccountingData
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("peerData")]
-        public System.Collections.Generic.IDictionary<string, Anonymous2> PeerData { get; set; } = default!;
+        public System.Collections.Generic.IDictionary<string, AccountingInfo> PeerData { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12600,12 +12115,9 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response63
+    internal partial class RedistributionStatusResponse
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("minimumGasFunds")]
         public string MinimumGasFunds { get; set; } = default!;
 
@@ -12645,15 +12157,9 @@ namespace Etherna.BeeNet.Clients.Bee
         [System.Text.Json.Serialization.JsonPropertyName("block")]
         public int Block { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("reward")]
         public string Reward { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("fees")]
         public string Fees { get; set; } = default!;
 
@@ -12669,18 +12175,12 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response64
+    internal partial class WalletResponse
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("bzzBalance")]
         public string BzzBalance { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("nativeTokenBalance")]
         public string NativeTokenBalance { get; set; } = default!;
 
@@ -12707,7 +12207,19 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response65
+    internal enum WithdrawCoin
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"bzz")]
+        Bzz = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"nativetoken")]
+        Nativetoken = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class WalletTxResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
@@ -12726,12 +12238,9 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response66
+    internal partial class GetWithdrawableResponse
     {
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("withdrawableAmount")]
         public string WithdrawableAmount { get; set; } = default!;
 
@@ -12747,7 +12256,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response67
+    internal partial class StakeTransactionResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("txHash")]
@@ -12766,31 +12275,9 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response68
+    internal partial class GetStakeResponse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("txHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TxHash { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response69
-    {
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("stakedAmount")]
         public string StakedAmount { get; set; } = default!;
 
@@ -12806,12 +12293,14 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response70
+    internal partial class LoggerTreeData
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("txHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TxHash { get; set; } = default!;
+        /// <summary>
+        /// The combination of the logger verbosity and its subsystem separated by |.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("+")]
+        public System.Collections.Generic.ICollection<string> Plus { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12825,14 +12314,47 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response71
+    internal partial class LoggerTreeNode : System.Collections.Generic.Dictionary<string, LoggerTreeData?>
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class Logger
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("logger")]
+        public string Logger1 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("verbosity")]
+        public string Verbosity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("subsystem")]
+        public string Subsystem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string Id { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class LoggerResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("tree")]
-        public System.Collections.Generic.IDictionary<string, Anonymous3?> Tree { get; set; } = default!;
+        public LoggerTreeNode Tree { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("loggers")]
-        public System.Collections.Generic.ICollection<Loggers> Loggers { get; set; } = default!;
+        public System.Collections.Generic.ICollection<Logger> Loggers { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12846,28 +12368,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response72
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("tree")]
-        public System.Collections.Generic.IDictionary<string, Anonymous4?> Tree { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("loggers")]
-        public System.Collections.Generic.ICollection<Loggers2> Loggers { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response73
+    internal partial class StatusSnapshotResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("overlay")]
@@ -12878,8 +12379,8 @@ namespace Etherna.BeeNet.Clients.Bee
         public int Proximity { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("beeMode")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<Response73BeeMode>))]
-        public Response73BeeMode BeeMode { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<StatusSnapshotResponseBeeMode>))]
+        public StatusSnapshotResponseBeeMode BeeMode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("reserveSize")]
         public int ReserveSize { get; set; } = default!;
@@ -12929,11 +12430,11 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response74
+    internal partial class StatusPeersResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("snapshots")]
-        public System.Collections.Generic.ICollection<Snapshots> Snapshots { get; set; } = default!;
+        public System.Collections.Generic.ICollection<StatusSnapshotResponse> Snapshots { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12947,11 +12448,35 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response75
+    internal partial class StatusNeighborhoodResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("neighborhood")]
+        public string Neighborhood { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reserveSizeWithinRadius")]
+        public int ReserveSizeWithinRadius { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proximity")]
+        public int Proximity { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class StatusNeighborhoodsResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("neighborhoods")]
-        public System.Collections.Generic.ICollection<Neighborhoods> Neighborhoods { get; set; } = default!;
+        public System.Collections.Generic.ICollection<StatusNeighborhoodResponse> Neighborhoods { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -12965,4503 +12490,77 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response76
+    internal enum SwarmRedundancyLevel
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
+        _0 = 0,
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
+        _1 = 1,
 
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
+        _2 = 2,
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response77
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response78
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response79
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response80
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response81
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response82
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response83
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response84
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response85
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response86
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response87
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response88
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response89
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response90
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response91
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response92
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response93
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response94
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response95
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response96
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response97
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response98
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response99
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response100
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response101
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response102
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response103
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response104
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response105
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response106
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response107
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response108
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response109
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response110
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response111
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response112
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response113
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response114
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response115
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response116
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response117
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response118
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response119
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response120
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response121
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response122
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response123
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response124
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response125
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response126
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response127
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response128
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response129
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response130
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response131
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response132
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response133
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response134
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response135
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response136
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response137
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response138
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response139
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response140
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response141
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response142
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response143
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response144
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response145
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response146
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response147
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response148
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response149
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response150
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response151
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response152
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response153
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response154
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response155
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response156
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response157
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response158
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response159
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response160
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response161
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response162
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response163
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response164
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response165
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response166
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response167
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response168
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response169
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response170
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response171
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response172
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response173
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response174
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response175
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response176
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response177
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response178
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response179
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response180
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response181
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response182
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response183
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response184
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response185
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response186
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response187
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response188
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response189
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response190
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response191
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response192
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response193
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response194
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response195
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response196
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response197
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response198
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response199
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response200
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response201
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response202
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response203
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response204
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response205
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response206
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response207
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response208
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response209
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response210
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response211
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response212
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response213
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response214
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response215
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response216
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response217
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response218
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response219
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response220
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response221
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response222
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response223
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response224
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response225
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response226
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response227
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response228
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response229
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response230
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response231
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response232
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
+        _3 = 3,
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
+        _4 = 4,
 
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response233
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response234
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response235
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response236
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response237
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response238
+    internal enum SwarmRedundancyStrategy
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
+        _0 = 0,
 
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
+        _1 = 1,
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+        _2 = 2,
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        _3 = 3,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response239
+    internal enum Verbosity
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Response240
-    {
+        [System.Runtime.Serialization.EnumMember(Value = @"none")]
+        None = 0,
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int Code { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"error")]
+        Error = 1,
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"warning")]
+        Warning = 2,
 
-        /// <summary>
-        /// List of reasons for the error message.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reasons")]
-        public System.Collections.Generic.ICollection<string>? Reasons { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"info")]
+        Info = 3,
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+        [System.Runtime.Serialization.EnumMember(Value = @"debug")]
+        Debug = 4,
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        [System.Runtime.Serialization.EnumMember(Value = @"all")]
+        All = 5,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Tags
+    internal partial class Response2
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("uid")]
-        public ulong Uid { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("startedAt")]
-        public System.DateTimeOffset StartedAt { get; set; } = default!;
 
-        /// <summary>
-        /// Number of chunks created by the splitter.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("split")]
-        public int Split { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Upload")]
+        public Upload Upload { get; set; } = default!;
 
-        /// <summary>
-        /// Number of chunks that are already uploaded with same reference and same postage batch. These don't need to be synced again.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("seen")]
-        public int Seen { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Pinning")]
+        public Pinning Pinning { get; set; } = default!;
 
-        /// <summary>
-        /// Number of chunks that were stored locally as they lie in the uploader node's neighborhood. This is only applicable for full nodes.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("stored")]
-        public int Stored { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Cache")]
+        public Cache Cache { get; set; } = default!;
 
-        /// <summary>
-        /// Number of chunks sent on the network to peers as a part of the upload. Chunks could be sent multiple times because of failures or replication.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public int Sent { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Reserve")]
+        public Reserve Reserve { get; set; } = default!;
 
-        /// <summary>
-        /// Number of chunks that were pushed with a valid receipt. The receipt will also show if they were stored at the correct depth.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("synced")]
-        public int Synced { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("ChunkStore")]
+        public ChunkStore ChunkStore { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -17475,7 +12574,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response20Status
+    internal enum HealthStatusStatus
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"ok")]
@@ -17490,44 +12589,7 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Balances
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("balance")]
-        public string Balance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdreceived")]
-        public string Thresholdreceived { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdgiven")]
-        public string Thresholdgiven { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Peers
+    internal partial class Peers2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
@@ -17558,30 +12620,33 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Balances2
+    internal enum NodeBeeMode
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
+        [System.Runtime.Serialization.EnumMember(Value = @"light")]
+        Light = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"full")]
+        Full = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ultra-light")]
+        UltraLight = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
+        Unknown = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class Peers3
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
+        public string Address { get; set; } = default!;
 
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("balance")]
-        public string Balance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdreceived")]
-        public string Thresholdreceived { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdgiven")]
-        public string Thresholdgiven { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("fullNode")]
+        public bool FullNode { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -17591,6 +12656,81 @@ namespace Etherna.BeeNet.Clients.Bee
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum BzzTopologyReachability
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Public")]
+        Public = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Private")]
+        Private = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum BzzTopologyNetworkAvailability
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Available")]
+        Available = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal partial class Anonymous
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("population")]
+        public int Population { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("connected")]
+        public int Connected { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("disconnectedPeers")]
+        public System.Collections.Generic.ICollection<DisconnectedPeers> DisconnectedPeers { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("connectedPeers")]
+        public System.Collections.Generic.ICollection<ConnectedPeers> ConnectedPeers { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal enum StatusSnapshotResponseBeeMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"light")]
+        Light = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"full")]
+        Full = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ultra-light")]
+        UltraLight = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
+        Unknown = 3,
 
     }
 
@@ -17715,767 +12855,6 @@ namespace Etherna.BeeNet.Clients.Bee
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response33BeeMode
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"light")]
-        Light = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"full")]
-        Full = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ultra-light")]
-        UltraLight = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
-        Unknown = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Peers2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("address")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Address { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("fullNode")]
-        public bool FullNode { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Settlements
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("received")]
-        public string Received { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public string Sent { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Settlements2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("received")]
-        public string Received { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sent")]
-        public string Sent { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response40Reachability
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Public")]
-        Public = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Private")]
-        Private = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response40NetworkAvailability
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Available")]
-        Available = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
-        Unavailable = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Anonymous
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("population")]
-        public int Population { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("connected")]
-        public int Connected { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("disconnectedPeers")]
-        public System.Collections.Generic.ICollection<DisconnectedPeers> DisconnectedPeers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("connectedPeers")]
-        public System.Collections.Generic.ICollection<ConnectedPeers> ConnectedPeers { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response42Status
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ok")]
-        Ok = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"nok")]
-        Nok = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
-        Unknown = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class LastCashedCheque
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public string Payout { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Result
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("recipient")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Recipient { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("lastPayout")]
-        public string LastPayout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("bounced")]
-        public bool Bounced { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Lastreceived
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public string Payout { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Lastsent
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public string Payout { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Lastcheques
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("peer")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Peer { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastreceived")]
-        public Lastreceived2? Lastreceived { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastsent")]
-        public Lastsent2? Lastsent { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class PendingTransactions
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionHash")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^0x[A-Fa-f0-9]{64}$")]
-        public string TransactionHash { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("to")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string To { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("nonce")]
-        public int Nonce { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("gasPrice")]
-        public string GasPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("gasLimit")]
-        public int GasLimit { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("gasTipCap")]
-        public string GasTipCap { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("gasTipBoost")]
-        public int GasTipBoost { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("gasFeeCap")]
-        public string GasFeeCap { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public string Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-        public System.DateTimeOffset Created { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("description")]
-        public string Description { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public string Value { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Stamps : Etherna.BeeNet.Clients.Bee.Fixer.PostageBatchDto
-    {
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Buckets
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("bucketID")]
-        public int BucketID { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("collisions")]
-        public int Collisions { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Batches
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("batchID")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string BatchID { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public string Value { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("start")]
-        public ulong Start { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("owner")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Owner { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("bucketDepth")]
-        public int BucketDepth { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("immutable")]
-        public bool Immutable { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("batchTTL")]
-        public long BatchTTL { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Proofs
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("proof1")]
-        public Proof1 Proof1 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proof2")]
-        public Proof2 Proof2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofLast")]
-        public ProofLast ProofLast { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Anonymous2
-    {
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("balance")]
-        public string Balance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("consumedBalance")]
-        public string ConsumedBalance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdReceived")]
-        public string ThresholdReceived { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("thresholdGiven")]
-        public string ThresholdGiven { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("currentThresholdReceived")]
-        public string CurrentThresholdReceived { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("currentThresholdGiven")]
-        public string CurrentThresholdGiven { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("surplusBalance")]
-        public string SurplusBalance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("reservedBalance")]
-        public string ReservedBalance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("shadowReservedBalance")]
-        public string ShadowReservedBalance { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("ghostBalance")]
-        public string GhostBalance { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Anonymous3
-    {
-
-        /// <summary>
-        /// The combination of the logger verbosity and its subsystem separated by |.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("+")]
-        public System.Collections.Generic.ICollection<string> Plus { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Loggers
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("logger")]
-        public string Logger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("verbosity")]
-        public string Verbosity { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("subsystem")]
-        public string Subsystem { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public string Id { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Anonymous4
-    {
-
-        /// <summary>
-        /// The combination of the logger verbosity and its subsystem separated by |.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("+")]
-        public System.Collections.Generic.ICollection<string> Plus { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Loggers2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("logger")]
-        public string Logger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("verbosity")]
-        public string Verbosity { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("subsystem")]
-        public string Subsystem { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public string Id { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum Response73BeeMode
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"light")]
-        Light = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"full")]
-        Full = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ultra-light")]
-        UltraLight = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
-        Unknown = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Snapshots
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("overlay")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{64}$")]
-        public string Overlay { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proximity")]
-        public int Proximity { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("beeMode")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SnapshotsBeeMode>))]
-        public SnapshotsBeeMode BeeMode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("reserveSize")]
-        public int ReserveSize { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("reserveSizeWithinRadius")]
-        public int ReserveSizeWithinRadius { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("pullsyncRate")]
-        public double PullsyncRate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("storageRadius")]
-        public int StorageRadius { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("connectedPeers")]
-        public int ConnectedPeers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("neighborhoodSize")]
-        public int NeighborhoodSize { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("requestFailed")]
-        public bool? RequestFailed { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("batchCommitment")]
-        public int BatchCommitment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isReachable")]
-        public bool IsReachable { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastSyncedBlock")]
-        public long LastSyncedBlock { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("committedDepth")]
-        public int CommittedDepth { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isWarmingUp")]
-        public bool IsWarmingUp { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Neighborhoods
-    {
-
-        /// <summary>
-        /// Swarm address of a neighborhood in string binary format, usually limited to as many bits as the current storage radius.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("neighborhood")]
-        public string Neighborhood { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("reserveSizeWithinRadius")]
-        public int ReserveSizeWithinRadius { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proximity")]
-        public int Proximity { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     internal partial class DisconnectedPeers
     {
 
@@ -18484,7 +12863,7 @@ namespace Etherna.BeeNet.Clients.Bee
         public string Address { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("metrics")]
-        public Metrics Metrics { get; set; } = default!;
+        public PeerMetricsView Metrics { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -18506,443 +12885,7 @@ namespace Etherna.BeeNet.Clients.Bee
         public string Address { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("metrics")]
-        public Metrics2 Metrics { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Lastreceived2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public string Payout { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Lastsent2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("beneficiary")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Beneficiary { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chequebook")]
-        [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Fa-f0-9]{40}$")]
-        public string Chequebook { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric string representing an integer that may exceed `Number.MAX_SAFE_INTEGER` (2^53-1)
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("payout")]
-        public string Payout { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Proof1
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
-        [System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
-        public int ChunkSpan { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageProof")]
-        public PostageProof PostageProof { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments2")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments3")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments3 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment")]
-        public string ProveSegment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment2")]
-        public string ProveSegment2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("socProof")]
-        public System.Collections.Generic.ICollection<SocProof>? SocProof { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Proof2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
-        [System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
-        public int ChunkSpan { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageProof")]
-        public PostageProof2 PostageProof { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments2")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments3")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments3 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment")]
-        public string ProveSegment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment2")]
-        public string ProveSegment2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("socProof")]
-        public System.Collections.Generic.ICollection<SocProof2>? SocProof { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class ProofLast
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkSpan")]
-        [System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
-        public int ChunkSpan { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageProof")]
-        public PostageProof3 PostageProof { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments2")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proofSegments3")]
-        public System.Collections.Generic.ICollection<string>? ProofSegments3 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment")]
-        public string ProveSegment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("proveSegment2")]
-        public string ProveSegment2 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("socProof")]
-        public System.Collections.Generic.ICollection<SocProof3>? SocProof { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal enum SnapshotsBeeMode
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"light")]
-        Light = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"full")]
-        Full = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ultra-light")]
-        UltraLight = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
-        Unknown = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Metrics
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastSeenTimestamp")]
-        public int LastSeenTimestamp { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionRetry")]
-        public int SessionConnectionRetry { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("connectionTotalDuration")]
-        public double ConnectionTotalDuration { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDuration")]
-        public double SessionConnectionDuration { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDirection")]
-        public string SessionConnectionDirection { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("latencyEWMA")]
-        public int LatencyEWMA { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("reachability")]
-        public string Reachability { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("healthy")]
-        public bool Healthy { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class Metrics2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastSeenTimestamp")]
-        public int LastSeenTimestamp { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionRetry")]
-        public int SessionConnectionRetry { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("connectionTotalDuration")]
-        public double ConnectionTotalDuration { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDuration")]
-        public double SessionConnectionDuration { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("sessionConnectionDirection")]
-        public string SessionConnectionDirection { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("latencyEWMA")]
-        public int LatencyEWMA { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("reachability")]
-        public string Reachability { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("healthy")]
-        public bool Healthy { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class PostageProof
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-        public string Index { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageId")]
-        public string PostageId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("timeStamp")]
-        public string TimeStamp { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class SocProof
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
-        public string ChunkAddr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
-        public string Identifier { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signer")]
-        public string Signer { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class PostageProof2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-        public string Index { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageId")]
-        public string PostageId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("timeStamp")]
-        public string TimeStamp { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class SocProof2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
-        public string ChunkAddr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
-        public string Identifier { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signer")]
-        public string Signer { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class PostageProof3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-        public string Index { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("postageId")]
-        public string PostageId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("timeStamp")]
-        public string TimeStamp { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal partial class SocProof3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("chunkAddr")]
-        public string ChunkAddr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
-        public string Identifier { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signature")]
-        public string Signature { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("signer")]
-        public string Signer { get; set; } = default!;
+        public PeerMetricsView Metrics { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 

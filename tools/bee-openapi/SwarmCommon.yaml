@@ -535,6 +535,7 @@ components:
           $ref: "#/components/schemas/BatchID"
         utilization:
           type: integer
+          format: uint32
           description: >
             Raw batch fullness indicator: the highest write count among the
             `2^bucketDepth` collision buckets of the batch. This is **not** a
@@ -569,20 +570,9 @@ components:
           type: integer
         blockNumber:
           type: integer
-          format: int64
+          format: uint64
         immutableFlag:
           type: boolean
-        exists:
-          type: boolean
-        batchTTL:
-          type: integer
-          format: int64
-
-    PostageBatchNoIssuer:
-      type: object
-      properties:
-        batchID:
-          $ref: "#/components/schemas/BatchID"
         exists:
           type: boolean
         batchTTL:
@@ -612,9 +602,8 @@ components:
           format: int64
 
     DebugPostageBatch:
-      anyOf:
+      allOf:
         - $ref: "#/components/schemas/PostageBatch"
-        - $ref: "#/components/schemas/PostageBatchNoIssuer"
 
     StampBucketData:
       type: object
@@ -666,6 +655,16 @@ components:
       type: string
       pattern: "^[A-Fa-f0-9]{64}$"
       example: "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
+
+    PostageBatchId:
+      description: "ID of Postage Batch that is used to upload data with"
+      allOf:
+        - $ref: "#/components/schemas/SwarmAddress"
+
+    ActHistoryAddress:
+      description: "Swarm address reference to an ACT history entry"
+      allOf:
+        - $ref: "#/components/schemas/SwarmAddress"
 
     PublicKey:
       type: string
@@ -1120,7 +1119,7 @@ components:
     SwarmActHistoryAddress:
       description: "Swarm address reference to the new ACT history entry"
       schema:
-        $ref: "#/components/schemas/SwarmAddress"
+        $ref: "#/components/schemas/ActHistoryAddress"
       required: false
 
     ETag:
@@ -1278,7 +1277,7 @@ components:
       name: swarm-postage-batch-id
       description: "ID of Postage Batch that is used to upload data with"
       schema:
-        $ref: "#/components/schemas/SwarmAddress"
+        $ref: "#/components/schemas/PostageBatchId"
 
     SwarmPostageStamp:
       in: header
@@ -1333,7 +1332,7 @@ components:
       in: header
       name: swarm-act-history-address
       schema:
-        $ref: "#/components/schemas/SwarmAddress"
+        $ref: "#/components/schemas/ActHistoryAddress"
       description: "ACT history reference address"
 
     SwarmActTimestamp:

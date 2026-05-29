@@ -1,12 +1,19 @@
 # Use client generation tool
 
-NSwag doesn't support multiple OpenAPI configuration files. They needs to be merged.
+NSwag doesn't support multiple OpenAPI configuration files. They need to be merged into a single `bee-openapi.yaml`.
 
-We are using `speccy` tool (https://github.com/wework/speccy) with these command:
+We are using `redocly` (https://github.com/Redocly/redocly-cli) to **bundle** the files:
 
 ```shell
-speccy resolve -i ./bee-openapi/Swarm.yaml -o bee-openapi.yaml
+npx @redocly/cli bundle ./bee-openapi/Swarm.yaml -o bee-openapi.yaml
 ```
+
+Do **not** use a tool that *dereferences* (fully inlines) the spec, such as the
+previously used `speccy resolve`. Dereferencing flattens every `$ref` and drops the
+`components/schemas` section, so NSwag emits one anonymous class per occurrence
+(hundreds of duplicated `ResponseN` types). `redocly bundle` merges the files into one
+document while preserving `components` and the internal `$ref`s, so NSwag generates a
+single, unified named DTO per schema (e.g. `ReferenceResponse`, `NewTagResponse`).
 
 How to version bee-openapi/*.yaml:  
 - copy *.yaml from official https://github.com/ethersphere/bee/tree/master/openapi in tools/original-open-api  
