@@ -62,7 +62,7 @@ namespace Etherna.BeeNet.Models
         {
             var signer = new EthereumMessageSigner();
             var toSign = ToSignDigest(hash, hasher);
-            return signer.EcRecover(toSign, new EthECDSASignature(signature.ToArray()));
+            return signer.EcRecover(toSign, signature.ToArray().ToHex());
         }
         
         public byte[] ToByteArray()
