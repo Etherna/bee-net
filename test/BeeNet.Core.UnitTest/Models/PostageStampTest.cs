@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Signer;
-using Nethereum.Signer;
 using System;
 using System.Linq;
 using Xunit;
@@ -83,7 +82,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void RecoverBatchOwnerReturnsSigner()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
             var hash = Hash;
             var digest = PostageStamp.BuildSignDigest(hash, BatchId, BucketIndex, TimeStamp, new Hasher());
             var signature = signer.Sign(digest);

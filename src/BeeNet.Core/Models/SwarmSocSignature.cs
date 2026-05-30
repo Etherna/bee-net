@@ -12,10 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Signer;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -60,11 +59,11 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public bool Equals(SwarmSocSignature other) => byteSignature.Span.SequenceEqual(other.byteSignature.Span);
         public override bool Equals(object? obj) => obj is SwarmSocSignature other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteSignature.ToArray());
-        public EthAddress RecoverOwner(byte[] toSignDigest)
+        public override int GetHashCode() => byteSignature.Span.ToHashCode();
+        public EthAddress RecoverOwner(byte[] toSignDigest, Hasher? hasher = null)
         {
-            var signer = new EthereumMessageSigner();
-            return signer.EcRecover(toSignDigest, ToString());
+            ArgumentNullException.ThrowIfNull(toSignDigest);
+            return EthPublicKey.Recover(toSignDigest, byteSignature.Span, hasher).ToAddress(hasher);
         }
         public byte[] ToByteArray() => byteSignature.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteSignature;

@@ -12,9 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -55,7 +54,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public bool Equals(PostageBatchId other) => byteId.Span.SequenceEqual(other.byteId.Span);
         public override bool Equals(object? obj) => obj is PostageBatchId other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteId.ToArray());
+        public override int GetHashCode() => byteId.Span.ToHashCode();
         public byte[] ToByteArray() => byteId.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteId;
         public override string ToString() => byteId.ToArray().ToHex();

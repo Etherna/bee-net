@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;

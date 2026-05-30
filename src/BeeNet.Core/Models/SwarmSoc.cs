@@ -14,8 +14,6 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Signer;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Signer;
 using System;
 
 namespace Etherna.BeeNet.Models
@@ -62,7 +60,7 @@ namespace Etherna.BeeNet.Models
             
             // Recover owner information.
             var toSignDigest = BuildToSignDigest(identifier, innerChunkHash, swarmChunkBmt.Hasher);
-            var owner = signature.RecoverOwner(toSignDigest);
+            var owner = signature.RecoverOwner(toSignDigest, swarmChunkBmt.Hasher);
 
             return new SwarmSoc(identifier, owner, innerChunk, hash, signature);
         }
@@ -78,8 +76,8 @@ namespace Etherna.BeeNet.Models
         /// <summary>
         /// Replicas SOC owner
         /// </summary>
-        public static EthAddress ReplicasOwner => ReplicasOwnerPrivateKey.GetPublicAddress(); //"0xdc5b20847f43d67928f49cd4f85d696b5a7617b5"
-        public static EthECKey ReplicasOwnerPrivateKey { get; } = new("0x0100000000000000000000000000000000000000000000000000000000000000");
+        public static EthAddress ReplicasOwner => ReplicasOwnerPrivateKey.Address; //"0xdc5b20847f43d67928f49cd4f85d696b5a7617b5"
+        public static EthPrivateKey ReplicasOwnerPrivateKey { get; } = new("0x0100000000000000000000000000000000000000000000000000000000000000");
         
         // Methods.
         public SwarmHash BuildHash(Hasher hasher)
@@ -127,16 +125,15 @@ namespace Etherna.BeeNet.Models
             Signature = new SwarmSocSignature(signer.Sign(toSignBytes));
         }
 
-        public void SignWithPrivateKey(EthECKey privateKey, Hasher hasher)
+        public void SignWithPrivateKey(EthPrivateKey privateKey, Hasher hasher)
         {
             ArgumentNullException.ThrowIfNull(privateKey);
             ArgumentNullException.ThrowIfNull(hasher);
-            
-            if (Owner != privateKey.GetPublicAddress())
+
+            if (Owner != privateKey.Address)
                 throw new ArgumentException("Invalid owner from private key", nameof(privateKey));
 
-            var signer = new EthereumMessageSigner();
-            Signature = signer.Sign(ToSignDigest(hasher), privateKey).HexToByteArray();
+            Signature = privateKey.Sign(ToSignDigest(hasher), hasher);
         }
 
         public byte[] ToSignDigest(Hasher hasher) => BuildToSignDigest(Identifier, InnerChunk.Hash, hasher);
@@ -148,7 +145,7 @@ namespace Etherna.BeeNet.Models
             
             // Verify signature.
             if (!Signature.HasValue ||
-                Signature.Value.RecoverOwner(ToSignDigest(hasher)) != Owner)
+                Signature.Value.RecoverOwner(ToSignDigest(hasher), hasher) != Owner)
                 return false;
             
             // Disperse replica validation.

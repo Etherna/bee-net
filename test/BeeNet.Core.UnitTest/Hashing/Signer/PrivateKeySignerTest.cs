@@ -13,7 +13,6 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.BeeNet.Models;
-using Nethereum.Signer;
 using System;
 using System.Linq;
 using Xunit;
@@ -41,7 +40,7 @@ namespace Etherna.BeeNet.Hashing.Signer
         [Fact]
         public void PublicAddressMatchesKnownAccount()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
 
             Assert.Equal(ExpectedAddress, signer.PublicAddress.ToString());
         }
@@ -49,7 +48,7 @@ namespace Etherna.BeeNet.Hashing.Signer
         [Fact]
         public void PublicKeyIsStable()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
 
             var publicKey = signer.GetPublicKey();
 
@@ -60,7 +59,7 @@ namespace Etherna.BeeNet.Hashing.Signer
         [Fact]
         public void SignatureIsDeterministicAndStable()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
 
             var signature = signer.Sign(Digest);
 
@@ -71,7 +70,7 @@ namespace Etherna.BeeNet.Hashing.Signer
         [Fact]
         public void SignedDigestRecoversToSignerAddress()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
 
             var signature = signer.Sign(Digest);
             var recovered = new SwarmSocSignature(signature).RecoverOwner(Digest);

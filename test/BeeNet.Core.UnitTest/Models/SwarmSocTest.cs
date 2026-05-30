@@ -14,7 +14,6 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Hashing.Signer;
-using Nethereum.Signer;
 using System;
 using System.Linq;
 using Xunit;
@@ -41,7 +40,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void SignThenValidateSucceeds()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
             var soc = new SwarmSoc(Identifier, signer.PublicAddress, BuildInnerChunk());
 
             soc.Sign(signer, new Hasher());
@@ -53,7 +52,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void SignRecoversToOwner()
         {
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
             var soc = new SwarmSoc(Identifier, signer.PublicAddress, BuildInnerChunk());
 
             soc.Sign(signer, new Hasher());
@@ -65,7 +64,7 @@ namespace Etherna.BeeNet.Models
         [Fact]
         public void SignerAndPrivateKeyProduceIdenticalSignature()
         {
-            var ecKey = new EthECKey(PrivateKeyHex);
+            var ecKey = new EthPrivateKey(PrivateKeyHex);
             var signer = new PrivateKeySigner(ecKey);
             var owner = signer.PublicAddress;
             var innerChunk = BuildInnerChunk();
@@ -83,7 +82,7 @@ namespace Etherna.BeeNet.Models
         public void BuildFromBytesRecoversSignedSoc()
         {
             var bmt = new SwarmChunkBmt();
-            var signer = new PrivateKeySigner(new EthECKey(PrivateKeyHex));
+            var signer = new PrivateKeySigner(new EthPrivateKey(PrivateKeyHex));
             var owner = signer.PublicAddress;
             var innerChunk = BuildInnerChunk(bmt);
 

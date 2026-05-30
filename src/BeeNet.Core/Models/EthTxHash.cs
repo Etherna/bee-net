@@ -12,9 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -61,9 +60,9 @@ namespace Etherna.BeeNet.Models
         public static EthTxHash Zero { get; } = new byte[HashSize];
 
         // Methods.
-        public bool Equals(EthTxHash other) => ByteArrayComparer.Current.Equals(byteHash, other.byteHash);
+        public bool Equals(EthTxHash other) => byteHash.AsSpan().SequenceEqual(other.byteHash);
         public override bool Equals(object? obj) => obj is EthTxHash other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash);
+        public override int GetHashCode() => byteHash.AsSpan().ToHashCode();
         public byte[] ToByteArray() => (byte[])byteHash.Clone();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash.AsMemory();
         public override string ToString() => byteHash.ToHex(prefix: true);
