@@ -15,8 +15,6 @@
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Signer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,9 +58,8 @@ namespace Etherna.BeeNet.Models
         /// <returns></returns>
         public EthAddress RecoverBatchOwner(SwarmHash hash, Hasher hasher)
         {
-            var signer = new EthereumMessageSigner();
             var toSign = ToSignDigest(hash, hasher);
-            return signer.EcRecover(toSign, signature.ToArray().ToHex());
+            return EthPublicKey.Recover(toSign, signature.Span, hasher).ToAddress(hasher);
         }
         
         public byte[] ToByteArray()

@@ -12,9 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.Buffers.Binary;
 using System.ComponentModel;
@@ -66,7 +65,7 @@ namespace Etherna.BeeNet.Models
         public override bool Equals(object? obj) => obj is SwarmHash other && Equals(other);
         public byte[] GetDistanceBytesFrom(SwarmHash other) => GetDistanceBytes(byteHash.Span, other.byteHash.Span);
         public byte[] GetDistanceBytesFrom(SwarmOverlayAddress other) => GetDistanceBytes(byteHash.Span, other.ToReadOnlyMemory().Span);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteHash.ToArray());
+        public override int GetHashCode() => byteHash.Span.ToHashCode();
         public ushort ToBucketId() => BinaryPrimitives.ReadUInt16BigEndian(byteHash.Span[..2]);
         public byte[] ToByteArray() => byteHash.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteHash;

@@ -12,9 +12,9 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
+using Etherna.BeeNet.Hashing.Signer;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -50,15 +50,15 @@ namespace Etherna.BeeNet.Models
         }
         
         // Static properties.
-        public static EthAddress Zero { get; } = AddressUtil.ZERO_ADDRESS;
+        public static EthAddress Zero { get; } = new(new byte[AddressSize]);
 
         // Methods.
-        public bool Equals(EthAddress other) => ByteArrayComparer.Current.Equals(byteAddress, other.byteAddress);
+        public bool Equals(EthAddress other) => byteAddress.AsSpan().SequenceEqual(other.byteAddress);
         public override bool Equals(object? obj) => obj is EthAddress other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteAddress);
+        public override int GetHashCode() => byteAddress.AsSpan().ToHashCode();
         public byte[] ToByteArray() => (byte[])byteAddress.Clone();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteAddress.AsMemory();
-        public override string ToString() => byteAddress.ConvertToEthereumChecksumAddress();
+        public override string ToString() => Secp256k1.ToChecksumAddress(byteAddress);
         public string ToString(bool withHexPrefix)
         {
             var address = ToString();
@@ -78,7 +78,7 @@ namespace Etherna.BeeNet.Models
         public static bool IsValidAddress(string value) =>
             //accept as valid both with "0x..." or not
             value.IsHex() &&
-            value.IsValidEthereumAddressLength();
+            value.RemoveHexPrefix().Length == AddressSize * 2;
         public static EthAddress Parse(string s, IFormatProvider? provider) => FromString(s);
         public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out EthAddress result)
         {

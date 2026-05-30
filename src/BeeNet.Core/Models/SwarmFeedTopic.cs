@@ -12,9 +12,8 @@
 // You should have received a copy of the GNU Lesser General Public License along with Bee.Net.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -59,7 +58,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public bool Equals(SwarmFeedTopic other) => byteTopic.Span.SequenceEqual(other.byteTopic.Span);
         public override bool Equals(object? obj) => obj is SwarmFeedTopic other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteTopic.ToArray());
+        public override int GetHashCode() => byteTopic.Span.ToHashCode();
         public byte[] ToByteArray() => byteTopic.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteTopic;
         public override string ToString() => byteTopic.ToArray().ToHex();

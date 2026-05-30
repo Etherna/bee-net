@@ -1,8 +1,7 @@
+using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Manifest;
 using Etherna.BeeNet.Stores;
 using Etherna.BeeNet.TypeConverters;
-using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -95,7 +94,7 @@ namespace Etherna.BeeNet.Models
         // Methods.
         public bool Equals(SwarmReference other) => byteReference.Span.SequenceEqual(other.byteReference.Span);
         public override bool Equals(object? obj) => obj is SwarmReference other && Equals(other);
-        public override int GetHashCode() => ByteArrayComparer.Current.GetHashCode(byteReference.ToArray());
+        public override int GetHashCode() => byteReference.Span.ToHashCode();
         public byte[] ToByteArray() => byteReference.ToArray();
         public ReadOnlyMemory<byte> ToReadOnlyMemory() => byteReference;
         public override string ToString() => byteReference.ToArray().ToHex();

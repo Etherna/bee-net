@@ -17,7 +17,6 @@ using Etherna.BeeNet.Exceptions;
 using Etherna.BeeNet.Extensions;
 using Etherna.BeeNet.Models;
 using Etherna.BeeNet.Tools;
-using Nethereum.Hex.HexConvertors.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
