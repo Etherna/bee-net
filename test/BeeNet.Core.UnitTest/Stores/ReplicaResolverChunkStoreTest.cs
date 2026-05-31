@@ -14,10 +14,12 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Models;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -128,6 +130,11 @@ namespace Etherna.BeeNet.Stores
         public async Task DoReplicaRequestsWithDelays(DoReplicaRequestsWithDelaysTestElement test)
         {
             // Setup.
+            // A virtual clock drives the level delays, so the staggered dispatch is observed
+            // deterministically by advancing time level by level, without depending on wall-clock timing.
+            var levelDelay = TimeSpan.FromSeconds(1);
+            var fakeTimeProvider = new FakeTimeProvider();
+
             ConcurrentBag<SwarmHash> currentRequestsBatch = [];
             List<SwarmHash[]> requestsBatches = [];
             
@@ -135,8 +142,8 @@ namespace Etherna.BeeNet.Stores
             sourceChunkStoreMock.Setup(s => s.GetAsync(It.IsAny<SwarmHash>(), It.IsAny<CancellationToken>()))
                 .Returns<SwarmHash, CancellationToken>(async (h, _) =>
                 {
-                    await Task.Yield();
                     currentRequestsBatch.Add(h);
+                    await Task.Yield();
                     throw new KeyNotFoundException();
                 });
             
@@ -144,31 +151,39 @@ namespace Etherna.BeeNet.Stores
                 sourceChunkStoreMock.Object,
                 test.RedundancyLevel,
                 new Hasher(),
-                TimeSpan.FromMilliseconds(500));
-
-            //run batches splitter asynchronously
-            var splitterTask = Task.Run(async () =>
-            {
-                await Task.Delay(250);
-                for (var i = 0; i < test.RequestsByLevel.Length; i++)
-                {
-                    requestsBatches.Add(currentRequestsBatch.ToArray());
-                    currentRequestsBatch = [];
-                    await Task.Delay(500);
-                }
-                //add a final empty one
-                requestsBatches.Add(currentRequestsBatch.ToArray());
-            });
+                levelDelay,
+                fakeTimeProvider);
 
             // Run.
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => replicaChunkStore.GetAsync(test.OriginalHash));
-            await splitterTask;
-            
+            // Start the resolver without awaiting: it won't complete until all level delays elapse,
+            // which only happens as we advance the fake clock below.
+            var getTask = Assert.ThrowsAsync<KeyNotFoundException>(() => replicaChunkStore.GetAsync(test.OriginalHash));
+
+            for (var i = 0; i < test.RequestsByLevel.Length; i++)
+            {
+                // Level 0 (original hash) is dispatched immediately; each further level after one more delay.
+                if (i > 0)
+                    fakeTimeProvider.Advance(levelDelay);
+
+                // Wait until the expected number of requests for the current level has been recorded.
+                // The fake clock guarantees no later level can fire early, so this only settles the
+                // already-triggered async continuations; it never merges levels together.
+                var timeout = Stopwatch.StartNew();
+                while (currentRequestsBatch.Count < test.RequestsByLevel[i].Length && timeout.Elapsed < TimeSpan.FromSeconds(5))
+                    await Task.Delay(1);
+                Assert.Equal(test.RequestsByLevel[i].Length, currentRequestsBatch.Count);
+                
+                requestsBatches.Add([..currentRequestsBatch]);
+                currentRequestsBatch.Clear();
+            }
+
+            await getTask;
+
             // Assert.
-            Assert.Equal(test.RequestsByLevel.Length + 1, requestsBatches.Count); //last one must be empty
-            for (int i = 0; i < requestsBatches.Count - 1; i++)
+            Assert.Equal(test.RequestsByLevel.Length, requestsBatches.Count);
+            for (int i = 0; i < requestsBatches.Count; i++)
                 Assert.Equal(test.RequestsByLevel[i].Order(), requestsBatches[i].Order());
-            Assert.Empty(requestsBatches.Last());
+            Assert.Empty(currentRequestsBatch); // no requests dispatched beyond the expected levels
         }
 
         [Fact]

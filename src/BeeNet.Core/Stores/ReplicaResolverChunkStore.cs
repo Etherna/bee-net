@@ -28,7 +28,8 @@ namespace Etherna.BeeNet.Stores
         IReadOnlyChunkStore sourceChunkStore,
         RedundancyLevel level,
         Hasher hasher,
-        TimeSpan? customLevelDelay = null)
+        TimeSpan? customLevelDelay = null,
+        TimeProvider? customTimeProvider = null)
         : ReadOnlyChunkStoreBase
     {
         // Fields.
@@ -36,6 +37,7 @@ namespace Etherna.BeeNet.Stores
         /// Duration between successive additional requests
         /// </summary>
         private readonly TimeSpan levelDelay = customLevelDelay ?? TimeSpan.FromMilliseconds(300);
+        private readonly TimeProvider timeProvider = customTimeProvider ?? TimeProvider.System;
 
         // Methods.
         public override async Task<SwarmChunk> GetAsync(SwarmHash hash, CancellationToken cancellationToken = default)
@@ -104,7 +106,7 @@ namespace Etherna.BeeNet.Stores
             CancellationToken cancellationToken)
         {
             // Wait the delay for this level.
-            await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(delay, timeProvider, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             
             // Get replica chunk.
