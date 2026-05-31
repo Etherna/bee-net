@@ -15,27 +15,29 @@
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.BeeNet.Models
 {
-    public sealed class SwarmSequenceFeed(EthAddress owner, SwarmFeedTopic topic)
+    public sealed class SwarmSequenceFeed(
+        EthAddress owner,
+        SwarmFeedTopic topic,
+        TimeProvider? customTimeProvider = null)
         : SwarmFeedBase(owner, topic)
     {
         // Consts.
         private const int DefaultSearchLevels = 8;
-        
+
         // Fields.
         /*
          * We can initialize new hashers here because hashers inside the pool are not reusable,
          * and we are not interested into injecting mocked hashers with tests.
          */
         private readonly ResourcePool<Hasher> hasherPool = new(() => new Hasher());
+        private readonly TimeProvider timeProvider = customTimeProvider ?? TimeProvider.System;
 
         // Properties.
         public override SwarmFeedType Type => SwarmFeedType.Sequence;
@@ -133,103 +135,103 @@ namespace Etherna.BeeNet.Models
             SwarmSequenceFeedChunk bestFoundChunk,
             TimeSpan? requestsCustomTimeout = null)
         {
+            // Lookups on all the levels are requested concurrently. As soon as the highest existing chunk
+            // of the searched interval is identified, the result is determined: this happens when a chunk
+            // is found at a level, and all the greater levels have already returned as not found. At that
+            // point any other still pending lookup is unnecessary, so it gets cancelled, and we can reply
+            // without waiting for it.
+            using var pendingLookupsCts = new CancellationTokenSource();
             using var semaphore = new SemaphoreSlim(1, 1);
-            var tasks = new List<Task>();
+            List<Task> tasks = [];
 
             SwarmSequenceFeedIndex baseIndex = (SwarmSequenceFeedIndex)bestFoundChunk.Index;
             int bestFoundLevel = 0;
-            List<int> notFoundLevels = [DefaultSearchLevels + 1];
+            List<int> notFoundLevels = [];
             SwarmSequenceFeedChunk? feedChunkResult = null;
-            
+
             for (var l = 1; l <= maxSearchLevel; l++)
             {
                 var level = l;
                 tasks.Add(Task.Run(async () =>
                 {
-                    // Init hasherPool.
+                    // Init hasher.
                     var hasher = hasherPool.GetResource();
-                    using var timeoutCancellationTokenSource = new CancellationTokenSource(requestsCustomTimeout ?? DefaultTimeout);
-                    
-                    // Exec lookup.
-                    var index = new SwarmSequenceFeedIndex(baseIndex.Value + ((ulong)1 << level) - 1);
-                    var chunk = await TryGetFeedChunkAsync(
-                        index,
-                        chunkStore,
-                        hasher,
-                        timeoutCancellationTokenSource.Token).ConfigureAwait(false)
-                        as SwarmSequenceFeedChunk;
-                    
-                    // Evaluate result. Use semaphore on evaluation because of concurrent requests.
-                    try //catch timeout exception
+                    try
                     {
+                        // Exec lookup. Each request has its own timeout, and is also cancelled as soon
+                        // as the result is determined by another concurrent lookup.
+                        using var timeoutCts = new CancellationTokenSource(requestsCustomTimeout ?? DefaultTimeout, timeProvider);
+                        using var requestCts = CancellationTokenSource.CreateLinkedTokenSource(pendingLookupsCts.Token, timeoutCts.Token);
+
+                        var index = new SwarmSequenceFeedIndex(baseIndex.Value + ((ulong)1 << level) - 1);
+                        var chunk = await TryGetFeedChunkAsync(
+                            index,
+                            chunkStore,
+                            hasher,
+                            requestCts.Token).ConfigureAwait(false)
+                            as SwarmSequenceFeedChunk;
+
+                        // Evaluate result. Use semaphore on evaluation because of concurrent requests.
                         await semaphore.WaitAsync().ConfigureAwait(false);
                         try
                         {
-                            //if bestFoundLevel is higher than current level, this result can be skipped
-                            if (level < bestFoundLevel)
+                            // Skip if the result is already determined, or a better chunk has already been found.
+                            if (feedChunkResult is not null || level < bestFoundLevel)
                                 return;
-                            
-                            //try update edge results
-                            if (chunk == null)
+
+                            // Update edge results.
+                            if (chunk is null)
                             {
-                                //keep trace to try recover in case this could be a lookup error
                                 notFoundLevels.Add(level);
-                                
-                                //skip if level can't lower not found minimum level
-                                if (notFoundLevels.Min() < level)
-                                    return;
                             }
                             else
                             {
-                                //report best result
                                 bestFoundChunk = chunk;
                                 bestFoundLevel = level;
-                                
-                                //adjust not found levels. If any previous result have failed to lookup
-                                //for an existing chunk, remove wrong levels
+
+                                // If any lower level failed to lookup an existing chunk (false negative),
+                                // remove its wrong "not found" result.
                                 notFoundLevels.RemoveAll(nfl => nfl < bestFoundLevel);
                             }
-                            
-                            // Check ending/recursion conditions.
-                            
-                            //if a chunk is found on the max level, and this is already a sub-interval,
-                            //then index+1 is already known to be not found
-                            if (chunk != null &&
-                                level == maxSearchLevel &&
-                                maxSearchLevel < DefaultSearchLevels)
-                            {
-                                feedChunkResult = chunk;
-                                return;
-                            }
-                            
-                            //if current interval is completed
-                            if (bestFoundLevel + 1 == notFoundLevels.Min())
-                            {
-                                //if best found result was from previous recursion (level == 0)
-                                if (bestFoundLevel == 0)
-                                {
-                                    feedChunkResult = bestFoundChunk;
-                                    return;
-                                }
 
-                                //else, go more in deep with better interval
+                            // The best found chunk is the highest existing one only when all the levels
+                            // greater than it have returned as not found. Until then, a greater level
+                            // could still return a chunk and move the edge forward.
+                            if (notFoundLevels.Count != maxSearchLevel - bestFoundLevel)
+                                return;
+
+                            // The highest existing chunk of the interval has been found: terminate the other
+                            // still pending lookups, because they are unnecessary.
+                            await pendingLookupsCts.CancelAsync().ConfigureAwait(false);
+
+                            // Reply with the best found chunk when the interval can't be narrowed further:
+                            // no chunk has been found after the base, or a chunk has been found on the upper
+                            // edge of a sub-interval (where the next index is already known as not existing).
+                            // Otherwise, narrow the search inside the found interval.
+                            if (bestFoundLevel == 0 ||
+                                (bestFoundLevel == maxSearchLevel && maxSearchLevel < DefaultSearchLevels))
+                                feedChunkResult = bestFoundChunk;
+                            else
                                 feedChunkResult = await RunLookupsAsync(
-                                    chunkStore: chunkStore,
-                                    maxSearchLevel: bestFoundLevel,
-                                    bestFoundChunk: bestFoundChunk).ConfigureAwait(false);
-                            }
+                                    chunkStore,
+                                    bestFoundLevel,
+                                    bestFoundChunk,
+                                    requestsCustomTimeout).ConfigureAwait(false);
                         }
                         finally
                         {
                             semaphore.Release();
-                            hasherPool.ReturnResource(hasher);
                         }
                     }
                     catch (OperationCanceledException) { }
+                    finally
+                    {
+                        hasherPool.ReturnResource(hasher);
+                    }
                 }));
             }
-            
-            await Task.WhenAll(tasks.ToArray()).ConfigureAwait(false);
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             return feedChunkResult;
         }
