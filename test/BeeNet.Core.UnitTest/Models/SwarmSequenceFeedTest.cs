@@ -14,9 +14,11 @@
 
 using Etherna.BeeNet.Hashing;
 using Etherna.BeeNet.Stores;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -204,7 +206,59 @@ namespace Etherna.BeeNet.Models
                     Times.AtMostOnce);
             }
         }
-        
+
+        [Fact]
+        public async Task LookupSequenceFeedTerminatesUnnecessaryPendingRequests()
+        {
+            // Setup.
+            // A virtual clock drives the lookups' timeout: while it stays frozen the timeout can't elapse,
+            // so the lower level lookups (unnecessary once the highest existing chunk has been found) can
+            // only complete if the lookup actively terminates them. This proves the early termination
+            // without depending on wall-clock timing.
+            var fakeTimeProvider = new FakeTimeProvider();
+            var sequenceFeed = new SwarmSequenceFeed(SequenceFeed.Owner, SequenceFeed.Topic, fakeTimeProvider);
+
+            for (ulong i = 0; i <= 10; i++)
+            {
+                var chunk = BuildSequenceFeedChunk(i);
+                chunkStoreMock.Setup(c => c.TryGetAsync(
+                        chunk.Hash,
+                        It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(chunk);
+            }
+
+            // The lower level lookups of the first interval (indexes 1 and 3) stay pending until their
+            // request is cancelled, simulating slow requests that the lookup must not wait for.
+            ulong[] pendingIndexes = [1, 3];
+            foreach (var pendingIndex in pendingIndexes)
+            {
+                var pendingHash = BuildSequenceFeedChunk(pendingIndex).Hash;
+                chunkStoreMock.Setup(c => c.TryGetAsync(
+                        pendingHash,
+                        It.IsAny<CancellationToken>()))
+                    .Returns<SwarmHash, CancellationToken>(async (_, ct) =>
+                    {
+                        try { await Task.Delay(Timeout.Infinite, ct); }
+                        catch (OperationCanceledException) { }
+                        return null;
+                    });
+            }
+
+            // Act.
+            // Start the lookup without awaiting: with the clock frozen, it can complete only by
+            // terminating the pending lower level lookups.
+            var lookupTask = sequenceFeed.TryFindLastFeedChunkAsync(null, chunkStoreMock.Object);
+
+            var realTimeBound = Stopwatch.StartNew();
+            while (!lookupTask.IsCompleted && realTimeBound.Elapsed < TimeSpan.FromSeconds(5))
+                await Task.Delay(1);
+
+            // Assert.
+            Assert.True(lookupTask.IsCompleted, "Lookup did not terminate the unnecessary pending requests.");
+            var result = await lookupTask;
+            Assert.Equal(BuildSequenceFeedChunk(10).Hash, result?.Hash);
+        }
+
         // Helpers.
         private static SwarmSequenceFeedChunk BuildSequenceFeedChunk(ulong i)
         {
