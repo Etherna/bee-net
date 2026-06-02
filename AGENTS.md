@@ -1,29 +1,29 @@
-# Bee.Net
+# SwarmSDK
 
-Bee.Net is a [Swarm](https://ethswarm.org/) Development Kit for .NET. It provides core models and tools to work with Swarm's protocol, and a client for the [Bee](https://github.com/ethersphere/bee) node. It is a set of **libraries**, not an application.
+SwarmSDK is a [Swarm](https://ethswarm.org/) Development Kit for .NET. It provides core models and tools to work with Swarm's protocol, and a client for the [Bee](https://github.com/ethersphere/bee) node. It is a set of **libraries**, not an application.
 
 ## Build, run, test
 
 Libraries multi-target **.NET 8, 9 and 10**; the test and WASM projects target **.NET 10 only**. `TreatWarningsAsErrors=true` and `AnalysisMode=AllEnabledByDefault` are set everywhere — warnings break the build, on every target framework.
 
 ```bash
-dotnet restore BeeNet.sln
-dotnet build BeeNet.sln -c Release                 # compiles every target framework
-dotnet test  BeeNet.sln -c Release                 # runs the xUnit test project
-dotnet test test/BeeNet.Core.UnitTest/BeeNet.Core.UnitTest.csproj   # single project
+dotnet restore SwarmSdk.sln
+dotnet build SwarmSdk.sln -c Release                 # compiles every target framework
+dotnet test  SwarmSdk.sln -c Release                 # runs the xUnit test project
+dotnet test test/SwarmSdk.UnitTest/SwarmSdk.UnitTest.csproj   # single project
 dotnet test --filter "FullyQualifiedName~ReplicaResolverChunkStoreTest"          # single class
 dotnet test --filter "FullyQualifiedName~ReplicaResolverChunkStoreTest.CanFindOriginalChunk"  # single test
 ```
 
-Because the libraries compile against the lowest target (`net8.0`), do not use APIs introduced only in a later framework — it will pass locally on `net10.0` and fail the build on `net8.0`. Use `dotnet test -f net10.0 …` to iterate on a single framework, but a green `BeeNet.sln` build means all of them compiled.
+Because the libraries compile against the lowest target (`net8.0`), do not use APIs introduced only in a later framework — it will pass locally on `net10.0` and fail the build on `net8.0`. Use `dotnet test -f net10.0 …` to iterate on a single framework, but a green `SwarmSdk.sln` build means all of them compiled.
 
-There is no frontend, web host, or database — `dotnet build` produces ready-to-pack NuGet libraries (`Bee.Net.Core`, `Bee.Net.Client`).
+There is no frontend, web host, or database — `dotnet build` produces ready-to-pack NuGet libraries (`SwarmSdk`, `SwarmSdk.Client`).
 
 ## Architecture
 
 Three source projects plus one test project:
 
-- **`src/BeeNet.Core`** (`Bee.Net.Core`) — Core models, tools, and services to work with Swarm, with no Bee-node dependency. Organized by feature folder:
+- **`src/SwarmSdk`** (`SwarmSdk`) — Core models, tools, and services to work with Swarm, with no Bee-node dependency. Organized by feature folder:
   - `Models/` — Swarm domain types (`SwarmHash`, `SwarmCac`, `SwarmSoc`, `SwarmAddress`, feeds, postage stamps, `EthAddress`, …). Mostly immutable value-like types with `BuildFrom…`/`BuildNew` static factories.
   - `Chunks/` — chunk-level operations: `ChunkDataStream` (seekable, lazily-fetched stream over a chunk tree), `ChunkTraverser`, `ChunkReplicator`, `ChunkParityDecoder` (Reed–Solomon redundancy), encryption.
   - `Stores/` — chunk/stamp store abstractions (`IReadOnlyChunkStore`, `IChunkStore`, `IStampStore`) and composable implementations/decorators (`MemoryChunkStore`, `LocalDirectoryChunkStore`, `CacheChunkStore`, `MirroringChunkStore`, `ReplicaResolverChunkStore`). Stores are decorators: compose them rather than adding branches to an existing one.
@@ -31,26 +31,27 @@ Three source projects plus one test project:
   - `Manifest/` — Mantaray manifest reading/writing and path resolution.
   - `Services/` — higher-level orchestration (`ChunkService`, `FeedService`) exposed via `I…Service` interfaces.
   - `Extensions/`, `JsonConverters/`, `TypeConverters/`, `Exceptions/` — supporting code.
-- **`src/BeeNet.Client`** (`Bee.Net.Client`) — Client to talk to a Bee node. `SwarmClient` / `ISwarmClient` is the public entry point; `Clients/Bee/BeeGeneratedClient.cs` and `Clients/Beehive/BeehiveGeneratedClient.cs` are **NSwag-generated** wrappers over the node's HTTP API. Also `Models/` (request/response DTOs like `FileResponse`), `Stores/` (chunk stores backed by the node), and `Tools/`.
-- **`src/BeeNet.Core.Wasm`** — WebAssembly host exposing core utilities to JS. `IsAotCompatible=true`, not packable, not part of the public NuGet surface. Keep it AOT-safe.
-- **`test/BeeNet.Core.UnitTest`** — xUnit + Moq unit tests, mirroring the `BeeNet.Core` folder layout.
+- **`src/SwarmSdk.Client`** (`SwarmSdk.Client`) — Client to talk to a Bee node. `SwarmClient` / `ISwarmClient` is the public entry point; `Clients/Bee/BeeGeneratedClient.cs` and `Clients/Beehive/BeehiveGeneratedClient.cs` are **NSwag-generated** wrappers over the node's HTTP API. Also `Models/` (request/response DTOs like `FileResponse`), `Stores/` (chunk stores backed by the node), and `Tools/`.
+- **`src/SwarmSdk.Wasm`** — WebAssembly host exposing SDK utilities to JS. `IsAotCompatible=true`, not packable, not part of the public NuGet surface. Keep it AOT-safe.
+- **`test/SwarmSdk.UnitTest`** — xUnit + Moq unit tests, mirroring the `SwarmSdk` folder layout.
 
 Key cross-cutting points:
 
-- **Namespaces drop the project's `Core`/`Client` segment.** Root namespace is `Etherna.BeeNet`, so `src/BeeNet.Core/Stores/Foo.cs` is `namespace Etherna.BeeNet.Stores`, not `…BeeNet.Core.Stores`. The namespace mirrors the folder path *under* the root namespace.
-- **`ConfigureAwait(false)` is required** on every awaited call in library code (`BeeNet.Core`, `BeeNet.Client`) — these are libraries with no synchronization context to preserve.
+- **Root namespace is `Etherna.SwarmSdk` for every project**, so `src/SwarmSdk/Stores/Foo.cs` is `namespace Etherna.SwarmSdk.Stores`, and `src/SwarmSdk.Client/Stores/Bar.cs` is `namespace Etherna.SwarmSdk.Stores` too (the project's `.Client` suffix is dropped, not part of the namespace). The namespace mirrors the folder path *under* the root namespace.
+- **`ConfigureAwait(false)` is required** on every awaited call in library code (`SwarmSdk`, `SwarmSdk.Client`) — these are libraries with no synchronization context to preserve.
 - **Generated clients are not hand-maintained.** `Clients/Bee/BeeGeneratedClient.cs` and `Clients/Beehive/BeehiveGeneratedClient.cs` are produced by NSwag from the Bee OpenAPI spec; prefer regenerating over editing, and keep manual post-generation fixes minimal and documented. Public ergonomics belong in `SwarmClient`, not in the generated layer. Regeneration lives in `tools/` (see `tools/README.md`): bundle the multi-file spec with `npx @redocly/cli bundle ./bee-openapi/Swarm.yaml -o bee-openapi.yaml` (use `redocly bundle`, **never** a dereferencing tool — that drops `components/schemas` and makes NSwag emit hundreds of anonymous `ResponseN` DTOs), then run `nswag run bee-api.nswag` and `nswag run beehive-api.nswag`. To bump the API version, copy the upstream `*.yaml` from `ethersphere/bee/openapi` into `tools/original-open-api/` and merge.
 - **Injectable time for delays/timeouts.** Code that schedules work over time takes a `TimeProvider` (defaulting to `TimeProvider.System`) so tests can drive a `FakeTimeProvider` instead of the wall clock. See `ReplicaResolverChunkStore` and its test.
 
 ## Issue tracker
 
-Bugs and features are tracked in Jira project **BNET** (https://etherna.atlassian.net/projects/BNET). Branch names follow `feature/BNET-<id>-<slug>` / `improve/BNET-<id>-<slug>` / `fix/BNET-<id>-<slug>` — match this when creating branches.
+Bugs and features are tracked in Jira project **SSDK** (https://etherna.atlassian.net/projects/SSDK). Branch names follow `feature/SSDK-<id>-<slug>` / `improve/SSDK-<id>-<slug>` / `fix/SSDK-<id>-<slug>` — match this when creating branches.
 
 # Coding Style
 
 ## General Principles
 
 - Keep commits clean: only include changes strictly necessary for the task at hand.
+- Never reference AI agents or assistants in commits or code — no agent names, no `Co-Authored-By` agent trailers, no "generated/assisted by" notes. Commit messages and code must read as the team's own work.
 - Exceptions to these conventions are accepted when strictly necessary or when they significantly improve code quality. Justify with a comment where needed.
 - All elements (usings, properties, methods, fields, enum members, etc.) are always alphabetically ordered within their respective sections.
 - Primary constructors are preferred everywhere the constructor is a simple parameter assignment.
@@ -67,13 +68,13 @@ Bugs and features are tracked in Jira project **BNET** (https://etherna.atlassia
 - **Primary constructor parameters**: `camelCase` without underscore
 - **Constants**: PascalCase (`MaxSocSize`, `SignatureSize`)
 - **Enums**: PascalCase type and members (`RedundancyLevel.Paranoid`)
-- **Namespaces**: `Etherna.BeeNet.<Feature>` mirroring the folder under the root namespace (e.g. `Etherna.BeeNet.Models`, `Etherna.BeeNet.Stores`)
+- **Namespaces**: `Etherna.SwarmSdk.<Feature>` mirroring the folder under the root namespace (e.g. `Etherna.SwarmSdk.Models`, `Etherna.SwarmSdk.Stores`)
 - **Custom exceptions**: `Exception` suffix, always `sealed`
 
 ## Code Organization
 
 - One class per file, filename matches class name
-- Namespace mirrors folder structure (under the `Etherna.BeeNet` root namespace)
+- Namespace mirrors folder structure (under the `Etherna.SwarmSdk` root namespace)
 - Block-scoped namespaces: `namespace X { ... }` — NOT file-scoped
 - Using directives inside the namespace block, always alphabetically ordered and kept to the minimum necessary
 - No global usings — each file declares its own imports
@@ -178,4 +179,4 @@ private void InternalHelper() { ... }
 - xUnit assertions: `Assert.Equal()`, `Assert.NotNull()`, `Assert.Throws<T>()` / `Assert.ThrowsAsync<T>()`
 - Moq for mocking: `new Mock<IChunkStore>()`
 - `FakeTimeProvider` (Microsoft.Extensions.TimeProvider.Testing) for anything time-dependent — never rely on wall-clock sleeps for ordering; advance the fake clock instead
-- The test project mirrors the `BeeNet.Core` folder layout (e.g. `Stores/ReplicaResolverChunkStoreTest.cs`)
+- The test project mirrors the `SwarmSdk` folder layout (e.g. `Stores/ReplicaResolverChunkStoreTest.cs`)
