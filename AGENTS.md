@@ -35,6 +35,8 @@ Three source projects plus one test project:
 - **`src/SwarmSdk.Wasm`** — WebAssembly host exposing SDK utilities to JS. `IsAotCompatible=true`, not packable, not part of the public NuGet surface. Keep it AOT-safe.
 - **`test/SwarmSdk.UnitTest`** — xUnit + Moq unit tests, mirroring the `SwarmSdk` folder layout.
 
+A test project mirrors the library it tests and references only that library, so logic worth unit-testing belongs in the lowest library that can hold it: prefer placing pure, testable logic in `SwarmSdk` core (where it is covered by `SwarmSdk.UnitTest`) and keeping `SwarmSdk.Client` a thin wrapper over it. `SwarmSdk.Client` has no test project of its own; add a mirror `SwarmSdk.Client.UnitTest` only if it ever grows logic that cannot live in core.
+
 Key cross-cutting points:
 
 - **Root namespace is `Etherna.SwarmSdk` for every project**, so `src/SwarmSdk/Stores/Foo.cs` is `namespace Etherna.SwarmSdk.Stores`, and `src/SwarmSdk.Client/Stores/Bar.cs` is `namespace Etherna.SwarmSdk.Stores` too (the project's `.Client` suffix is dropped, not part of the namespace). The namespace mirrors the folder path *under* the root namespace.
@@ -153,6 +155,14 @@ private void InternalHelper() { ... }
   public override bool CanSeek => true;
   ```
 - LINQ method chains: one operation per line, aligned
+- When a call's or constructor's arguments are wrapped one per line, keep the **first** argument on the opening-parenthesis line and align the rest under it — don't drop the first argument onto its own line. Skip this only when the first argument is itself long enough to warrant its own line.
+  ```csharp
+  new(id: id,
+      amount: null,
+      depth: PostageBatch.MinDepth,
+      utilization: 0);
+  ```
+  This applies to invocation argument lists; multi-line method/constructor *parameter declarations* keep the first parameter on its own line, as elsewhere in the codebase.
 - Blank line between member sections
 
 ## C# Language Features
@@ -175,7 +185,7 @@ private void InternalHelper() { ... }
 ## Testing (xUnit + Moq)
 
 - `[Fact]` for basic tests, `[Theory]` with `[MemberData]` for parameterized cases
-- AAA pattern with section comments: `// Arrange.`, `// Action.`, `// Assert.`
+- AAA pattern with section comments: `// Setup.`, `// Run.`, `// Assert.` (collapse to `// Run & Assert.` when a single statement does both)
 - xUnit assertions: `Assert.Equal()`, `Assert.NotNull()`, `Assert.Throws<T>()` / `Assert.ThrowsAsync<T>()`
 - Moq for mocking: `new Mock<IChunkStore>()`
 - `FakeTimeProvider` (Microsoft.Extensions.TimeProvider.Testing) for anything time-dependent — never rely on wall-clock sleeps for ordering; advance the fake clock instead
