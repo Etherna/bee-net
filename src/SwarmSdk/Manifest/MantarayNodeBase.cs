@@ -1,0 +1,125 @@
+// Copyright 2021-present Etherna SA
+// This file is part of SwarmSDK.
+// 
+// SwarmSDK is free software: you can redistribute it and/or modify it under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+// 
+// SwarmSDK is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public License along with SwarmSDK.
+// If not, see <https://www.gnu.org/licenses/>.
+
+using Etherna.SwarmSdk.Hashing;
+using Etherna.SwarmSdk.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Etherna.SwarmSdk.Manifest
+{
+    public abstract class MantarayNodeBase : IReadOnlyMantarayNode
+    {
+        // Consts.
+        public const int ForksIndexSize = 32;
+        public static readonly byte[] Version02Hash = new Hasher().ComputeHash("mantaray:0.2")
+            .Take(VersionHashSize).ToArray();
+        public const int VersionHashSize = 31;
+
+        // Properties.
+        public abstract SwarmReference? EntryReference { get; }
+        public abstract IReadOnlyDictionary<char, MantarayNodeFork> Forks { get; }
+        public abstract IReadOnlyDictionary<string, string> Metadata { get; }
+        public abstract NodeType NodeTypeFlags { get; }
+        public abstract EncryptionKey256? ObfuscationKey { get; }
+        public abstract SwarmReference Reference { get; }
+        
+        // Methods.
+        public async Task<IReadOnlyDictionary<string, string>> GetMetadataAsync(
+            string path,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(path);
+
+            // If the path is empty, return current node metadata
+            if (path.Length == 0)
+                return Metadata;
+
+            // Find the child fork.
+            if (!Forks.TryGetValue(path[0], out var fork) ||
+                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+                throw new KeyNotFoundException($"Final path {path} can't be found");
+            
+            // If the child node is the one we are looking for, return metadata.
+            var childSubPath = path[fork.Prefix.Length..];
+            if (childSubPath.Length == 0)
+                return fork.Node.Metadata;
+            
+            // Else, proceed into it.
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
+
+            return await fork.Node.GetMetadataAsync(childSubPath, cancellationToken).ConfigureAwait(false);
+        }
+        
+        public async Task<MantarayResourceInfo> GetResourceInfoAsync(
+            string path,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(path);
+
+            // If the path is empty and entry is not null, return the entry
+            if (path.Length == 0)
+            {
+                if (EntryReference.HasValue && !SwarmReference.IsZero(EntryReference.Value))
+                    return new()
+                    {
+                        Reference = EntryReference.Value,
+                        Metadata = Metadata,
+                    };
+            
+                throw new KeyNotFoundException("Path can't be found");
+            }
+            
+            // Find the child fork.
+            if (!Forks.TryGetValue(path[0], out var fork) ||
+                !path.StartsWith(fork.Prefix, StringComparison.InvariantCulture))
+                throw new KeyNotFoundException($"Final path {path} can't be found");
+
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
+
+            return await fork.Node.GetResourceInfoAsync(
+                path[fork.Prefix.Length..],
+                cancellationToken).ConfigureAwait(false);
+        }
+        
+        public async Task<bool> HasPathPrefixAsync(
+            string path,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(path);
+
+            if (path.Length == 0)
+                return true;
+            
+            // Find the child fork.
+            if (!Forks.TryGetValue(path[0], out var fork))
+                return false;
+            
+            var commonPathLength = Math.Min(path.Length, fork.Prefix.Length);
+            if (!path.AsSpan()[..commonPathLength].SequenceEqual(fork.Prefix.AsSpan()[..commonPathLength]))
+                return false;
+
+            await fork.Node.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
+
+            return await fork.Node.HasPathPrefixAsync(
+                path[commonPathLength..],
+                cancellationToken).ConfigureAwait(false);
+        }
+        
+        public abstract Task OnVisitingAsync(CancellationToken cancellationToken = default);
+    }
+}
