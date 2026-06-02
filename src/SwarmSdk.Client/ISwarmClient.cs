@@ -79,10 +79,12 @@ namespace Etherna.SwarmSdk
         /// <summary>Upload a collection of chunks in a single bulk request.</summary>
         /// <param name="chunks">Chunks to upload.</param>
         /// <param name="batchId">ID of Postage Batch that is used to upload data with.</param>
+        /// <param name="maxUploadAttempts">Maximum number of attempts per chunk push (initial try plus retries). 1 disables retrying. Retrying is safe because re-sending already-stamped chunks is idempotent.</param>
         /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
         Task ChunksBulkUploadAsync(
             SwarmChunk[] chunks,
             PostageBatchId batchId,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default);
 
         /// <summary>Connect to address.</summary>
@@ -855,7 +857,9 @@ namespace Etherna.SwarmSdk
         /// <param name="actHistoryAddress">ACT history reference address.</param>
         /// <param name="deferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <param name="redundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="maxUploadAttempts">Maximum number of upload attempts (initial try plus retries) on transient failures. 1 disables retrying. Requires a seekable <paramref name="body"/> when greater than 1.</param>
         /// <returns>Content reference</returns>
+        /// <remarks>Retrying reuses the same postage batch. For plain uploads this is idempotent, since the content addresses are deterministic. When <paramref name="encrypt"/> is true the content is re-encrypted with a fresh random key on each attempt, so a retry produces a different reference and consumes additional batch utilization.</remarks>
         /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
         Task<SwarmReference> UploadBytesAsync(
             Stream body,
@@ -868,6 +872,7 @@ namespace Etherna.SwarmSdk
             string? actHistoryAddress = null,
             bool? deferredUpload = null,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload a chunk.</summary>
@@ -919,7 +924,9 @@ namespace Etherna.SwarmSdk
         /// <param name="redundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
         /// <param name="act">Determines if the uploaded data should be treated as ACT (Access Control Trie) content.</param>
         /// <param name="actHistoryAddress">ACT history reference address.</param>
+        /// <param name="maxUploadAttempts">Maximum number of upload attempts (initial try plus retries) on transient failures. 1 disables retrying.</param>
         /// <returns>Content reference</returns>
+        /// <remarks>Retrying reuses the same postage batch. For plain uploads this is idempotent, since the content addresses are deterministic. When <paramref name="encrypt"/> is true the content is re-encrypted with a fresh random key on each attempt, so a retry produces a different reference and consumes additional batch utilization.</remarks>
         /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
         Task<SwarmReference> UploadDirectoryAsync(
             string directoryPath,
@@ -934,6 +941,7 @@ namespace Etherna.SwarmSdk
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             bool? act = null,
             string? actHistoryAddress = null,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload feed root manifest.</summary>
@@ -968,7 +976,9 @@ namespace Etherna.SwarmSdk
         /// <param name="errorDocument">Custom error document to return when a path is not found in the collection.</param>
         /// <param name="deferredUpload">Determines if the uploaded data should be sent to the network immediately or in a deferred fashion. By default the upload will be deferred.</param>
         /// <param name="redundancyLevel">Add redundancy to the data being uploaded so that downloaders can download it with better UX. 0 value is default and does not add any redundancy to the file.</param>
+        /// <param name="maxUploadAttempts">Maximum number of upload attempts (initial try plus retries) on transient failures. 1 disables retrying. Requires a seekable <paramref name="content"/> when greater than 1.</param>
         /// <returns>Content reference</returns>
+        /// <remarks>Retrying reuses the same postage batch. For plain uploads this is idempotent, since the content addresses are deterministic. When <paramref name="encrypt"/> is true the content is re-encrypted with a fresh random key on each attempt, so a retry produces a different reference and consumes additional batch utilization.</remarks>
         /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
         Task<SwarmReference> UploadFileAsync(
             Stream content,
@@ -984,6 +994,7 @@ namespace Etherna.SwarmSdk
             string? errorDocument = null,
             bool? deferredUpload = null,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload single owner chunk.</summary>

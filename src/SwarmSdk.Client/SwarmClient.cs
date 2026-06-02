@@ -16,6 +16,7 @@ using Etherna.SwarmSdk.Clients.Bee;
 using Etherna.SwarmSdk.Exceptions;
 using Etherna.SwarmSdk.Extensions;
 using Etherna.SwarmSdk.Models;
+using Etherna.SwarmSdk.Services;
 using Etherna.SwarmSdk.Tools;
 using System;
 using System.Collections.Generic;
@@ -242,24 +243,32 @@ namespace Etherna.SwarmSdk
         public async Task ChunksBulkUploadAsync(
             SwarmChunk[] chunks,
             PostageBatchId batchId,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(chunks);
-            
+
             if (IsDryMode)
                 return;
-            
+
             switch (ApiCompatibility)
             {
                 case SwarmClients.Bee:
                 {
                     foreach (var chunk in chunks)
                     {
-                        using var memoryStream = new MemoryStream(chunk.GetFullPayloadToByteArray());
-                    
-                        await UploadChunkAsync(
-                            memoryStream,
-                            batchId,
+                        // Re-sending an already-stamped chunk is idempotent, so each push can be retried safely.
+                        var chunkPayload = chunk.GetFullPayloadToByteArray();
+                        await UploadRetrier.ExecuteWithRetryAsync(
+                            async ct =>
+                            {
+                                using var memoryStream = new MemoryStream(chunkPayload);
+                                await UploadChunkAsync(
+                                    memoryStream,
+                                    batchId,
+                                    cancellationToken: ct).ConfigureAwait(false);
+                            },
+                            maxAttempts: maxUploadAttempts,
                             cancellationToken: cancellationToken).ConfigureAwait(false);
                     }
                     break;
@@ -278,20 +287,26 @@ namespace Etherna.SwarmSdk
 
                         //chunk data
                         payload.AddRange(chunkBytes.Span);
-                
+
                         //check hash
                         payload.AddRange(chunk.Hash.ToByteArray());
                     }
-            
+
                     var byteArrayPayload = payload.ToArray();
-                    using var memoryStream = new MemoryStream(byteArrayPayload);
-                    
-                    // Upload stream.
-                    await beehiveGeneratedClient.Ev1ChunksBulkUploadAsync(
-                        swarm_Postage_Batch_Id: batchId.ToString(),
-                        new FileParameter(memoryStream),
+
+                    // Upload stream. The payload is rebuilt on each attempt because the stream is consumed by the send.
+                    await UploadRetrier.ExecuteWithRetryAsync(
+                        async ct =>
+                        {
+                            using var memoryStream = new MemoryStream(byteArrayPayload);
+                            await beehiveGeneratedClient.Ev1ChunksBulkUploadAsync(
+                                swarm_Postage_Batch_Id: batchId.ToString(),
+                                new FileParameter(memoryStream),
+                                cancellationToken: ct).ConfigureAwait(false);
+                        },
+                        maxAttempts: maxUploadAttempts,
                         cancellationToken: cancellationToken).ConfigureAwait(false);
-                    
+
                     break;
                 }
                 default:
@@ -2722,37 +2737,55 @@ namespace Etherna.SwarmSdk
             string? actHistoryAddress = null,
             bool? deferredUpload = null,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(body);
+
             if (IsDryMode)
                 return encrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
 
-            switch (ApiCompatibility)
-            {
-                case SwarmClients.Bee:
-                    return (await beeGeneratedClient.BytesPostAsync(
-                        swarm_postage_batch_id: batchId.ToString(),
-                        swarm_tag: tagId?.Value,
-                        swarm_pin: pin,
-                        swarm_deferred_upload: deferredUpload,
-                        swarm_encrypt: encrypt,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
-                        swarm_act: act,
-                        swarm_act_history_address: actHistoryAddress,
-                        body: body,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                case SwarmClients.Beehive:
-                    return (await beehiveGeneratedClient.BytesPostAsync(
-                        swarm_Postage_Batch_Id: batchId.ToString(),
-                        body: new FileParameter(body),
-                        swarm_Compact_Level: compactLevel,
-                        swarm_Encrypt: encrypt,
-                        swarm_Pin: pin,
-                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)redundancyLevel,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                default:
-                    throw new InvalidOperationException();
-            }
+            // Retrying needs to resend the same data, so a non-seekable stream cannot be rewound.
+            if (maxUploadAttempts > 1 && !body.CanSeek)
+                throw new ArgumentException(
+                    "A seekable stream is required to retry the upload; set maxUploadAttempts to 1 for non-seekable streams.",
+                    nameof(body));
+            var startPosition = body.CanSeek ? body.Position : 0L;
+
+            return await UploadRetrier.ExecuteWithRetryAsync(
+                async ct =>
+                {
+                    if (body.CanSeek)
+                        body.Position = startPosition;
+                    switch (ApiCompatibility)
+                    {
+                        case SwarmClients.Bee:
+                            return (await beeGeneratedClient.BytesPostAsync(
+                                swarm_postage_batch_id: batchId.ToString(),
+                                swarm_tag: tagId?.Value,
+                                swarm_pin: pin,
+                                swarm_deferred_upload: deferredUpload,
+                                swarm_encrypt: encrypt,
+                                swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
+                                swarm_act: act,
+                                swarm_act_history_address: actHistoryAddress,
+                                body: body,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        case SwarmClients.Beehive:
+                            return (await beehiveGeneratedClient.BytesPostAsync(
+                                swarm_Postage_Batch_Id: batchId.ToString(),
+                                body: new FileParameter(body),
+                                swarm_Compact_Level: compactLevel,
+                                swarm_Encrypt: encrypt,
+                                swarm_Pin: pin,
+                                swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel?)redundancyLevel,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        default:
+                            throw new InvalidOperationException();
+                    }
+                },
+                maxAttempts: maxUploadAttempts,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public Task<SwarmHash> UploadChunkAsync(
@@ -2826,59 +2859,66 @@ namespace Etherna.SwarmSdk
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
             bool? act = null,
             string? actHistoryAddress = null,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default)
         {
             if (IsDryMode)
                 return encrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
 
-            // Create tar file.
+            // Create tar file once; the seekable stream is rewound before each attempt.
             using var memoryStream = new MemoryStream();
             await TarFile.CreateFromDirectoryAsync(directoryPath, memoryStream, false, cancellationToken).ConfigureAwait(false);
-            memoryStream.Position = 0;
-            
+
             // Try set index document.
             if (indexDocument is null &&
                 File.Exists(Path.Combine(directoryPath, "index.html")))
                 indexDocument = "index.html";
 
             // Upload directory.
-            switch (ApiCompatibility)
-            {
-                case SwarmClients.Bee:
-                    return (await beeGeneratedClient.BzzPostAsync(
-                        name: null,
-                        swarm_tag: tagId?.Value,
-                        swarm_pin: pin,
-                        swarm_encrypt: encrypt,
-                        content_Type: "application/x-tar",
-                        swarm_collection: true,
-                        swarm_index_document: indexDocument,
-                        swarm_error_document: errorDocument,
-                        swarm_postage_batch_id: batchId.ToString(),
-                        swarm_deferred_upload: deferredUpload,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
-                        swarm_act: act,
-                        swarm_act_history_address: actHistoryAddress,
-                        body: memoryStream,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                case SwarmClients.Beehive:
-                    return (await beehiveGeneratedClient.BzzPostAsync(
-                        file: new Clients.Beehive.FileParameter(
-                            data: memoryStream,
-                            fileName: null,
-                            contentType: "application/x-tar"),
-                        swarm_Postage_Batch_Id: batchId.ToString(),
-                        swarm_Compact_Level: compactLevel,
-                        swarm_Encrypt: encrypt,
-                        swarm_Pin: pin,
-                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)redundancyLevel,
-                        swarm_Collection: true,
-                        swarm_Index_Document: indexDocument,
-                        swarm_Error_Document: errorDocument,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                default:
-                    throw new InvalidOperationException();
-            }
+            return await UploadRetrier.ExecuteWithRetryAsync(
+                async ct =>
+                {
+                    memoryStream.Position = 0;
+                    switch (ApiCompatibility)
+                    {
+                        case SwarmClients.Bee:
+                            return (await beeGeneratedClient.BzzPostAsync(
+                                name: null,
+                                swarm_tag: tagId?.Value,
+                                swarm_pin: pin,
+                                swarm_encrypt: encrypt,
+                                content_Type: "application/x-tar",
+                                swarm_collection: true,
+                                swarm_index_document: indexDocument,
+                                swarm_error_document: errorDocument,
+                                swarm_postage_batch_id: batchId.ToString(),
+                                swarm_deferred_upload: deferredUpload,
+                                swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
+                                swarm_act: act,
+                                swarm_act_history_address: actHistoryAddress,
+                                body: memoryStream,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        case SwarmClients.Beehive:
+                            return (await beehiveGeneratedClient.BzzPostAsync(
+                                file: new Clients.Beehive.FileParameter(
+                                    data: memoryStream,
+                                    fileName: null,
+                                    contentType: "application/x-tar"),
+                                swarm_Postage_Batch_Id: batchId.ToString(),
+                                swarm_Compact_Level: compactLevel,
+                                swarm_Encrypt: encrypt,
+                                swarm_Pin: pin,
+                                swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)redundancyLevel,
+                                swarm_Collection: true,
+                                swarm_Index_Document: indexDocument,
+                                swarm_Error_Document: errorDocument,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        default:
+                            throw new InvalidOperationException();
+                    }
+                },
+                maxAttempts: maxUploadAttempts,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<SwarmHash> UploadFeedManifestAsync(
@@ -2935,46 +2975,64 @@ namespace Etherna.SwarmSdk
             string? errorDocument = null,
             bool? deferredUpload = null,
             RedundancyLevel redundancyLevel = RedundancyLevel.None,
+            int maxUploadAttempts = 1,
             CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(content);
+
             if (IsDryMode)
                 return encrypt == true ? SwarmReference.EncryptedZero : SwarmReference.PlainZero;
 
-            switch (ApiCompatibility)
-            {
-                case SwarmClients.Bee:
-                    return (await beeGeneratedClient.BzzPostAsync(
-                        name: name,
-                        swarm_tag: tagId?.Value,
-                        swarm_pin: pin,
-                        swarm_encrypt: encrypt,
-                        content_Type: contentType,
-                        swarm_collection: isFileCollection,
-                        swarm_index_document: indexDocument,
-                        swarm_error_document: errorDocument,
-                        swarm_postage_batch_id: batchId.ToString(),
-                        swarm_deferred_upload: deferredUpload,
-                        swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
-                        body: content,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                case SwarmClients.Beehive:
-                    return (await beehiveGeneratedClient.BzzPostAsync(
-                        file: new Clients.Beehive.FileParameter(
-                            data: content,
-                            fileName: name,
-                            contentType: contentType),
-                        swarm_Postage_Batch_Id: batchId.ToString(),
-                        swarm_Compact_Level: compactLevel,
-                        swarm_Encrypt: encrypt,
-                        swarm_Pin: pin,
-                        swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)redundancyLevel,
-                        swarm_Collection: isFileCollection,
-                        swarm_Index_Document: indexDocument,
-                        swarm_Error_Document: errorDocument,
-                        cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
-                default:
-                    throw new InvalidOperationException();
-            }
+            // Retrying needs to resend the same data, so a non-seekable stream cannot be rewound.
+            if (maxUploadAttempts > 1 && !content.CanSeek)
+                throw new ArgumentException(
+                    "A seekable stream is required to retry the upload; set maxUploadAttempts to 1 for non-seekable streams.",
+                    nameof(content));
+            var startPosition = content.CanSeek ? content.Position : 0L;
+
+            return await UploadRetrier.ExecuteWithRetryAsync(
+                async ct =>
+                {
+                    if (content.CanSeek)
+                        content.Position = startPosition;
+                    switch (ApiCompatibility)
+                    {
+                        case SwarmClients.Bee:
+                            return (await beeGeneratedClient.BzzPostAsync(
+                                name: name,
+                                swarm_tag: tagId?.Value,
+                                swarm_pin: pin,
+                                swarm_encrypt: encrypt,
+                                content_Type: contentType,
+                                swarm_collection: isFileCollection,
+                                swarm_index_document: indexDocument,
+                                swarm_error_document: errorDocument,
+                                swarm_postage_batch_id: batchId.ToString(),
+                                swarm_deferred_upload: deferredUpload,
+                                swarm_redundancy_level: (Clients.Bee.SwarmRedundancyLevel)redundancyLevel,
+                                body: content,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        case SwarmClients.Beehive:
+                            return (await beehiveGeneratedClient.BzzPostAsync(
+                                file: new Clients.Beehive.FileParameter(
+                                    data: content,
+                                    fileName: name,
+                                    contentType: contentType),
+                                swarm_Postage_Batch_Id: batchId.ToString(),
+                                swarm_Compact_Level: compactLevel,
+                                swarm_Encrypt: encrypt,
+                                swarm_Pin: pin,
+                                swarm_Redundancy_Level: (Clients.Beehive.RedundancyLevel)redundancyLevel,
+                                swarm_Collection: isFileCollection,
+                                swarm_Index_Document: indexDocument,
+                                swarm_Error_Document: errorDocument,
+                                cancellationToken: ct).ConfigureAwait(false)).Reference;
+                        default:
+                            throw new InvalidOperationException();
+                    }
+                },
+                maxAttempts: maxUploadAttempts,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<SwarmHash> UploadSocAsync(
