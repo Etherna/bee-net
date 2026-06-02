@@ -13,6 +13,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.SwarmSdk.Exceptions;
+using Etherna.SwarmSdk.Hashing.Signer;
 using Etherna.SwarmSdk.Models;
 using Etherna.SwarmSdk.Tools;
 using System;
@@ -482,6 +483,24 @@ namespace Etherna.SwarmSdk
             string peerAddress,
             CancellationToken cancellationToken = default);
 
+        /// <summary>Download a Single Owner Chunk and parse it into a <see cref="SwarmSoc"/>.</summary>
+        /// <param name="owner">Ethereum address of the SOC owner.</param>
+        /// <param name="identifier">Unique identifier of the SOC.</param>
+        /// <param name="cache">Determines if the download data should be cached on the node. By default the download will be cached.</param>
+        /// <param name="actTimestamp">ACT timestamp.</param>
+        /// <param name="actPublisher">ACT publisher public key.</param>
+        /// <param name="actHistoryAddress">ACT history reference address.</param>
+        /// <returns>The downloaded single owner chunk</returns>
+        /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
+        Task<SwarmSoc> GetSocAsync(
+            EthAddress owner,
+            SwarmSocIdentifier identifier,
+            bool? cache = null,
+            long? actTimestamp = null,
+            string? actPublisher = null,
+            string? actHistoryAddress = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>Retrieve Single Owner Chunk data.</summary>
         /// <param name="owner">Ethereum address of the Owner of the SOC.</param>
         /// <param name="id">Unique identifier for the chunk data.</param>
@@ -942,6 +961,32 @@ namespace Etherna.SwarmSdk
             bool? act = null,
             string? actHistoryAddress = null,
             int maxUploadAttempts = 1,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>Publish a feed update.</summary>
+        /// <param name="topic">Feed topic.</param>
+        /// <param name="type">Feed indexing scheme.</param>
+        /// <param name="data">Data payload of the feed update, passed to the feed as-is.</param>
+        /// <param name="signer">Signer of the feed owner. Its address identifies the feed owner.</param>
+        /// <param name="batchId">ID of Postage Batch that is used to upload data with.</param>
+        /// <param name="knownNearIndex">An optional known feed index near the last one, to speed up lookup.</param>
+        /// <param name="tagId">Tag UID.</param>
+        /// <param name="deferredUpload">Determines if data should be uploaded in a deferred way.</param>
+        /// <param name="pin">Represents if the uploaded data should be also locally pinned on the node.</param>
+        /// <param name="timestamp">Optional timestamp for the feed update (used by epoch feeds).</param>
+        /// <returns>Reference hash of the published feed chunk</returns>
+        /// <exception cref="SwarmSdkApiException">A server side error occurred.</exception>
+        Task<SwarmHash> UpdateFeedAsync(
+            SwarmFeedTopic topic,
+            SwarmFeedType type,
+            ReadOnlyMemory<byte> data,
+            ISigner signer,
+            PostageBatchId batchId,
+            SwarmFeedIndexBase? knownNearIndex = null,
+            TagId? tagId = null,
+            bool deferredUpload = false,
+            bool? pin = null,
+            DateTimeOffset? timestamp = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>Upload feed root manifest.</summary>

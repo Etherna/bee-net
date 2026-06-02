@@ -15,8 +15,10 @@
 using Etherna.SwarmSdk.Clients.Bee;
 using Etherna.SwarmSdk.Exceptions;
 using Etherna.SwarmSdk.Extensions;
+using Etherna.SwarmSdk.Hashing.Signer;
 using Etherna.SwarmSdk.Models;
 using Etherna.SwarmSdk.Services;
+using Etherna.SwarmSdk.Stores;
 using Etherna.SwarmSdk.Tools;
 using System;
 using System.Collections.Generic;
@@ -1709,6 +1711,37 @@ namespace Etherna.SwarmSdk
             }
         }
 
+        public async Task<SwarmSoc> GetSocAsync(
+            EthAddress owner,
+            SwarmSocIdentifier identifier,
+            bool? cache = null,
+            long? actTimestamp = null,
+            string? actPublisher = null,
+            string? actHistoryAddress = null,
+            CancellationToken cancellationToken = default)
+        {
+            // The SOC address is the keccak256 of identifier and owner: download the chunk at that address.
+            var swarmChunkBmt = new SwarmChunkBmt();
+            var address = SwarmSoc.BuildHash(identifier, owner, swarmChunkBmt.Hasher);
+
+            var chunk = await GetChunkAsync(
+                address,
+                swarmChunkBmt,
+                cache,
+                actTimestamp,
+                actPublisher,
+                actHistoryAddress,
+                cancellationToken).ConfigureAwait(false);
+
+            if (chunk is not SwarmSoc soc ||
+                soc.Owner != owner ||
+                soc.Identifier != identifier)
+                throw new InvalidOperationException(
+                    $"Downloaded chunk at {address} is not the expected single owner chunk");
+
+            return soc;
+        }
+
         public async Task<FileResponse> GetSocDataAsync(
             EthAddress owner,
             string id,
@@ -2918,6 +2951,50 @@ namespace Etherna.SwarmSdk
                     }
                 },
                 maxAttempts: maxUploadAttempts,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<SwarmHash> UpdateFeedAsync(
+            SwarmFeedTopic topic,
+            SwarmFeedType type,
+            ReadOnlyMemory<byte> data,
+            ISigner signer,
+            PostageBatchId batchId,
+            SwarmFeedIndexBase? knownNearIndex = null,
+            TagId? tagId = null,
+            bool deferredUpload = false,
+            bool? pin = null,
+            DateTimeOffset? timestamp = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(signer);
+
+            // The feed owner is the signer's address.
+            var owner = signer.PublicAddress;
+            SwarmFeedBase feed = type switch
+            {
+                SwarmFeedType.Epoch => new SwarmEpochFeed(owner, topic),
+                SwarmFeedType.Sequence => new SwarmSequenceFeed(owner, topic),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+            // Resolve the next index against the node, build the update with the given data
+            // (passed to the feed as-is) and sign it as a SOC.
+            var chunkBmt = new SwarmChunkBmt();
+            var feedChunk = await feed.BuildNextFeedChunkAsync(
+                data,
+                knownNearIndex,
+                new SwarmClientChunkStore(this),
+                chunkBmt,
+                timestamp).ConfigureAwait(false);
+            feedChunk.Sign(signer, chunkBmt.Hasher);
+
+            return await UploadSocAsync(
+                feedChunk,
+                batchId,
+                tagId: tagId,
+                deferredUpload: deferredUpload,
+                pin: pin,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
