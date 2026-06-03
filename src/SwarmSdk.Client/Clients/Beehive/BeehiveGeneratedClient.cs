@@ -543,7 +543,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
 
                     if (swarm_Redundancy_Level != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Redundancy-Level", ConvertToString(swarm_Redundancy_Level, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var json_ = SerializeBody(body);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
@@ -1248,7 +1248,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
 
                     if (swarm_Postage_Stamp != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Postage-Stamp", ConvertToString(swarm_Postage_Stamp, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var json_ = SerializeBody(body);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
@@ -1364,7 +1364,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
                     if (swarm_Postage_Batch_Id == null)
                         throw new System.ArgumentNullException("swarm_Postage_Batch_Id");
                     request_.Headers.TryAddWithoutValidation("Swarm-Postage-Batch-Id", ConvertToString(swarm_Postage_Batch_Id, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var json_ = SerializeBody(body);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
@@ -1470,7 +1470,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
                     if (swarm_Postage_Batch_Id == null)
                         throw new System.ArgumentNullException("swarm_Postage_Batch_Id");
                     request_.Headers.TryAddWithoutValidation("Swarm-Postage-Batch-Id", ConvertToString(swarm_Postage_Batch_Id, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var json_ = SerializeBody(body);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
@@ -2771,7 +2771,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
 
                     if (swarm_Pin != null)
                         request_.Headers.TryAddWithoutValidation("Swarm-Pin", ConvertToString(swarm_Pin, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var json_ = SerializeBody(body);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/octet-stream");
                     request_.Content = content_;
@@ -3559,7 +3559,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
                 var responseText = await ReadAsStringAsync(response.Content, cancellationToken).ConfigureAwait(false);
                 try
                 {
-                    var typedBody = System.Text.Json.JsonSerializer.Deserialize<T>(responseText, JsonSerializerSettings);
+                    var typedBody = (T)System.Text.Json.JsonSerializer.Deserialize(responseText, JsonSerializerSettings.GetTypeInfo(typeof(T)))!;
                     return new ObjectResponseResult<T>(typedBody!, responseText);
                 }
                 catch (System.Text.Json.JsonException exception)
@@ -3574,7 +3574,7 @@ namespace Etherna.SwarmSdk.Clients.Beehive
                 {
                     using (var responseStream = await ReadAsStreamAsync(response.Content, cancellationToken).ConfigureAwait(false))
                     {
-                        var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
+                        var typedBody = (T)(await System.Text.Json.JsonSerializer.DeserializeAsync(responseStream, JsonSerializerSettings.GetTypeInfo(typeof(T)), cancellationToken).ConfigureAwait(false))!;
                         return new ObjectResponseResult<T>(typedBody!, string.Empty);
                     }
                 }
@@ -3586,6 +3586,8 @@ namespace Etherna.SwarmSdk.Clients.Beehive
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2075",
+            Justification = "Reads [EnumMember] on enum fields for query/header values. Enum types reached here are referenced by API signatures, and Native AOT preserves enum field metadata and attributes, so the reflection resolves correctly.")]
         private string ConvertToString(object? value, System.Globalization.CultureInfo cultureInfo)
         {
             if (value == null)

@@ -1,0 +1,39 @@
+name: Native AOT compatibility
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  verify-aot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Install Native AOT prerequisites
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      # Publishing with PublishAot runs the ILC compiler over the whole library surface (SwarmSdk and
+      # SwarmSdk.Client are rooted in the probe). The project sets TreatWarningsAsErrors, so any
+      # trim/AOT warning (IL2026, IL3050, IL2075, …) fails this step.
+      - name: Verify AOT compatibility (publish)
+        run: dotnet publish test/SwarmSdk.AotCompatibility/SwarmSdk.AotCompatibility.csproj -c Release -r linux-x64
+
+      # Run the native binary so AOT issues that only surface at runtime also fail CI.
+      - name: Run AOT smoke test
+        run: ./test/SwarmSdk.AotCompatibility/bin/Release/net10.0/linux-x64/publish/SwarmSdk.AotCompatibility
