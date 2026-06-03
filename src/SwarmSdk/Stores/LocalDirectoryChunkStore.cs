@@ -135,7 +135,7 @@ namespace Etherna.SwarmSdk.Stores
                 return SwarmSoc.BuildFromBytes(hash, buffer.AsMemory()[..readBytes], new SwarmChunkBmt());
             }
 
-            throw new KeyNotFoundException($"Chunk {hash} doesnt' exist");
+            throw new KeyNotFoundException($"Chunk {hash} doesn't exist");
         }
 
         public override Task<bool> HasChunkAsync(SwarmHash hash, CancellationToken cancellationToken = default) =>

@@ -47,7 +47,7 @@ namespace Etherna.SwarmSdk.Hashing.Pipeline
         public long NumberId { get; }
 
         /// <summary>
-        /// Previous chunk semaphore. Occuped resource until chunk is processing.
+        /// Previous chunk semaphore. Occupied resource until chunk is processing.
         /// </summary>
         public SemaphoreSlim? PrevChunkSemaphore { get; }
         
