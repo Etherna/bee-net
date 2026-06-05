@@ -25,6 +25,11 @@ namespace Etherna.SwarmSdk.Models
             SwarmAddress Address,
             string ExpectedString);
 
+        public record CombineUrisTestElement(
+            SwarmAddress Address,
+            SwarmUri[] InputUris,
+            SwarmAddress ExpectedAddress);
+
         public record StringToAddressTestElement(
             string InputString,
             SwarmReference ExpectedReference,
@@ -61,7 +66,44 @@ namespace Etherna.SwarmSdk.Models
                 return tests.Select(t => new object[] { t });
             }
         }
-        
+
+        public static IEnumerable<object[]> CombineUrisTests
+        {
+            get
+            {
+                var ones = new SwarmReference("1111111111111111111111111111111111111111111111111111111111111111");
+                var tests = new List<CombineUrisTestElement>
+                {
+                    // No uris, returns the address itself.
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
+                        [],
+                        new SwarmAddress(SwarmReference.PlainZero, "Im/prefix")),
+
+                    // Relative not rooted uri, appended to the prefix.
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
+                        ["sub/path"],
+                        new SwarmAddress(SwarmReference.PlainZero, "Im/prefix/sub/path")),
+
+                    // Relative rooted uri, replaces path but keeps reference.
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
+                        ["/rooted/path"],
+                        new SwarmAddress(SwarmReference.PlainZero, "/rooted/path")),
+
+                    // Absolute uri, ignores everything composed before.
+                    new(new SwarmAddress(SwarmReference.PlainZero, "Im/prefix"),
+                        [new SwarmUri(ones, "absolute/path")],
+                        new SwarmAddress(ones, "absolute/path")),
+
+                    // Multiple mixed uris.
+                    new(new SwarmAddress(SwarmReference.PlainZero),
+                        ["a", "b/c", new SwarmUri(ones, null), "d"],
+                        new SwarmAddress(ones, "d")),
+                };
+
+                return tests.Select(t => new object[] { t });
+            }
+        }
+
         public static IEnumerable<object[]> StringToAddressTests
         {
             get
@@ -120,6 +162,15 @@ namespace Etherna.SwarmSdk.Models
             var result = test.Address.ToString();
             
             Assert.Equal(test.ExpectedString, result);
+        }
+
+        [Theory, MemberData(nameof(CombineUrisTests))]
+        public void CombineUris(CombineUrisTestElement test)
+        {
+            var result = test.Address.Combine(test.InputUris);
+
+            Assert.Equal(test.ExpectedAddress.Reference, result.Reference);
+            Assert.Equal(test.ExpectedAddress.Path, result.Path);
         }
 
         [Theory, MemberData(nameof(StringToAddressTests))]
