@@ -58,6 +58,17 @@ namespace Etherna.SwarmSdk.Models
         public string Path => _path ?? NormalizePath(null);
         
         // Methods.
+        /// <summary>
+        /// Resolve a sequence of URIs on top of the current Address, and return the resulting Address.
+        /// Absolute URIs (with a reference) reset the resolution, while relative URIs append their path.
+        /// </summary>
+        /// <param name="uris">The URIs to resolve on top of this Address</param>
+        /// <returns>The resolved Address</returns>
+        public SwarmAddress Combine(params SwarmUri[] uris)
+        {
+            ArgumentNullException.ThrowIfNull(uris);
+            return SwarmUri.Combine([this, .. uris]).ToSwarmAddress();
+        }
         public bool Equals(SwarmAddress other) =>
             Reference.Equals(other.Reference) &&
             EqualityComparer<string>.Default.Equals(Path, other.Path);
