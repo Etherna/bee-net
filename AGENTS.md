@@ -96,6 +96,8 @@ Secondary/separator comments:
 //no space, no capital, no ending period
 ```
 
+Members should be documented with XML doc comments (`///`), with a well-composed description and no superfluous information — always for public API, and for non-public members whenever it aids understanding.
+
 ## Member Ordering Within a Class
 
 Use principal-style section comments to delimit groups, in this order:
@@ -192,3 +194,4 @@ private void InternalHelper() { ... }
 - Moq for mocking: `new Mock<IChunkStore>()`
 - `FakeTimeProvider` (Microsoft.Extensions.TimeProvider.Testing) for anything time-dependent — never rely on wall-clock sleeps for ordering; advance the fake clock instead
 - The test project mirrors the `SwarmSdk` folder layout (e.g. `Stores/ReplicaResolverChunkStoreTest.cs`)
+- **No `ConfigureAwait` in test code.** The opposite of the library rule: inside `[Fact]`/`[Theory]` methods *and* any async helper `await`ed from a test, write plain `await foo()` — the xUnit analyzer rule `xUnit1030` errors on `ConfigureAwait(false)` and (with `TreatWarningsAsErrors`) breaks the build. `CA2007` is not enforced here, so omitting it is correct. The only exception is an async helper invoked synchronously (e.g. `.Wait()` from a `[MemberData]` property getter), which never runs on a test's async context and may keep `ConfigureAwait(false)`.
