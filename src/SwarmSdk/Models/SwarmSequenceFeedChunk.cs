@@ -12,7 +12,6 @@
 // You should have received a copy of the GNU Lesser General Public License along with SwarmSDK.
 // If not, see <https://www.gnu.org/licenses/>.
 
-using Etherna.SwarmSdk.Exceptions;
 using Etherna.SwarmSdk.Stores;
 using System;
 using System.Threading.Tasks;
@@ -77,37 +76,37 @@ namespace Etherna.SwarmSdk.Models
         // Properties.
         public ReadOnlyMemory<byte> Data => FeedPayload;
 
-        // Methods.
-        public override Task<SwarmCac> UnwrapDataChunkAsync(
-            bool resolveLegacyPayload,
-            SwarmChunkBmt swarmChunkBmt,
-            IChunkStore? chunkStore = null) =>
-            UnwrapDataChunkAsync(resolveLegacyPayload, chunkStore);
-        
-        public async Task<SwarmCac> UnwrapDataChunkAsync(
-            bool resolveLegacyPayload,
-            IChunkStore? chunkStore = null)
-        {
-            if (resolveLegacyPayload && chunkStore == null)
-                throw new ArgumentNullException(nameof(chunkStore), "Legacy payload resolution needs a chunk store.");
-            
-            // Check if is legacy payload with possible lengths.
-            if (resolveLegacyPayload &&
-                FeedPayload.Length is LegacyTimeStampSize + SwarmHash.HashSize or   // unencrypted ref
-                                      LegacyTimeStampSize + SwarmHash.HashSize * 2) // encrypted ref
-            {
-                var hash = new SwarmHash(FeedPayload[LegacyTimeStampSize..]);
-#pragma warning disable CA1062
-                var chunk = await chunkStore!.GetAsync(hash).ConfigureAwait(false);
-#pragma warning restore CA1062
-                if (chunk is not SwarmCac cac)
-                    throw new SwarmChunkTypeException(
-                        chunk,
-                        $"Legacy referenced chunk {hash} is not a Content Addressed Chunk");
-                return cac;
-            }
+        /// <summary>
+        /// True when the payload length matches a legacy (v1) [timestamp][reference] update,
+        /// either with an unencrypted or an encrypted reference.
+        /// </summary>
+        public bool IsLegacyLengthPayload =>
+            FeedPayload.Length is LegacyTimeStampSize + SwarmHash.HashSize or   // unencrypted ref
+                                  LegacyTimeStampSize + SwarmHash.HashSize * 2; // encrypted ref
 
-            return InnerChunk;
+        // Methods.
+        public override async Task<SwarmFeedResolvedChunk> ResolveWrappedChunkAsync(
+            SwarmChunkBmt swarmChunkBmt,
+            IReadOnlyChunkStore chunkStore)
+        {
+            ArgumentNullException.ThrowIfNull(chunkStore);
+
+            // A v1 (legacy) payload embeds a [timestamp][reference] pointing to the actual data chunk,
+            // while a v2 payload embeds the data chunk directly. When the payload length matches the
+            // legacy size the interpretation is ambiguous: Bee races both and keeps the one whose chunk
+            // is retrievable. We reproduce the same outcome, preferring v1 only when its referenced
+            // chunk can actually be fetched, and falling back to the embedded v2 chunk otherwise.
+            // This matches Bee in every real case (legacy with a present manifest -> v1; ambiguous-length
+            // v2 -> v2). It intentionally diverges only in the degenerate case where neither
+            // interpretation is retrievable (e.g. a legacy update whose referenced chunk is gone): there
+            // Bee is non-deterministic (it may 404 or serve the payload depending on which lookup wins
+            // the race), while we deterministically return the embedded payload we already hold.
+            if (IsLegacyLengthPayload &&
+                await chunkStore.TryGetAsync(new SwarmHash(FeedPayload[LegacyTimeStampSize..]))
+                    .ConfigureAwait(false) is SwarmCac legacyChunk)
+                return new SwarmFeedResolvedChunk(legacyChunk, SwarmFeedPayloadVersion.V1);
+
+            return new SwarmFeedResolvedChunk(InnerChunk, SwarmFeedPayloadVersion.V2);
         }
         
         // Static methods.

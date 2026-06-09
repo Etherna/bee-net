@@ -34,10 +34,17 @@ namespace Etherna.SwarmSdk.Models
         public SwarmFeedTopic Topic { get; } = topic;
 
         // Methods.
-        public abstract Task<SwarmCac> UnwrapDataChunkAsync(
-            bool resolveLegacyPayload,
+        /// <summary>
+        /// Resolve the wrapped data chunk, automatically detecting whether the feed update uses a
+        /// legacy (v1) or current (v2) payload. Mirrors Bee's resolution: when the payload length is
+        /// ambiguous the legacy interpretation is preferred only if its referenced chunk is actually
+        /// retrievable, otherwise it falls back to the embedded (v2) chunk.
+        /// </summary>
+        /// <param name="swarmChunkBmt">The BMT used to rebuild the embedded chunk when needed.</param>
+        /// <param name="chunkStore">The store used to resolve a legacy reference.</param>
+        public abstract Task<SwarmFeedResolvedChunk> ResolveWrappedChunkAsync(
             SwarmChunkBmt swarmChunkBmt,
-            IChunkStore? chunkStore = null);
+            IReadOnlyChunkStore chunkStore);
         
         // Static methods.
         public static SwarmHash BuildHash(
