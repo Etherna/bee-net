@@ -18,6 +18,7 @@ using Etherna.SwarmSdk.Hashing.Postage;
 using Etherna.SwarmSdk.Models;
 using Etherna.SwarmSdk.Stores;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.SwarmSdk.Manifest
@@ -73,6 +74,40 @@ namespace Etherna.SwarmSdk.Manifest
                 !encrypt && compactLevel == 0 ?
                     EncryptionKey256.Zero :
                     (EncryptionKey256?)null); //auto-generate on hash building
+        }
+
+        // Static builders.
+        // Build a new editable manifest cloning an existing referenced manifest. The original hash
+        // reference is lost, but all its nodes are cloned into a fresh editable mantaray that can be
+        // modified and hashed again with the given write settings.
+        public static async Task<WritableMantarayManifest> BuildFromReferencedManifestAsync(
+            ReferencedMantarayManifest referencedManifest,
+            IChunkStore chunkStore,
+            IPostageStamper postageStamper,
+            RedundancyLevel redundancyLevel,
+            bool encrypt,
+            ushort compactLevel,
+            int? chunkHashingConcurrency,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(referencedManifest);
+            ArgumentNullException.ThrowIfNull(chunkStore);
+            ArgumentNullException.ThrowIfNull(postageStamper);
+
+            // Build an empty manifest with the requested write settings, then clone referenced nodes into its root.
+            var manifest = new WritableMantarayManifest(
+                chunkStore,
+                postageStamper,
+                redundancyLevel,
+                encrypt,
+                compactLevel,
+                chunkHashingConcurrency);
+
+            await manifest.rootNode.PopulateFromReferencedNodeAsync(
+                (ReferencedMantarayNode)referencedManifest.RootNode,
+                cancellationToken).ConfigureAwait(false);
+
+            return manifest;
         }
 
         // Properties.

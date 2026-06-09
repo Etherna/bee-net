@@ -188,6 +188,40 @@ namespace Etherna.SwarmSdk.Manifest
         
         public override Task OnVisitingAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
+        // Internals.
+        // Clone the content of a referenced node into this node, recursively, dropping the original hash
+        // reference. Child nodes are created with this node's write settings, so the whole subtree stays
+        // consistent with the manifest configuration and can be hashed again.
+        internal async Task PopulateFromReferencedNodeAsync(
+            ReferencedMantarayNode referencedNode,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(referencedNode);
+
+            if (_reference is not null)
+                throw new InvalidOperationException("Hash already calculated, the node is immutable now");
+
+            // Make sure the referenced node has fetched and decoded its chunk before reading its content.
+            await referencedNode.OnVisitingAsync(cancellationToken).ConfigureAwait(false);
+
+            // Copy the node content. The entry reference is copied verbatim: a null entry reference means
+            // the original node didn't serialize any entry hash, so this clone keeps skipping it too.
+            _entryReference = referencedNode.EntryReference;
+            _metadata = referencedNode.Metadata;
+            _nodeTypeFlags = referencedNode.NodeTypeFlags;
+            skipWriteEntryHash = referencedNode.EntryReference is null;
+
+            // Recursively clone forks, preserving their prefixes and keys.
+            foreach (var (forkKey, fork) in referencedNode.Forks)
+            {
+                var childNode = new WritableMantarayNode(encryptedReferences, ObfuscationCompactLevel, _obfuscationKey);
+                await childNode.PopulateFromReferencedNodeAsync(
+                    (ReferencedMantarayNode)fork.Node,
+                    cancellationToken).ConfigureAwait(false);
+                _forks[forkKey] = new MantarayNodeFork(fork.Prefix, childNode);
+            }
+        }
+
         // Helpers.
         private byte[] ForksToByteArray()
         {
