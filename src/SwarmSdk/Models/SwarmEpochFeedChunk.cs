@@ -82,11 +82,10 @@ namespace Etherna.SwarmSdk.Models
         public DateTimeOffset TimeStamp => FeedPayload[..TimeStampSize].Span.UnixTimeSecondsToDateTimeOffset();
 
         // Methods.
-        public override Task<SwarmCac> UnwrapDataChunkAsync(
-            bool resolveLegacyPayload,
+        public override Task<SwarmFeedResolvedChunk> ResolveWrappedChunkAsync(
             SwarmChunkBmt swarmChunkBmt,
-            IChunkStore? chunkStore = null) =>
-            Task.FromResult(UnwrapDataChunk(swarmChunkBmt));
+            IReadOnlyChunkStore chunkStore) =>
+            Task.FromResult(new SwarmFeedResolvedChunk(UnwrapDataChunk(swarmChunkBmt), SwarmFeedPayloadVersion.V2));
         
         public SwarmCac UnwrapDataChunk(
             SwarmChunkBmt swarmChunkBmt)
