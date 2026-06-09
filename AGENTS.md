@@ -121,6 +121,9 @@ public string Name { get; }
 // Methods.
 public void DoSomething() { ... }
 
+// Internals.
+internal void DoInternalThing() { ... }
+
 // Static methods.
 public static int Compute(...) { ... }
 
