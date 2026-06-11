@@ -15,6 +15,7 @@
 using Etherna.SwarmSdk.Hashing;
 using Etherna.SwarmSdk.Models;
 using Etherna.SwarmSdk.Stores;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Etherna.SwarmSdk.Manifest
@@ -54,6 +55,36 @@ namespace Etherna.SwarmSdk.Manifest
                 redundancyStrategyFallback,
                 null,
                 NodeType.Edge);
+            return new ReferencedMantarayManifest(node);
+        }
+
+        /// <summary>
+        /// Build a new manifest from its root reference, fetching and decoding the root node
+        /// </summary>
+        /// <param name="rootReference">The manifest root reference</param>
+        /// <param name="chunkStore">The chunk store</param>
+        /// <param name="redundancyLevel">Redundancy level used to retrieve root replicas</param>
+        /// <param name="redundancyStrategy">Base strategy used to retrieve parity chunks</param>
+        /// <param name="redundancyStrategyFallback">Fallback to more aggressive redundancy strategy if required</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>The manifest, with root node fetched and decoded</returns>
+        public static async Task<ReferencedMantarayManifest> BuildNewAsync(
+            SwarmReference rootReference,
+            IReadOnlyChunkStore chunkStore,
+            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
+            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
+            bool redundancyStrategyFallback = true,
+            CancellationToken cancellationToken = default)
+        {
+            var node = new ReferencedMantarayNode(
+                rootReference,
+                chunkStore,
+                redundancyStrategy,
+                redundancyStrategyFallback,
+                null,
+                NodeType.Edge);
+            await node.FetchChunkAsync(redundancyLevel, cancellationToken).ConfigureAwait(false);
+            node.DecodeFromChunk();
             return new ReferencedMantarayManifest(node);
         }
 

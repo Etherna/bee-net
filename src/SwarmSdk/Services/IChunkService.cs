@@ -44,54 +44,6 @@ namespace Etherna.SwarmSdk.Services
             bool redundancyStrategyFallback = true);
 
         /// <summary>
-        /// Resolve an address (root reference + path) to its manifest resource info
-        /// </summary>
-        /// <param name="address">The resource address</param>
-        /// <param name="chunkStore">The chunk store</param>
-        /// <param name="manifestPathResolver">The manifest path resolver</param>
-        /// <param name="redundancyLevel">Redundancy level used to retrieve root replicas</param>
-        /// <param name="redundancyStrategy">Base strategy used to retrieve parity chunks</param>
-        /// <param name="redundancyStrategyFallback">Fallback to more aggressive redundancy strategy if required</param>
-        /// <returns>The manifest path resolution result</returns>
-        Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveAddressToResourceInfoAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore,
-            ManifestPathResolver manifestPathResolver,
-            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
-            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
-            bool redundancyStrategyFallback = true);
-
-        /// <summary>
-        /// Resolve the root reference of an address through its manifest
-        /// </summary>
-        /// <param name="address">The resource address</param>
-        /// <param name="chunkStore">The chunk store</param>
-        /// <returns>The resolved reference</returns>
-        Task<SwarmReference> ResolveReferenceFromAddressAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore);
-
-        /// <summary>
-        /// Resolve a reference from a hash or an address string
-        /// </summary>
-        /// <param name="referenceOrAddress">A hash, or an address (root reference + path)</param>
-        /// <param name="chunkStore">The chunk store</param>
-        /// <returns>The resolved reference</returns>
-        Task<SwarmReference> ResolveReferenceFromStringAsync(
-            string referenceOrAddress,
-            IReadOnlyChunkStore chunkStore);
-
-        /// <summary>
-        /// Try to get the file name metadata of an address resource
-        /// </summary>
-        /// <param name="address">The resource address</param>
-        /// <param name="chunkStore">The chunk store</param>
-        /// <returns>The file name, or null if not present</returns>
-        Task<string?> TryGetAddressFileNameAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore);
-
-        /// <summary>
         /// Evaluate the result uploading a directory
         /// </summary>
         /// <param name="directoryPath">The directory to upload</param>

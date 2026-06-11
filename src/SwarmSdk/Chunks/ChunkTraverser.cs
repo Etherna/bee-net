@@ -57,15 +57,13 @@ namespace Etherna.SwarmSdk.Chunks
             var isManifestChunk = false;
             try
             {
-                var manifest = ReferencedMantarayManifest.BuildNew(
+                await ReferencedMantarayManifest.BuildNewAsync(
                     rootReference,
                     chunkStore,
-                    redundancyStrategy,
-                    redundancyStrategyFallback);
-                await ((ReferencedMantarayNode)manifest.RootNode).FetchChunkAsync(
                     redundancyLevel,
+                    redundancyStrategy,
+                    redundancyStrategyFallback,
                     cancellationToken).ConfigureAwait(false);
-                ((ReferencedMantarayNode)manifest.RootNode).DecodeFromChunk();
                 isManifestChunk = true;
             }
             catch (InvalidOperationException) //in case it's not a manifest

@@ -39,8 +39,13 @@ namespace Etherna.SwarmSdk.Services
             RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
             bool redundancyStrategyFallback = true)
         {
-            var chunkReference = (await ResolveAddressToResourceInfoAsync(
-                address, chunkStore, manifestPathResolver).ConfigureAwait(false)).Result.Reference;
+            var chunkReference = (await SwarmAddressResolver.ResolveResourceInfoAsync(
+                address,
+                chunkStore,
+                manifestPathResolver,
+                redundancyLevel,
+                redundancyStrategy,
+                redundancyStrategyFallback).ConfigureAwait(false)).Result.Reference;
 
             return await ChunkDataStream.BuildNewAsync(
                 chunkReference,
@@ -48,55 +53,6 @@ namespace Etherna.SwarmSdk.Services
                 redundancyLevel,
                 redundancyStrategy,
                 redundancyStrategyFallback).ConfigureAwait(false);
-        }
-
-        public async Task<ManifestPathResolutionResult<MantarayResourceInfo>> ResolveAddressToResourceInfoAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore,
-            ManifestPathResolver manifestPathResolver,
-            RedundancyLevel redundancyLevel = RedundancyLevel.Paranoid,
-            RedundancyStrategy redundancyStrategy = RedundancyStrategy.Data,
-            bool redundancyStrategyFallback = true)
-        {
-            var rootManifest = ReferencedMantarayManifest.BuildNew(
-                address.Reference,
-                chunkStore,
-                redundancyStrategy,
-                redundancyStrategyFallback);
-
-            await ((ReferencedMantarayNode)rootManifest.RootNode).FetchChunkAsync(
-                redundancyLevel).ConfigureAwait(false);
-
-            ((ReferencedMantarayNode)rootManifest.RootNode).DecodeFromChunk();
-
-            return await rootManifest.GetResourceInfoAsync(
-                address.Path, manifestPathResolver).ConfigureAwait(false);
-        }
-
-        public async Task<SwarmReference> ResolveReferenceFromAddressAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore) =>
-            (await ResolveAddressToResourceInfoAsync(
-                address, chunkStore, ManifestPathResolver.IdentityResolver).ConfigureAwait(false)).Result.Reference;
-
-        public async Task<SwarmReference> ResolveReferenceFromStringAsync(
-            string referenceOrAddress,
-            IReadOnlyChunkStore chunkStore)
-        {
-            if (SwarmHash.IsValidHash(referenceOrAddress))
-                return new SwarmReference(SwarmHash.FromString(referenceOrAddress), null);
-            return (await ResolveAddressToResourceInfoAsync(
-                    SwarmAddress.FromString(referenceOrAddress), chunkStore, ManifestPathResolver.IdentityResolver)
-                .ConfigureAwait(false)).Result.Reference;
-        }
-
-        public async Task<string?> TryGetAddressFileNameAsync(
-            SwarmAddress address,
-            IReadOnlyChunkStore chunkStore)
-        {
-            var info = await ResolveAddressToResourceInfoAsync(
-                address, chunkStore, ManifestPathResolver.IdentityResolver).ConfigureAwait(false);
-            return info.Result.Metadata.GetValueOrDefault(ManifestEntry.FilenameKey);
         }
 
         public Task<UploadEvaluationResult> UploadDirectoryAsync(
