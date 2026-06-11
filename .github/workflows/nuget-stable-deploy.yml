@@ -6,7 +6,11 @@ on:
       - 'v*.*.*'
 
 jobs:
+  verify-aot:
+    uses: ./.github/workflows/aot-compatibility.yml
+
   build-test-package:
+    needs: verify-aot
     runs-on: ubuntu-latest
 
     steps:
