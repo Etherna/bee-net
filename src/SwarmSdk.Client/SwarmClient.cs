@@ -303,7 +303,7 @@ namespace Etherna.SwarmSdk
                             using var memoryStream = new MemoryStream(byteArrayPayload);
                             await beehiveGeneratedClient.Ev1ChunksBulkUploadAsync(
                                 swarm_Postage_Batch_Id: batchId.ToString(),
-                                new FileParameter(memoryStream),
+                                memoryStream,
                                 cancellationToken: ct).ConfigureAwait(false);
                         },
                         maxAttempts: maxUploadAttempts,
@@ -2807,7 +2807,7 @@ namespace Etherna.SwarmSdk
                         case SwarmClients.Beehive:
                             return (await beehiveGeneratedClient.BytesPostAsync(
                                 swarm_Postage_Batch_Id: batchId.ToString(),
-                                body: new FileParameter(body),
+                                body: body,
                                 swarm_Compact_Level: compactLevel,
                                 swarm_Encrypt: encrypt,
                                 swarm_Pin: pin,
@@ -2870,7 +2870,7 @@ namespace Etherna.SwarmSdk
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
                 case SwarmClients.Beehive:
                     return (await beehiveGeneratedClient.ChunksPostAsync(
-                        body: new FileParameter(chunkData),
+                        body: chunkData,
                         swarm_Postage_Batch_Id: batchId?.ToString(),
                         swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
                         cancellationToken: cancellationToken).ConfigureAwait(false)).Reference;
@@ -2933,7 +2933,7 @@ namespace Etherna.SwarmSdk
                                 cancellationToken: ct).ConfigureAwait(false)).Reference;
                         case SwarmClients.Beehive:
                             return (await beehiveGeneratedClient.BzzPostAsync(
-                                file: new Clients.Beehive.FileParameter(
+                                body: new Clients.Beehive.FileParameter(
                                     data: memoryStream,
                                     fileName: null,
                                     contentType: "application/x-tar"),
@@ -3091,7 +3091,7 @@ namespace Etherna.SwarmSdk
                                 cancellationToken: ct).ConfigureAwait(false)).Reference;
                         case SwarmClients.Beehive:
                             return (await beehiveGeneratedClient.BzzPostAsync(
-                                file: new Clients.Beehive.FileParameter(
+                                body: new Clients.Beehive.FileParameter(
                                     data: content,
                                     fileName: name,
                                     contentType: contentType),
@@ -3153,7 +3153,7 @@ namespace Etherna.SwarmSdk
                         owner: soc.Owner.ToString(false),
                         id: soc.Identifier.ToString(),
                         sig: soc.Signature.Value.ToString(),
-                        body: new FileParameter(bodyMemoryStream),
+                        body: bodyMemoryStream,
                         swarm_Postage_Batch_Id: batchId?.ToString(),
                         swarm_Postage_Stamp: presignedPostageStamp?.ToString(),
                         swarm_Pin: pin,
