@@ -42,7 +42,7 @@
             "name": "Swarm-Redundancy-Level",
             "in": "header",
             "schema": {
-              "default": "Paranoid",
+              "default": "paranoid",
               "$ref": "#/components/schemas/RedundancyLevel"
             }
           },
@@ -50,7 +50,7 @@
             "name": "Swarm-Redundancy-Strategy",
             "in": "header",
             "schema": {
-              "default": "Data",
+              "default": "data",
               "$ref": "#/components/schemas/RedundancyStrategy"
             }
           },
@@ -74,6 +74,16 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -86,6 +96,16 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Range Not Satisfiable",
             "content": {
               "application/json": {
                 "schema": {
@@ -184,7 +204,7 @@
             "name": "Swarm-Redundancy-Level",
             "in": "header",
             "schema": {
-              "default": "None",
+              "default": "none",
               "$ref": "#/components/schemas/RedundancyLevel"
             }
           }
@@ -193,7 +213,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -261,7 +282,7 @@
             "name": "Swarm-Redundancy-Level",
             "in": "header",
             "schema": {
-              "default": "Paranoid",
+              "default": "paranoid",
               "$ref": "#/components/schemas/RedundancyLevel"
             }
           },
@@ -269,7 +290,7 @@
             "name": "Swarm-Redundancy-Strategy",
             "in": "header",
             "schema": {
-              "default": "Data",
+              "default": "data",
               "$ref": "#/components/schemas/RedundancyStrategy"
             }
           },
@@ -285,6 +306,16 @@
         "responses": {
           "200": {
             "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -312,6 +343,16 @@
                 }
               }
             }
+          },
+          "416": {
+            "description": "Range Not Satisfiable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
           }
         }
       },
@@ -332,7 +373,7 @@
             "name": "Swarm-Redundancy-Level",
             "in": "header",
             "schema": {
-              "default": "Paranoid",
+              "default": "paranoid",
               "$ref": "#/components/schemas/RedundancyLevel"
             }
           },
@@ -340,7 +381,7 @@
             "name": "Swarm-Redundancy-Strategy",
             "in": "header",
             "schema": {
-              "default": "Data",
+              "default": "data",
               "$ref": "#/components/schemas/RedundancyStrategy"
             }
           },
@@ -434,7 +475,7 @@
             "name": "Swarm-Redundancy-Level",
             "in": "header",
             "schema": {
-              "default": "None",
+              "default": "none",
               "$ref": "#/components/schemas/RedundancyLevel"
             }
           },
@@ -465,22 +506,26 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             },
             "application/x-tar": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             },
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -663,7 +708,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -733,7 +779,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -796,7 +843,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -901,7 +949,7 @@
             "name": "type",
             "in": "query",
             "schema": {
-              "default": "Sequence",
+              "default": "sequence",
               "$ref": "#/components/schemas/SwarmFeedType"
             }
           },
@@ -917,7 +965,7 @@
             "name": "Swarm-Redundancy-Strategy",
             "in": "header",
             "schema": {
-              "default": "Data",
+              "default": "data",
               "$ref": "#/components/schemas/RedundancyStrategy"
             }
           },
@@ -928,19 +976,21 @@
               "type": "boolean",
               "default": true
             }
-          },
-          {
-            "name": "Swarm-Feed-Legacy-Resolve",
-            "in": "header",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -961,6 +1011,16 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Range Not Satisfiable",
             "content": {
               "application/json": {
                 "schema": {
@@ -1025,7 +1085,7 @@
             "name": "type",
             "in": "query",
             "schema": {
-              "default": "Sequence",
+              "default": "sequence",
               "$ref": "#/components/schemas/SwarmFeedType"
             }
           }
@@ -1449,7 +1509,7 @@
             "name": "Swarm-Redundancy-Strategy",
             "in": "header",
             "schema": {
-              "default": "Data",
+              "default": "data",
               "$ref": "#/components/schemas/RedundancyStrategy"
             }
           },
@@ -1473,6 +1533,16 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1485,6 +1555,16 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeeErrorDto"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Range Not Satisfiable",
             "content": {
               "application/json": {
                 "schema": {
@@ -1551,7 +1631,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/Stream"
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -2534,20 +2615,24 @@
       },
       "RedundancyLevel": {
         "enum": [
-          "None",
-          "Medium",
-          "Strong",
-          "Insane",
-          "Paranoid"
-        ]
+          "none",
+          "medium",
+          "strong",
+          "insane",
+          "paranoid"
+        ],
+        "type": "string",
+        "description": "Accepts the value name (case-insensitive) or its integer equivalent: none (0), medium (1), strong (2), insane (3), paranoid (4)."
       },
       "RedundancyStrategy": {
         "enum": [
-          "None",
-          "Data",
-          "Prox",
-          "Race"
-        ]
+          "none",
+          "data",
+          "prox",
+          "race"
+        ],
+        "type": "string",
+        "description": "Accepts the value name (case-insensitive) or its integer equivalent: none (0), data (1), prox (2), race (3)."
       },
       "Stream": {
         "type": "string",
@@ -2561,9 +2646,11 @@
       },
       "SwarmFeedType": {
         "enum": [
-          "Epoch",
-          "Sequence"
-        ]
+          "epoch",
+          "sequence"
+        ],
+        "type": "string",
+        "description": "Accepts the value name (case-insensitive) or its integer equivalent: epoch (0), sequence (1)."
       },
       "SwarmHash": {
         "maxLength": 64,
