@@ -36,7 +36,7 @@ namespace Etherna.SwarmSdk.Models
             TimeSpan ttl,
             uint utilization)
         {
-            if (depth is < MinDepth or > MaxDepth)
+            if (isUsable && depth is < MinDepth or > MaxDepth)
                 throw new ArgumentOutOfRangeException(nameof(depth), "Batch depth out of range");
 
             Id = id;
