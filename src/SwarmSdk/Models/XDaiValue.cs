@@ -12,14 +12,17 @@
 // You should have received a copy of the GNU Lesser General Public License along with SwarmSDK.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(XDaiValueJsonConverter))]
     [TypeConverter(typeof(XDaiValueTypeConverter))]
     public readonly struct XDaiValue(decimal value) : IEquatable<XDaiValue>, IParsable<XDaiValue>
     {

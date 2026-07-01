@@ -1,11 +1,14 @@
 using Etherna.SwarmSdk.Extensions;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(SwarmReferenceJsonConverter))]
     [TypeConverter(typeof(SwarmReferenceTypeConverter))]
     public readonly struct SwarmReference : IEquatable<SwarmReference>, IParsable<SwarmReference>
     {

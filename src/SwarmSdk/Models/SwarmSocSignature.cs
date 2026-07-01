@@ -14,13 +14,16 @@
 
 using Etherna.SwarmSdk.Extensions;
 using Etherna.SwarmSdk.Hashing;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(SwarmSocSignatureJsonConverter))]
     [TypeConverter(typeof(SwarmSocSignatureTypeConverter))]
     public readonly struct SwarmSocSignature : IEquatable<SwarmSocSignature>, IParsable<SwarmSocSignature>
     {

@@ -12,15 +12,18 @@
 // You should have received a copy of the GNU Lesser General Public License along with SwarmSDK.
 // If not, see <https://www.gnu.org/licenses/>.
 
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(SwarmUriJsonConverter))]
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings")]
     [TypeConverter(typeof(SwarmUriTypeConverter))]
     public readonly struct SwarmUri : IEquatable<SwarmUri>, IParsable<SwarmUri>

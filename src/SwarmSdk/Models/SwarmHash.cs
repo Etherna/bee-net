@@ -13,14 +13,17 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.SwarmSdk.Extensions;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.Buffers.Binary;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(SwarmHashJsonConverter))]
     [TypeConverter(typeof(SwarmHashTypeConverter))]
     public readonly struct SwarmHash : IComparable<SwarmHash>, IEquatable<SwarmHash>, IParsable<SwarmHash>
     {

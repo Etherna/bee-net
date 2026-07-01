@@ -22,6 +22,10 @@ namespace Etherna.SwarmSdk.JsonConverters
     public sealed class XDaiValueJsonConverter(NumericFormat valueFormat)
         : JsonConverter<XDaiValue>
     {
+        public XDaiValueJsonConverter()
+            : this(NumericFormat.AsString)
+        { }
+
         public override XDaiValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {

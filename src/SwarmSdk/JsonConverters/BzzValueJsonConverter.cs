@@ -22,6 +22,10 @@ namespace Etherna.SwarmSdk.JsonConverters
     public sealed class BzzValueJsonConverter(NumericFormat valueFormat)
         : JsonConverter<BzzValue>
     {
+        public BzzValueJsonConverter()
+            : this(NumericFormat.AsString)
+        { }
+
         public override BzzValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {

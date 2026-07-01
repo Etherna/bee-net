@@ -14,14 +14,17 @@
 
 using Etherna.SwarmSdk.Extensions;
 using Etherna.SwarmSdk.Hashing;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(PostageStampJsonConverter))]
     [TypeConverter(typeof(PostageStampTypeConverter))]
     public readonly struct PostageStamp(
         PostageBatchId batchId,

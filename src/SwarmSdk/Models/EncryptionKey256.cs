@@ -13,14 +13,17 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.SwarmSdk.Extensions;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(EncryptionKey256JsonConverter))]
     [TypeConverter(typeof(EncryptionKey256TypeConverter))]
     public readonly struct EncryptionKey256 : IEquatable<EncryptionKey256>, IParsable<EncryptionKey256>
     {

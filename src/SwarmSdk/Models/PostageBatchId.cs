@@ -13,13 +13,16 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 using Etherna.SwarmSdk.Extensions;
+using Etherna.SwarmSdk.JsonConverters;
 using Etherna.SwarmSdk.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Etherna.SwarmSdk.Models
 {
+    [JsonConverter(typeof(PostageBatchIdJsonConverter))]
     [TypeConverter(typeof(PostageBatchIdTypeConverter))]
     public readonly struct PostageBatchId : IEquatable<PostageBatchId>, IParsable<PostageBatchId>
     {
