@@ -100,7 +100,7 @@ namespace Etherna.SwarmSdk.Stores
             
             foreach (var file in cacFiles.Concat(socFiles))
             {
-                try { hashes.Add(new SwarmHash(Path.GetFileName(file))); }
+                try { hashes.Add(new SwarmHash(Path.GetFileNameWithoutExtension(file))); }
                 catch { }
             }
 
