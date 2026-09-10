@@ -150,7 +150,7 @@ private void InternalHelper() { ... }
 - Nullable reference types enabled (`<Nullable>enable</Nullable>`)
 - `ArgumentNullException.ThrowIfNull(param)` for parameter validation
 - `is null` / `is not null` (not `== null`)
-- Prefer `null` over `default` as default value for optional reference parameters
+- Prefer `null` over `default` wherever the type admits it: optional parameter defaults, late-init member initializers (`= null!`, not `= default!`), returns and assignments. Keep `default` only where `null` can't apply: non-nullable value types (e.g. `CancellationToken cancellationToken = default`) and unconstrained generic type parameters.
 - `??` and `??=` operators
 
 ## Formatting
@@ -182,6 +182,7 @@ private void InternalHelper() { ... }
 - Target-typed `new()` when type is clear from context (for non-collection types)
 - Tuple deconstruction for multiple return values
 - Span/`Memory<byte>` and ranges (`data[..32]`, `data[cursor..]`) for byte-level slicing — avoid unnecessary copies
+- Lock fields: prefer the dedicated `System.Threading.Lock` type (.NET 9+) over a plain `object` — more expressive, and the compiler enforces correct `lock` usage on it. Here it applies only once the `net8.0` target is dropped: the lowest-target rule forbids .NET 9+ APIs today.
 
 ## LINQ
 
